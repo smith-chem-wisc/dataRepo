@@ -1689,3 +1689,36 @@ backslash trap bit three times in one day, turning `\n` and `\t` into real chara
 code, and each time the file failed to parse. Owed at close: nothing by us. aging owes the
 `sample_ages` re-delivery, the rebuild on 0.25.0 and the 0.27.0 re-ingest. pep owes DATAREPO-60,
 ptmQtl P13/P14, logs DATAREPO-46 and phred Q1. sdrf will send the first real drafted SDRF.
+
+
+## 2026-09-27 - Twenty-second: LOGS-D3 answered from aging's own artefacts, sdrf's drafts through an ingest, 0.28.0/0.28.1
+
+The inbox held five messages. The only one owed was logs' LOGS-D3: recount the stored rat accessions
+under the Ensembl-agrees view. aging had rebuilt its serving catalog that morning (`8af306854043f771`,
+still 0.21.0, format 6) and it carried the runner's `gene_resolutions` artefacts. So the count came
+from aging's own artefacts, not a scratch run: 4,886 of 8,180 stored proteome accessions (59.7%).
+The view gains 724 over the XML's and loses 44. Those 44 turned out, in logs 024, to be absent from
+Ensembl's rat xref entirely, so no gene is disputed. Two first drafts of 023 carried hand-subtracted
+numbers and one was wrong (multi_gene 44 for 45). Every figure was re-derived by a direct query
+before sending, and 15 stored isoform accessions (aging's isoform database, `9fa7e108`) came out
+of the same check.
+
+G62 (a), sdrf's three drafts: PXD049018 was ingested in scratch against aging's real search. The
+scratch run dir was built from junctions to `run_2026-09-21` plus a `00_sdrf/metadata/` folder, the
+database root was junctioned to `F:/aging_data/db`, and aging's `mm_settings/1.1.11` was passed;
+without the last two, a third of the findings are scratch artefacts. Every search table equalled
+aging's bundle row for row; only the sample side changed. The other two drafts are not in the corpus
+and went through `sources.sdrf.parse` alone. That found G75: source cells went through the VALUE
+filter. sdrf 024 reported 3 rows. The fix showed the defect was bigger. A column's own
+`not applicable` had fallen through to the row default, so 65 biological-replicate cells read
+`publication`, and 024 had repeated that as a fact about sdrf's file. sdrf 025 corrects it. It is
+the thread-036 lesson again: a claim about someone else's output, made from our own parse of it.
+
+0.28.0 (`8bac4ae`, CI green) keeps provenance cells verbatim, with INGESTER 0.20.0 and schema still
+0.0.13. It also carries ptmQtl's P13 wording. aging had not ingested 0.27.0, so the bump costs them
+nothing, and they now re-ingest on 0.28.x. Mid-close, aging 075 arrived with REQ-DATAREPO-5:
+`is_unique` is `len(parsimony list) == 1`, confirmed at `identifications.py:443`. 0.28.1 fixes the
+three `protein_accessions` descriptions and the `is_unique` / `is_isoform_specific` descriptions,
+text only. Computing specificity from the searched sequences is G76, and the re-ingest is not held
+for it. PowerShell `Set-Content -Encoding utf8` put a BOM on two .py files during the version bump;
+it was caught in the diff.

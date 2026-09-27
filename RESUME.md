@@ -6,10 +6,10 @@
 
 | | |
 |---|---|
-| Commits | 305 |
+| Commits | 314 |
 | Sync | [`trishorts/dataRepo`](https://github.com/trishorts/dataRepo) |
 | Locked decisions | 35 |
-| Open gaps | 70 |
+| Open gaps | 71 |
 | Gate items skipped | 4 |
 
 <!-- END GENERATED -->
@@ -22,9 +22,29 @@ reanalyses. The results cover search, quant, provenance, design and organelle an
 use it, but AI agents are the main users. The question it serves is how organelle proteomes change
 with age.
 
-## Latest (2026-09-26, twenty-first session): 0.22.0-0.27.0, the whole inbox answered, G74/G62/G42 built
+## Latest (2026-09-27, twenty-second session): LOGS-D3, sdrf's drafts through an ingest (G62 a), 0.28.0/0.28.1
 
-**Code is datarepo 0.27.0 (`82febc3`, CI green), schema 0.0.13, `INGESTER_VERSION` 0.19.0,
+**Code is datarepo 0.28.1 (`8cadf6c`), schema 0.0.13, `INGESTER_VERSION` 0.20.0, `CATALOG_VERSION` 8.**
+- **0.28.0 (`8bac4ae`, CI green) is G75.** SDRF provenance cells are stored verbatim. The bug: a
+  column's own `not applicable` fell back to the row default, so 65 PXD016662 cells read
+  `publication`.
+- **0.28.1 changes descriptions only (aging 075, REQ-DATAREPO-5 a/b):**
+  - `protein_accessions` is MetaMorpheus's parsimony list;
+  - `is_unique` is parsimony-unique;
+  - `is_isoform_specific` is not populated.
+- **Threads:**
+  - logs 023, answering LOGS-D3: 59.7% of stored rat accessions have a gene under the agrees view.
+    logs closed it in 024.
+  - sdrf 024 and 025: 025 corrects 024. DATAREPO-61 asks what `not applicable` as a source means.
+  - ptmQtl 014: P13 wording applied.
+  - aging 076: re-ingest on 0.28.1.
+- **aging's serving catalog** read `8af306854043f771` (41 bundles, 0.21.0, format 6) on 2026-09-27.
+
+The 2026-09-26 session (0.22.0-0.27.0) is summarised below.
+
+### 2026-09-26, twenty-first session: 0.22.0-0.27.0, the whole inbox answered, G74/G62/G42 built
+
+**Code was datarepo 0.27.0 (`82febc3`, CI green), schema 0.0.13, `INGESTER_VERSION` 0.19.0,
 `CATALOG_VERSION` 8, aging study layer 0.4.0, `STUDY_INGESTER_VERSION` 0.5.0.** aging's serving catalog
 read `deddfb23a567c7c7` (34 datasets, bundles on 0.21.0) on 2026-09-26.
 
@@ -782,26 +802,32 @@ from a single query.
 
 ### The next action
 
-Nothing is owed by us at the 2026-09-26 close. The next action depends on who answers first:
+Nothing is owed by us at the 2026-09-27 close. logs 025 was an EMPTY template in our tree at close
+(untracked); read it once logs fills it in, and never commit it before then.
 
-1. **aging answers 072-074:** read their new catalog's `catalog_meta` (expect `catalog_version` 8)
-   and check that `sample_ages` rows carry `age_source` (236 rows, all `curated`). When they re-ingest
-   on 0.27.0, count `sample_characteristics` rows with `value_reserved` (on the 5 SDRF datasets a
-   scratch re-ingest gave 12-18 per characteristic per dataset) and check that every `sdrf_status`
-   is still `trusted`.
-2. **sdrf sends a real drafted SDRF** (from `e9513dd4` / mzLib #1374): run it through a scratch
-   ingest and report `source`, `source_method` and `fraction_source` counts back (G62 remainder).
-3. **Otherwise, build:** G70 remainder, which ingests `results.txt`'s PEP training block (AUC,
-   LogLoss, counts) and tells pep. It needs an `INGESTER_VERSION` bump, so batch it with the next
-   ingest change.
+1. **Build G76** (aging 075, REQ-DATAREPO-5 b/c): compute peptide specificity from the SEARCHED
+   sequences, not the parsimony list. Keep `protein_accessions` as it is. First run
+   `/bridge-oracle pyMzLib` on `classify_peptides`: it may already do this. Then decide between new
+   columns (a schema bump) and redefining `is_unique` / `is_isoform_specific`. Either way it bumps
+   `INGESTER_VERSION`. Ship it to aging only if their 0.28.1 re-ingest has not started; otherwise
+   batch it with the next ingest change.
+2. **When aging re-ingests on 0.28.1:** read `catalog_meta` (expect format 8). Check that
+   `sample_ages` carries `age_source` (236 rows). Count `value_reserved` rows, and check that every
+   `sdrf_status` is still `trusted`.
+3. **When sdrf answers DATAREPO-61:** if `not applicable` is a vocabulary word, add it to the
+   `source` description; 0.28.0 already stores it verbatim.
+4. **Otherwise:** the G70 remainder (the `results.txt` PEP block, which needs an `INGESTER_VERSION`
+   bump; batch it with G76), and G62 (b), the gate against sdrf's `screen.tsv`.
 
 **In flight (re-check each with the thread checker):**
-- **aging:** re-deliver `sample_ages` (layer 0.4.0), rebuild on 0.25.0, regenerate the site, then
-  re-ingest all on 0.27.0; add `pipeline.public_repo/public_commit` (55e); decide the catalog /
-  Parquet publication (56, Zenodo recommended). Their 57c (occupancy sentence) is in their `--about`.
+- **aging:** re-ingest all on **0.28.1** (076), re-deliver `sample_ages` (layer 0.4.0), and rebuild on
+  0.25.0 or later: their 2026-09-27 rebuild was still 0.21.0, format 6. Then regenerate the site,
+  add `pipeline.public_repo/public_commit` (55e), and decide the catalog / Parquet publication (56,
+  Zenodo recommended).
+- **sdrf:** DATAREPO-61 (024/025), and DATAREPO-31/32.
 - **pep:** DATAREPO-60, checking `pep:DEF-PEP`'s wording (default: it stands).
-- **ptmQtl:** P13 (what a NULL pair `value` means) and P14. G72.
-- **Charter v0.4:** logs (DATAREPO-46) and phred have not signed (G73).
+- **Charter v0.4:** phred has not signed. logs confirmed DATAREPO-46 in 022, and ptmQtl found v0.4
+  correct in 012; whether those count as signatures is G73.
 - **go:** PR B (mzLib#1353) review, then release.
 - **sdrf:** the first real drafted SDRF.
 

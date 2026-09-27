@@ -916,6 +916,18 @@ gaps:
     default: store source / source_reference / source_method / fraction_source /
     technical_replicate_source verbatim, reserved words included, with an INGESTER_VERSION bump. No
     stored row changes today: no deposited SDRF in the corpus carries a source column.
+    [BUILT in 0.28.0 `8bac4ae` on the default. It was bigger than the 3 rows: a column's own
+    `not applicable` fell through to the row default, so 65 PXD016662 biological-replicate cells read
+    `publication`; sdrf 024 §1 repeated that, corrected in sdrf 025.]
+  - >-
+    G76 Sequence-level peptide specificity (aging 075, REQ-DATAREPO-5 (b)/(c)). `is_unique` is
+    `len(parsimony protein_accessions) == 1` (identifications.py), so a peptide in P02751 and three of
+    its isoforms reads true; `is_isoform_specific` is NULL on every row. 0.28.1 fixed the descriptions
+    only. Build: compute both against the searched sequences (the databases bundle.json records;
+    pyMzLib `classify_peptides` may already do it; check with bridge-oracle before writing any), as
+    new columns or by redefining these; an INGESTER_VERSION bump, and a schema bump if columns are
+    added. Keep the parsimony list as is: it is the right default (aging's user). aging computes
+    specificity themselves meanwhile (`results/organelle_isoforms_2026-09-26/`), so nothing waits.
   - >-
     G63 [MANIFEST PATH BUILT in 0.18.0, 2026-09-24 (aging said yes in 058): runs.enrichment,
     runs.enrichment_source, datasets.enrichment_mixed, manifest run_enrichment + mixed_enrichment as

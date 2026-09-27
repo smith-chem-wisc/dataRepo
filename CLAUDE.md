@@ -6,23 +6,30 @@ This folder is a `/project`-managed research project. **You are de facto working
 
 - **Phase:** INCEPTION
 - **Goal:** An AI-ready, API-accessible repository for the search + quant results of the many PRIDE datasets the `aging` pipeline reanalyzes. Humans can use it, but AI agents are the main users. The question it serves is how organelle proteomes change with age.
-- **Pick up at:** **First thing: run the thread checker.** The inbox was cleared on 2026-09-26:
-  aging 072 answered DATAREPO-53..59, sdrf 018 answered DR10/DR11, pep 003 and qc 005 sent. **In
-  flight with aging:** re-deliver `sample_ages` under layer 0.4.0 with `age_source` (all 236 rows),
-  rebuild the catalog on 0.25.0 (format 8, per aging 073; the site refuses older than 7), regenerate the site; then
-  re-ingest ALL on 0.27.0 when convenient (schema 0.0.13, aging 074); add `pipeline.public_repo/public_commit` to provenance (55e); decide the
-  catalog/Parquet publication (56, Zenodo recommended). G62 and G42 are BUILT (0.26.0/0.27.0); next: run a real drafted SDRF from sdrf (`e9513dd4`, mzLib #1374)
-  through an ingest when they send one (G62 remainder), G70 remainder (results.txt PEP block). Code is datarepo **0.27.0** (`82febc3`, CI green: `source_method`); 0.26.0 (`a53cc78`) SDRF sources, data-file gate,
+- **Pick up at:** **First thing: run the thread checker.** Cleared again on 2026-09-27: logs 024
+  closed LOGS-D3 (59.7% rat, nothing owed); sdrf 024/025 sent (drafts run; 025 CORRECTS 024's
+  "65 publication/model" claim; DATAREPO-61 open); ptmQtl 014 and aging 076 sent. **Next build: G76**
+  (aging 075, REQ-DATAREPO-5 (b)/(c)): `is_unique` / `is_isoform_specific` from the SEARCHED sequences,
+  not the parsimony list. Run `/bridge-oracle pyMzLib` on `classify_peptides` before writing any code.
+  **In flight with aging:** re-ingest ALL on **0.28.1** (INGESTER 0.20.0, schema 0.0.13, aging 076;
+  replaces 0.27.0, which nobody ingested). Re-deliver `sample_ages` under layer 0.4.0 with
+  `age_source` (all 236 rows). Rebuild the catalog on >=0.25.0: their 2026-09-27 rebuild
+  `8af306854043f771` is still 0.21.0, format 6, and the site refuses older than 7. Then regenerate
+  the site. Also owed by aging: add `pipeline.public_repo/public_commit` to provenance (55e); decide
+  the catalog/Parquet publication (56, Zenodo recommended). Open: G62 (b), the gate against sdrf's
+  `screen.tsv`; G70 remainder, the results.txt PEP block. Code is datarepo **0.28.1**: text only on
+  0.28.0 (`8bac4ae`, CI green), which is G75, SDRF provenance cells verbatim. Earlier: 0.27.0
+  (`82febc3`) `source_method`; 0.26.0 (`a53cc78`) SDRF sources, data-file gate,
   `value_reserved`; 0.25.0 (`b3d97b8`) G74 sample `_name` columns; 0.24.1 (`f2c7d4a`) read_first; 0.24.0
   (`8da69d2`) the site; 0.23.0 (`2fcd181`) per-dataset contaminant, compact provenance, age_source;
   0.22.0 (`036eaa0`) pep guard. Core schema **0.0.13**, aging study layer **0.4.0**,
-  `bundle.INGESTER_VERSION` **0.19.0**, `runner.RUNNER_VERSION` **1**,
+  `bundle.INGESTER_VERSION` **0.20.0**, `runner.RUNNER_VERSION` **1**,
   `study.STUDY_INGESTER_VERSION` **0.5.0**, `catalog.CATALOG_VERSION` **8**. **D27: dataRepo SHIPS,
   the instance operator (aging) RUNS.** Charter **v0.4** (`874bf61`); logs (DATAREPO-46) and phred
   unsigned (G73). Public site: https://trishorts.github.io/aging-pipeline/. aging's serving catalog
-  read `deddfb23a567c7c7` (34 datasets, 0.21.0) on 2026-09-26. Theirs to answer: pep DATAREPO-60,
-  ptmQtl P13/P14 (G72), go/QuantProject/ptmQtl checking
-  v0.4 wording, logs DATAREPO-46, sdrf's drafted SDRF (G62), pyMzLib on G68. Other builds: G52
+  read `8af306854043f771` (41 bundles, built on 0.21.0, format 6) on 2026-09-27. logs confirmed DATAREPO-46 (022) and ptmQtl
+  found v0.4 correct (012); whether that counts as signing G73 is not settled. Theirs to answer: pep DATAREPO-60,
+  sdrf DATAREPO-61 (and 31/32), go/QuantProject checking v0.4 wording, pyMzLib on G68. Other builds: G52
   ProForma diff; G67 leftovers. Each change that reaches rows needs an `INGESTER_VERSION` bump in the
   same commit (a runner change: `RUNNER_VERSION`). Standing items: G48, G35 (do NOT claim D15's
   bar), G32, G46, G33/G26/G36, G13. **N1/G9 goes to the next NCEMS meeting regardless.** Do NOT build
@@ -328,6 +335,17 @@ This folder is a `/project`-managed research project. **You are de facto working
   producer's real format, covering each state the definition names.
 - **`gh run list --commit` needs the FULL sha.** A short sha matches nothing and returns empty, so a
   watcher loop waits forever and reports nothing. Use `git rev-parse <short>`.
+- **A fallback turns a producer's word into yours.** G75: a source column's own `not applicable`
+  was read as empty and replaced by the row default, so 65 cells said `publication` that sdrf never
+  wrote, and our sdrf 024 reported that to them as a fact about their file. Only the fix showed it.
+  Any `x or default` over a producer's cell must treat a WRITTEN reserved word as written.
+- **To ingest a peer's file against aging's real search, build a scratch run dir. Never write
+  into `F:/aging_data`.** Junction each stage folder of `run_<date>/<PXD>`, put the file in
+  `00_sdrf/metadata/`, junction `<work_root>/db` to `F:/aging_data/db`, and pass `--mm-settings
+  F:/aging_data/mm_settings/1.1.11`. Without the last two, occupancy, contaminant and
+  unresolved-mod findings are artefacts of the scratch setup (2026-09-27, PXD049018).
+- **PowerShell `Set-Content -Encoding utf8` adds a BOM to .py files too** (0.28.0 version bump).
+  Use `[IO.File]::WriteAllText` with `UTF8Encoding $false`, or the Edit tool.
 - **The .gitignore template ignores `bin/`.** Add a `!/<dir>/bin/` exception before putting code in any bin folder (G4).
 
 **Sibling project: `E:\CodeReview\aging`** (the NCEMS pipeline). aging *produces* results under
