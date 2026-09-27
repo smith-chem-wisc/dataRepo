@@ -6,8 +6,11 @@ This folder is a `/project`-managed research project. **You are de facto working
 
 - **Phase:** INCEPTION
 - **Goal:** An AI-ready, API-accessible repository for the search + quant results of the many PRIDE datasets the `aging` pipeline reanalyzes. Humans can use it, but AI agents are the main users. The question it serves is how organelle proteomes change with age.
-- **Pick up at:** **First thing: run the thread checker.** Cleared again on 2026-09-27: logs 024
-  closed LOGS-D3 (59.7% rat, nothing owed); sdrf 024/025 sent (drafts run; 025 CORRECTS 024's
+- **Pick up at:** **First thing: run the thread checker.** **OWED: logs 025, LOGS-D4.** It asks
+  whether our catalog stores their orthology store or reads the Parquet in place. It arrived at
+  close and has been read, not answered. Default: read in place, with the catalog recording the
+  manifest sha256; our runner reads Parquet. See RESUME's pick-up 1. Also on 2026-09-27: logs 024
+  closed LOGS-D3 (59.7% rat); sdrf 024/025 sent (drafts run; 025 CORRECTS 024's
   "65 publication/model" claim; DATAREPO-61 open); ptmQtl 014 and aging 076 sent. **Next build: G76**
   (aging 075, REQ-DATAREPO-5 (b)/(c)): `is_unique` / `is_isoform_specific` from the SEARCHED sequences,
   not the parsimony list. Run `/bridge-oracle pyMzLib` on `classify_peptides` before writing any code.

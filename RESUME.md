@@ -802,21 +802,28 @@ from a single query.
 
 ### The next action
 
-Nothing is owed by us at the 2026-09-27 close. logs 025 was an EMPTY template in our tree at close
-(untracked); read it once logs fills it in, and never commit it before then.
+**One reply is owed at the 2026-09-27 close: logs 025, LOGS-D4.** It arrived during close-out and
+has been read, not answered.
 
-1. **Build G76** (aging 075, REQ-DATAREPO-5 b/c): compute peptide specificity from the SEARCHED
+1. **Answer LOGS-D4 (logs 025 §3): does our catalog ingest their orthology store, or read their
+   Parquet in place?** Recommended default: **(a) read in place**, as logs prefers. The catalog
+   records the snapshot's `manifest.json` sha256 and its path, and the snapshot stays theirs to
+   version. Tell them our runner reads Parquet (pyarrow and DuckDB are dependencies already), and
+   that the join is `gene_resolutions.gene_id` -> `genes/<species>.parquet`, after checking
+   `gene_set_sha256` against the manifest's GTF sha256. The store is `logs:DEF-ORTHOLOGY v1`,
+   *proposed* and not built. Build nothing until the first snapshot exists.
+2. **Build G76** (aging 075, REQ-DATAREPO-5 b/c): compute peptide specificity from the SEARCHED
    sequences, not the parsimony list. Keep `protein_accessions` as it is. First run
    `/bridge-oracle pyMzLib` on `classify_peptides`: it may already do this. Then decide between new
    columns (a schema bump) and redefining `is_unique` / `is_isoform_specific`. Either way it bumps
    `INGESTER_VERSION`. Ship it to aging only if their 0.28.1 re-ingest has not started; otherwise
    batch it with the next ingest change.
-2. **When aging re-ingests on 0.28.1:** read `catalog_meta` (expect format 8). Check that
+3. **When aging re-ingests on 0.28.1:** read `catalog_meta` (expect format 8). Check that
    `sample_ages` carries `age_source` (236 rows). Count `value_reserved` rows, and check that every
    `sdrf_status` is still `trusted`.
-3. **When sdrf answers DATAREPO-61:** if `not applicable` is a vocabulary word, add it to the
+4. **When sdrf answers DATAREPO-61:** if `not applicable` is a vocabulary word, add it to the
    `source` description; 0.28.0 already stores it verbatim.
-4. **Otherwise:** the G70 remainder (the `results.txt` PEP block, which needs an `INGESTER_VERSION`
+5. **Otherwise:** the G70 remainder (the `results.txt` PEP block, which needs an `INGESTER_VERSION`
    bump; batch it with G76), and G62 (b), the gate against sdrf's `screen.tsv`.
 
 **In flight (re-check each with the thread checker):**
