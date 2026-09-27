@@ -64,6 +64,17 @@ def _clean(raw: str) -> str | None:
     return None if value.lower() in NOT_AVAILABLE else value
 
 
+def _verbatim(raw: str) -> str | None:
+    """A provenance cell as written: NULL only when empty. A reserved word stays a word (G75).
+
+    `_clean` is for values, where `not available` answers the question. A source column saying
+    `not applicable` is the SDRF recording something, and NULL there reads "the SDRF records no
+    source", which it does.
+    """
+    value = (raw or "").strip()
+    return value or None
+
+
 def _term(raw: str) -> str | None:
     parts = parse_value(raw)
     accession = parts.get("AC")
@@ -146,7 +157,7 @@ def parse(
                 "biological_replicate": int(replicate) if replicate and replicate.isdigit() else None,
                 "timepoint": _name(row.get("characteristics[time]", "")),
             }
-            default_source = _clean(row.get("comment[characteristics source]", ""))
+            default_source = _verbatim(row.get("comment[characteristics source]", ""))
             for column, raw in pairs:
                 m = _COLUMN.match(column.strip())
                 if not m or m.group("kind").lower() == "comment":
@@ -166,9 +177,9 @@ def parse(
                     # sdrf's D31 grain: a column's own `comment[<name> source]` overrides the row's
                     # `comment[characteristics source]`. Neither present means NULL, never
                     # `deposited`: nothing in the file says so (G62).
-                    "source": _clean(row.get(f"comment[{inner} source]", "")) or default_source,
-                    "source_reference": _clean(row.get(f"comment[{inner} source reference]", "")),
-                    "source_method": _clean(row.get(f"comment[{inner} source method]", "")),
+                    "source": _verbatim(row.get(f"comment[{inner} source]", "")) or default_source,
+                    "source_reference": _verbatim(row.get(f"comment[{inner} source reference]", "")),
+                    "source_method": _verbatim(row.get(f"comment[{inner} source method]", "")),
                 })
 
         data_file = _clean(row.get("comment[data file]", "")) or _clean(row.get("assay name", ""))
@@ -189,8 +200,8 @@ def parse(
             "technical_replicate": int(technical) if technical and technical.isdigit() else None,
             # SDRF-DR10: a drafted `1` is a default nothing established, so where it came from is
             # carried beside it. NULL until the SDRF writes the column.
-            "fraction_source": _clean(row.get("comment[fraction identifier source]", "")),
-            "technical_replicate_source": _clean(row.get("comment[technical replicate source]", "")),
+            "fraction_source": _verbatim(row.get("comment[fraction identifier source]", "")),
+            "technical_replicate_source": _verbatim(row.get("comment[technical replicate source]", "")),
             "acquisition": _name(row.get("comment[proteomics data acquisition method]", "")),
         }
         channel = _channel(row.get("comment[label]", ""))

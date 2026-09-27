@@ -1115,3 +1115,35 @@ def test_a_drafted_sdrf_says_where_each_value_came_from(tmp_path):
 
     deposited = sdrf_source.parse(RUN / "02_fetch/metadata/PXD999999.sdrf.tsv", "PXD999999")
     assert {c["source"] for c in deposited.characteristics} == {None}
+
+
+@pytest.mark.parametrize("word", sorted(w for w in sdrf_source.NOT_AVAILABLE if w))
+def test_a_reserved_word_in_a_provenance_column_is_kept_as_written(tmp_path, word):
+    """G75: every provenance column, every reserved word. PXD016662's drafted SDRF writes
+    `comment[characteristics source] = not applicable`; read through the value filter it became
+    NULL, which the schema defines as 'the SDRF records no source'. Only an empty cell is NULL."""
+    written = word.upper() if word == "na" else word.title()  # case is kept too
+    header = [
+        "source name", "characteristics[organism]", "characteristics[sex]", "comment[data file]",
+        "comment[characteristics source]", "comment[sex source]", "comment[sex source reference]",
+        "comment[sex source method]", "comment[fraction identifier source]",
+        "comment[technical replicate source]",
+    ]
+    row = ["S1", "not available", "female", "R1.raw", written, written, written, written, written, written]
+    path = tmp_path / "reserved.sdrf.tsv"
+    path.write_text("\t".join(header) + "\n" + "\t".join(row) + "\n", encoding="utf-8")
+    parsed = sdrf_source.parse(path, "PXD1")
+    by = {c["name"]: c for c in parsed.characteristics}
+    sex = by["characteristics[sex]"]
+    assert (sex["source"], sex["source_reference"], sex["source_method"]) == (written,) * 3
+    assert by["characteristics[organism]"]["source"] == written, "the row default is kept too"
+    facts = parsed.run_facts["R1"]
+    assert (facts["fraction_source"], facts["technical_replicate_source"]) == (written, written)
+
+    # An EMPTY cell is still no source: blank column-level cells fall back to the row default,
+    # and a blank default leaves NULL.
+    row = ["S1", "not available", "female", "R1.raw", "", "", "", "", "", ""]
+    path.write_text("\t".join(header) + "\n" + "\t".join(row) + "\n", encoding="utf-8")
+    parsed = sdrf_source.parse(path, "PXD1")
+    assert {(c["source"], c["source_reference"], c["source_method"]) for c in parsed.characteristics} == {(None,) * 3}
+    assert (parsed.run_facts["R1"]["fraction_source"], parsed.run_facts["R1"]["technical_replicate_source"]) == (None, None)
