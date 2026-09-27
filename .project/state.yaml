@@ -898,9 +898,24 @@ gaps:
     `runs.fraction_source` / `technical_replicate_source`, the data-file gate with SdrfStatus
     partial / unmatched; G42 closed by `value_reserved`). Checked on sdrf 015's drafted PXD049018 SDRF:
     replicate `default`, organism and organism part `pride project record`. `source_method` added in
-    0.27.0 (sdrf 019: rules / curator / model). Left: (a) run a REAL drafted SDRF carrying the source,
-    method and fraction-source columns (sdrf `e9513dd4`, mzLib #1374) through an ingest; (b) cross-check the gate against sdrf's
-    `results/benchmark/screen.tsv` (46 SDRFs naming absent files) when one reaches an ingest.
+    0.27.0 (sdrf 019: rules / curator / model). (a) DONE 2026-09-27 on 0.27.0, sdrf 022's three drafts
+    (drafter `4fd14565`): PXD049018 ingested end to end in scratch against aging's real search (links
+    to run_2026-09-21, aging's mm_settings); every search table equals aging's c1fafb bundle row for row,
+    samples 20 -> 2, 6 characteristics, runs fraction_source `inferred` / technical_replicate_source
+    `default`, sdrf_status `trusted`, `no_sdrf` gone. PXD012203 and PXD016662 are not in the corpus,
+    so they were run through `sources.sdrf.parse` only: 20 and 362 samples; `publication` + `model` +
+    reference kept on every model cell (PXD016662: 26 distinct references). Found: G75; PXD016662's
+    organism is `not available` on all 362 rows (sdrf's call, told in sdrf 024). Left: (b) cross-check
+    the gate against sdrf's `results/benchmark/screen.tsv` (46 SDRFs naming absent files) when one
+    reaches an ingest.
+  - >-
+    G75 An SDRF source cell holding a reserved word is stored as NULL. `sources/sdrf.py` runs every
+    source column through `_clean`, so PXD016662's `comment[characteristics source] = not applicable`
+    (3 AMV phospho rows) becomes `source` NULL, which the schema defines as "the SDRF records no
+    source". The description promises verbatim. Asked sdrf what the word means (DATAREPO-61, sdrf 024);
+    default: store source / source_reference / source_method / fraction_source /
+    technical_replicate_source verbatim, reserved words included, with an INGESTER_VERSION bump. No
+    stored row changes today: no deposited SDRF in the corpus carries a source column.
   - >-
     G63 [MANIFEST PATH BUILT in 0.18.0, 2026-09-24 (aging said yes in 058): runs.enrichment,
     runs.enrichment_source, datasets.enrichment_mixed, manifest run_enrichment + mixed_enrichment as
