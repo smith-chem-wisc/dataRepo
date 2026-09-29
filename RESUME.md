@@ -2,14 +2,14 @@
 
 <!-- BEGIN GENERATED -- render_resume.py owns this block; edit state.yaml, not here -->
 
-**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-09-27
+**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-09-29
 
 | | |
 |---|---|
-| Commits | 314 |
-| Sync | [`trishorts/dataRepo`](https://github.com/trishorts/dataRepo) |
-| Locked decisions | 35 |
-| Open gaps | 71 |
+| Commits | 345 |
+| Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
+| Locked decisions | 37 |
+| Open gaps | 74 |
 | Gate items skipped | 4 |
 
 <!-- END GENERATED -->
@@ -22,7 +22,44 @@ reanalyses. The results cover search, quant, provenance, design and organelle an
 use it, but AI agents are the main users. The question it serves is how organelle proteomes change
 with age.
 
-## Latest (2026-09-27, twenty-second session): LOGS-D3, sdrf's drafts through an ingest (G62 a), 0.28.0/0.28.1
+## Latest (2026-09-29, twenty-third session): public. `publish`, v0.31.0 with no-Python downloads, docs rebuilt, repo moved
+
+**Code is datarepo 0.31.0, RELEASED:** https://github.com/smith-chem-wisc/dataRepo/releases/tag/v0.31.0
+(tag commit `cc21f1c`). Schema 0.0.13, `INGESTER_VERSION` 0.21.0, aging layer 0.5.0,
+`STUDY_INGESTER_VERSION` 0.6.0, `CATALOG_VERSION` 8. **The repository is now
+`smith-chem-wisc/dataRepo`** (the user's decision, carried out by PXReprise; the old URL redirects).
+
+- **0.29.0 (`06dace3`):** `curated_sample_characteristics` in the aging layer (aging 078,
+  REQ-DATAREPO-6). `datarepo_sql` points sample queries at curated rows
+  (`study_tables_on_these_samples`).
+- **0.30.0 (`5795928`):** the parts of PXReprise 001 that could be built now:
+  - `datarepo publish` (PXR-D4);
+  - provenance acceptance as a `LAYOUTS` table, including `pxreprise-provenance/1`;
+  - site `--purpose` / `--keyword`, so no page claims aging's question unless told to;
+  - thread citations out of rows.
+- **0.31.0:** self-contained executables (D36, not a port).
+  - `tools/build_binary.py` builds them, and `.github/workflows/binaries.yml` runs on 4 platforms.
+    Each build is verified by `tools/packaging/smoke_test.py`: the tutorial runs with no Python, and
+    the ids must match pip's. Bundle `3b56a967d6968d39`, catalog `a90e1b47c81f28d5` on every platform.
+  - A `v*` tag makes a DRAFT release; `gh release edit <tag> --draft=false` publishes it.
+- **Docs:**
+  - new pages: [getting-started](docs/getting-started.md), [operating](docs/operating.md),
+    [cli](docs/cli.md) (generated), a glossary in [docs/README.md](docs/README.md), and a new README;
+  - tests hold them true: `test_docs_links`, `test_cli_docs`, and `test_getting_started` (fails when
+    the tutorial's printed version or ids go stale);
+  - a stranger-agent run of the tutorial fixed a dozen faults.
+- **Threads:**
+  - logs 029: LOGS-D4 = (a), read in place (G77 proposed).
+  - phred 004 + charter **v0.5**; ptmQtl 015 relayed.
+  - aging 079 and 080. aging already re-ingested all 54 on 0.28.1; **no re-ingest is needed for
+    0.29-0.31**. They should build on 0.30.0 or later with `--purpose "how organelle proteomes
+    change with age" --keyword aging`.
+  - PXReprise 002, 004, 005:
+    - slide material;
+    - PXR-D5 is answered, as D37: the definitions namespace goes in provenance.json;
+    - DATAREPO-64 is open: where their `pxreprise:` definition text lives.
+
+### 2026-09-27, twenty-second session: LOGS-D3, sdrf's drafts through an ingest (G62 a), 0.28.0/0.28.1
 
 **Code is datarepo 0.28.1 (`8cadf6c`), schema 0.0.13, `INGESTER_VERSION` 0.20.0, `CATALOG_VERSION` 8.**
 - **0.28.0 (`8bac4ae`, CI green) is G75.** SDRF provenance cells are stored verbatim. The bug: a
@@ -802,41 +839,49 @@ from a single query.
 
 ### The next action
 
-**One reply is owed at the 2026-09-27 close: logs 025, LOGS-D4.** It arrived during close-out and
-has been read, not answered.
+**Nothing is owed by us at the 2026-09-29 close.** v0.31.0 is released, and every peer thread is
+answered.
 
-1. **Answer LOGS-D4 (logs 025 §3): does our catalog ingest their orthology store, or read their
-   Parquet in place?** Recommended default: **(a) read in place**, as logs prefers. The catalog
-   records the snapshot's `manifest.json` sha256 and its path, and the snapshot stays theirs to
-   version. Tell them our runner reads Parquet (pyarrow and DuckDB are dependencies already), and
-   that the join is `gene_resolutions.gene_id` -> `genes/<species>.parquet`, after checking
-   `gene_set_sha256` against the manifest's GTF sha256. The store is `logs:DEF-ORTHOLOGY v1`,
-   *proposed* and not built. Build nothing until the first snapshot exists.
-2. **Build G76** (aging 075, REQ-DATAREPO-5 b/c): compute peptide specificity from the SEARCHED
+1. **Build G76** (aging 075, REQ-DATAREPO-5 b/c): compute peptide specificity from the SEARCHED
    sequences, not the parsimony list. Keep `protein_accessions` as it is. First run
    `/bridge-oracle pyMzLib` on `classify_peptides`: it may already do this. Then decide between new
    columns (a schema bump) and redefining `is_unique` / `is_isoform_specific`. Either way it bumps
-   `INGESTER_VERSION`. Ship it to aging only if their 0.28.1 re-ingest has not started; otherwise
-   batch it with the next ingest change.
-3. **When aging re-ingests on 0.28.1:** read `catalog_meta` (expect format 8). Check that
-   `sample_ages` carries `age_source` (236 rows). Count `value_reserved` rows, and check that every
-   `sdrf_status` is still `trusted`.
-4. **When sdrf answers DATAREPO-61:** if `not applicable` is a vocabulary word, add it to the
-   `source` description; 0.28.0 already stores it verbatim.
-5. **Otherwise:** the G70 remainder (the `results.txt` PEP block, which needs an `INGESTER_VERSION`
-   bump; batch it with G76), and G62 (b), the gate against sdrf's `screen.tsv`.
+   `INGESTER_VERSION`. aging JUST re-ingested (54 on 0.28.1), so **batch G76 with the `pxreprise:`
+   definitions (D37)** into one ingest change, and ship both when PXReprise switches.
+2. **When PXReprise answers DATAREPO-64** (where their `pxreprise:` definition text is): build D37.
+   - Read `"definitions"` from provenance.json, and refuse an unknown value.
+   - Write the 10 ids under the declared namespace, with their text transcribed word for word.
+   - `aging:` stays the default.
+   - Nothing of aging's changes before PXReprise's release (their 003).
+3. **G79 (b), no row changes:** move `STUDY_COMPOSITE_IDENTIFIERS`, `STUDY_REFERENCES` and
+   `STUDY_RESERVED_FLAGS` out of Python into `schema/study/aging.yaml` annotations, generated by
+   `tools/build_tables.py`.
+4. **When aging builds on 0.30.0 or later:**
+   - read `catalog_meta` (format 8);
+   - check that the site kept its wording (they need `--purpose ... --keyword aging`);
+   - once they deliver `curated_sample_characteristics`, count its `value_reserved` rows.
+5. **Otherwise:** the G70 remainder (the `results.txt` PEP block, batched with G76), G62 (b), and
+   G77 when a result first uses a logs snapshot.
+
+**Releasing:** bump `__version__` and add a CHANGELOG entry. Then update the tutorial's printed ids
+(`test_getting_started` fails until you do: rerun the tutorial on the new version). Push, and wait
+for CI green. Then `git tag -a vX.Y.Z` and `git push origin vX.Y.Z`, wait for the `binaries`
+workflow, and `gh release edit vX.Y.Z --draft=false --notes-file <notes>`. Publishing is the user's
+call.
 
 **In flight (re-check each with the thread checker):**
-- **aging:** re-ingest all on **0.28.1** (076), re-deliver `sample_ages` (layer 0.4.0), and rebuild on
-  0.25.0 or later: their 2026-09-27 rebuild was still 0.21.0, format 6. Then regenerate the site,
-  add `pipeline.public_repo/public_commit` (55e), and decide the catalog / Parquet publication (56,
-  Zenodo recommended).
+- **aging:** build and publish on 0.30.0 or later (080); deliver `curated_sample_characteristics` after
+  the four samples.tsv fixes in 079 §2; add `pipeline.public_repo/public_commit` (55e); decide the
+  catalog / Parquet publication (56, Zenodo recommended).
+  - Our 079/080 mirrors are committed in aging's repo but were NOT pushed. aging had its own
+    unpushed commits, and pushing them is theirs or the user's.
+- **PXReprise:** DATAREPO-64; their switch to `pxreprise-provenance/1`, which waits on aging using
+  0.30.0 or later; adopting `datarepo publish` and the v0.31.0 download in `examples/first-run`.
 - **sdrf:** DATAREPO-61 (024/025), and DATAREPO-31/32.
-- **pep:** DATAREPO-60, checking `pep:DEF-PEP`'s wording (default: it stands).
-- **Charter v0.4:** phred has not signed. logs confirmed DATAREPO-46 in 022, and ptmQtl found v0.4
-  correct in 012; whether those count as signatures is G73.
+- **phred:** checking charter v0.5's merged wording (004). **ptmQtl:** whether to correct their NEEDS
+  cell (015).
+- **Charter:** v0.5. G73 asks whether logs' 022 and ptmQtl's 012 count as signatures.
 - **go:** PR B (mzLib#1353) review, then release.
-- **sdrf:** the first real drafted SDRF.
 
 **Standing:** G48 (explain `ERVK-6` for `P63135`; never back-fill `Protein.gene`), G35 (do NOT
 claim D15's bar), G32, G46, G33/G26/G36, G13. **N1/G9 goes to the next NCEMS meeting regardless.**

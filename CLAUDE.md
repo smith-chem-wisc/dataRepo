@@ -6,42 +6,36 @@ This folder is a `/project`-managed research project. **You are de facto working
 
 - **Phase:** INCEPTION
 - **Goal:** An AI-ready, API-accessible repository for the search + quant results of the many PRIDE datasets the `aging` pipeline reanalyzes. Humans can use it, but AI agents are the main users. The question it serves is how organelle proteomes change with age.
-- **Pick up at:** **First thing: run the thread checker.** **OWED: logs 025, LOGS-D4.** It asks
-  whether our catalog stores their orthology store or reads the Parquet in place. It arrived at
-  close and has been read, not answered. Default: read in place, with the catalog recording the
-  manifest sha256; our runner reads Parquet. See RESUME's pick-up 1. Also on 2026-09-27: logs 024
-  closed LOGS-D3 (59.7% rat); sdrf 024/025 sent (drafts run; 025 CORRECTS 024's
-  "65 publication/model" claim; DATAREPO-61 open); ptmQtl 014 and aging 076 sent. **Next build: G76**
-  (aging 075, REQ-DATAREPO-5 (b)/(c)): `is_unique` / `is_isoform_specific` from the SEARCHED sequences,
-  not the parsimony list. Run `/bridge-oracle pyMzLib` on `classify_peptides` before writing any code.
-  **In flight with aging:** re-ingest ALL on **0.28.1** (INGESTER 0.20.0, schema 0.0.13, aging 076;
-  replaces 0.27.0, which nobody ingested). Re-deliver `sample_ages` under layer 0.4.0 with
-  `age_source` (all 236 rows). Rebuild the catalog on >=0.25.0: their 2026-09-27 rebuild
-  `8af306854043f771` is still 0.21.0, format 6, and the site refuses older than 7. Then regenerate
-  the site. Also owed by aging: add `pipeline.public_repo/public_commit` to provenance (55e); decide
-  the catalog/Parquet publication (56, Zenodo recommended). Open: G62 (b), the gate against sdrf's
-  `screen.tsv`; G70 remainder, the results.txt PEP block. Code is datarepo **0.28.1**: text only on
-  0.28.0 (`8bac4ae`, CI green), which is G75, SDRF provenance cells verbatim. Earlier: 0.27.0
-  (`82febc3`) `source_method`; 0.26.0 (`a53cc78`) SDRF sources, data-file gate,
-  `value_reserved`; 0.25.0 (`b3d97b8`) G74 sample `_name` columns; 0.24.1 (`f2c7d4a`) read_first; 0.24.0
-  (`8da69d2`) the site; 0.23.0 (`2fcd181`) per-dataset contaminant, compact provenance, age_source;
-  0.22.0 (`036eaa0`) pep guard. Core schema **0.0.13**, aging study layer **0.4.0**,
-  `bundle.INGESTER_VERSION` **0.20.0**, `runner.RUNNER_VERSION` **1**,
-  `study.STUDY_INGESTER_VERSION` **0.5.0**, `catalog.CATALOG_VERSION` **8**. **D27: dataRepo SHIPS,
-  the instance operator (aging) RUNS.** Charter **v0.4** (`874bf61`); logs (DATAREPO-46) and phred
-  unsigned (G73). Public site: https://trishorts.github.io/aging-pipeline/. aging's serving catalog
-  read `8af306854043f771` (41 bundles, built on 0.21.0, format 6) on 2026-09-27. logs confirmed DATAREPO-46 (022) and ptmQtl
-  found v0.4 correct (012); whether that counts as signing G73 is not settled. Theirs to answer: pep DATAREPO-60,
-  sdrf DATAREPO-61 (and 31/32), go/QuantProject checking v0.4 wording, pyMzLib on G68. Other builds: G52
-  ProForma diff; G67 leftovers. Each change that reaches rows needs an `INGESTER_VERSION` bump in the
-  same commit (a runner change: `RUNNER_VERSION`). Standing items: G48, G35 (do NOT claim D15's
-  bar), G32, G46, G33/G26/G36, G13. **N1/G9 goes to the next NCEMS meeting regardless.** Do NOT build
-  `accession_is_leading` (G43).
-  **D1-D21 locked.**
+- **Pick up at:** **First thing: run the thread checker.** Nothing was owed at the 2026-09-29 close.
+  **v0.31.0 is RELEASED** (https://github.com/smith-chem-wisc/dataRepo/releases/tag/v0.31.0, tag
+  `cc21f1c`), with four no-Python executables (D36), each verified in CI by running the tutorial.
+  - **Next build: G76** (aging 075): `is_unique` / `is_isoform_specific` from the SEARCHED sequences.
+    Run `/bridge-oracle pyMzLib` on `classify_peptides` first. **Batch it with D37**: the
+    `pxreprise:` definitions, declared as `"definitions"` in provenance.json. Wait for PXReprise's
+    DATAREPO-64 (where their text lives), so aging moves once. aging JUST re-ingested all 54 on
+    0.28.1, and 0.29-0.31 need no re-ingest.
+  - **No row change:** G79 (b), move the per-layer rule dicts into `schema/study/aging.yaml`.
+  - See RESUME's "Pick up at", which also has the release recipe.
+  - **In flight:**
+    - aging: build on 0.30.0 or later with `--purpose "how organelle proteomes change with age"
+      --keyword aging` (080); fix samples.tsv (079 §2) and deliver `curated_sample_characteristics`.
+      **Our 079/080 mirrors sit UNPUSHED in aging's repo**, beside aging's own unpushed commits.
+    - PXReprise: DATAREPO-64, and their `pxreprise-provenance/1` switch.
+    - sdrf: DATAREPO-61/31/32. phred: check charter v0.5 (004). go: PR B (#1353).
+  - Versions: datarepo **0.31.0**, core schema **0.0.13**, `bundle.INGESTER_VERSION` **0.21.0**,
+    aging study layer **0.5.0**, `study.STUDY_INGESTER_VERSION` **0.6.0**, `runner.RUNNER_VERSION`
+    **1**, `catalog.CATALOG_VERSION` **8**.
+  - **D27: dataRepo SHIPS, the instance operator (aging) RUNS.** Charter **v0.5** (`5935931`); G73
+    open. Public aging site: https://trishorts.github.io/aging-pipeline/ (catalog `c3e8d1e85612ed0c`,
+    54 datasets, built on 0.28.1).
+  - Each change that reaches rows needs an `INGESTER_VERSION` bump in the same commit (a runner
+    change: `RUNNER_VERSION`).
+  - Standing: G48, G35 (do NOT claim D15's bar), G32, G46, G33/G26/G36, G13. **N1/G9 goes to the
+    next NCEMS meeting regardless.** Do NOT build `accession_is_leading` (G43). **D1-D21 locked.**
 - **GitHub:** public at https://github.com/smith-chem-wisc/dataRepo (branch `master`). Created as
   `trishorts/dataRepo` on 2026-09-19 (closed G8); **transferred to smith-chem-wisc on 2026-09-29** at
-  the user's instruction (PXReprise 003, closing U12). The old URL redirects. Repointing the local
-  `origin` is the user's step (it was denied to the agent).
+  the user's instruction (PXReprise 003, closing U12). The old URL redirects. `origin`
+  points at smith-chem-wisc (the user repointed it).
 - **PR board: smith-chem-wisc project #16 "dataRepo"** (https://github.com/orgs/smith-chem-wisc/projects/16,
   created 2026-09-25 at pride's PRIDE-G1). **Every PR this project opens goes on it**, in any repo:
   add it when opened (`gh project item-add 16 --owner smith-chem-wisc --url <pr>`, Status "In review"),
@@ -77,9 +71,10 @@ This folder is a `/project`-managed research project. **You are de facto working
   for). Read the new messages before writing. Never hand-edit a template's `reply_to_digest`.
 - **Test a static-file limit on the real corpus, not the fixture.** A fixed two-character protein
   shard passed every test and was 3.6 MB on aging's data, which is the truncation it was built to avoid.
-- **The store's bundles are schema 0.0.11 and the code is 0.0.13**, so a scratch catalog from aging's
-  store needs the 0.25.0 code (a temporary worktree at `b3d97b8`, per RESUME's recipe) until aging
-  re-ingests.
+- **aging's store holds 54 bundles on schema 0.0.13 (ingester 0.20.0, 2026-09-29)**, beside older
+  ones. A scratch catalog builds on current code if you name those bundles (`--latest`). **Read the
+  store before telling aging to re-ingest:** 079 told them to build from a commit after they had
+  already re-ingested, and only reading `bundle.json` versions caught it before 080.
 - **A windowed pyMzLib read re-parses the whole file per window** (~55 s for 1.8 GB). Windows are
   512 MiB of source (1.24 GB is known to read whole, 1.83 GB not). A proven-identical reader change
   does not bump `INGESTER_VERSION` (D26); a probably-identical one does.
@@ -352,6 +347,16 @@ This folder is a `/project`-managed research project. **You are de facto working
   unresolved-mod findings are artefacts of the scratch setup (2026-09-27, PXD049018).
 - **PowerShell `Set-Content -Encoding utf8` adds a BOM to .py files too** (0.28.0 version bump).
   Use `[IO.File]::WriteAllText` with `UTF8Encoding $false`, or the Edit tool.
+- **A zip loses the Unix executable bit.** The first CI run of the binaries failed on Linux and both
+  macOS builds with `Permission denied` on pyMzLib's `mzlib-bridge`. Unix builds ship `.tar.gz`,
+  and the workflow unpacks WITHOUT chmod, so a lost bit still fails the smoke test.
+- **A catalog id hashes the package version; a bundle id does not.** So every release makes a
+  printed catalog id stale. `tests/test_getting_started.py` fails until the tutorial's version and
+  ids are rerun; update the page, never the test.
+- **Hand any user-facing page to an agent with nothing else.** The tutorial passed every review;
+  a stranger with only the page and a fresh clone found a dozen faults in 2.5 minutes.
+- **Repo moves and remote repoints are the user's.** The agent's `git remote set-url` was denied
+  (2026-09-29); the user ran it. Publishing a release happened only on the user's explicit ask.
 - **The .gitignore template ignores `bin/`.** Add a `!/<dir>/bin/` exception before putting code in any bin folder (G4).
 
 **Sibling project: `E:\CodeReview\aging`** (the NCEMS pipeline). aging *produces* results under

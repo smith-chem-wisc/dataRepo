@@ -1722,3 +1722,46 @@ three `protein_accessions` descriptions and the `is_unique` / `is_isoform_specif
 text only. Computing specificity from the searched sequences is G76, and the re-ingest is not held
 for it. PowerShell `Set-Content -Encoding utf8` put a BOM on two .py files during the version bump;
 it was caught in the diff.
+## 2026-09-29 - Twenty-third: the inbox cleared, then dataRepo went public: publish, the no-Python release (v0.31.0), the docs rebuilt, and a new home at smith-chem-wisc
+
+The session opened owing two replies and ended with a public release. logs' LOGS-D4 was answered
+(a), read in place, after consuming their released tar rather than trusting the local copy: both
+sha256s matched, all 190,415 stored gene_resolutions rows carried the snapshot's three
+gene_set_sha256 values, no stored gene id was missing from their gene sets, and every gene got
+exactly one pair_status. What the catalog would record about a snapshot is G77, proposed only.
+phred 003 was merged as charter v0.5; ptmQtl was told phred will not fill localization_score.
+
+aging 078 asked how to deliver curated sample metadata. It became 0.29.0's study table
+curated_sample_characteristics (layer 0.5.0). The first draft refused reserved words; filling it
+from aging's real samples.tsv showed that merged "looked, not found" with "never curated", which is
+G42 from the curator's side, so the release keeps and flags them. The same fill measured what their
+file must change before delivery (40 of 52 datasets differ per run; 51 multi-answer cells; `not
+stated` is not an SDRF word).
+
+Then PXReprise appeared with the user's direction: public, generic, no Python. The user chose
+packaged executables over a port (D36). 0.30.0 added `datarepo publish`, provenance acceptance as a
+(family, version) -> layout table with pxreprise-provenance/1, site --purpose so no page claims
+aging's question, and citations out of rows. A subagent sorted the 231 "aging" hits: the real
+coupling is small; the 10 aging: pipeline definitions are PXReprise's to own (DATAREPO-63), declared
+in provenance.json (PXR-D5), to be built when they switch so aging moves once.
+
+The user asked for world-class docs. A tutorial, an operator's guide, a CLI reference generated from
+the parser, a glossary and a rewritten README were written, and three tests now hold them true
+(links and anchors, CLI drift, and the tutorial's printed ids). The link test found study-aging.md's
+core-type links broken since they were generated. The instrument that mattered most was handing the
+tutorial to an agent with nothing else: all six steps passed in 2.5 minutes, and it listed a dozen
+faults in the page, one of them mine (a catalog id quoted from before the version bump, because a
+catalog id hashes the package version and a bundle id does not).
+
+0.31.0 froze datarepo with PyInstaller. CI builds four platforms and verifies each by running the
+tutorial on a PATH with no Python, requiring the pip install's ids. The first CI run failed on all
+three Unix builds with Permission denied on the mzLib bridge: zip loses the executable bit. Unix
+builds now ship .tar.gz and the workflow unpacks without chmod on purpose. All four then gave
+bundle 3b56a967d6968d39 and catalog a90e1b47c81f28d5. Mid-session the user had PXReprise transfer
+the repo to smith-chem-wisc/dataRepo (closing U12); the agent's remote repoint was denied and the
+user ran it. At the user's request v0.31.0 was tagged and published, and the public Windows download
+was re-run by hand.
+
+Two corrections to our own claims went out. aging 079 told aging to build from 06dace3, but aging had
+already re-ingested all 54 on 0.28.1, found only by reading the store before writing 080. And
+PXReprise 004 said pyproject.toml named the new URL, when it has none; corrected in 005.

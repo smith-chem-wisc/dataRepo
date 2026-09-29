@@ -403,6 +403,14 @@ decisions:
       built in CI from the same Python code and attached to each release, NOT by a port. The user
       agreed 2026-09-29. A port would re-implement ingest, catalog, MCP and site and re-earn every
       correctness fix; a packaged binary meets PXReprise D8 (.NET, git, MetaMorpheus only).
+  - id: D37
+    date: 2026-09-29
+    text: >-
+      A producer declares its definitions' namespace in each provenance.json (`"definitions":
+      "pxreprise"`), never in the manifest (PXR-D5, our PXReprise 004). What a pipeline's numbers
+      mean is the producer's statement and travels hashed inside the bundle; the manifest is the
+      operator's. None declared reads as `aging:`. An `aging:` id and its `pxreprise:` twin never
+      differ in meaning; a changed meaning is a new id. Build it in the release PXReprise switches in.
 gaps:
   - >-
     G1 Framework. Steps 1 (ingest), 2 (build) and 3 (MCP) are BUILT and locked as D9/D10/D12-D15.
