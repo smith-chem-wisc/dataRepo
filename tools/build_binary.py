@@ -1,6 +1,6 @@
 """Build the self-contained `datarepo` executable for this platform (D36, PXReprise PXR-D1).
 
-    python tools/build_binary.py                 # dist/datarepo-<version>-<platform>.zip
+    python tools/build_binary.py                 # dist/datarepo-<version>-<platform>.zip (.tar.gz off Windows)
     python tools/build_binary.py --allow-dirty   # a local test build, stamped with NO commit
 
 A user of the result needs no Python: the zip holds `datarepo/datarepo[.exe]` with the interpreter,
@@ -23,6 +23,7 @@ import platform
 import shutil
 import subprocess
 import sys
+import tarfile
 import zipfile
 from pathlib import Path
 
@@ -93,11 +94,19 @@ def main() -> int:
 
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
-    archive = out / f"datarepo-{__version__}-{tag}.zip"
     folder = work / "dist" / "datarepo"
-    with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as z:
-        for path in sorted(folder.rglob("*")):
-            z.write(path, Path("datarepo") / path.relative_to(folder))
+    # A zip on Windows, a .tar.gz elsewhere. Zip tools disagree about restoring Unix permissions
+    # (Python's zipfile never does), and an unpacked mzLib bridge that is not executable fails every
+    # ingest with "Permission denied": the first CI run of the smoke test, on all three Unix builds.
+    if sys.platform == "win32":
+        archive = out / f"datarepo-{__version__}-{tag}.zip"
+        with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as z:
+            for path in sorted(folder.rglob("*")):
+                z.write(path, Path("datarepo") / path.relative_to(folder))
+    else:
+        archive = out / f"datarepo-{__version__}-{tag}.tar.gz"
+        with tarfile.open(archive, "w:gz") as t:
+            t.add(folder, arcname="datarepo")
     print(f"wrote {archive} ({archive.stat().st_size / 1e6:.0f} MB), commit {stamp['commit'] or 'NONE (dirty)'}")
     return 0
 
