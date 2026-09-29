@@ -51,7 +51,7 @@ SITE_MARKER = ".datarepo-site.json"
 BIOSCHEMAS_DATASET = "https://bioschemas.org/profiles/Dataset/1.0-RELEASE"
 CROISSANT_CONFORMS_TO = "http://mlcommons.org/croissant/1.0"
 PARQUET = "application/x-parquet"
-REPOSITORY = "https://github.com/trishorts/dataRepo"
+REPOSITORY = "https://github.com/smith-chem-wisc/dataRepo"
 
 LICENCE_URLS = {"CC-BY-4.0": "https://creativecommons.org/licenses/by/4.0/"}
 

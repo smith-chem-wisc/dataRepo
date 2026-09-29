@@ -1115,7 +1115,7 @@ skip_log:
 repos: []  # PR D and PR E worktrees retired 2026-09-24: both merged, in mzLib 1.0.592
 
 github:
-  remote: "https://github.com/trishorts/dataRepo"
+  remote: "https://github.com/smith-chem-wisc/dataRepo"
   private: false  # D2: public; created by the user 2026-09-19 (closed G8)
 
 dir_map: {}

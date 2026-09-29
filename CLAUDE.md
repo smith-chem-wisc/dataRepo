@@ -38,7 +38,10 @@ This folder is a `/project`-managed research project. **You are de facto working
   bar), G32, G46, G33/G26/G36, G13. **N1/G9 goes to the next NCEMS meeting regardless.** Do NOT build
   `accession_is_leading` (G43).
   **D1-D21 locked.**
-- **GitHub:** public at https://github.com/trishorts/dataRepo (`origin`, branch `master`). The user created it on 2026-09-19, which closed G8.
+- **GitHub:** public at https://github.com/smith-chem-wisc/dataRepo (branch `master`). Created as
+  `trishorts/dataRepo` on 2026-09-19 (closed G8); **transferred to smith-chem-wisc on 2026-09-29** at
+  the user's instruction (PXReprise 003, closing U12). The old URL redirects. Repointing the local
+  `origin` is the user's step (it was denied to the agent).
 - **PR board: smith-chem-wisc project #16 "dataRepo"** (https://github.com/orgs/smith-chem-wisc/projects/16,
   created 2026-09-25 at pride's PRIDE-G1). **Every PR this project opens goes on it**, in any repo:
   add it when opened (`gh project item-add 16 --owner smith-chem-wisc --url <pr>`, Status "In review"),
