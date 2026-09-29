@@ -383,3 +383,25 @@ def test_the_public_pair_is_read_from_the_bundles_own_provenance_copy(tmp_path):
     ]}), encoding="utf-8")
     assert _bundle_public_pipeline(str(tmp_path), "abc") == ("https://github.com/me/public", "def")
     assert _bundle_public_pipeline(str(tmp_path), "nomatch") == (None, None)
+
+
+def test_the_generator_claims_no_purpose_it_was_not_given(tmp_path, catalog):
+    """PXR-D2: every site used to say it served "how organelle proteomes change with age", on any
+    instance. The question an instance serves is its operator's to state."""
+    bare = tmp_path / "bare"
+    build_site(catalog, bare)
+    for name in ("index.html", "llms.txt", "datasets/PXD000001.html"):
+        # A definition id names its owner (`aging:DEF-MS2`), which is attribution, not a claim.
+        text = re.sub(r"\w+:DEF-[\w-]+", "", (bare / name).read_text(encoding="utf-8"))
+        assert "organelle" not in text, name
+        assert "aging" not in text.lower(), name
+    stated = tmp_path / "stated"
+    build_site(catalog, stated, purpose="how organelle proteomes change with age.",
+               keywords=["aging"])
+    index = (stated / "index.html").read_text(encoding="utf-8")
+    assert "for questions about how organelle proteomes change with age.</p>" in index
+    assert "The question they serve is how organelle proteomes change with age." in index
+    assert "for questions about how organelle proteomes change with age" in (
+        stated / "llms.txt").read_text(encoding="utf-8")
+    page = (stated / "datasets/PXD000001.html").read_text(encoding="utf-8")
+    assert '"aging"' in page

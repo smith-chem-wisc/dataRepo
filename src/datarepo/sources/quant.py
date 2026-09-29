@@ -30,7 +30,8 @@ DETECTION_TYPE = {
 }
 
 #: Reason pyMzLib does not read these files; carried into the reader log.
-_NO_READER = "no pyMzLib reader for FlashLFQ's wide tables (aging 006 / pyMzLib 005)"
+# Requested of pyMzLib in aging 006 / pyMzLib 005 (G14).
+_NO_READER = "no pyMzLib reader for FlashLFQ's wide tables"
 _PEAKS_NOTE = "pyMzLib's FlashLFQ peak reader requires an 'MBR Score' column MetaMorpheus 1.1.11 does not write"
 
 

@@ -783,7 +783,8 @@ def _duplicate_findings(collapsed: list[Collapse], dataset_id: str) -> list[dict
                 + "; ".join(parts)
                 + ". The full list is in bundle.json under collapsed_duplicates."
             ),
-            "source": "datarepo ingest integrity (aging thread 015, AGING-Q2)",
+            # Why duplicates collapse rather than refuse: aging thread 015, AGING-Q2.
+            "source": "datarepo ingest integrity",
         }
     ]
 
@@ -861,7 +862,8 @@ def _unplaced_site_findings(
                 + ". Sites on the other proteins of the same PSMs are written. Counts are in "
                 "bundle.json under protein_databases."
             ),
-            "source": "datarepo ingest (aging 043, DATAREPO-32)",
+            # aging 043, DATAREPO-32: MetaMorpheus residue spans are not aligned with accessions.
+            "source": "datarepo ingest",
         }
     ]
 

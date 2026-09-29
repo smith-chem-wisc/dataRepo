@@ -17,10 +17,22 @@ from typing import Any
 from .. import definitions as defs
 from ..errors import UnsupportedProvenance
 
-#: Provenance schema versions this ingester knows how to map.
-SUPPORTED = {2, 3}
+#: Every provenance schema this ingester reads, as `(family, version) -> field layout`.
+#:
+#: The LAYOUT is what the rest of this module branches on: layout 2 is the one where
+#: `id_rate.psms_1pct` holds the FDR engine's count, layout 3 the one that splits it into two named
+#: fields. A schema name is the producer's, and one layout can travel under several names:
+#: `pxreprise-provenance/1` is PXReprise's neutral name for the document PXReprise already emits as
+#: `aging-provenance/3` (PXReprise 001, PXR-D2), so it reads with layout 3. A schema not listed here is
+#: refused, never read under a guessed layout, because a count read under the wrong field meaning
+#: is a wrong number with a right-looking definition id.
+LAYOUTS: dict[tuple[str, int], int] = {
+    ("aging-provenance", 2): 2,
+    ("aging-provenance", 3): 3,
+    ("pxreprise-provenance", 1): 3,
+}
 
-_SCHEMA_RE = re.compile(r"^aging-provenance/(\d+)$")
+_SCHEMA_RE = re.compile(r"^(?P<family>[a-z][a-z0-9-]*-provenance)/(?P<version>\d+)$")
 
 #: How much each pipeline flag should change trust in the data.
 FLAG_SEVERITY = {
@@ -51,27 +63,24 @@ def load(path: Path) -> dict[str, Any]:
 
 
 def schema_version(doc: dict[str, Any]) -> int:
-    """Major version of the provenance schema.
+    """The field layout of this provenance document (see `LAYOUTS`).
 
     Raises:
-        UnsupportedProvenance: the value is missing, unparseable, or a version whose field meanings
+        UnsupportedProvenance: the value is missing, unparseable, or a schema whose field meanings
             this ingester has not been taught.
     """
     raw = str(doc.get("schema", ""))
     m = _SCHEMA_RE.match(raw)
-    if not m:
+    layout = LAYOUTS.get((m["family"], int(m["version"]))) if m else None
+    if layout is None:
+        supported = ", ".join(f"{family}/{v}" for family, v in sorted(LAYOUTS))
         raise UnsupportedProvenance(
-            f"provenance schema {raw!r} is not an aging-provenance version this ingester reads"
+            f"provenance schema {raw!r} is not one this ingester reads; it reads {supported}. "
+            f"A schema it has not been taught is refused rather than read under a guessed layout: "
+            f"older records name their PSM count in a way that cannot be mapped to a definition "
+            f"safely."
         )
-    version = int(m.group(1))
-    if version not in SUPPORTED:
-        supported = ", ".join(f"aging-provenance/{v}" for v in sorted(SUPPORTED))
-        raise UnsupportedProvenance(
-            f"provenance schema aging-provenance/{version} is not supported; this ingester reads "
-            f"{supported}. Older records name their PSM count in a way that cannot be mapped to a "
-            f"definition safely (aging 006)."
-        )
-    return version
+    return layout
 
 
 def record_row(

@@ -14,6 +14,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Sequence
 
+from . import definitions as defs
+
 #: Counts within this relative distance of each other are treated as agreeing.
 TOLERANCE = 0.0
 
@@ -81,7 +83,8 @@ def build(
             "psms_target_1pct",
             psm_count_1pct,
             totals.get("psms"),
-            "results.txt: All target PSMs with q-value <= 0.01 (aging DEF-PSM-1PCT v1)",
+            f"results.txt: All target PSMs with q-value <= 0.01 "
+            f"({defs.PSM_1PCT.definition_id} {defs.PSM_1PCT.version})",
         ),
         Check(
             "peptidoforms_target_1pct",

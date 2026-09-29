@@ -1357,7 +1357,7 @@ TOOL_SPECS: list[dict[str, Any]] = [
             "first: it returns the datasets, every table with its row count, and the open "
             "findings. Then call it with a table name for that table's columns and what each one "
             "means, an enum name for its permissible values, or a definition id (e.g. "
-            "'aging:DEF-PSM-1PCT') for the published text behind a stored number. A table listed "
+            "'pep:DEF-PEP') for the published text behind a stored number. A table listed "
             "with 0 rows exists and is empty: the data has not been delivered, which is not the "
             "same as the answer being no."
         ),

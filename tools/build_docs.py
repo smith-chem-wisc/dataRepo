@@ -26,11 +26,16 @@ def cell(text: str | None) -> str:
 
 
 def range_label(sv: SchemaView, rng: str | None) -> str:
+    """A column's type, linked to where that type is documented.
+
+    A study layer's page documents only its own tables and enums, so a core type (`Sample`,
+    `FeatureType`) links to core.md; a bare `#sample` there pointed at a heading the page lacks.
+    """
     rng = rng or sv.schema.default_range or "string"
-    if rng in sv.all_classes():
-        return f"[{rng}](#{rng.lower()})"
-    if rng in sv.all_enums():
-        return f"[{rng}](#{rng.lower()})"
+    if rng in sv.all_classes() or rng in sv.all_enums():
+        own = set(sv.all_classes(imports=False)) | set(sv.all_enums(imports=False))
+        page = "" if rng in own else "core.md"
+        return f"[{rng}]({page}#{rng.lower()})"
     return f"`{rng}`"
 
 

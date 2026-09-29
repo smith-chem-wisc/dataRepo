@@ -376,6 +376,7 @@ def cmd_site(args: argparse.Namespace) -> int:
         Path(args.catalog), Path(args.out), title=args.title, base_url=args.base_url,
         data_url=args.data_url, notice=args.notice,
         about=Path(args.about).read_text(encoding="utf-8") if args.about else None,
+        purpose=args.purpose, keywords=args.keyword or (),
     )
     print(f"site     {result.out}")
     print(f"  catalog  {result.catalog_id}")
@@ -386,6 +387,49 @@ def cmd_site(args: argparse.Namespace) -> int:
     for warning in result.warnings:
         print(f"  WARN     {warning}")
     return 0
+
+
+def cmd_publish(args: argparse.Namespace) -> int:
+    """`build` then `site`, for an operator with no script of their own (PXReprise PXR-D4).
+
+    It adds exactly one thing to the two verbs it calls: with no accessions named, it takes every
+    `include` dataset that HAS a bundle in the store and names each one that has none, where a bare
+    `build` refuses on the first. That is the step aging's private `publish_catalog_and_site.ps1`
+    did with an inline Python one-liner, and the one a stranger cannot do without writing it.
+
+    What it deliberately does not do: run an engine (the operator's `datarepo run`), pick up a study
+    delivery nobody asked for (study bundles stay opt-in: `--study-latest LAYER`), or push the site
+    anywhere. Publishing to a host is outward-facing and stays the operator's own step.
+    """
+    manifest = load_manifest(args.manifest)
+    store = Path(args.store) if args.store else manifest.store
+    accessions = args.accession
+    if not accessions:
+        accessions, missing = [], []
+        for entry in manifest.ingestable():
+            (accessions if discover_bundles(store, entry.accession) else missing).append(entry.accession)
+        for accession in missing:
+            print(f"skipped  {accession}: 'include' in the manifest, but no bundle under {store}")
+        if not accessions:
+            print(f"{manifest.path}: no 'include' dataset has a bundle under {store}", file=sys.stderr)
+            return 1
+    out = Path(args.out) if args.out else store.parent / "catalog.duckdb"
+    # Not --overwrite: a catalog whose id is unchanged is kept, so an unchanged store republishes
+    # byte-identical pages and the site's git diff is empty. Any change to its contents rebuilds it.
+    build_args = argparse.Namespace(
+        manifest=args.manifest, accession=accessions, store=str(store), out=str(out), bundle=None,
+        latest=True, study=None, study_latest=args.study_latest, release=None, overwrite=False,
+        verbose=False,
+    )
+    code = cmd_build(build_args)
+    if code:
+        return code
+    site_args = argparse.Namespace(
+        catalog=str(out), out=args.site, title=args.title, base_url=args.base_url,
+        data_url=args.data_url, notice=args.notice, about=args.about, purpose=args.purpose,
+        keyword=args.keyword,
+    )
+    return cmd_site(site_args)
 
 
 def cmd_mcp(args: argparse.Namespace) -> int:
@@ -590,7 +634,47 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--data-url", help="where the bundle store is served; enables downloads and croissant.json")
     p.add_argument("--notice", help="a banner for the top of every page and of llms.txt")
     p.add_argument("--about", help="a Markdown file: the front page's overview of the project")
+    p.add_argument(
+        "--purpose", metavar="TEXT",
+        help='the question this instance serves, ending "for questions about ..."; '
+             'e.g. "how organelle proteomes change with age". Without it no page claims one',
+    )
+    p.add_argument(
+        "--keyword", action="append", metavar="WORD",
+        help="a schema.org keyword for every dataset page, e.g. aging; repeatable",
+    )
     p.set_defaults(func=cmd_site)
+
+    p = sub.add_parser(
+        "publish", help="build the catalog from every ingested dataset, then write the static site"
+    )
+    p.add_argument("manifest", help="the producing instance's manifest.yaml")
+    p.add_argument(
+        "accession", nargs="*",
+        help="datasets to load; default is every 'include' that has a bundle, naming those without",
+    )
+    p.add_argument("--site", required=True, help="the site directory: empty, or a site written before")
+    p.add_argument("--store", help="where bundles live; default is the manifest's store")
+    p.add_argument("--out", help="catalog file to write; default is <store>/../catalog.duckdb")
+    p.add_argument(
+        "--study-latest", action="append", metavar="LAYER",
+        help="load a study layer's newest delivery; repeatable. None is loaded unless named",
+    )
+    p.add_argument("--title", help="the site's name; default from the catalog's instance")
+    p.add_argument("--base-url", help="where the site will be served, for absolute links and the sitemap")
+    p.add_argument("--data-url", help="where the bundle store is served; enables downloads and croissant.json")
+    p.add_argument("--notice", help="a banner for the top of every page and of llms.txt")
+    p.add_argument("--about", help="a Markdown file: the front page's overview of the project")
+    p.add_argument(
+        "--purpose", metavar="TEXT",
+        help='the question this instance serves, ending "for questions about ..."; '
+             'e.g. "how organelle proteomes change with age". Without it no page claims one',
+    )
+    p.add_argument(
+        "--keyword", action="append", metavar="WORD",
+        help="a schema.org keyword for every dataset page, e.g. aging; repeatable",
+    )
+    p.set_defaults(func=cmd_publish)
 
     p = sub.add_parser("doctor", help="check this machine can ingest")
     p.set_defaults(func=cmd_doctor)

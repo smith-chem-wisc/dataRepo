@@ -41,6 +41,7 @@ from typing import Any, Sequence
 from urllib.parse import quote
 
 from . import __version__
+from . import definitions as defs
 from .errors import CatalogError
 
 #: Written into the output directory; the only thing that lets a regeneration delete what the last
@@ -318,7 +319,7 @@ def _figures_of_merit(con: Any) -> list[dict[str, Any]]:
     kinds = con.execute(
         "SELECT count(DISTINCT modification_name) FROM ptm_sites WHERE target_decoy = 'target'"
     ).fetchone()[0]
-    ms2_note = "MS2 scans in the raw files, summed (aging:DEF-MS2)"
+    ms2_note = f"MS2 scans in the raw files, summed ({defs.MS2_COUNT.definition_id})"
     if ms2_datasets != n_datasets:
         ms2_note += f"; {ms2_datasets} of {n_datasets} datasets report it"
     return [
@@ -414,6 +415,16 @@ def summary(ds: dict[str, Any]) -> str:
 # --- URLs --------------------------------------------------------------------------------------
 
 
+def _for_questions(facts: dict[str, Any]) -> str:
+    """`, for questions about <purpose>` when the instance stated one, else nothing.
+
+    The question an instance serves is the operator's (`--purpose`), not dataRepo's: the generator
+    used to say "how organelle proteomes change with age" on every site it wrote (PXR-D2).
+    """
+    purpose = facts.get("purpose")
+    return f", for questions about {purpose}" if purpose else ""
+
+
 def _pride_url(dataset_id: str) -> str | None:
     if dataset_id.startswith("PXD"):
         return f"https://www.ebi.ac.uk/pride/archive/projects/{quote(dataset_id)}"
@@ -443,7 +454,8 @@ def _licence_url(licence: str | None) -> str | None:
 
 
 def dataset_jsonld(
-    ds: dict[str, Any], meta: dict[str, Any], *, base_url: str | None, data_url: str | None
+    ds: dict[str, Any], meta: dict[str, Any], *, base_url: str | None, data_url: str | None,
+    keywords: Sequence[str] = (),
 ) -> dict[str, Any]:
     """A Bioschemas Dataset (1.0-RELEASE) block for one dataset page."""
     doc: dict[str, Any] = {
@@ -458,7 +470,7 @@ def dataset_jsonld(
         "version": ds["bundle"]["bundle_id"],
         "dateModified": ds["bundle"]["written_utc"],
         "keywords": [
-            "proteomics", "mass spectrometry", "reanalysis", "aging",
+            "proteomics", "mass spectrometry", "reanalysis", *keywords,
             *(ds["organism_names"] or []),
         ],
         "measurementTechnique": "mass spectrometry",
@@ -498,8 +510,7 @@ def catalog_jsonld(
         "identifier": f"datarepo:catalog:{meta['catalog_id']}",
         "description": (
             f"Search and quantification results for {len(facts['datasets'])} public proteomics "
-            "datasets reanalysed with one pipeline, for questions about how organelle proteomes "
-            "change with age."
+            f"datasets reanalysed with one pipeline{_for_questions(facts)}."
         ),
         "dataset": [
             {"@type": "Dataset", "name": ds["dataset_id"], "identifier": ds["dataset_id"],
@@ -883,9 +894,12 @@ def _index_html(
         for m in facts["merit"]
     )
     about_block = f'<section class="about">\n{about_html(about)}\n</section>' if about else ""
+    purpose_sentence = (
+        f" The question they serve is {_e(facts['purpose'])}." if facts.get("purpose") else ""
+    )
     body = f"""<header>
 <h1>{_e(title)}</h1>
-<p class="tagline">Public proteomics data, reanalysed with one pipeline, for questions about aging.</p>
+<p class="tagline">Public proteomics data, reanalysed with one pipeline{_e(_for_questions(facts))}.</p>
 </header>
 <main>
 {about_block}
@@ -895,8 +909,7 @@ def _index_html(
 <p class="note">Figures of merit from catalog <code>{_e(meta['catalog_id'])}</code>. Hover a number for its exact value.</p>
 <h2>This repository</h2>
 <p class="lede">Search and quantification results for {_plural(len(facts['datasets']), 'public proteomics dataset')},
-reanalysed with one pipeline and stored with the same schema, so they can be compared. The question
-they serve is how organelle proteomes change with age.</p>
+reanalysed with one pipeline and stored with the same schema, so they can be compared.{purpose_sentence}</p>
 <p><strong>For AI agents:</strong> start at <a href="llms.txt"><code>llms.txt</code></a>. The same facts
 as this page are in <a href="datasets.json"><code>datasets.json</code></a>.</p>
 <h2>The corpus at a glance</h2>
@@ -930,7 +943,7 @@ Read them before using it. Organism is that of the protein database searched.</p
 
 def _dataset_html(
     ds: dict[str, Any], meta: dict[str, Any], *, title: str, base_url: str | None,
-    data_url: str | None,
+    data_url: str | None, keywords: Sequence[str] = (),
 ) -> str:
     dataset_id = ds["dataset_id"]
     pride = _pride_url(dataset_id)
@@ -1067,7 +1080,7 @@ unknown. One chemistry can appear under two names (UniProt's and MetaMorpheus's)
 </main>"""
     return _page(
         f"{dataset_id}: {ds.get('title') or dataset_id}", body, root="../", meta=meta,
-        jsonld=dataset_jsonld(ds, meta, base_url=base_url, data_url=data_url),
+        jsonld=dataset_jsonld(ds, meta, base_url=base_url, data_url=data_url, keywords=keywords),
     )
 
 
@@ -1083,7 +1096,7 @@ def _llms_txt(
         "",
         "> Search and quantification results for "
         f"{_plural(len(facts['datasets']), 'public proteomics dataset')}, reanalysed with one "
-        "pipeline into one schema, for questions about how organelle proteomes change with age. "
+        f"pipeline into one schema{_for_questions(facts)}. "
         f"Every number here comes from catalog `{meta['catalog_id']}` (datarepo "
         f"{meta['builder_version']}, schema {meta['schema_version']}, built {meta['built_utc']}); "
         "cite that id with any number you reuse.",
@@ -1308,6 +1321,8 @@ def build_site(
     data_url: str | None = None,
     notice: str | None = None,
     about: str | None = None,
+    purpose: str | None = None,
+    keywords: Sequence[str] = (),
 ) -> SiteResult:
     """Write the static site for one catalog into `out`.
 
@@ -1322,6 +1337,10 @@ def build_site(
         about: Markdown for the front page's overview: what the project behind this instance is
             and why it exists. It is the instance owner's text, not dataRepo's, so it comes in
             from outside rather than being written here.
+        purpose: the question the instance serves, as the end of "for questions about ...", e.g.
+            "how organelle proteomes change with age". The operator's words; without it no page
+            claims a purpose. Shown in the tagline, the overview, `llms.txt` and the structured data.
+        keywords: extra schema.org keywords for every dataset page, e.g. `aging`.
         notice: a banner shown at the top of every page and of `llms.txt`, e.g. that the site is a
             preview whose data will be regenerated. It goes where no reader, human or agent, can
             miss it, because a caveat on a page nobody opens is not a caveat.
@@ -1330,6 +1349,8 @@ def build_site(
         CatalogError: no catalog at `catalog`, or `out` holds files this generator did not write.
     """
     facts = read_site_facts(catalog)
+    facts["purpose"] = (purpose or "").strip().rstrip(".") or None
+    keywords = [k.strip() for k in keywords if k and k.strip()]
     meta = facts["meta"]
     title = title or (
         f"{meta['instance']} proteomics repository" if meta.get("instance")
@@ -1359,7 +1380,7 @@ def build_site(
     }
     for ds in facts["datasets"]:
         files[_page_path(ds["dataset_id"])] = _dataset_html(
-            ds, meta, title=title, base_url=base_url, data_url=data_url
+            ds, meta, title=title, base_url=base_url, data_url=data_url, keywords=keywords
         )
         files[_json_path(ds["dataset_id"])] = _json({
             "catalog": catalog_block,

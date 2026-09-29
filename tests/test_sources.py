@@ -47,6 +47,20 @@ def test_an_unrecognisable_provenance_schema_is_refused():
         prov.schema_version({"schema": "something-else/2"})
 
 
+def test_a_neutral_schema_name_reads_with_the_layout_it_names():
+    # PXR-D2: PXReprise's neutral name for the document it emits as aging-provenance/3.
+    assert prov.schema_version({"schema": "pxreprise-provenance/1"}) == 3
+    assert prov.schema_version({"schema": "aging-provenance/3"}) == 3
+    assert prov.schema_version({"schema": "aging-provenance/2"}) == 2
+
+
+@pytest.mark.parametrize("raw", ["pxreprise-provenance/2", "other-provenance/3", "provenance/3"])
+def test_a_family_or_version_nobody_taught_is_refused_not_guessed(raw):
+    # A well-formed name is not permission: a layout is read only where it has been declared.
+    with pytest.raises(UnsupportedProvenance, match="it reads aging-provenance/2"):
+        prov.schema_version({"schema": raw})
+
+
 def test_flags_become_findings_that_explain_themselves():
     doc = {"flags": ["low_id_rate: 9/300 = 3.0% (S3)", "no_design_file: none written"]}
     rows = {r["code"]: r for r in prov.finding_rows(doc, "PXD1", "provenance.json")}
