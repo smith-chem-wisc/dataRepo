@@ -381,7 +381,7 @@ def cmd_site(args: argparse.Namespace) -> int:
     print(f"site     {result.out}")
     print(f"  catalog  {result.catalog_id}")
     pages = sum(1 for name in result.files if name.startswith("datasets/") and name.endswith(".html"))
-    print(f"  wrote    {len(result.files)} files, {pages} dataset pages")
+    print(f"  wrote    {len(result.files)} files, {pages} dataset page{'' if pages == 1 else 's'}")
     for name, reason in sorted(result.skipped.items()):
         print(f"  skipped  {name}: {reason}")
     for warning in result.warnings:
