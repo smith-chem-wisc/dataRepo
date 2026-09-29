@@ -34,6 +34,7 @@ import hashlib
 import json
 import shutil
 import subprocess
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Mapping, Sequence
@@ -88,6 +89,39 @@ def _git(path: Path, *args: str) -> str:
     return done.stdout.strip()
 
 
+#: Written beside the package by `tools/build_binary.py` into a self-contained executable (D36,
+#: PXR-D1). A frozen binary has no pip record, so this is its identity: the commit it was built from,
+#: which the build refuses to stamp from a dirty tree.
+BUILD_INFO = "_build_info.json"
+
+
+def _build_info_path() -> Path:
+    # PyInstaller places `--add-data ...;datarepo` beside the frozen package's modules.
+    return Path(__file__).resolve().parent / BUILD_INFO
+
+
+def frozen_build() -> dict[str, Any] | None:
+    """The build stamp of the running self-contained executable, or None when not frozen.
+
+    Raises:
+        RunnerError: frozen, but the stamp is missing or names no commit, so nothing identifies the
+            code that is running.
+    """
+    if not getattr(sys, "frozen", False):
+        return None
+    path = _build_info_path()
+    try:
+        info = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        raise RunnerError(
+            f"this datarepo executable carries no readable {BUILD_INFO} ({exc}), so which build it "
+            f"is cannot be shown. Use a released download, which is stamped when it is built."
+        ) from exc
+    if not info.get("commit"):
+        raise RunnerError(f"this datarepo executable's {BUILD_INFO} names no commit")
+    return info
+
+
 def install_identity(distribution: str = "datarepo", *, version: str | None = None) -> dict[str, Any]:
     """Which release of `distribution` is running, or a refusal (aging 063).
 
@@ -99,11 +133,17 @@ def install_identity(distribution: str = "datarepo", *, version: str | None = No
     - from a local directory, NOT editable: the directory's git HEAD, and only if that clone is
       clean. This is how aging installs a release: a read-only clone at the announced sha.
 
+    - a self-contained executable (D36): the commit, version and platform stamped at build time.
+
     Refused: an editable install (the code can change under a running operator, which is how a
     0.18.0 working tree was on aging's PATH mid-release), and anything else with no identity.
     """
     import importlib.metadata  # noqa: PLC0415
 
+    build = frozen_build() if distribution == "datarepo" else None
+    if build is not None:
+        return {"distribution": distribution, "version": build.get("version") or version,
+                "source": "binary", "commit": build["commit"], "platform": build.get("platform")}
     version = version or importlib.metadata.version(distribution)
     info = _direct_url(distribution)
     if info is None:

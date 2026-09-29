@@ -1532,10 +1532,17 @@ def claude_config_path() -> Path:
 
 
 def install_entry(catalog: Path | str, *, python: str | None = None) -> dict[str, Any]:
-    """The `mcpServers` entry for this catalog. Absolute paths: the client sets its own cwd."""
+    """The `mcpServers` entry for this catalog. Absolute paths: the client sets its own cwd.
+
+    From a self-contained executable (D36) the command is the executable itself: it has no `-m`,
+    and `sys.executable` IS datarepo.
+    """
+    catalog_args = ["mcp", "--catalog", str(Path(catalog).resolve())]
+    if getattr(sys, "frozen", False) and python is None:
+        return {"command": sys.executable, "args": catalog_args, "env": {}}
     return {
         "command": python or sys.executable,
-        "args": ["-m", "datarepo.cli", "mcp", "--catalog", str(Path(catalog).resolve())],
+        "args": ["-m", "datarepo.cli", *catalog_args],
         "env": {},
     }
 

@@ -817,3 +817,13 @@ def test_a_sample_query_is_pointed_at_curated_rows_about_those_samples(tmp_path)
 def test_no_pointer_when_no_study_rows_exist(server):
     # An empty study table is `empty_tables`' business; pointing at it would send a reader to nothing.
     assert "study_tables_on_these_samples" not in server.sql("SELECT * FROM samples")
+
+
+def test_an_executable_registers_itself_not_python_dash_m(monkeypatch, tmp_path):
+    # D36: in a frozen build `sys.executable` IS datarepo, and it has no `-m`.
+    import sys as _sys
+
+    monkeypatch.setattr(_sys, "frozen", True, raising=False)
+    entry = install_entry(tmp_path / "catalog.duckdb")
+    assert entry["command"] == _sys.executable
+    assert entry["args"][:2] == ["mcp", "--catalog"]

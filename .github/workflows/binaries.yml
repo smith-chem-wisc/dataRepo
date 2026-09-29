@@ -1,0 +1,87 @@
+# Self-contained `datarepo` executables, one per platform (D36, PXReprise PXR-D1).
+#
+# Every run builds and VERIFIES: tools/packaging/smoke_test.py runs the getting-started tutorial with
+# the executable on a PATH holding no Python, then with the Python install that built it, and fails
+# unless both give the same bundle and catalog ids. The zips are uploaded as workflow artifacts.
+#
+# Only a `v*` tag goes further, and only to a DRAFT release: nothing is public until a person
+# publishes the draft. Where releases live is the user's decision (design/OPEN_QUESTIONS.md, U12).
+name: binaries
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+  pull_request:
+    paths:
+      - "tools/build_binary.py"
+      - "tools/packaging/**"
+      - ".github/workflows/binaries.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        # One runner per pyMzLib wheel platform: its mzLib bridge is native, so each binary is built
+        # where it will run. PyInstaller does not cross-compile.
+        include:
+          - os: windows-latest
+          - os: ubuntu-latest
+          - os: macos-latest       # arm64
+          - os: macos-15-intel     # x64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install the environment to freeze
+        run: pip install ".[readers,mcp]" pyinstaller
+
+      - name: Build
+        run: python tools/build_binary.py
+
+      - name: Unpack
+        shell: bash
+        run: |
+          mkdir unpacked
+          python -c "import zipfile,glob; zipfile.ZipFile(glob.glob('dist/*.zip')[0]).extractall('unpacked')"
+          chmod +x unpacked/datarepo/datarepo || true
+
+      - name: Verify by running the tutorial
+        shell: bash
+        run: |
+          exe=unpacked/datarepo/datarepo
+          [ -f "$exe.exe" ] && exe="$exe.exe"
+          python tools/packaging/smoke_test.py "$exe" --expect-commit "${{ github.sha }}"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: datarepo-${{ matrix.os }}
+          path: dist/*.zip
+          if-no-files-found: error
+
+  draft-release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Attach to a draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" dist/*.zip --draft --verify-tag \
+            --repo "${GITHUB_REPOSITORY}" --title "datarepo ${GITHUB_REF_NAME}" \
+            --notes "Self-contained executables built and verified by the binaries workflow. See CHANGELOG.md."

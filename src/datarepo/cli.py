@@ -481,6 +481,14 @@ def cmd_doctor(args: argparse.Namespace) -> int:
     print(f"datarepo {__version__}  schema {SCHEMA_VERSION}")
     ok = True
     try:
+        from .runner import frozen_build  # noqa: PLC0415
+
+        build = frozen_build()
+        if build is not None:
+            print(f"  build            executable, commit {build['commit'][:12]}, {build.get('platform')}")
+    except DataRepoError as exc:
+        print(f"  build            executable, UNIDENTIFIED: {exc}")
+    try:
         import pyarrow  # noqa: PLC0415
 
         print(f"  pyarrow          {pyarrow.__version__}")

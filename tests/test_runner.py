@@ -269,3 +269,37 @@ def test_two_resolutions_of_one_database_are_refused_rather_than_chosen(world):
              release={**RELEASE, "pymzlib": "0.3.0"}, resolve=fake_resolver(world))
     with pytest.raises(CatalogError, match="A catalog serves one"):
         select_artefacts(world.store, [world.bundle])
+
+
+# --- a self-contained executable (D36, PXR-D1) -----------------------------------------------------
+
+
+def _frozen(monkeypatch, tmp_path, stamp):
+    monkeypatch.setattr(runner.sys, "frozen", True, raising=False)
+    path = tmp_path / runner.BUILD_INFO
+    if stamp is not None:
+        path.write_text(json.dumps(stamp), encoding="utf-8")
+    monkeypatch.setattr(runner, "_build_info_path", lambda: path)
+
+
+def test_an_executable_is_identified_by_the_commit_it_was_built_from(monkeypatch, tmp_path):
+    _frozen(monkeypatch, tmp_path, {"version": "0.30.0", "commit": "5795928e", "platform": "windows-x64"})
+    got = runner.install_identity("datarepo", version="0.30.0")
+    assert got == {"distribution": "datarepo", "version": "0.30.0", "source": "binary",
+                   "commit": "5795928e", "platform": "windows-x64"}
+
+
+@pytest.mark.parametrize("stamp", [None, {"version": "0.30.0", "commit": None}])
+def test_an_executable_with_no_commit_is_refused(monkeypatch, tmp_path, stamp):
+    # A test build from a dirty tree is stamped with no commit, so it runs but cannot pass for a
+    # release: the runner refuses what nothing identifies.
+    _frozen(monkeypatch, tmp_path, stamp)
+    with pytest.raises(RunnerError, match="executable"):
+        runner.install_identity("datarepo", version="0.30.0")
+
+
+def test_the_engines_identity_is_still_read_from_pip_inside_an_executable(monkeypatch, tmp_path):
+    # Only datarepo itself is the binary; pyMzLib inside it keeps its index identity.
+    _frozen(monkeypatch, tmp_path, {"version": "0.30.0", "commit": "abc"})
+    monkeypatch.setattr(runner, "_direct_url", lambda dist: None)
+    assert runner.install_identity("mzlib", version="0.2.0")["source"] == "index"
