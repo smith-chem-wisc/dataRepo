@@ -54,8 +54,20 @@ from ._tables import SCHEMA_VERSION, STUDY_TABLES, STUDY_VERSIONS
 from .bundle import rows_to_table, sha256_file
 from .errors import IngestError, ManifestError
 from .integrity import STUDY_COMPOSITE_IDENTIFIERS
+from .sources.sdrf import NOT_AVAILABLE
 
 SUPPORTED_STUDY_MANIFEST_VERSIONS = {1}
+
+#: Reserved-word flags this module COMPUTES, by layer and table: `{flag column: value column}`.
+#: The flag is true when the value is an SDRF reserved word, with the core's list and meaning
+#: (`sample_characteristics.value_reserved`). A curator's `not applicable` (a cell line has no
+#: tissue) and `not available` (the sources were read and do not say) are answers, and no row means
+#: "not curated". Refusing the words, as the first draft did, made the second and third look the
+#: same: G42 from the curator's side, found by filling the table from aging's real samples.tsv
+#: (aging 078, REQ-DATAREPO-6). Computed rather than trusted, so it cannot disagree with the value.
+STUDY_RESERVED_FLAGS: dict[str, dict[str, dict[str, str]]] = {
+    "aging": {"curated_sample_characteristics": {"value_reserved": "value"}},
+}
 
 #: The version of the STUDY INGEST PATH, and the only version in a study bundle's content hash.
 #:
@@ -63,7 +75,7 @@ SUPPORTED_STUDY_MANIFEST_VERSIONS = {1}
 #: "these are the same model results". Bump it in the same commit as any change to what this module
 #: reads, parses, coerces or writes. It is separate from the ingester's because the two paths move
 #: independently -- a change to how a `.psmtsv` is parsed says nothing about a delivered age effect.
-STUDY_INGESTER_VERSION = "0.5.0"
+STUDY_INGESTER_VERSION = "0.6.0"
 
 STUDY_BUNDLE_MANIFEST = "study.json"
 
@@ -301,6 +313,34 @@ def _duplicate_keys(layer: str, table: str, rows: Sequence[dict[str, Any]]) -> l
     return [":".join(v) for v in sorted(duplicates)]
 
 
+_TRUE = {"true", "1", "yes"}
+_FALSE = {"false", "0", "no"}
+
+
+def _flag_reserved(layer: str, table: str, rows: list[dict[str, Any]]) -> list[str]:
+    """Set each `STUDY_RESERVED_FLAGS` column from its value column, in place.
+
+    A delivered flag is allowed, and must agree: one that says a word is not reserved when it is (or
+    the reverse) is returned as `column=value` so the write can refuse it. An empty value is left
+    alone, because a required column refuses it later with a better message.
+    """
+    conflicts = []
+    for flag, column in STUDY_RESERVED_FLAGS.get(layer, {}).get(table, {}).items():
+        for row in rows:
+            value = row.get(column)
+            if not isinstance(value, str) or not value.strip():
+                continue
+            computed = value.strip().lower() in NOT_AVAILABLE
+            delivered = row.get(flag)
+            if isinstance(delivered, str):
+                text = delivered.strip().lower()
+                delivered = True if text in _TRUE else False if text in _FALSE else (text or None)
+            if delivered is not None and delivered != computed:
+                conflicts.append(f"{flag}={row.get(flag)!r} for {column}={value.strip()!r}")
+            row[flag] = computed
+    return conflicts
+
+
 def _unknown_definitions(
     declared: Sequence[str], schema: pa.Schema, rows: Sequence[dict[str, Any]]
 ) -> set[str]:
@@ -424,6 +464,13 @@ def write_study_bundle(
                 f"table {label}: {len(duplicates)} duplicate key(s) on ({key}), e.g. {sample}. "
                 f"Two rows for one fit are two different answers to one question, and which is "
                 f"right is the producer's call, not this ingester's."
+            )
+        conflicts = _flag_reserved(layer, name, rows)
+        if conflicts:
+            raise IngestError(
+                f"table {label}: {len(conflicts)} delivered reserved-word flag(s) disagree with "
+                f"the value, e.g. {', '.join(conflicts[:3])}. The flag is computed from the SDRF "
+                f"reserved-word list; leave the column empty or correct it."
             )
         unknown = _unknown_definitions(manifest.definitions, schema, rows)
         if unknown:

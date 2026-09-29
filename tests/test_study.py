@@ -47,6 +47,7 @@ def test_the_aging_layer_declares_its_tables():
     assert AGING in STUDY_VERSIONS
     assert set(STUDY_TABLES[AGING]) == {
         "sample_ages",
+        "curated_sample_characteristics",
         "age_effects",
         "age_effect_refusals",
         "age_effect_meta",

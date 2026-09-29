@@ -533,3 +533,90 @@ def test_a_curated_age_names_its_source_and_leaves_the_normalizer_null(tmp_path,
     missing = [{"sample_id": "PXD000001:sample1", "age_raw": "24 months", "age_years": "2"}]
     with pytest.raises(IngestError, match="age_source"):
         write_study_bundle(write_delivery(tmp_path / "second", {"sample_ages": missing}, store=store))
+
+
+# --- curated sample characteristics (aging 078, REQ-DATAREPO-6) -----------------------------------
+
+CURATED = {
+    "sample_id": "PXD000001:sample1",
+    "name": "characteristics[cell line]",
+    "value": "SH-SY5Y",
+    "term": "CVCL_0019",
+    "source_reference": "PRIDE PXD000001 project record",
+    "evidence": "Methods: SH-SY5Y cells were differentiated with retinoic acid",
+    "confidence": "high",
+    "curation_version": "aging-curation/1",
+}
+
+
+def _catalog_with_curated(tmp_path, store, curated):
+    bundles = [write_bundle(store, DATASET)]
+    delivered = write_study_bundle(
+        write_delivery(tmp_path, {"curated_sample_characteristics": curated}, store=store)
+    )
+    study = select_study_bundles(store, pins={AGING: delivered.bundle_id})
+    return build_catalog(bundles, tmp_path / "catalog.duckdb", study_bundles=study)
+
+
+def test_a_curated_characteristic_loads_beside_the_core_and_leaves_it_alone(tmp_path, store):
+    # U5, and the point of the table: the core `samples` row keeps what the SDRF wrote (here, no
+    # cell line at all), and the curated value sits beside it, marked as aging's by where it lives.
+    result = _catalog_with_curated(tmp_path, store, [CURATED])
+    got = rows(result.path, "SELECT name, value, term, curation_version, study_layer "
+                            "FROM curated_sample_characteristics")
+    assert got == [{
+        "name": "characteristics[cell line]", "value": "SH-SY5Y", "term": "CVCL_0019",
+        "curation_version": "aging-curation/1", "study_layer": AGING,
+    }]
+    core = rows(result.path, "SELECT cell_line FROM samples WHERE sample_id = 'PXD000001:sample1'")
+    assert core == [{"cell_line": None}]
+    assert rows(result.path, "SELECT count(*) AS n FROM sample_characteristics "
+                             "WHERE value = 'SH-SY5Y'") == [{"n": 0}]
+
+
+def test_a_curated_characteristic_for_an_unknown_sample_is_refused(tmp_path, store):
+    with pytest.raises(CatalogError, match="curated_sample_characteristics.sample_id"):
+        _catalog_with_curated(tmp_path, store, [dict(CURATED, sample_id="PXD000001:nosuchsample")])
+
+
+def test_one_curated_value_per_characteristic_per_sample(tmp_path, store):
+    second = dict(CURATED, value="SK-N-SH", term="CVCL_0531")
+    with pytest.raises(IngestError, match="duplicate key"):
+        write_study_bundle(write_delivery(
+            tmp_path, {"curated_sample_characteristics": [CURATED, second]}, store=store))
+    other = dict(CURATED, name="characteristics[disease]", value="normal", term="PATO:0000461")
+    assert write_study_bundle(write_delivery(
+        tmp_path / "b", {"curated_sample_characteristics": [CURATED, other]}, store=store)).bundle_id
+
+
+@pytest.mark.parametrize("column", ["source_reference", "curation_version"])
+def test_a_curated_value_names_its_source_and_its_curation(tmp_path, store, column):
+    with pytest.raises(IngestError, match=column):
+        write_study_bundle(write_delivery(
+            tmp_path, {"curated_sample_characteristics": [dict(CURATED, **{column: ""})]},
+            store=store))
+
+
+@pytest.mark.parametrize("word", ["not available", "not applicable", "Unknown", "n/a", "none"])
+def test_a_curated_reserved_word_is_kept_and_flagged(tmp_path, store, word):
+    # G42 from the curator's side, found by filling from aging's samples.tsv: `not applicable` (a
+    # cell line has no tissue) and `not available` (read, not said) are answers, and no row means
+    # "not curated". Kept, flagged with the core's list, so a count can filter it out.
+    reserved = dict(CURATED, name="characteristics[organism part]", value=word, term="")
+    result = _catalog_with_curated(tmp_path, store, [CURATED, reserved])
+    got = rows(result.path, "SELECT name, value, value_reserved FROM curated_sample_characteristics "
+                            "ORDER BY name")
+    assert got == [
+        {"name": "characteristics[cell line]", "value": "SH-SY5Y", "value_reserved": False},
+        {"name": "characteristics[organism part]", "value": word, "value_reserved": True},
+    ]
+
+
+def test_a_delivered_reserved_flag_that_disagrees_is_refused(tmp_path, store):
+    assert write_study_bundle(write_delivery(
+        tmp_path, {"curated_sample_characteristics": [dict(CURATED, value_reserved="false")]},
+        store=store)).bundle_id
+    with pytest.raises(IngestError, match="disagree"):
+        write_study_bundle(write_delivery(
+            tmp_path / "b", {"curated_sample_characteristics": [dict(CURATED, value_reserved="true")]},
+            store=store))

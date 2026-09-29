@@ -657,7 +657,7 @@ def test_the_acceptance_views_state_the_rule_they_apply(server):
 def test_a_study_layer_with_no_delivery_is_reported_as_present_and_empty(server):
     """`study_layers: []` read as "there is no study layer" and contradicted describe('tables')."""
     layers = {entry["layer"]: entry for entry in server.describe()["study_layers"]}
-    assert layers["aging"]["tables_present"] == 8
+    assert layers["aging"]["tables_present"] == 9
     assert layers["aging"]["delivery_loaded"] is False
     assert layers["aging"]["rows"] == 0
 
@@ -786,3 +786,34 @@ def test_a_tissue_named_without_a_term_is_found_and_described(tmp_path):
         assert "G74" in means["organism_part_name"] and "not available" in means["organism_part_name"]
         hit = next(h for h in server.search("heart", kind="sample")["hits"]["sample"] if "n_samples" in h)
         assert hit["organism_part_names"] == ["heart"] and not hit["organism_parts"]
+
+
+# --- aging 078: a curated value lives beside `samples`, and a sample query is told so ------------
+
+
+def test_a_sample_query_is_pointed_at_curated_rows_about_those_samples(tmp_path):
+    """G69's shape one step later: a curated cell line is in a study table, never in `samples`, so
+    `SELECT cell_line FROM samples` returns NULL and reads as unknown. The pointer is in the sql
+    envelope because describe can be skipped."""
+    from datarepo.catalog import build_catalog, select_study_bundles
+    from datarepo.study import write_study_bundle
+    from test_study_bundle import CURATED, write_delivery
+
+    store = tmp_path / "store"
+    bundles = [write_bundle(store, "PXD000001")]
+    delivered = write_study_bundle(
+        write_delivery(tmp_path, {"curated_sample_characteristics": [CURATED]}, store=store)
+    )
+    study = select_study_bundles(store, pins={"aging": delivered.bundle_id})
+    path = build_catalog(bundles, tmp_path / "catalog.duckdb", study_bundles=study).path
+    with CatalogServer(path) as served:
+        result = served.sql("SELECT sample_id, cell_line FROM samples")
+        assert result["rows"] == [["PXD000001:sample1", None]]
+        assert result["study_tables_on_these_samples"] == ["curated_sample_characteristics"]
+        assert "not evidence that nothing is known" in result["study_tables_on_these_samples_mean"]
+        assert "study_tables_on_these_samples" not in served.sql("SELECT count(*) FROM psms")
+
+
+def test_no_pointer_when_no_study_rows_exist(server):
+    # An empty study table is `empty_tables`' business; pointing at it would send a reader to nothing.
+    assert "study_tables_on_these_samples" not in server.sql("SELECT * FROM samples")

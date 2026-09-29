@@ -60,6 +60,7 @@ from ._schema_docs import ENUMS, SCHEMA_DESCRIPTION, STUDY_ENUMS, STUDY_TABLE_DO
 from ._tables import SCHEMA_VERSION
 from .catalog import DERIVED_COLUMN_DOCS, DERIVED_DOCS
 from .errors import CatalogError, DataRepoError, QueryRefused, QueryTimeout
+from .integrity import STUDY_REFERENCES
 from .sandbox import CHAR_CAP, ROW_CAP, TIMEOUT_SECONDS, Sandbox
 
 #: Tools are named with this prefix because an agent sees them alongside every other server's.
@@ -114,6 +115,11 @@ RUN_RELATIVE_COLUMNS: dict[str, str] = {
         "one MetaMorpheus release. Across releases use `q_value`, which does not depend on PEP"
     ),
 }
+
+#: Core tables whose rows ARE samples. A `sql` answer reading one says which populated study
+#: tables are keyed on those samples (`study_tables_on_these_samples`, aging 078): a curated value
+#: never enters the core, so a caller that stops at `samples` reads its NULLs as "unknown".
+SAMPLE_TABLES = frozenset({"samples", "sample_characteristics"})
 
 
 class ToolError(DataRepoError):
@@ -1221,6 +1227,20 @@ class CatalogServer:
                 f"distributions set side by side): compare counts at a threshold instead, and prefer "
                 f"`q_value` across releases. Definition: describe('pep:DEF-PEP')."
             )
+        about_samples = self._study_rows_on_samples(touched)
+        if about_samples:
+            out["study_tables_on_these_samples"] = about_samples
+            # G69 again, one step later (aging 078): a curated tissue or cell line lives in a study
+            # table and never in `samples`, so a NULL there reads as "unknown" to a caller that
+            # stops at the core. Not a refusal, and it names no value: it says where else to look.
+            out["study_tables_on_these_samples_mean"] = (
+                f"This query reads sample tables. {', '.join(about_samples)} hold rows about "
+                f"samples in this catalog, delivered by a study layer rather than read from an "
+                f"SDRF. A NULL or missing tissue, cell type, cell line, disease or age in `samples` "
+                f"is not evidence that nothing is known: read those tables before reporting one as "
+                f"unknown, and say that such a value is the study owner's curation, not the "
+                f"depositor's."
+            )
         if result.truncated:
             out["truncated_by"] = result.truncated_by
             out["truncated_means"] = (
@@ -1230,6 +1250,26 @@ class CatalogServer:
             )
         return out
 
+
+    def _study_rows_on_samples(self, touched: list[dict[str, Any]] | None) -> list[str]:
+        """Populated study tables keyed on `samples`, when the statement reads a sample table.
+
+        The study tables come from `integrity.STUDY_REFERENCES`, so a layer that adds another
+        sample-keyed table is covered without touching this. An undetermined read (`touched` is
+        None) reports nothing: the note is a pointer, and a pointer on every unparsed query would
+        train a reader to skip it.
+        """
+        read = {t["table"] for t in touched or []}
+        if not read & SAMPLE_TABLES:
+            return []
+        known = self.tables()
+        keyed = sorted(
+            table
+            for references in STUDY_REFERENCES.values()
+            for table, _column, target, _target_column in references
+            if target == "samples"
+        )
+        return [t for t in keyed if (known.get(t, {}).get("rows") or 0) > 0]
 
     def _run_relative_read(
         self, query: str, result_columns: Sequence[str], touched: list[dict[str, Any]] | None

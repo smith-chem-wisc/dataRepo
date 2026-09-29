@@ -111,6 +111,8 @@ COMPOSITE_IDENTIFIERS: tuple[tuple[str, tuple[str, ...]], ...] = (
 STUDY_COMPOSITE_IDENTIFIERS: dict[str, dict[str, tuple[str, ...]]] = {
     "aging": {
         "sample_ages": ("sample_id",),
+        # One curated value per characteristic per sample (aging 078, REQ-DATAREPO-6).
+        "curated_sample_characteristics": ("sample_id", "name"),
         "age_effects": (
             "dataset_id", "feature_id", "response", "estimator", "quant_basis", "model_form",
             "stratum",
@@ -149,6 +151,7 @@ STUDY_COMPOSITE_IDENTIFIERS: dict[str, dict[str, tuple[str, ...]]] = {
 STUDY_REFERENCES: dict[str, tuple[tuple[str, str, str, str], ...]] = {
     "aging": (
         ("sample_ages", "sample_id", "samples", "sample_id"),
+        ("curated_sample_characteristics", "sample_id", "samples", "sample_id"),
         ("age_effects", "dataset_id", "datasets", "dataset_id"),
         ("age_effect_refusals", "dataset_id", "datasets", "dataset_id"),
         ("clock_features", "clock_id", "clock_models", "clock_id"),
