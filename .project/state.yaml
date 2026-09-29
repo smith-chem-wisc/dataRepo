@@ -396,6 +396,13 @@ decisions:
       Run-relative columns (`pep`, `best_pep`, `pep_q_value`) get a WARNING in the sql envelope, not a
       refusal (G70, pep 002): a within-dataset ranking and a count at a threshold are correct uses, and
       the query text cannot tell them from a cross-dataset comparison.
+  - id: D36
+    date: 2026-09-29
+    text: >-
+      No Python on a user's machine (PXReprise PXR-D1) is met by SELF-CONTAINED EXECUTABLES per OS,
+      built in CI from the same Python code and attached to each release, NOT by a port. The user
+      agreed 2026-09-29. A port would re-implement ingest, catalog, MCP and site and re-earn every
+      correctness fix; a packaged binary meets PXReprise D8 (.NET, git, MetaMorpheus only).
 gaps:
   - >-
     G1 Framework. Steps 1 (ingest), 2 (build) and 3 (MCP) are BUILT and locked as D9/D10/D12-D15.
@@ -928,6 +935,24 @@ gaps:
     new columns or by redefining these; an INGESTER_VERSION bump, and a schema bump if columns are
     added. Keep the parsimony list as is: it is the right default (aging's user). aging computes
     specificity themselves meanwhile (`results/organelle_isoforms_2026-09-26/`), so nothing waits.
+  - >-
+    G77 Orthology snapshot record (logs 029, LOGS-D4 = read in place). PROPOSED, not built: when a
+    stored result used a logs snapshot, the catalog records its release tag, tar sha256, manifest
+    sha256, format/format_version and the CC-BY attribution; queries go to the Parquet through
+    logs' views.sql. Build against the first result that actually uses a snapshot (aging's, D27).
+  - >-
+    G78 PXR-D1 self-contained executables (D36). Build per-OS binaries (Windows, Linux, macOS) in CI
+    from a tag, attach to a GitHub release, verify each by RUNNING getting-started on it (not by
+    building it). Needs the release home (U12) and a release name clear of PyPI `datarepo`.
+    pyMzLib's bridge is per-platform and must travel inside each binary.
+  - >-
+    G79 PXR-D2 remainder (0.30.0 did provenance families, site --purpose/--keyword, the MCP example,
+    thread citations out of rows). STILL aging-shaped: (a) the 20 `aging:` definitions every bundle
+    writes (definitions.py; PSM_1PCT, ID_RATE, MS2_COUNT...) should be declared by the producer, with
+    aging's as defaults; ask PXReprise who owns them now. (b) per-layer rule dicts in Python
+    (integrity STUDY_COMPOSITE_IDENTIFIERS / STUDY_REFERENCES, study STUDY_RESERVED_FLAGS) belong in
+    schema/study/<layer>.yaml as annotations, generated. (c) catalog DERIVED_DOCS prose cites aging's
+    corpus. (d) schema descriptions ('e.g. aging-provenance/2', 'the reanalysis project (aging)').
   - >-
     G63 [MANIFEST PATH BUILT in 0.18.0, 2026-09-24 (aging said yes in 058): runs.enrichment,
     runs.enrichment_source, datasets.enrichment_mixed, manifest run_enrichment + mixed_enrichment as
