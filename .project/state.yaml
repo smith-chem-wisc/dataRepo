@@ -941,10 +941,11 @@ gaps:
     sha256, format/format_version and the CC-BY attribution; queries go to the Parquet through
     logs' views.sql. Build against the first result that actually uses a snapshot (aging's, D27).
   - >-
-    G78 [BUILT AND VERIFIED 2026-09-29, datarepo 0.31.0: binaries workflow run 36597055213, all four
-    platforms give bundle 3b56a967d6968d39 / catalog a90e1b47c81f28d5, identical to pip. NOT PUBLISHED:
-    a v* tag makes a DRAFT release; publishing is the user's. OWED to PXReprise: correct our 004 §4,
-    which says pyproject.toml names the new URL; pyproject carries no URL at all.] PXR-D1
+    G78 [CLOSED 2026-09-29: RELEASED v0.31.0 at the user's request,
+    https://github.com/smith-chem-wisc/dataRepo/releases/tag/v0.31.0, tag commit cc21f1c. Tag run
+    36598888485 verified all four platforms (bundle 3b56a967d6968d39, catalog a90e1b47c81f28d5, same as
+    pip); the public Windows download re-run by hand. Told PXReprise (005, with the 004 §4 correction).
+    Release recipe: push a v* tag, wait for the draft, then `gh release edit <tag> --draft=false`.] PXR-D1
     self-contained executables (D36). Build per-OS binaries (Windows, Linux, macOS) in CI
     from a tag, attach to a GitHub release, verify each by RUNNING getting-started on it (not by
     building it). Needs the release home (U12) and a release name clear of PyPI `datarepo`.
