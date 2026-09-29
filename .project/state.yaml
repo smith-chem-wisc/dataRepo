@@ -947,7 +947,7 @@ gaps:
     pyMzLib's bridge is per-platform and must travel inside each binary.
   - >-
     G79 PXR-D2 remainder (0.30.0 did provenance families, site --purpose/--keyword, the MCP example,
-    thread citations out of rows). STILL aging-shaped: (a) the 20 `aging:` definitions every bundle
+    thread citations out of rows). STILL aging-shaped: (a) the 10 `aging:` definitions every bundle
     writes (definitions.py; PSM_1PCT, ID_RATE, MS2_COUNT...) should be declared by the producer, with
     aging's as defaults; ask PXReprise who owns them now. (b) per-layer rule dicts in Python
     (integrity STUDY_COMPOSITE_IDENTIFIERS / STUDY_REFERENCES, study STUDY_RESERVED_FLAGS) belong in
