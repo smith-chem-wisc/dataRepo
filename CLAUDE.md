@@ -6,30 +6,35 @@ This folder is a `/project`-managed research project. **You are de facto working
 
 - **Phase:** INCEPTION
 - **Goal:** An AI-ready, API-accessible repository for the search + quant results of the many PRIDE datasets the `aging` pipeline reanalyzes. Humans can use it, but AI agents are the main users. The question it serves is how organelle proteomes change with age.
-- **Pick up at:** **First thing: run the thread checker.** At the 2026-09-30 close two threads were
-  UNREAD: **PXReprise 006 (asks PXR-D6) and pep 005**. Read and answer them first.
+- **Pick up at:** **First thing: run the thread checker.** At the second 2026-09-30 close nothing
+  was owed by us (inbox read; PXReprise 007 and dia 002 posted).
   **v0.32.0 is RELEASED** (https://github.com/smith-chem-wisc/dataRepo/releases/tag/v0.32.0, tag on
-  `6abd39e`). It has the REQ-DATAREPO-7 run-name fix and three new site figures (D38).
-  - **Next build: G76** (aging 075): `is_unique` / `is_isoform_specific` from the SEARCHED sequences.
-    Run `/bridge-oracle pyMzLib` on `classify_peptides` first. **Batch it with D37**: the
-    `pxreprise:` definitions, declared as `"definitions"` in provenance.json. Wait for PXReprise's
-    DATAREPO-64 (where their text lives), so aging moves once. G76 also switches the site's
-    unique-peptide tile to sequence-unique.
+  `6abd39e`). It has the REQ-DATAREPO-7 run-name fix and three new site figures (D38). **The live
+  site is still built by 0.28.1** (aging's publish pin); **D39**: PXReprise switches to 0.32.0 NOW,
+  and our definitions release is a second, later switch.
+  - **Next build: one ingest release with D37 + G76 + G81.** D37: DATAREPO-64 is answered, so
+    transcribe the ten `pxreprise:` definitions from PXReprise `DEFINITIONS.md` at `1ac199e`
+    (word for word, Grain line, source commit). G76 (aging 075): `is_unique` /
+    `is_isoform_specific` from the SEARCHED sequences; run `/bridge-oracle pyMzLib` on
+    `classify_peptides` first; also switches the site's unique-peptide tile. G81 (pep 005):
+    `iterative <on|off|not recorded>` in DEF-PEP's version key. Tell PXReprise and pep the sha.
+  - dia (G82): wait for DATAREPO-65/66 or a real output folder (dia 002).
   - **No row change:** G79 (b), move the per-layer rule dicts into `schema/study/aging.yaml`.
     G80: report mzLib's run-name defect upstream.
   - See RESUME's "Pick up at", which also has the release recipe.
   - **In flight:**
-    - aging: ingest PXD075372 and build/publish on **0.32.0** with `--purpose "how organelle
-      proteomes change with age" --keyword aging` (082). Then check the live page shows the new
-      tiles. Also: fix samples.tsv (079 §2) and deliver `curated_sample_characteristics`.
-    - PXReprise: DATAREPO-64, and their `pxreprise-provenance/1` switch.
-    - sdrf: DATAREPO-61/31/32. phred: check charter v0.5 (004). go: PR B (#1353).
+    - PXReprise: build venv-0.32.0 and switch (our 007); their 0.3.1 re-ingests PXD075372. Then
+      aging repoints `$DataRepo` and adds `--purpose "how organelle proteomes change with age"
+      --keyword aging` (082). Then check the live page (generator 0.32.0, the new tiles). Also:
+      aging fixes samples.tsv (079 §2) and delivers `curated_sample_characteristics`.
+    - sdrf: their G42 drafter change (commit to come) and G43. phred: check charter v0.5 (004).
+      go: PR B (#1353).
   - Versions: datarepo **0.32.0**, core schema **0.0.13**, `bundle.INGESTER_VERSION` **0.22.0**,
     aging study layer **0.5.0**, `study.STUDY_INGESTER_VERSION` **0.6.0**, `runner.RUNNER_VERSION`
     **1**, `catalog.CATALOG_VERSION` **8**.
   - **D27: dataRepo SHIPS, the instance operator (aging) RUNS.** Charter **v0.5** (`5935931`); G73
-    open. Public aging site: https://trishorts.github.io/aging-pipeline/ (catalog `81ceb87ea745ee62`,
-    62 datasets, seen 2026-09-30; not yet rebuilt on 0.32.0).
+    open. Public aging site: https://trishorts.github.io/aging-pipeline/ (catalog `437b6ad19e6ff393`,
+    64 datasets, built by 0.28.1, seen 2026-09-30).
   - Each change that reaches rows needs an `INGESTER_VERSION` bump in the same commit (a runner
     change: `RUNNER_VERSION`).
   - Standing: G48, G35 (do NOT claim D15's bar), G32, G46, G33/G26/G36, G13. **N1/G9 goes to the
@@ -366,6 +371,11 @@ This folder is a `/project`-managed research project. **You are de facto working
 - **The auto-mode classifier refuses the agent's push and tag of a release.** Commit locally, then give
   the user the `!` commands one at a time. Watch the tag run in the background and say explicitly
   when `gh release edit --draft=false` is safe (the user asked for exactly that).
+- **"The site doesn't show the new release" is usually the operator's pin, not our code.** Read
+  `https://trishorts.github.io/aging-pipeline/.datarepo-site.json`: its `generator` names the datarepo
+  that built the page. On 2026-09-30 it said 0.28.1 a day after 0.32.0 shipped, because aging's
+  `publish_catalog_and_site.ps1` points at a venv that only moves when PXReprise switches (D39).
+- **`threads.py new` needs `--date`** as well as `--project` and `--to`.
 - **The .gitignore template ignores `bin/`.** Add a `!/<dir>/bin/` exception before putting code in any bin folder (G4).
 
 **Sibling project: `E:\CodeReview\aging`** (the NCEMS pipeline). aging *produces* results under

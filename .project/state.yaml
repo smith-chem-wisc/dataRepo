@@ -418,6 +418,17 @@ decisions:
       user, 2026-09-30). N is chosen at each build as the N >= 2 whose count is nearest
       `site.SHARED_PROTEINS_TARGET`, ties to the larger N, and the tile states N. A fixed 3 read 14,442
       at 62 datasets and would only grow. Shipped in 0.32.0 (N = 5, 9,639 on aging's catalog).
+  - id: D39
+    date: 2026-09-30
+    text: >-
+      The batch switches to datarepo 0.32.0 NOW; "aging moves once" is dropped (the user, answering
+      PXR-D6 in PXReprise 007). Amends D37's "build it in the release PXReprise switches in": the
+      release that reads `definitions` (D37, with G76 and G81) is a SECOND, later switch. Reason: the
+      public site was rebuilt on 0.28.1 (catalog 437b6ad19e6ff393) and lacks 0.32.0's figures, and
+      PXD075372 stays un-ingested until the switch; the definitions release is unbuilt with a
+      prerequisite (G76's bridge-oracle step), while a switch costs PXReprise one venv and a restart.
+      Rejected: build D37 alone now as 0.33.0 (a few hours before the site moves, G76 a third switch);
+      wait for D37 + G76 (slowest).
 gaps:
   - >-
     G1 Framework. Steps 1 (ingest), 2 (build) and 3 (MCP) are BUILT and locked as D9/D10/D12-D15.

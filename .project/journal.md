@@ -1809,3 +1809,36 @@ watcher waited for tag run 36739417858, which went green on all four platforms a
 on the draft, and only then did I say go. Thread 082 went to aging after master was pushed: it
 answers REQ-DATAREPO-7 and moves their build-and-publish target from 0.30.0 to 0.32.0. The three new
 figures reach the live page only through that rebuild.
+
+## 2026-09-30 - Twenty-fifth: the site's missing figures were a pin, not a bug; switch now (D39); inbox cleared
+
+The user reported that the public aging site still showed the old figures of merit. The page itself
+said why: its footer and `.datarepo-site.json` name `datarepo 0.28.1` as the generator, for catalog
+437b6ad19e6ff393 built at 17:35 UTC today. aging's publish script (`instance/publish_catalog_and_site.ps1`
+line 24) still points at `F:\aging_batch\venv-0.28.1`, and no 0.32.0 venv exists yet, because the
+switch is G78 on aging's side and waits on PXReprise building the venv. Under D27 we do not touch the
+operator's publish, so the finding went into the thread rather than into their script. Reading a
+site's marker file is the cheapest way to answer "which release built this page", and it is now in
+CLAUDE.md.
+
+PXReprise 006 then turned out to be the actual blocker. It answered DATAREPO-64 (the ten `pxreprise:`
+definitions live in their `DEFINITIONS.md` at `1ac199e`) and asked PXR-D6: which datarepo version reads
+`definitions`, so that aging's batch switches only once, for that and REQ-DATAREPO-7 together. That
+release does not exist and is batched with G76, which has its own prerequisite. Their 007 to aging had
+agreed to switch at 0.32.0, so the two threads disagreed. The user chose to switch now (D39): the
+site and PXD075372 are worth more than one avoided venv rebuild. PXReprise 007 says so, tells them
+not to ship their provenance change before our definitions release, and promises the sha only once
+it is pushed. Rejected: building D37 alone as 0.33.0 today (a few hours, and G76 would then be a third
+switch), and waiting for D37 + G76.
+
+The rest of the inbox. pep 005 says MetaMorpheus #2844 merged with iterative PEP training ON by
+default, so DEF-PEP's version key now needs `iterative <on|off|not recorded>`; that is G81, batched
+into the next ingest release. sdrf 026 answered DATAREPO-61: a column source of `not applicable` means
+"no override, the row default applies", so our 0.28.0 reading stands; they asked for the PXD016662
+mixed-species organism limit to be noted, which is now in `docs/limitations.md` §2 with the reading
+rule. dia 001 (a new MetaMorpheus DIA search, arriving via PXReprise) asked whether ingest can take
+their draft TSVs. Answer, dia 002: not on 0.32.0, and a precursor cannot be a `psms` row because it
+has no scan and our USI is built from one, so it needs its own table (G82, a core schema bump when
+it comes). We asked for a typed mzLib reader beside their writer (DATAREPO-65) and how contaminants
+are labelled (DATAREPO-66), since their T/D/ET/ED labels name none. Small trap: `threads.py new`
+refuses without `--date`.
