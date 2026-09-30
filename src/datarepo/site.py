@@ -296,12 +296,22 @@ def _figures_of_merit(con: Any) -> list[dict[str, Any]]:
     # Per dataset, because the contaminant label is: human albumin is a target in a human search
     # and a contaminant in a rodent one, and a corpus-wide flag dropped it from every count (aging
     # 070 57f). An accession counts in a dataset where it was accepted and was not a contaminant.
-    proteins, shared = con.execute(
-        "SELECT count(*), count(*) FILTER (WHERE n >= 3) FROM ("
+    spread = con.execute(
+        "SELECT n, count(*) FROM ("
         "  SELECT protein_accession, count(DISTINCT dataset_id) AS n FROM protein_datasets "
         "  WHERE (n_protein_groups > 0 OR n_peptidoforms > 0) "
         "    AND NOT coalesce(is_contaminant, false) AND protein_accession NOT LIKE 'DECOY%' "
-        "  GROUP BY 1)"
+        "  GROUP BY 1) GROUP BY 1"
+    ).fetchall()
+    proteins = sum(c for _, c in spread)
+    shared_in, shared = _shared_threshold(dict(spread))
+    # A peptide sequence at 1% FDR counts as unique when parsimony gave it one protein in EVERY
+    # dataset where it passed; `target` excludes decoys and contaminants. Parsimony-unique, not
+    # sequence-unique: `is_unique` comes from the producer's parsimony list (G76).
+    peptides, unique_peptides = con.execute(
+        "SELECT count(*), count(*) FILTER (WHERE u) FROM ("
+        "  SELECT base_sequence, bool_and(coalesce(is_unique, false)) AS u "
+        "  FROM peptidoforms_1pct GROUP BY 1)"
     ).fetchone()
     # Enriched datasets (pull-downs, probes, IPs) say nothing about a proteome, so the count a reader
     # asking "how much of the proteome is here" needs is the one over whole-proteome datasets only
@@ -319,6 +329,14 @@ def _figures_of_merit(con: Any) -> list[dict[str, Any]]:
     kinds = con.execute(
         "SELECT count(DISTINCT modification_name) FROM ptm_sites WHERE target_decoy = 'target'"
     ).fetchone()[0]
+    # By UNIMOD accession, not name: "Phosphoserine on S" (UniProt) and "Phosphorylation on S"
+    # (the search) are one chemistry, and a name match would also catch glycerylphosphoryl-
+    # ethanolamine. The chemistry view counts a residue reached under both names once.
+    phospho, acetyl = con.execute(
+        "SELECT count(*) FILTER (WHERE modification = 'UNIMOD:21'), "
+        "count(*) FILTER (WHERE modification = 'UNIMOD:1') "
+        "FROM ptm_sites_by_chemistry WHERE target_decoy = 'target'"
+    ).fetchone()
     ms2_note = f"MS2 scans in the raw files, summed ({defs.MS2_COUNT.definition_id})"
     if ms2_datasets != n_datasets:
         ms2_note += f"; {ms2_datasets} of {n_datasets} datasets report it"
@@ -329,15 +347,43 @@ def _figures_of_merit(con: Any) -> list[dict[str, Any]]:
         {"label": "Spectra searched", "value": ms2 and int(ms2), "note": ms2_note},
         {"label": "PSMs at 1% FDR", "value": psms,
          "note": "target peptide-spectrum matches, as the search engine counts them"},
+        {"label": "Unique peptides at 1% FDR", "value": unique_peptides,
+         "note": f"peptide sequences assigned to a single protein by parsimony in every dataset "
+                 f"that found them, decoys and contaminants excluded; out of {peptides or 0:,} "
+                 f"sequences in all"},
         {"label": "Proteins identified", "value": proteins,
-         "note": f"accessions with 1%-FDR evidence, decoys and contaminants excluded; "
-                 f"{shared or 0:,} of them in 3 or more datasets"},
+         "note": f"accessions with 1%-FDR evidence, decoys and contaminants excluded"
+                 + (f"; {shared:,} of them in {shared_in} or more datasets" if shared_in else "")},
         {"label": "Proteins, whole-proteome datasets", "value": whole,
          "note": f"the same count over the {n_whole:,} datasets with no enrichment step; an "
                  f"enriched dataset (pull-down, probe, IP) says nothing about the proteome"},
         {"label": "PTM sites", "value": sites,
-         "note": f"modified residues on proteins, {kinds or 0:,} kinds of modification"},
+         "note": f"modified residues on proteins, {kinds or 0:,} kinds of modification; on "
+                 f"target proteins, {phospho or 0:,} phosphorylation (UNIMOD:21) and "
+                 f"{acetyl or 0:,} acetylation (UNIMOD:1) sites"},
     ]
+
+
+#: The "in N or more datasets" figure aims here: N is chosen per build so the count stays near it,
+#: because a fixed N counts more proteins with every dataset added (3 gave 14,442 at 62 datasets).
+SHARED_PROTEINS_TARGET = 10_000
+
+
+def _shared_threshold(by_n: dict[int, int]) -> tuple[int | None, int]:
+    """(N, count) for the N >= 2 whose "in N or more datasets" count is nearest the target.
+
+    A tie goes to the larger N, the stricter statement. (None, 0) when no protein is in two
+    datasets, since "in 1 or more" is every protein and says nothing.
+    """
+    best: tuple[int | None, int] = (None, 0)
+    at_least = 0
+    for n in sorted(by_n, reverse=True):
+        at_least += by_n[n]
+        if n < 2:
+            break
+        if best[0] is None or abs(at_least - SHARED_PROTEINS_TARGET) < abs(best[1] - SHARED_PROTEINS_TARGET):
+            best = (n, at_least)
+    return best
 
 
 # --- words -------------------------------------------------------------------------------------

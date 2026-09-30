@@ -244,6 +244,48 @@ def test_the_figures_of_merit_are_the_catalogs_sums(tmp_path, catalog):
     assert "0 of 2 datasets report it" in merit["Spectra searched"]["note"]
 
 
+def test_the_shared_protein_threshold_keeps_the_count_near_ten_thousand():
+    from datarepo.site import _shared_threshold
+
+    # aging's 62-dataset catalog, 2026-09-30: ">= 3" read 14,442; ">= 5" is 9,639, the nearest.
+    by_n = {1: 8164, 2: 4498, 3: 2861, 4: 1942, 5: 1449, 6: 8190}  # 6 stands for ">= 6"
+    assert _shared_threshold(by_n) == (5, 9639)
+    # "in 1 or more datasets" is every protein, so it is never offered.
+    assert _shared_threshold({1: 50}) == (None, 0)
+    # A small corpus falls back to the loosest statement that still says something.
+    assert _shared_threshold({1: 5, 2: 3, 3: 1}) == (2, 4)
+
+
+def test_the_unique_peptide_figure_counts_sequences_not_rows(catalog):
+    from datarepo.site import read_site_facts
+    import duckdb
+
+    merit = {m["label"]: m for m in read_site_facts(catalog)["merit"]}
+    con = duckdb.connect(str(catalog), read_only=True)
+    expected = con.execute(
+        "SELECT count(*) FROM (SELECT base_sequence FROM peptidoforms_1pct GROUP BY 1 "
+        "HAVING bool_and(coalesce(is_unique, false)))"
+    ).fetchone()[0]
+    con.close()
+    assert merit["Unique peptides at 1% FDR"]["value"] == expected
+
+
+def test_the_ptm_tile_counts_phospho_and_acetyl_by_unimod_accession(catalog):
+    from datarepo.site import read_site_facts
+    import duckdb
+
+    note = {m["label"]: m for m in read_site_facts(catalog)["merit"]}["PTM sites"]["note"]
+    con = duckdb.connect(str(catalog), read_only=True)
+    phospho, acetyl = con.execute(
+        "SELECT count(*) FILTER (WHERE modification = 'UNIMOD:21'), "
+        "count(*) FILTER (WHERE modification = 'UNIMOD:1') "
+        "FROM ptm_sites_by_chemistry WHERE target_decoy = 'target'"
+    ).fetchone()
+    con.close()
+    assert f"{phospho:,} phosphorylation (UNIMOD:21)" in note
+    assert f"{acetyl:,} acetylation (UNIMOD:1)" in note
+
+
 def test_a_compacted_figure_keeps_its_magnitude():
     from datarepo.site import _compact
 
