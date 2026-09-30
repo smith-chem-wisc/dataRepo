@@ -13,10 +13,29 @@ that cannot be matched produces no USI rather than one that fails to resolve.
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 
 #: Suffixes the pipeline's calibration stage appends to a run's base name.
 CALIBRATION_SUFFIXES = ("-calib", "-averaged", "-calibrated")
+
+
+#: mzLib's `SpectrumMatchFromTsvHeader.AcceptedSpectraFormats`, in its order (mzLib 33f9e618).
+MZLIB_TSV_SPECTRA_FORMATS = (".raw", ".mzML", ".mgf", ".d", "ms1.msalign", "ms2.msalign")
+
+
+def mzlib_tsv_file_name(name: str) -> str:
+    """The run name mzLib's PSM reader reports for a file named `name`.
+
+    `SpectrumMatchFromTsv` deletes every occurrence of each known spectra extension ANYWHERE in the
+    `File Name` cell, case-insensitively, not just a final one. So PRIDE's `X.raw.thermo.raw`,
+    searched as `X.raw.thermo`, comes back from pyMzLib as `X.thermo` (aging 081, REQ-DATAREPO-7).
+    Mirrored exactly so a deposited name can be compared with what the reader says.
+    """
+    for ext in MZLIB_TSV_SPECTRA_FORMATS:
+        name = re.sub(re.escape(ext), "", name, flags=re.IGNORECASE)
+        name = re.split(r"[\\/]", name)[-1]
+    return name
 
 
 def strip_pipeline_suffix(name: str) -> str:
@@ -43,14 +62,22 @@ class RunNameMap:
 
     def __post_init__(self) -> None:
         self._index = {name.casefold(): name for name in self.deposited}
+        # The same names as mzLib's PSM reader would report them. Two deposited names that the
+        # reader collapses to one are left out: a match there would be a guess.
+        mangled: dict[str, list[str]] = {}
+        for name in self.deposited:
+            mangled.setdefault(mzlib_tsv_file_name(name).casefold(), []).append(name)
+        self._mangled = {k: v[0] for k, v in mangled.items() if len(v) == 1}
         self.unmatched: dict[str, int] = {}
 
     def resolve(self, reported: str) -> str | None:
         """Return the deposited run name for a name a search reported, or None."""
-        for candidate in (reported, strip_pipeline_suffix(reported)):
-            hit = self._index.get(candidate.casefold())
-            if hit is not None:
-                return hit
+        candidates = (reported, strip_pipeline_suffix(reported))
+        for index in (self._index, self._mangled):
+            for candidate in candidates:
+                hit = index.get(candidate.casefold())
+                if hit is not None:
+                    return hit
         self.unmatched[reported] = self.unmatched.get(reported, 0) + 1
         return None
 

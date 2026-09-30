@@ -195,6 +195,29 @@ def test_an_ontology_term_in_the_cell_is_preferred_over_a_name_lookup():
     assert sdrf_source.parse_value("Homo sapiens") == {"NT": "Homo sapiens"}
 
 
+# --- run names ---------------------------------------------------------------------------------
+
+def test_a_run_whose_stem_holds_a_spectra_extension_still_resolves():
+    # aging 081 (REQ-DATAREPO-7): PRIDE's `X.raw.thermo.raw`, searched as `X.raw.thermo`, reaches us
+    # from mzLib's PSM reader as `X.thermo-calib`, because mzLib deletes `.raw` anywhere in the name.
+    names = RunNameMap(("QEX03_AM_230117_CW10_065.raw.thermo", "QEX03_MF_221219_CW14_107.raw.thermo"))
+    assert names.resolve("QEX03_AM_230117_CW10_065.thermo-calib") == "QEX03_AM_230117_CW10_065.raw.thermo"
+    assert names.resolve("QEX03_MF_221219_CW14_107.thermo") == "QEX03_MF_221219_CW14_107.raw.thermo"
+    # The plain path is untouched, with and without calibration.
+    plain = RunNameMap(("QE-002106_GM1_a",))
+    assert plain.resolve("QE-002106_GM1_a-calib") == "QE-002106_GM1_a"
+    assert plain.resolve("QE-002106_GM1_a") == "QE-002106_GM1_a"
+    assert names.unmatched == {} and plain.unmatched == {}
+
+
+def test_two_runs_that_mzlib_reports_alike_resolve_to_neither():
+    # `a.raw.b` and `a.b` both read as `a.b`; picking one would put PSMs on the wrong run.
+    names = RunNameMap(("a.raw.b", "a.mzML.b"))
+    assert names.resolve("a.b-calib") is None
+    # An exact deposited name still wins over the mangled index.
+    assert RunNameMap(("a.b", "a.raw.b")).resolve("a.b") == "a.b"
+
+
 # --- FlashLFQ ---------------------------------------------------------------------------------
 
 def test_a_zero_intensity_produces_no_quant_row_because_missing_is_not_zero(registry):
