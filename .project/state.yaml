@@ -411,6 +411,13 @@ decisions:
       mean is the producer's statement and travels hashed inside the bundle; the manifest is the
       operator's. None declared reads as `aging:`. An `aging:` id and its `pxreprise:` twin never
       differ in meaning; a changed meaning is a new id. Build it in the release PXReprise switches in.
+  - id: D38
+    date: 2026-09-30
+    text: >-
+      The site's "in N or more datasets" protein figure is held near 10,000, not at a fixed N (the
+      user, 2026-09-30). N is chosen at each build as the N >= 2 whose count is nearest
+      `site.SHARED_PROTEINS_TARGET`, ties to the larger N, and the tile states N. A fixed 3 read 14,442
+      at 62 datasets and would only grow. Shipped in 0.32.0 (N = 5, 9,639 on aging's catalog).
 gaps:
   - >-
     G1 Framework. Steps 1 (ingest), 2 (build) and 3 (MCP) are BUILT and locked as D9/D10/D12-D15.
@@ -935,7 +942,16 @@ gaps:
     `not applicable` fell through to the row default, so 65 PXD016662 biological-replicate cells read
     `publication`; sdrf 024 §1 repeated that, corrected in sdrf 025.]
   - >-
-    G76 Sequence-level peptide specificity (aging 075, REQ-DATAREPO-5 (b)/(c)). `is_unique` is
+    G80 Report mzLib's run-name defect upstream (REQ-DATAREPO-7, aging 081). `SpectrumMatchFromTsv`
+    (mzLib 33f9e618) deletes `.raw`/`.mzML`/`.mgf`/`.d`/`ms1.msalign`/`ms2.msalign` ANYWHERE in
+    `File Name`, case-insensitively, so PRIDE's `X.raw.thermo.raw` reads as `X.thermo` and `run.day2`
+    as `runay2`. 0.32.0 works around it in `usi.RunNameMap` (mirrors the rule, unambiguous only).
+    Not yet reported: take it to pyMzLib (thread) / mzLib (issue, via /oracle mzLib), re-testing on the
+    current release first; when fixed upstream, delete `usi.mzlib_tsv_file_name`.
+  - >-
+    G76 Sequence-level peptide specificity (aging 075, REQ-DATAREPO-5 (b)/(c)). ALSO: the site's
+    "Unique peptides at 1% FDR" tile (0.32.0) counts parsimony-unique sequences and says so; switch it
+    to sequence-unique when this is built. `is_unique` is
     `len(parsimony protein_accessions) == 1` (identifications.py), so a peptide in P02751 and three of
     its isoforms reads true; `is_isoform_specific` is NULL on every row. 0.28.1 fixed the descriptions
     only. Build: compute both against the searched sequences (the databases bundle.json records;

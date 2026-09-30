@@ -1765,3 +1765,47 @@ was re-run by hand.
 Two corrections to our own claims went out. aging 079 told aging to build from 06dace3, but aging had
 already re-ingested all 54 on 0.28.1, found only by reading the store before writing 080. And
 PXReprise 004 said pyproject.toml named the new URL, when it has none; corrected in 005.
+
+## 2026-09-30 - Twenty-fourth: three front-page figures for the user, and REQ-DATAREPO-7 fixed; v0.32.0 released
+
+The user came in with a screenshot of the public site and the impression that dataRepo is in charge
+of it. We are half in charge: `datarepo site` writes the page, and aging builds and publishes it
+(D25, D27). The screenshot already showed 62 datasets on catalog 81ceb87ea745ee62, which aging had
+rebuilt since our last close (54 datasets).
+
+The user asked for three figures. All three were measured on aging's serving catalog, opened
+read-only, before any code was written.
+- **A unique-peptide tile.** 287,642 distinct peptide sequences at 1% FDR are unique, out of
+  298,626. "Unique" here means parsimony gave the sequence one protein in every dataset that found
+  it (293,342 if one dataset is enough). The tile says "by parsimony", because `is_unique` is not
+  sequence-level until G76 is built.
+- **The shared-protein figure held near 10,000.** "In 3 or more datasets" read 14,442. The user
+  wanted the cutoff raised so the count stays near 10,000, and a fixed N would only drift upward as
+  aging adds datasets. So N is chosen at every build (D38). Today it is 5, which gives 9,639; 4
+  would give 11,581. My first unit-test fixture for this was mis-summed, and the code was right.
+- **Phosphorylation and acetylation counts on the PTM tile.** These count by UNIMOD accession over
+  `ptm_sites_by_chemistry`. A name match would have caught "glycerylphosphorylethanolamine", and it
+  would have double-counted residues that appear under both a UniProt name and a search name
+  (Phosphoserine / Phosphorylation on S). The result is 16,113 phosphorylation and 19,924
+  acetylation sites on target proteins.
+
+Then REQ-DATAREPO-7 (aging 081). PXD075372 refused to ingest because none of its PSMs matched a
+run. aging guessed our suffix stripping ran in the wrong order. Reading mzLib's source showed the
+cause is upstream: `SpectrumMatchFromTsv` deletes each known spectra extension (`.raw`, `.mzML`,
+`.mgf`, `.d`, and the msalign ones) anywhere in `File Name`. So PRIDE's `X.raw.thermo.raw` comes
+back to us as `X.thermo-calib`. `.d` is on that list, so any stem containing `.d` is damaged the
+same way. `RunNameMap` now compares against each deposited name as mzLib would report it, and only
+where that is unambiguous. The proof was a scratch ingest of aging's real output: junctions to the
+run, `db` and `mm_settings`, and a scratch store. It wrote bundle e982a3dfb717d4ea with 1,550,591
+PSMs on all 24 runs, and every PSM has a USI. The 0.1% gap to MetaMorpheus's 1% count lies
+between our q-only count and our notch-filtered count, so it is the known notch predicate and not
+lost runs. The upstream report is G80.
+
+Release 0.32.0 carries INGESTER 0.22.0 on schema 0.0.13, so only PXD075372 needs ingesting. The
+tutorial was rerun: bundle aeb10630abbcaf72, catalog 153cf55067d58441. The auto-mode classifier
+blocked my push and tag, since they are a public release, so the user ran push, tag, tag push and
+publish with `!`. The user asked to be told explicitly when the last command was safe. A background
+watcher waited for tag run 36739417858, which went green on all four platforms and left four assets
+on the draft, and only then did I say go. Thread 082 went to aging after master was pushed: it
+answers REQ-DATAREPO-7 and moves their build-and-publish target from 0.30.0 to 0.32.0. The three new
+figures reach the live page only through that rebuild.

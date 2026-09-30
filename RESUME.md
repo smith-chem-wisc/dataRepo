@@ -2,14 +2,14 @@
 
 <!-- BEGIN GENERATED -- render_resume.py owns this block; edit state.yaml, not here -->
 
-**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-09-29
+**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-09-30
 
 | | |
 |---|---|
-| Commits | 345 |
+| Commits | 352 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
-| Locked decisions | 37 |
-| Open gaps | 74 |
+| Locked decisions | 38 |
+| Open gaps | 75 |
 | Gate items skipped | 4 |
 
 <!-- END GENERATED -->
@@ -22,7 +22,34 @@ reanalyses. The results cover search, quant, provenance, design and organelle an
 use it, but AI agents are the main users. The question it serves is how organelle proteomes change
 with age.
 
-## Latest (2026-09-29, twenty-third session): public. `publish`, v0.31.0 with no-Python downloads, docs rebuilt, repo moved
+## Latest (2026-09-30, twenty-fourth session): v0.32.0, three new front-page figures and REQ-DATAREPO-7
+
+**Code is datarepo 0.32.0, RELEASED:** https://github.com/smith-chem-wisc/dataRepo/releases/tag/v0.32.0
+(tag on `6abd39e`, binaries run 36739417858 green on 4 platforms). `INGESTER_VERSION` 0.22.0, schema
+0.0.13, `CATALOG_VERSION` 8. Tutorial ids: bundle `aeb10630abbcaf72`, catalog `153cf55067d58441`.
+
+- **Site (`2ff8874`, the user's request, measured on aging's 62-dataset serving catalog first):**
+  - a new tile, "Unique peptides at 1% FDR": 287,642 of 298,626 sequences. These are
+    parsimony-unique in every dataset that found them (G76 will make it sequence-level);
+  - the proteins tile's "in N or more datasets": N is chosen per build so the count sits nearest
+    10,000 (D38). Today N = 5, giving 9,639; a fixed 3 read 14,442;
+  - the PTM tile adds 16,113 phosphorylation and 19,924 acetylation sites on target proteins, by
+    UNIMOD accession over `ptm_sites_by_chemistry`.
+- **REQ-DATAREPO-7 (aging 081), fixed:** mzLib's `SpectrumMatchFromTsv` deletes `.raw` / `.mzML` /
+  `.mgf` / `.d` / msalign ANYWHERE in `File Name`. So PXD075372's `X.raw.thermo.raw` runs matched
+  nothing and the bundle refused to write. `usi.RunNameMap` now mirrors mzLib's rule, using it only
+  where the result is unambiguous.
+  - A scratch ingest of aging's real output wrote bundle `e982a3dfb717d4ea`: 1,550,591 PSMs, all 24
+    runs, every PSM with a USI.
+  - Reporting the defect upstream is G80.
+- **Thread aging 082** (pushed both sides): REQ-DATAREPO-7 answered. aging should ingest PXD075372
+  and build and publish on 0.32.0, not 0.30.0. The new figures reach the live page only through
+  that rebuild.
+- **The auto-mode classifier blocks the agent's release push and tag.** The user ran push, tag, tag
+  push and `gh release edit` with `!`, and asked to be told explicitly when each step is safe. A
+  background watcher on the tag run did that.
+
+### 2026-09-29, twenty-third session: public. `publish`, v0.31.0 with no-Python downloads, docs rebuilt, repo moved
 
 **Code is datarepo 0.31.0, RELEASED:** https://github.com/smith-chem-wisc/dataRepo/releases/tag/v0.31.0
 (tag commit `cc21f1c`). Schema 0.0.13, `INGESTER_VERSION` 0.21.0, aging layer 0.5.0,
@@ -839,9 +866,10 @@ from a single query.
 
 ### The next action
 
-**Nothing is owed by us at the 2026-09-29 close.** v0.31.0 is released, and every peer thread is
-answered.
+**Owed by us at the 2026-09-30 close: two unread threads.** v0.32.0 is released.
 
+0. **Read and answer PXReprise 006** (it asks PXR-D6) **and pep 005** (the checker's `* 1 UNREAD`).
+   Run `threads.py inbox --mark-read` after reading.
 1. **Build G76** (aging 075, REQ-DATAREPO-5 b/c): compute peptide specificity from the SEARCHED
    sequences, not the parsimony list. Keep `protein_accessions` as it is. First run
    `/bridge-oracle pyMzLib` on `classify_peptides`: it may already do this. Then decide between new
@@ -860,17 +888,22 @@ answered.
    - read `catalog_meta` (format 8);
    - check that the site kept its wording (they need `--purpose ... --keyword aging`);
    - once they deliver `curated_sample_characteristics`, count its `value_reserved` rows.
-5. **Otherwise:** the G70 remainder (the `results.txt` PEP block, batched with G76), G62 (b), and
+5. **G80:** report mzLib's extension-anywhere run-name defect (pyMzLib thread, then an mzLib issue
+   via `/oracle mzLib`). Re-test on the current release first.
+6. **Otherwise:** the G70 remainder (the `results.txt` PEP block, batched with G76), G62 (b), and
    G77 when a result first uses a logs snapshot.
 
 **Releasing:** bump `__version__` and add a CHANGELOG entry. Then update the tutorial's printed ids
 (`test_getting_started` fails until you do: rerun the tutorial on the new version). Push, and wait
 for CI green. Then `git tag -a vX.Y.Z` and `git push origin vX.Y.Z`, wait for the `binaries`
 workflow, and `gh release edit vX.Y.Z --draft=false --notes-file <notes>`. Publishing is the user's
-call.
+call. **The classifier refuses the agent's push and tag of a release**, so hand the user the `!`
+commands one at a time, and say plainly when the tag run is green and the draft has its four
+assets.
 
 **In flight (re-check each with the thread checker):**
-- **aging:** build and publish on 0.30.0 or later (080); deliver `curated_sample_characteristics` after
+- **aging:** ingest PXD075372 and build and publish on **0.32.0** (082, which supersedes 080's 0.30.0).
+  Then check the live page shows the three new figures; deliver `curated_sample_characteristics` after
   the four samples.tsv fixes in 079 §2; add `pipeline.public_repo/public_commit` (55e); decide the
   catalog / Parquet publication (56, Zenodo recommended).
   - Our 079/080 mirrors are committed in aging's repo but were NOT pushed. aging had its own

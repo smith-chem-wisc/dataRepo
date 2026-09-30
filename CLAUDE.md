@@ -6,28 +6,30 @@ This folder is a `/project`-managed research project. **You are de facto working
 
 - **Phase:** INCEPTION
 - **Goal:** An AI-ready, API-accessible repository for the search + quant results of the many PRIDE datasets the `aging` pipeline reanalyzes. Humans can use it, but AI agents are the main users. The question it serves is how organelle proteomes change with age.
-- **Pick up at:** **First thing: run the thread checker.** Nothing was owed at the 2026-09-29 close.
-  **v0.31.0 is RELEASED** (https://github.com/smith-chem-wisc/dataRepo/releases/tag/v0.31.0, tag
-  `cc21f1c`), with four no-Python executables (D36), each verified in CI by running the tutorial.
+- **Pick up at:** **First thing: run the thread checker.** At the 2026-09-30 close two threads were
+  UNREAD: **PXReprise 006 (asks PXR-D6) and pep 005**. Read and answer them first.
+  **v0.32.0 is RELEASED** (https://github.com/smith-chem-wisc/dataRepo/releases/tag/v0.32.0, tag on
+  `6abd39e`). It has the REQ-DATAREPO-7 run-name fix and three new site figures (D38).
   - **Next build: G76** (aging 075): `is_unique` / `is_isoform_specific` from the SEARCHED sequences.
     Run `/bridge-oracle pyMzLib` on `classify_peptides` first. **Batch it with D37**: the
     `pxreprise:` definitions, declared as `"definitions"` in provenance.json. Wait for PXReprise's
-    DATAREPO-64 (where their text lives), so aging moves once. aging JUST re-ingested all 54 on
-    0.28.1, and 0.29-0.31 need no re-ingest.
+    DATAREPO-64 (where their text lives), so aging moves once. G76 also switches the site's
+    unique-peptide tile to sequence-unique.
   - **No row change:** G79 (b), move the per-layer rule dicts into `schema/study/aging.yaml`.
+    G80: report mzLib's run-name defect upstream.
   - See RESUME's "Pick up at", which also has the release recipe.
   - **In flight:**
-    - aging: build on 0.30.0 or later with `--purpose "how organelle proteomes change with age"
-      --keyword aging` (080); fix samples.tsv (079 §2) and deliver `curated_sample_characteristics`.
-      **Our 079/080 mirrors sit UNPUSHED in aging's repo**, beside aging's own unpushed commits.
+    - aging: ingest PXD075372 and build/publish on **0.32.0** with `--purpose "how organelle
+      proteomes change with age" --keyword aging` (082). Then check the live page shows the new
+      tiles. Also: fix samples.tsv (079 §2) and deliver `curated_sample_characteristics`.
     - PXReprise: DATAREPO-64, and their `pxreprise-provenance/1` switch.
     - sdrf: DATAREPO-61/31/32. phred: check charter v0.5 (004). go: PR B (#1353).
-  - Versions: datarepo **0.31.0**, core schema **0.0.13**, `bundle.INGESTER_VERSION` **0.21.0**,
+  - Versions: datarepo **0.32.0**, core schema **0.0.13**, `bundle.INGESTER_VERSION` **0.22.0**,
     aging study layer **0.5.0**, `study.STUDY_INGESTER_VERSION` **0.6.0**, `runner.RUNNER_VERSION`
     **1**, `catalog.CATALOG_VERSION` **8**.
   - **D27: dataRepo SHIPS, the instance operator (aging) RUNS.** Charter **v0.5** (`5935931`); G73
-    open. Public aging site: https://trishorts.github.io/aging-pipeline/ (catalog `c3e8d1e85612ed0c`,
-    54 datasets, built on 0.28.1).
+    open. Public aging site: https://trishorts.github.io/aging-pipeline/ (catalog `81ceb87ea745ee62`,
+    62 datasets, seen 2026-09-30; not yet rebuilt on 0.32.0).
   - Each change that reaches rows needs an `INGESTER_VERSION` bump in the same commit (a runner
     change: `RUNNER_VERSION`).
   - Standing: G48, G35 (do NOT claim D15's bar), G32, G46, G33/G26/G36, G13. **N1/G9 goes to the
@@ -357,6 +359,13 @@ This folder is a `/project`-managed research project. **You are de facto working
   a stranger with only the page and a fresh clone found a dozen faults in 2.5 minutes.
 - **Repo moves and remote repoints are the user's.** The agent's `git remote set-url` was denied
   (2026-09-29); the user ran it. Publishing a release happened only on the user's explicit ask.
+- **mzLib's PSM reader rewrites run names**: `SpectrumMatchFromTsv` deletes `.raw`, `.mzML`, `.mgf`,
+  `.d` and the msalign extensions ANYWHERE in `File Name`. So `X.raw.thermo.raw` reads as `X.thermo`,
+  and `run.day2` as `runay2`. `usi.RunNameMap` mirrors the rule (0.32.0, G80). A run-name mismatch
+  is decided in mzLib's source, not by guessing strip order.
+- **The auto-mode classifier refuses the agent's push and tag of a release.** Commit locally, then give
+  the user the `!` commands one at a time. Watch the tag run in the background and say explicitly
+  when `gh release edit --draft=false` is safe (the user asked for exactly that).
 - **The .gitignore template ignores `bin/`.** Add a `!/<dir>/bin/` exception before putting code in any bin folder (G4).
 
 **Sibling project: `E:\CodeReview\aging`** (the NCEMS pipeline). aging *produces* results under
