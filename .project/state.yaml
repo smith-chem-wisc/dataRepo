@@ -949,7 +949,21 @@ gaps:
     Not yet reported: take it to pyMzLib (thread) / mzLib (issue, via /oracle mzLib), re-testing on the
     current release first; when fixed upstream, delete `usi.mzlib_tsv_file_name`.
   - >-
-    G76 Sequence-level peptide specificity (aging 075, REQ-DATAREPO-5 (b)/(c)). ALSO: the site's
+    G81 NEW 2026-09-30 (pep 005). Add `iterative <on|off|not recorded>` to pep:DEF-PEP's version key
+    (`definitions.pep_definition`): `MetaMorpheus <release>; regime <regime>; iterative <...>`.
+    MetaMorpheus #2844 merged at `c4515a797` (2026-09-29); iteration is ON by default. Rule: key
+    `IterativePepTraining` under `[SearchParameters]` in the task TOML -> its value; absent and
+    release predates the merge -> off; absent and release contains it -> on (or `not recorded`);
+    glyco / crosslink / nonspecific / variant passes -> off whatever the key says. Changes a
+    definitions row, so INGESTER_VERSION bump; batch with the D37 / G76 release. Tell pep the sha.
+  - >-
+    G82 NEW 2026-09-30 (dia 001, DATAREPO-Q1). Ingest dia's DIA outputs (`AllDiaPrecursors.tsv`,
+    `AllDiaPeptides.tsv`, `AllDiaProteinGroups.tsv`) arriving via PXReprise. A DIA precursor has no
+    scan, so it cannot be a `Psm` row (scan and usi are required): needs a new table, i.e. a core
+    schema bump. Answered with requirements in dia 002; build after dia's M7 writer and a pyMzLib
+    reader exist.
+  - >-
+    G76Sequence-level peptide specificity (aging 075, REQ-DATAREPO-5 (b)/(c)). ALSO: the site's
     "Unique peptides at 1% FDR" tile (0.32.0) counts parsimony-unique sequences and says so; switch it
     to sequence-unique when this is built. `is_unique` is
     `len(parsimony protein_accessions) == 1` (identifications.py), so a peptide in P02751 and three of
