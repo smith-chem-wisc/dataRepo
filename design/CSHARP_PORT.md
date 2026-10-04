@@ -101,6 +101,21 @@ or a Python bug, and each gets a named finding before the switch. The Python bug
 - **pyMzLib stops being a dependency** once ingest is ported. Their DATAREPO-M1 answer says so. Our needs
   move to mzLib itself, through `/oracle mzLib`.
 
+## Requirements peers have handed the port (carry them to the phase named)
+
+- **aging 084** (answers DATAREPO-68): no Python imports of datarepo anywhere; they run `ingest`, `build`,
+  `study`, `site`, `manifest` and the MCP server (`python -m datarepo.cli mcp` today). **Phase 4/5:** keep a
+  way to start the MCP server they can point `.claude.json` at (an exe is fine) and tell them the new
+  command line at the switch. **Phase 5 (site):** the "Unique peptides" tile's definition must say I and L
+  are equivalent and contaminants count (G76). They re-run their `results/eval/` benchmark on both catalogs
+  from the same bundles before switching, and send every differing answer.
+- **go 020** (D39): once go's D39 is in an mzLib release, a shuffled partner (`Random_<acc>_f<n>`) in
+  `accession_used` can only be a go bug, so the 018 section 1.3 check becomes a regression test and the entrapment
+  refusal is dropped for files whose `#!mzlib_release` is that release or later. Recommendation: leave
+  entrapment groups out of both the hit list and the background of any enrichment input.
+- **pyMzLib 019 / DATAREPO-70**: 46 of 937 `SharedWithinGene` peptides on PXD028975 rest on an Ensembl id
+  alone (paralogs). Ship with mzLib's rule unless they change it; name the 4.9% in the release notes.
+
 ## Open questions (also in OPEN_QUESTIONS.md, each with the default work proceeds on)
 
 - **U16 (answered 2026-10-04: same repo, `dotnet/`):** where the C# lives. Default: `dotnet/` in this repository, so history and the schema stay
