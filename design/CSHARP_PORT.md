@@ -105,7 +105,7 @@ or a Python bug, and each gets a named finding before the switch. The Python bug
 
 - **U16:** where the C# lives. Default: `dotnet/` in this repository, so history and the schema stay
   together. Alternative: a new `smith-chem-wisc/DataRepo.NET` repository.
-- **U17:** whether the docs generator (LinkML's Python tooling) counts as "quick work". Default: yes,
+- **U17 (answered 2026-10-04: yes):** whether the docs generator (LinkML's Python tooling) counts as "quick work". Default: yes,
   for now. It is build-time only, emits Markdown, and never runs on data. Replace it if you say otherwise.
-- **U18:** whether Python 0.32.0 gets operator-blocking fixes during the port. Default: yes, minimal ones,
+- **U18 (answered 2026-10-04: yes):** whether Python 0.32.0 gets operator-blocking fixes during the port. Default: yes, minimal ones,
   each also written into the C# port.
