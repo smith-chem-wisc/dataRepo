@@ -10,9 +10,14 @@ using DataRepo.Ingest;
 //       Phase 2: run the C# ingester on one dataset into a scratch store.
 //   compare <expected bundle dir> <actual bundle dir>
 //       Phase 2: every table of two bundles, row by row (Python's and C#'s ingest of the same inputs).
+//   site <catalog.duckdb> --out <dir> [--title T] [--base-url U] [--data-url U] [--notice T] [--about F]
+//        [--purpose T] [--keyword W]...
+//       Phase 5: `datarepo site` with every option, from the C# generator.
+//   site-compare <expected site dir> <actual site dir>
+//       Phase 5: every file of two sites, byte for byte, the generator's own version normalised (SiteParity).
 if (args.Length == 0)
 {
-    Console.Error.WriteLine("usage: roundtrip | ingest | compare (see Program.cs)");
+    Console.Error.WriteLine("usage: roundtrip | ingest | compare | site | site-compare (see Program.cs)");
     return 2;
 }
 return args[0] switch
@@ -20,12 +25,14 @@ return args[0] switch
     "roundtrip" => RoundTripVerb(args),
     "ingest" => IngestVerb(args),
     "compare" => CompareVerb(args),
+    "site" => DataRepo.Site.SiteCommand.Run(args[1..], Console.Out, Console.Error),
+    "site-compare" => SiteCompareVerb(args),
     _ => Usage(),
 };
 
 static int Usage()
 {
-    Console.Error.WriteLine("usage: roundtrip | ingest | compare (see Program.cs)");
+    Console.Error.WriteLine("usage: roundtrip | ingest | compare | site | site-compare (see Program.cs)");
     return 2;
 }
 
@@ -62,6 +69,15 @@ static int CompareVerb(string[] args)
     var differences = RoundTrip.CompareBundles(args[1], args[2]);
     foreach (var d in differences) Console.WriteLine($"  DIFF  {d}");
     Console.WriteLine(differences.Count == 0 ? "  identical: every table, every row" : $"  {differences.Count} table(s) differ");
+    return differences.Count == 0 ? 0 : 1;
+}
+
+static int SiteCompareVerb(string[] args)
+{
+    if (args.Length < 3) return Usage();
+    var differences = DataRepo.Site.SiteParity.Compare(args[1], args[2], out var files, out var bytes);
+    foreach (var d in differences) Console.WriteLine($"  DIFF  {d}");
+    Console.WriteLine($"  {files} files, {bytes:N0} bytes compared; {differences.Count} difference(s)");
     return differences.Count == 0 ? 0 : 1;
 }
 
