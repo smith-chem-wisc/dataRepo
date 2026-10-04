@@ -460,7 +460,17 @@ gaps:
     (5) whole-valued doubles from pyMzLib arrived as ints (bridge JSON), so str() of them reads "-1" not
     "-1.0"; the C# readers reproduce it. (6) TMT/multiplexed SDRF: run_facts and sample_of_run keyed by
     run, so the last channel's row wins. (7) read_tsv raises on a field over 131,072 chars (csv limit).
-    (8) a superscript replicate digit crashes (isdigit true, int() fails). Found by the porting agents.
+    (8) a superscript replicate digit crashes (isdigit true, int() fails). (9) modlist's Mods/*.txt order
+    was platform-dependent (pathlib case-sensitive on POSIX); the C# fixes it to the Windows order every
+    stored bundle used. (10) protein_db keeps B/Z residues that mzLib sanitises to X before searching
+    (6 mouse + 1 rat protein), so peptides there cannot be placed. (11) runs.build can make duplicate
+    run_ids (qc key `b` beside fetch `b.raw`; `c.mzML` + `c.raw`). (12) assign_enrichment: two runs with
+    one stem, only the later is filled. (13) metric_rows writes MBR keys whose value is null. (14)
+    modification_rows: a name without " on " gets residues = the whole name. (15) tc_ambiguity picks
+    search tasks by file stem (GlycoSearch counts), pep_regime by TaskType. (16) provenance schema regex
+    accepts a trailing newline; a null schema is stored as "None". (17) FASTA read as utf-8 not
+    utf-8-sig (a BOM drops the first protein); an XML entry with an empty first accession is skipped.
+    Found by the porting agents.
   - >-
     G1 Framework. Steps 1 (ingest), 2 (build) and 3 (MCP) are BUILT and locked as D9/D10/D12-D15.
     Step 3 shipped in datarepo 0.10.0 on 2026-09-22: `datarepo mcp --catalog <path>` with
