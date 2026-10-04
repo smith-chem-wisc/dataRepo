@@ -24,7 +24,7 @@ def _copy(tmp_path, source, edit):
 
 
 def test_a_file_from_an_unreleased_mzlib_is_refused_and_the_refusal_names_the_commit():
-    with pytest.raises(IngestError, match="282b480ddc96b632c5d52c510a638928aab4fca6"):
+    with pytest.raises(IngestError, match="c5b16451f71d223c5165dfe5234f06146b80cd0f"):
         go.read_annotation(ANNOTATION)
     with pytest.raises(IngestError, match="unreleased"):
         go.read_categories(CATEGORIES)
@@ -132,8 +132,8 @@ def test_a_term_on_a_group_not_marked_annotated_is_refused(tmp_path):
         lines = text.split("\n")
         for i, line in enumerate(lines):
             cells = line.split("\t")
-            if len(cells) == 15 and cells[2].startswith("GO:"):
-                cells[10] = "no_entry"
+            if len(cells) == len(COLUMNS) and cells[COLUMNS.index("go_id")].startswith("GO:"):
+                cells[COLUMNS.index("annotation_status")] = "no_entry"
                 lines[i] = "\t".join(cells)
                 break
         return "\n".join(lines)
@@ -141,3 +141,63 @@ def test_a_term_on_a_group_not_marked_annotated_is_refused(tmp_path):
     path = _copy(tmp_path, ANNOTATION, edit)
     with pytest.raises(IngestError, match="a term means annotated"):
         go.read_annotation(path, allow_prerelease=True)
+
+
+COLUMNS = list(go.ANNOTATION_COLUMNS)
+
+
+def _rewrite_table(tmp_path, transform):
+    """Apply `transform(header_cells, rows_of_cells)` to the fixture's table, keeping its `#!` lines."""
+    text = ANNOTATION.read_text(encoding="utf-8")
+    meta = [l for l in text.split("\n") if l.startswith("#!")]
+    table = [l.split("\t") for l in text.split("\n") if l and not l.startswith("#!")]
+    names, rows = transform(table[0], table[1:])
+    path = tmp_path / ANNOTATION.name
+    path.write_bytes(("\n".join(meta + ["\t".join(names)] + ["\t".join(r) for r in rows]) + "\n").encode("utf-8"))
+    return path
+
+
+def test_columns_are_found_by_name_not_by_position(tmp_path):
+    # GO-D1: go asked whether the reader looks columns up by name. Reversed order reads the same.
+    path = _rewrite_table(tmp_path, lambda names, rows: (names[::-1], [r[::-1] for r in rows]))
+    expected = go.localization_rows(go.read_annotation(ANNOTATION, allow_prerelease=True))
+    got = go.localization_rows(go.read_annotation(path, allow_prerelease=True))
+    assert [{k: v for k, v in r.items() if k != "source_id"} for r in got] == \
+        [{k: v for k, v in r.items() if k != "source_id"} for r in expected]
+
+
+def test_a_missing_or_unknown_column_is_refused_by_name(tmp_path):
+    drop = COLUMNS.index("evidence_by_member")
+    path = _rewrite_table(tmp_path, lambda n, rows: (n[:drop] + n[drop + 1:], [r[:drop] + r[drop + 1:] for r in rows]))
+    with pytest.raises(IngestError, match=r"missing \['evidence_by_member'\], unknown \[\]"):
+        go.read_annotation(path, allow_prerelease=True)
+    path = _rewrite_table(tmp_path, lambda n, rows: (n + ["new_column"], [r + [""] for r in rows]))
+    with pytest.raises(IngestError, match=r"missing \[\], unknown \['new_column'\]"):
+        go.read_annotation(path, allow_prerelease=True)
+
+
+def test_an_unknown_header_key_such_as_unresolved_go_ids_is_ignored(tmp_path):
+    # go D35: written only when ids were skipped, after source_file_sha256.
+    def edit(text):
+        at = text.index("#!counter_q_value_max")
+        return text[:at] + "#!unresolved_go_ids 3\n" + text[at:]
+
+    annotation = go.read_annotation(_copy(tmp_path, ANNOTATION, edit), allow_prerelease=True)
+    assert annotation.header["unresolved_go_ids"] == "3"
+    assert len(go.localization_rows(annotation)) == len(
+        go.localization_rows(go.read_annotation(ANNOTATION, allow_prerelease=True)))
+
+
+def test_a_group_with_entrapment_members_is_refused(tmp_path):
+    # Our go 013: no file from an entrapment search until GO-E1. D36 made it detectable.
+    col = COLUMNS.index("entrapment_members")
+
+    def mark(names, rows):
+        group = rows[0][0]
+        for r in rows:
+            if r[0] == group:
+                r[col] = "Random_P12345"
+        return names, rows
+
+    with pytest.raises(IngestError, match="entrapment members 'Random_P12345'"):
+        go.read_annotation(_rewrite_table(tmp_path, mark), allow_prerelease=True)

@@ -15,6 +15,9 @@ What it checks, each refusing the file on failure (``IngestError``):
   ``q_value <= counter_q_value_max`` (D29), recounted here so a reader tests go's writer.
 - **Every row agrees with the header** on ``go_release`` and both sha256s, a non-empty ``go_id`` means
   ``annotated`` (D19), and ``n_with`` is the size of ``accession_used`` (D22).
+- **No group has entrapment members** (go D36's ``entrapment_members``). An entrapment protein
+  carries its target's GO (#1271), so no file from an entrapment search is ingested until GO-E1 is
+  answered (our go 013). Before D36 the reader could not see this; now it refuses.
 - **No accession sits in two groups.** go has never seen it (go 010 section 3), and a per-accession
   row would then have two group q-values. Refused until MetaMorpheus says whether parsimony can do it
   (our go 011).
@@ -31,6 +34,12 @@ What it does NOT store, and says so in the result rather than dropping it silent
   go's other per-row evidence (``protein_group``, ``q_value``, ``n_members``, ``n_with``,
   ``inherited``, ``propagated``) IS stored, from schema 0.0.10 (D28: one schema change with the
   runner's ``gene_resolutions``).
+- **go D33's per-member columns** (``accession_direct``, ``accession_inherited``,
+  ``evidence_by_member``). They are checked by name and read, but not stored: storing them is a
+  schema decision not yet taken. ``inherited`` (stored) also covers a sequence variant from D34 on.
+
+Header keys this reader does not use, such as D35's optional ``#!unresolved_go_ids``, are kept in
+``header`` and otherwise ignored.
 """
 
 from __future__ import annotations
@@ -46,10 +55,14 @@ from ..errors import IngestError
 
 ANNOTATION_FORMAT = "1"
 CATEGORY_FORMAT = "1"
+# As released in mzLib 1.0.593 (#1353 with go D33's three per-member columns, #1366 with D36's
+# `entrapment_members`). Looked up by name: order is not checked, but a missing or unknown column is
+# refused, since an unknown column is a contract change nobody has decided to store or drop.
 ANNOTATION_COLUMNS = (
-    "protein_group", "accession_used", "go_id", "go_name", "aspect", "evidence", "inherited",
-    "propagated", "n_members", "n_with", "annotation_status", "q_value", "go_release",
-    "go_obo_sha256", "annotation_db_sha256",
+    "protein_group", "accession_used", "accession_direct", "accession_inherited", "go_id", "go_name",
+    "aspect", "evidence", "evidence_by_member", "inherited", "propagated", "n_members", "n_with",
+    "entrapment_members", "annotation_status", "q_value", "go_release", "go_obo_sha256",
+    "annotation_db_sha256",
 )
 CATEGORY_COLUMNS = ("go_id", "category", "subcategory")
 STATUSES = ("annotated", "no_go_terms", "no_entry", "contaminant")
@@ -121,13 +134,21 @@ def _read(path: Path, format_key: str, format_version: str, columns: tuple[str, 
         )
     reader = csv.reader([l for l in lines[body_start:] if l != ""], delimiter="\t")
     names = next(reader, None)
-    if names is None or tuple(names) != columns:
-        raise IngestError(f"{path.name}: columns {names} are not go's {list(columns)}")
+    if names is None:
+        raise IngestError(f"{path.name}: no column header row")
+    if len(set(names)) != len(names):
+        raise IngestError(f"{path.name}: a column name repeats in {names}")
+    missing = [c for c in columns if c not in names]
+    unknown = [c for c in names if c not in columns]
+    if missing or unknown:
+        raise IngestError(
+            f"{path.name}: columns are not go's {list(columns)}: missing {missing}, unknown {unknown}"
+        )
     rows = []
     for n, cells in enumerate(reader, start=body_start + 2):
-        if len(cells) != len(columns):
-            raise IngestError(f"{path.name}: line {n} has {len(cells)} cells, not {len(columns)}")
-        rows.append(dict(zip(columns, cells)))
+        if len(cells) != len(names):
+            raise IngestError(f"{path.name}: line {n} has {len(cells)} cells, not {len(names)}")
+        rows.append(dict(zip(names, cells)))
     return header, rows
 
 
@@ -188,6 +209,12 @@ def read_annotation(path: str | Path, *, allow_prerelease: bool = False) -> GoAn
         used = _split(row["accession_used"])
         if row["go_id"] and int(row["n_with"]) != len(used):
             raise IngestError(f"{where}: n_with {row['n_with']} but {len(used)} accession(s) used (go D22)")
+        if row["entrapment_members"]:
+            raise IngestError(
+                f"{where}: entrapment members {row['entrapment_members']!r}. An entrapment protein "
+                f"carries its target's GO (#1271), so no file from an entrapment search is ingested "
+                f"until GO-E1 is answered (dataRepo go 013)."
+            )
         group = row["protein_group"]
         if group_status.setdefault(group, status) != status:
             raise IngestError(f"{where}: group has rows with two statuses")
