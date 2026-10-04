@@ -45,7 +45,9 @@ static int IngestVerb(string[] args)
         return 2;
     }
     var started = DateTime.UtcNow;
-    var result = Ingester.Ingest(args[1], args[2], store, Option(args, "--mm-settings"), args.Contains("--overwrite"));
+    // Parity rules unless --current: the point of this verb is comparing with Python 0.32.0.
+    var rules = args.Contains("--current") ? IngestRules.Current : IngestRules.Python0320;
+    var result = Ingester.Ingest(args[1], args[2], store, Option(args, "--mm-settings"), args.Contains("--overwrite"), rules);
     Console.WriteLine($"  bundle   {result.BundlePath}{(result.Skipped ? " (unchanged, not rewritten)" : "")}");
     Console.WriteLine($"  tables   {string.Join(", ", result.RowCounts.Select(kv => $"{kv.Key} {kv.Value}"))}");
     foreach (var check in result.Mismatches)
