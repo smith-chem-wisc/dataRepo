@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DataRepo.Bundle\DataRepo.Bundle.csproj" />
+    <ProjectReference Include="..\DataRepo.Ingest\DataRepo.Ingest.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
