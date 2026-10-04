@@ -103,7 +103,7 @@ or a Python bug, and each gets a named finding before the switch. The Python bug
 
 ## Open questions (also in OPEN_QUESTIONS.md, each with the default work proceeds on)
 
-- **U16:** where the C# lives. Default: `dotnet/` in this repository, so history and the schema stay
+- **U16 (answered 2026-10-04: same repo, `dotnet/`):** where the C# lives. Default: `dotnet/` in this repository, so history and the schema stay
   together. Alternative: a new `smith-chem-wisc/DataRepo.NET` repository.
 - **U17 (answered 2026-10-04: yes):** whether the docs generator (LinkML's Python tooling) counts as "quick work". Default: yes,
   for now. It is build-time only, emits Markdown, and never runs on data. Replace it if you say otherwise.

@@ -49,7 +49,7 @@ depends on it is marked as such.
 
 | ID | Question | Default (work proceeds on it) |
 |---|---|---|
-| U16 | Which GitHub repository holds the C# code? | `dotnet/` in this repository (smith-chem-wisc/dataRepo), beside `src/` until the Python is retired, so nobody repoints anything. Alternative: a new `smith-chem-wisc/DataRepo.NET` repo. Re-asked in plain words 2026-10-04. |
+| U16 | Which GitHub repository holds the C# code? | `dotnet/` in this repository (smith-chem-wisc/dataRepo), beside `src/` until the Python is retired, so nobody repoints anything. **ANSWERED 2026-10-04 (the user): option 1, same repo.** |
 | U17 | Is the schema docs generator (LinkML's Python tooling, build-time only, never touches data) acceptable as "quick work"? | **ANSWERED 2026-10-04 (the user): yes, it stays.** |
 | U18 | Does the frozen Python 0.32.0 get fixes for defects that block the operator during the port? | **ANSWERED 2026-10-04 (the user): yes.** Minimal ones, each also written into the port. |
 
