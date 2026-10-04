@@ -125,6 +125,11 @@ jobs:
           "$DR" ingest tests/data/manifest.yaml PXD999999 \
             --store "$RUNNER_TEMP/cs-store" \
             --mm-settings tests/data/work_root/mm_settings/1.1.11
+          # PXReprise 009: --json puts one envelope, and only that, on stdout.
+          "$DR" ingest tests/data/manifest.yaml PXD999999 --json \
+            --store "$RUNNER_TEMP/cs-store" \
+            --mm-settings tests/data/work_root/mm_settings/1.1.11 \
+            | python -c "import json,sys; e=json.load(sys.stdin); assert e['ok'] and e['datasets'][0]['status']=='unchanged', e"
           "$DR" build tests/data/manifest.yaml PXD999999 \
             --store "$RUNNER_TEMP/cs-store" --out "$RUNNER_TEMP/cs-catalog.duckdb"
           "$DR" catalog "$RUNNER_TEMP/cs-catalog.duckdb"
