@@ -450,6 +450,20 @@ decisions:
       half-built D37/G81 Python is parked on local branch wip/d37-g81-python (3e68781) as specification.
 gaps:
   - >-
+    G84 NEW 2026-10-04 (PXReprise 009 wish 2). A note can reach the catalog only through a re-ingest. Notes are
+    NON_CONTENT fields (rewording must not re-id), yet `datasets.notes` is written at ingest, so aging's ten
+    notes this week (PXR-A12, PXR-A18) sit in the manifest until the deposit is next ingested. Proposed (D32
+    shape, not built): `datarepo build` already takes the manifest, so the CATALOG takes every non-content field
+    from the manifest it is given, and the bundle keeps the ingest-time copy as provenance. No schema bump, no
+    re-ingest, no new command. Needs a CATALOG_VERSION bump. Do in C# after the switch.
+  - >-
+    G85 NEW 2026-10-04 (PXReprise 009 wish 3). Runs excluded from ANALYSIS (searched, kept in the bundle) are
+    prose in `notes` (S71's two runs; PXD012753 `20170317_VM_17`/`VM_18`). Proposed, not built: a manifest field
+    `excluded_runs: {run: reason}`, checked like `run_enrichment` (every name a run, by `datarepo manifest` and
+    ingest). It changes no number we derive, so it is NON_CONTENT and reaches the catalog the G84 way, as a
+    column set at build: no re-ingest, no core schema bump. It is aging's content, so aging must agree to fill
+    it.
+  - >-
     G83 NEW 2026-10-04 (C# port, phase 2). Python 0.32.0 behaviours the port reproduces ON PURPOSE for
     row parity, each to be decided after parity as its own INGESTER bump: (1) modlist lookup GUESSES when
     no entry targets the residue (first candidate with a UNIMOD id, else the first): `[UniProt:N6-
