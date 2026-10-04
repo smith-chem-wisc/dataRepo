@@ -138,6 +138,10 @@ Python 0.32.0 to the C# release. **Nothing here has been done; each step marked 
    - the schema's `peptidoforms.is_unique` / `is_isoform_specific` descriptions rewritten for G76 (D40: one gene
      / one sequence, I = L, contaminants count, from mzLib's classifier), and the site tile's definition
      (aging 084), plus `pep:DEF-PEP`'s version key gaining `iterative` (G81);
+   - `OccupancyState` gains `covered_zero` (QuantProject 009, DEF-OCC-COVERED-ZERO; the C# already writes it under
+     `IngestRules.Current`), its description and `ptm_stoichiometry.occupancy_state`'s / `intensity_is_floor`'s
+     descriptions updated, and the schema version bumped (0.0.13 -> 0.0.14). The release re-ingests everything
+     anyway, so this costs the operator nothing extra;
    - retire the Python CI jobs' `--check` against the schema (the Python is frozen and its generated files would
      go stale on the first schema edit), keeping the Python package in the repo until the switch is done;
    - README and docs: the C# `datarepo` replaces `pip install`; the tutorial ids rerun (CLAUDE.md: a catalog id
