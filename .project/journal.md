@@ -1853,3 +1853,10 @@ rather than fixing them. The verification, not the porting, was the work: 95.3M 
 CI on Linux found four platform-dependent behaviours a Windows-only run never would (pathlib order, Path.name,
 TIMESTAMPTZ zone, core count). G76 (D40, the user's choice of mapping) and G81 are built in C#. The switch
 (version, release, aging's benchmark, re-ingest) is a checklist waiting on the user and the operator.
+
+Close of the day: corpus ingest parity finished at 85 of 85. The one difference (PXD077298) was aging editing
+the manifest entry between the two ingests; both sides re-run from one snapshot of the manifest matched. Then
+PXReprise 009 chose the executable over the library (two mzLib pins cannot share a process) and asked for a
+JSON envelope and for `manifest` to apply ingest's run-map rules. Both were built (`dd9bd40`) with one function
+shared by `manifest` and ingest, so the two refuse a map in the same words. Notes reaching the catalog without
+a re-ingest is proposed as a BUILD-time read (G84, the D32 shape).

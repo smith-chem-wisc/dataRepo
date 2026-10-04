@@ -6,10 +6,10 @@
 
 | | |
 |---|---|
-| Commits | 423 |
+| Commits | 430 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
 | Locked decisions | 41 |
-| Open gaps | 78 |
+| Open gaps | 80 |
 | Gate items skipped | 4 |
 
 <!-- END GENERATED -->
@@ -28,7 +28,7 @@ with age.
   is frozen at 0.32.0 (operator-blocking fixes only, U18). Plan and status table: `design/CSHARP_PORT.md`.
 - **Done the same day, each verified against what Python 0.32.0 actually wrote on real data:**
   - bundle writer and content hash (88 stored bundles, 95.3M rows, 0 differences);
-  - ingester (fixture 17/17 tables; 44 of 44 corpus datasets identical, loop still following the Python reference);
+  - ingester (fixture 17/17 tables; corpus **85 of 85** datasets identical, every table and row);
   - study layer (same ids), catalog (27M rows), site (41 MB byte-identical), runner + logs engine, MCP server
     (1,161 tool calls byte-identical), CLI `datarepo.exe` with every command;
   - CI runs the C# end to end on Linux; self-contained binaries on 4 platforms (artifacts only).
@@ -38,11 +38,14 @@ with age.
 - **Found on the way** (all in G83 or CLAUDE.md): ~17 Python quirks reproduced on purpose for parity;
   platform-dependent Python (pathlib order on Linux, Windows `Path.name`, DuckDB TIMESTAMPTZ zone, core count);
   46 of 937 within-gene merges rest on an Ensembl id alone (pyMzLib 019, DATAREPO-70).
-- **Threads:** go 017/019 (GO-D1..D3), pyMzLib 018/019 (M1..M3, DATAREPO-70), PXReprise 008, aging 083,
-  pep 006 (DATAREPO-67..69). aging 084 and go 020 answered; nothing owed by us.
+- **Threads:** go 017/019 (GO-D1..D3), pyMzLib 018/019 (M1..M3, DATAREPO-70), PXReprise 008/010, aging 083,
+  pep 006 (DATAREPO-67..69), QuantProject 010 (covered_zero, v3.6). PXReprise 009 chose the executable; for
+  them `dd9bd40` added `ingest --json` (one envelope on stdout) and `run_enrichment` checks in `manifest`.
+  Their other wishes are G84 (notes reach the catalog at BUILD) and G85 (`excluded_runs`, needs aging).
+  010 asks DATAREPO-71: drain the batch for the one re-ingest (about 2 h 20 min here).
 - **Pick up at:** the switch checklist in `design/CSHARP_PORT.md` ("The switch"). Waiting on the user: the
-  first C# version number (recommendation 1.0.0) and the release. Waiting on peers: PXReprise 008, pep 006,
-  pyMzLib DATAREPO-70. Check the corpus parity log (scratchpad `corpus_parity.log`) for the final count.
+  first C# version number (recommendation 1.0.0) and the release. Waiting on peers: PXReprise DATAREPO-71,
+  pep 006, pyMzLib DATAREPO-70, aging's benchmark on both catalogs.
 
 ## 2026-09-30 (twenty-fifth session): why the site has no new figures, and the inbox cleared
 
