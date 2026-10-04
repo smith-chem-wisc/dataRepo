@@ -77,6 +77,10 @@ Each phase ends on a parity check against real data. The operator stays on Pytho
 4. **MCP server.**
    **Done when:** a subagent with only the tools, and no source, answers the same questions (`scratchpad/ask.py`
    rewritten against the C# server).
+   **Built 2026-10-04** (`DataRepo.Mcp`, `datarepo mcp` in `DataRepo.Cli`): every answer to a 367-call corpus is
+   byte for byte the Python 0.32.0 server's on the two fixture catalogs (CI), and 427 calls on aging's serving
+   catalog (RealData); see `dotnet/tests/DataRepo.Tests/Fixtures/mcp/PROVENANCE.md`. The subagent check above is
+   still to do.
 5. **Site, runner, CLI, binaries, release.** The operator switches once. The Python package is then
    deleted, and the docs say so.
 
@@ -107,7 +111,11 @@ or a Python bug, and each gets a named finding before the switch. The Python bug
 - **aging 084** (answers DATAREPO-68): no Python imports of datarepo anywhere; they run `ingest`, `build`,
   `study`, `site`, `manifest` and the MCP server (`python -m datarepo.cli mcp` today). **Phase 4/5:** keep a
   way to start the MCP server they can point `.claude.json` at (an exe is fine) and tell them the new
-  command line at the switch. **Phase 5 (site):** the "Unique peptides" tile's definition must say I and L
+  command line at the switch. **The command line (phase 4):** `datarepo.exe mcp --catalog <catalog.duckdb>`,
+  registered by `datarepo mcp --catalog <path> --install` as
+  `{"command": "<path>\\datarepo.exe", "args": ["mcp", "--catalog", "<absolute catalog path>"], "env": {}}`
+  (under the shared .NET host: `"command": "dotnet"`, `"args": ["<path>\\datarepo.dll", "mcp", ...]`). Same
+  options as the Python (`--list`, `--check`, `--name`, `--config`, `--force`). **Phase 5 (site):** the "Unique peptides" tile's definition must say I and L
   are equivalent and contaminants count (G76). They re-run their `results/eval/` benchmark on both catalogs
   from the same bundles before switching, and send every differing answer.
 - **go 020** (D39): once go's D39 is in an mzLib release, a shuffled partner (`Random_<acc>_f<n>`) in
