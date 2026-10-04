@@ -1,6 +1,21 @@
 # Porting dataRepo to C# (D41)
 
-**Status: PHASE 1 BUILT, 2026-10-04** (`dotnet/`: `DataRepo.SchemaGen`, `DataRepo.Bundle`, `DataRepo.Parity`, `DataRepo.Tests`; the fixture bundle Python wrote round-trips identically and its id recomputes). **Phase 1 DONE 2026-10-04:** all 88 current-schema bundles in aging's store round-trip with identical rows and recomputed ids, 95,328,025 rows, 0 differences (1 older-schema bundle skipped). Phase 2 in progress. Decided by the user on 2026-10-04: "any code of substance must
+**Status (2026-10-04, end of the first port day): everything but the MCP server is ported and verified against Python 0.32.0 on real data. Nothing is released; the operator stays on Python 0.32.0.**
+
+| phase | state | measured against Python 0.32.0 |
+|---|---|---|
+| 1 schema and bundle | **done** | all 88 current-schema bundles in aging's store round-trip: 95,328,025 rows, 0 differences, every id recomputes |
+| 2 ingest | **done** (parity mode `IngestRules.Python0320`) | test dataset: 17/17 tables identical; corpus: every dataset compared so far identical (33 of 85 at writing; the loop follows the Python reference ingest) |
+| 2 G76 / G81 / D37 | **built** under `IngestRules.Current` | G76 reproduces aging 075's fibronectin case; 46 of 937 within-gene merges rest on an Ensembl id alone (DATAREPO-70) |
+| 3 study layer | **done** (`DataRepo.Study`) | ids identical to Python's; aging's stored study bundle reproduced |
+| 3 catalog | **done** (`DataRepo.Catalog`) | 27M rows identical (13 aging datasets with study layer and 8 engine artefacts; 20-dataset reference); one view lists in undefined order in Python's own SQL |
+| 4 MCP server | **in progress** (agent) | |
+| 5 site | **done** (`DataRepo.Site`) | byte-identical: 1,321 files / 41 MB from aging's 85-dataset serving catalog |
+| 5 runner + logs engine | **done** (`DataRepo.Runner`) | aging's stored rat resolution re-run with its inputs: every row identical |
+| 5 CLI | **done but `mcp`** (`DataRepo.Cli`, `datarepo.exe`) | CI runs ingest/build/query/site end to end on Linux |
+| 5 binaries, release, operator switch | not started | |
+
+Decided by the user on 2026-10-04: "any code of substance must
 be in C# and in our production code. python is only acceptable for quick work." Asked whether that covers
 dataRepo's own package, they chose the port. This supersedes D36, which made the executables from the
 Python code.
