@@ -429,6 +429,25 @@ decisions:
       prerequisite (G76's bridge-oracle step), while a switch costs PXReprise one venv and a restart.
       Rejected: build D37 alone now as 0.33.0 (a few hours before the site moves, G76 a third switch);
       wait for D37 + G76 (slowest).
+  - id: D40
+    date: 2026-10-04
+    text: >-
+      G76's two columns come from mzLib's PeptideUniquenessClassifier over the SEARCHED databases (the
+      user, 2026-10-04): is_unique = maps to one gene (Unique or SharedWithinGene); is_isoform_specific
+      = maps to one distinct sequence (Unique); NotInDatabase = NULL for both; no new column, no schema
+      bump. is_unique's meaning moves from "one protein" to "one gene" and its description says so.
+      Verified on aging 075's case: the fibronectin peptide is SharedWithinGene over P02751, -1, -8,
+      -13, so true / false. Rejected: both columns = Unique (always identical); a verbatim `sharing`
+      column (schema bump = full re-ingest).
+  - id: D41
+    date: 2026-10-04
+    text: >-
+      dataRepo is PORTED TO C# (the user, 2026-10-04: "any code of substance must be in C# and in our
+      production code. python is only acceptable for quick work"; asked whether that covers dataRepo's
+      own package, they chose the port). SUPERSEDES D36 (executables built from the Python). No new
+      substantive Python goes into dataRepo; the Python 0.32.0 stays the operator's running version and
+      the reference the port is diffed against until parity. Plan: design/CSHARP_PORT.md. The
+      half-built D37/G81 Python is parked on local branch wip/d37-g81-python (3e68781) as specification.
 gaps:
   - >-
     G1 Framework. Steps 1 (ingest), 2 (build) and 3 (MCP) are BUILT and locked as D9/D10/D12-D15.

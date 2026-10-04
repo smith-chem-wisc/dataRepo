@@ -2,15 +2,17 @@
 
 <!-- BEGIN GENERATED -- render_resume.py owns this block; edit state.yaml, not here -->
 
-**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-09-30
+**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-10-04
 
 | | |
 |---|---|
-| Commits | 358 |
+| Commits | 369 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
-| Locked decisions | 39 |
+| Locked decisions | 41 |
 | Open gaps | 77 |
 | Gate items skipped | 4 |
+
+> **1 document(s) in `design/` not referenced above** -- `CSHARP_PORT.md`. Add a line for each, or say why not.
 
 <!-- END GENERATED -->
 

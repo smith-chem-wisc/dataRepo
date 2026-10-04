@@ -12,12 +12,13 @@ This folder is a `/project`-managed research project. **You are de facto working
   `6abd39e`). It has the REQ-DATAREPO-7 run-name fix and three new site figures (D38). **The live
   site is still built by 0.28.1** (aging's publish pin); **D39**: PXReprise switches to 0.32.0 NOW,
   and our definitions release is a second, later switch.
-  - **Next build: one ingest release with D37 + G76 + G81.** D37: DATAREPO-64 is answered, so
-    transcribe the ten `pxreprise:` definitions from PXReprise `DEFINITIONS.md` at `1ac199e`
-    (word for word, Grain line, source commit). G76 (aging 075): `is_unique` /
-    `is_isoform_specific` from the SEARCHED sequences; run `/bridge-oracle pyMzLib` on
-    `classify_peptides` first; also switches the site's unique-peptide tile. G81 (pep 005):
-    `iterative <on|off|not recorded>` in DEF-PEP's version key. Tell PXReprise and pep the sha.
+  - **D41 (2026-10-04): dataRepo is being PORTED TO C#** ("any code of substance must be in C#";
+    supersedes D36). Plan: `design/CSHARP_PORT.md` (phases 1-5, parity = row-by-row diff against
+    Python 0.32.0 on aging's store). **No new substantive Python.** Python is frozen at 0.32.0.
+    D37 + G76 + G81 now ship in C# (phase 2): the ten `pxreprise:` texts, `cite()` and pep 005's
+    rule are parked on local branch `wip/d37-g81-python` (3e68781) as specification. G76 = mzLib
+    `PeptideUniquenessClassifier`, mapped by D40 (is_unique = one gene, is_isoform_specific = one
+    sequence). U16-U18 open with defaults. Tell PXReprise, aging, pep, pyMzLib of the plan.
   - dia (G82): wait for DATAREPO-65/66 or a real output folder (dia 002).
   - **No row change:** G79 (b), move the per-layer rule dicts into `schema/study/aging.yaml`.
     G80: report mzLib's run-name defect upstream.

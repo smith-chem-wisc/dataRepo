@@ -45,6 +45,14 @@ depends on it is marked as such.
 | U14 | Does the runner fetch reference inputs (Ensembl's xref dump, go.obo), or does the operator supply them? | The operator supplies every file; the runner hashes each and checks it against the engine's published manifest. Fetching would make the runner a second, unrecorded source of inputs |
 | U15 | Where do logs' rows go? | A new core table `gene_resolutions`, keyed as logs keys it (`search_database_sha256, gene_set_release, accession, gene_id`), with `definition_id`. That is a schema change, taken once, together with go's per-row evidence columns |
 
+### The C# port (D41, design/CSHARP_PORT.md), 2026-10-04
+
+| ID | Question | Default (work proceeds on it) |
+|---|---|---|
+| U16 | Where does the C# port live? | `dotnet/` in this repository, beside `src/` until the Python is retired. Alternative: a new `smith-chem-wisc/DataRepo.NET` repo. |
+| U17 | Is the schema docs generator (LinkML's Python tooling, build-time only, never touches data) acceptable as "quick work"? | Yes for now; replaced if you say otherwise. |
+| U18 | Does the frozen Python 0.32.0 get fixes for defects that block the operator during the port? | Yes, minimal ones, each also written into the port. |
+
 ## Waiting on aging (thread `design/threads/aging/`)
 
 | ID | Question | Status |
