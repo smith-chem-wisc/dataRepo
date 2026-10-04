@@ -18,9 +18,13 @@ using DataRepo.Ingest;
 //       Phase 5: `datarepo site` with every option, from the C# generator.
 //   site-compare <expected site dir> <actual site dir>
 //       Phase 5: every file of two sites, byte for byte, the generator's own version normalised (SiteParity).
+//   build <manifest> [accession ...] --store <store> --out <scratch catalog> [--latest] [--bundle A=id]...
+//         [--study layer=id]... [--study-latest layer]... [--overwrite]
+//       Phase 3: `datarepo build` through the C# catalog builder, with the Python CLI's selection and notes,
+//       so the two catalogs can be compared table by table. <store> is read only.
 if (args.Length == 0)
 {
-    Console.Error.WriteLine("usage: roundtrip | ingest | compare | study | site | site-compare (see Program.cs)");
+    Console.Error.WriteLine("usage: roundtrip | ingest | compare | study | build | site | site-compare (see Program.cs)");
     return 2;
 }
 return args[0] switch
@@ -29,6 +33,7 @@ return args[0] switch
     "ingest" => IngestVerb(args),
     "compare" => CompareVerb(args),
     "study" => StudyVerb(args),
+    "build" => BuildVerb(args),
     "site" => DataRepo.Site.SiteCommand.Run(args[1..], Console.Out, Console.Error),
     "site-compare" => SiteCompareVerb(args),
     _ => Usage(),
@@ -36,7 +41,7 @@ return args[0] switch
 
 static int Usage()
 {
-    Console.Error.WriteLine("usage: roundtrip | ingest | compare | study | site | site-compare (see Program.cs)");
+    Console.Error.WriteLine("usage: roundtrip | ingest | compare | study | build | site | site-compare (see Program.cs)");
     return 2;
 }
 
@@ -61,6 +66,53 @@ static string? Option(string[] args, string name)
 {
     var i = Array.IndexOf(args, name);
     return i >= 0 && i + 1 < args.Length ? args[i + 1] : null;
+}
+
+static List<string> Options(string[] args, string name)
+{
+    var found = new List<string>();
+    for (var i = 0; i + 1 < args.Length; i++)
+        if (args[i] == name) found.Add(args[i + 1]);
+    return found;
+}
+
+static int BuildVerb(string[] args)
+{
+    if (args.Length < 2) return Usage();
+    var valued = new HashSet<string> { "--store", "--out", "--bundle", "--study", "--study-latest" };
+    var accessions = new List<string>();
+    for (var i = 2; i < args.Length; i++)
+    {
+        if (valued.Contains(args[i])) { i++; continue; }
+        if (!args[i].StartsWith("--", StringComparison.Ordinal)) accessions.Add(args[i]);
+    }
+    var manifest = Manifest.Load(args[1]);
+    if (accessions.Count == 0) accessions = manifest.IngestableEntries().Select(e => e.Accession).ToList();
+    var store = Option(args, "--store") ?? manifest.Store;
+    var output = Option(args, "--out");
+    if (output is null)
+    {
+        Console.Error.WriteLine("--out <scratch catalog> is required: the parity tool never writes into an operator's tree");
+        return 2;
+    }
+    static Dictionary<string, string> Pins(IEnumerable<string> values) =>
+        values.Select(v => v.Split('=', 2)).ToDictionary(p => p[0], p => p[1]);
+    var started = DateTime.UtcNow;
+    var bundles = DataRepo.Catalog.CatalogBuilder.SelectBundles(manifest, accessions, store, Pins(Options(args, "--bundle")), args.Contains("--latest"));
+    var study = DataRepo.Catalog.CatalogBuilder.SelectStudyBundles(store, Pins(Options(args, "--study")), Options(args, "--study-latest"));
+    var (artefacts, engineChecks) = DataRepo.Catalog.CatalogBuilder.SelectArtefacts(store, bundles);
+    var notes = new Dictionary<string, object?> { ["manifest"] = manifest.Path.Replace('/', Path.DirectorySeparatorChar) };
+    if (study.Count > 0) notes["study"] = study.ToDictionary(r => r.Layer, r => (object?)r.BundleId);
+    var result = DataRepo.Catalog.CatalogBuilder.BuildCatalog(bundles, output, args.Contains("--overwrite"), manifest.Instance, notes, study, artefacts, engineChecks);
+    Console.WriteLine($"catalog  {result.Path}");
+    Console.WriteLine($"  id       {result.CatalogId}{(result.Skipped ? " (unchanged)" : "")}");
+    foreach (var r in result.Bundles) Console.WriteLine($"  dataset  {r.DatasetId,-12} bundle {r.BundleId}");
+    foreach (var r in result.StudyBundles) Console.WriteLine($"  study    {r.Layer,-12} bundle {r.BundleId}  ({r.LayerVersion})");
+    foreach (var r in result.Artefacts) Console.WriteLine($"  engine   {r.Engine,-20} artefact {r.ArtefactId}");
+    Console.WriteLine($"  indexes  {result.Indexes}");
+    Console.WriteLine($"  checks   {result.Checks.Count} run, {result.FailedChecks.Count} failed");
+    Console.WriteLine($"  seconds  {(DateTime.UtcNow - started).TotalSeconds:F1}");
+    return 0;
 }
 
 static int IngestVerb(string[] args)
