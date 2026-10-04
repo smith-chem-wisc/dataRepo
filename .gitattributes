@@ -10,3 +10,5 @@ tests/data/work_root/db/*.xml -text
 tests/data/** -text
 # The study fixtures: Python hashed these exact bytes into the expected study bundle ids.
 dotnet/tests/DataRepo.Tests/Fixtures/study/** -text
+# The C# site port compares its output with Python's byte for byte, so the expected pages keep their LF bytes.
+dotnet/tests/DataRepo.Tests/Fixtures/site/** -text
