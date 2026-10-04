@@ -264,6 +264,116 @@ PRECURSOR_COUNT = Def(
     "NOT a count of scans, and it is not a count of distinct species.",
 )
 
+#: PXReprise's ten (D37, PXReprise 006, DATAREPO-64): the twins of aging's ten pipeline counts, published
+#: when PXReprise took over running the pipeline. Transcribed word for word by a script from
+#: `DEFINITIONS.md` at smith-chem-wisc/PXReprise `1ac199e7e40eab638c74b5c6cb6aa7acb596dadd` (sha256
+#: 287345a0...): wrapped lines joined, the Grain line kept as the first paragraph. A record that declares
+#: `"definitions": "pxreprise"` cites these; one that declares nothing cites aging's (`cite`).
+_PXR_SOURCE = (
+    " [Source: PXReprise DEFINITIONS.md at smith-chem-wisc/PXReprise "
+    "1ac199e7e40eab638c74b5c6cb6aa7acb596dadd.]"
+)
+
+PXR_PSM_1PCT = Def(
+    'pxreprise:DEF-PSM-1PCT',
+    'v1',
+    "PXReprise",
+    "**Grain:** dataset.\n\nTarget PSMs at 1% FDR, as MetaMorpheus's `results.txt` summary line reports them: `All target PSMs with q-value <= 0.01`. Target PSMs only; contaminants are excluded. This is the canonical PSM count. Reproducing it from `AllPSMs.psmtsv` needs four conditions, all of them required: `Decoy/Contaminant/Target` is exactly `T`; `QValue <= 0.01`; `QValue Notch <= 0.01`; and the PSM is not notch-ambiguous (`pxreprise:DEF-PSM-NOTCH-AMBIGUOUS`). Even then the reproduction is an approximation, not the definition. `QValue` is printed to six decimals, so a true q-value just above 0.01 prints as `0.010000` and passes a file-side test that MetaMorpheus's own count rejects. No file-side predicate can reproduce a count whose threshold coincides with a printable value. The canonical number is always the one MetaMorpheus prints. A consumer that selects rows with the predicate should expect a small disagreement in either direction (measured: 0, -14 and -6 PSMs on three datasets), and report it rather than reconcile it away." + _PXR_SOURCE,
+)
+PXR_NOTCH_AMBIGUOUS = Def(
+    'pxreprise:DEF-PSM-NOTCH-AMBIGUOUS',
+    'v1',
+    "PXReprise",
+    '**Grain:** PSM.\n\nA PSM is notch-ambiguous when the `Notch` cell of `AllPSMs.psmtsv` contains a `|` separator, that is, when MetaMorpheus wrote more than one notch hypothesis for the match. For such a PSM, `SpectralMatch.ResolveAllAmbiguities` leaves the in-memory `PsmFdrInfo.QValueNotch` unresolved at a value above 1, while `PsmTsvWriter.AddMatchScoreData` writes the **minimum** notch q-value across the hypotheses. The written `QValue Notch` can therefore pass a threshold that the counted one fails. That is why `pxreprise:DEF-PSM-1PCT` needs this condition as well as the two q-values.' + _PXR_SOURCE,
+)
+PXR_PSM_FDR_ENGINE = Def(
+    'pxreprise:DEF-PSM-FDRENGINE',
+    'v1',
+    "PXReprise",
+    "**Grain:** dataset.\n\nPSMs within 1% FDR, as MetaMorpheus's FDR engine logs them: the first `PSMs within 1% FDR: <n>` line. It is higher than `pxreprise:DEF-PSM-1PCT` and appears to include contaminant PSMs. It is recorded for comparison and never reported. In aging's provenance schema `/2` and earlier, this was the number stored as `id_rate.psms_1pct`. So that field name cannot be trusted without the record's schema version." + _PXR_SOURCE,
+)
+PXR_PEPTIDE_COUNT_1PCT = Def(
+    'pxreprise:DEF-PEPTIDE-1PCT',
+    'v1',
+    "PXReprise",
+    '**Grain:** dataset.\n\nTarget peptides at 1% FDR: the `results.txt` line `All target peptides with q-value <= 0.01`. From `AllPeptides.psmtsv`, the predicate is `Decoy/Contaminant/Target` is exactly `T`, `QValue <= 0.01` and `QValue Notch <= 0.01`. MetaMorpheus computes it at peptide-level FDR and collapses it to one row per full sequence (lowest PEP). No ambiguous-notch rows survive the collapse, so `pxreprise:DEF-PSM-NOTCH-AMBIGUOUS` does not apply here. Verified on PXD036557: 5,541.' + _PXR_SOURCE,
+)
+PXR_PROTEIN_GROUP_COUNT_1PCT = Def(
+    'pxreprise:DEF-PROTEINGROUP-1PCT',
+    'v1',
+    "PXReprise",
+    '**Grain:** dataset.\n\nTarget protein groups at 1% FDR: the `results.txt` line `All target protein groups with q-value <= 0.01 (1% FDR)`. The predicate is `Protein QValue <= 0.01` and not decoy, so **contaminant groups are counted**, unlike the PSM and peptide lines, which exclude them. Verified on PXD036557: 1,652 groups that are not decoys, against 1,623 that are strictly `T`. MetaMorpheus has no leading, razor or representative protein. A group is an unordered set whose accession string is sorted alphabetically, so no quantity may be built on "the first member".' + _PXR_SOURCE,
+)
+PXR_ID_RATE = Def(
+    'pxreprise:DEF-ID-RATE',
+    'v1',
+    "PXReprise",
+    '**Grain:** dataset.\n\nThe identified fraction of MS2 spectra, as the search stage records it in `provenance.json` `id_rate.rate`: `pxreprise:DEF-PSM-1PCT` divided by `pxreprise:DEF-MS2` summed over the searched files. A file that QC excluded from the search is left out of both. The `low_id_rate` flag uses this value.' + _PXR_SOURCE,
+)
+PXR_MS2_COUNT = Def(
+    'pxreprise:DEF-MS2',
+    'v1',
+    "PXReprise",
+    "**Grain:** run; summed to the dataset for reporting.\n\nMS2 scans in one raw file. PXReprise's spectra-QC stage counts them by reading the file with mzLib's readers: the scans whose MSn order is 2. The sum over the searched files equals MetaMorpheus's own `All MS2 Scans` line. Verified on PXD036557: both 266,402." + _PXR_SOURCE,
+)
+PXR_RUN_MINUTES = Def(
+    'pxreprise:DEF-RUN-MINUTES',
+    'v1',
+    "PXReprise",
+    '**Grain:** run. Never a dataset figure.\n\nThe acquisition length of one raw file: the largest retention time over all its scans, in minutes, rounded to 2 decimal places (half to even). On PXD036557 all 18 files report 180.0, and two were checked at full precision (180.00184 and 179.99996 min). So an identical value across files is a real method length, not a rounding artefact or a default.' + _PXR_SOURCE,
+)
+PXR_PRECURSOR_COUNT = Def(
+    'pxreprise:DEF-PRECURSORS',
+    'v1',
+    "PXReprise",
+    '**Grain:** run; summed to the dataset for reporting.\n\nThe `results.txt` line `All Precursors`: the precursor envelopes MetaMorpheus deconvoluted from the MS2 scans. This is more than one per scan (495,127 over 266,402 scans on PXD036557). It is **not** a count of scans, and it is not a count of distinct species.' + _PXR_SOURCE,
+)
+PXR_CONTAM_PSM_SHARE = Def(
+    'pxreprise:DEF-CONTAM-PSM',
+    'v1',
+    "PXReprise",
+    '**Grain:** dataset.\n\nThe contaminant share of the identifications in a dataset: contaminant PSMs divided by (target + contaminant) PSMs, at `QValue <= 0.01`, decoys excluded, over the whole dataset. A PSM counts as a contaminant only when its `Decoy/Contaminant/Target` value is exactly `C`. An ambiguous `C|T` counts as not-contaminant and stays in the denominator. This is an identification-level share: it says how much of the evidence came from the contaminant database, not how much of the signal did. `QuantProject:DEF-QC-9` is the intensity-level answer, and the two differ by several fold. A per-file share is a different quantity with its own ID, never this one measured per file.' + _PXR_SOURCE,
+)
+
+#: aging id -> its pxreprise twin. The two never differ in meaning (D37).
+PXREPRISE_TWINS: dict[str, Def] = {
+    PSM_1PCT.definition_id: PXR_PSM_1PCT,
+    NOTCH_AMBIGUOUS.definition_id: PXR_NOTCH_AMBIGUOUS,
+    PSM_FDR_ENGINE.definition_id: PXR_PSM_FDR_ENGINE,
+    PEPTIDE_COUNT_1PCT.definition_id: PXR_PEPTIDE_COUNT_1PCT,
+    PROTEIN_GROUP_COUNT_1PCT.definition_id: PXR_PROTEIN_GROUP_COUNT_1PCT,
+    ID_RATE.definition_id: PXR_ID_RATE,
+    MS2_COUNT.definition_id: PXR_MS2_COUNT,
+    RUN_MINUTES.definition_id: PXR_RUN_MINUTES,
+    PRECURSOR_COUNT.definition_id: PXR_PRECURSOR_COUNT,
+    CONTAM_PSM_SHARE.definition_id: PXR_CONTAM_PSM_SHARE,
+}
+
+#: The namespaces a provenance record may declare in its `definitions` field, and the one a record
+#: that declares nothing is read as (D37).
+NAMESPACES = ("aging", "pxreprise")
+DEFAULT_NAMESPACE = "aging"
+
+
+def cite(definition: Def, namespace: str) -> str:
+    """The id a number defined by `definition` carries when its record declares `namespace`.
+
+    Only aging's ten pipeline counts have twins; every other definition (QuantProject's, pep's) is
+    cited by its own id whatever the namespace, because PXReprise never redefines another project's
+    number.
+
+    Raises:
+        ValueError: a namespace this ingester has not been taught.
+    """
+    if namespace not in NAMESPACES:
+        raise ValueError(f"definitions namespace {namespace!r} is not one of {NAMESPACES}")
+    if namespace == "pxreprise":
+        twin = PXREPRISE_TWINS.get(definition.definition_id)
+        if twin is not None:
+            return twin.definition_id
+    return definition.definition_id
+
+
 #: pep's description of MetaMorpheus's PEP columns (pep 002, G70). Unlike the others its VERSION is
 #: per bundle: there is no PEP method identifier, and the model is retrained on every search, so the
 #: nearest thing to one is the (release, regime) pair pep suggested keying it on.
@@ -289,9 +399,16 @@ _PEP_TEXT = (
 )
 
 
-def pep_definition(release: str | None, regime: str | None) -> Def:
-    """DEF-PEP for one search, versioned by the release and regime that produced its PEP values."""
-    version = f"MetaMorpheus {release or 'release not recorded'}; regime {regime or 'not recorded'}"
+def pep_definition(release: str | None, regime: str | None, iterative: str = "not recorded") -> Def:
+    """DEF-PEP for one search, versioned by the release, regime and training mode behind its PEP.
+
+    `iterative` is `on`, `off` or `not recorded` (pep 005, G81): from the first MetaMorpheus release
+    with #2844, two searches of one release and regime can train their PEP model differently.
+    """
+    version = (
+        f"MetaMorpheus {release or 'release not recorded'}; regime {regime or 'not recorded'}; "
+        f"iterative {iterative}"
+    )
     return Def(PEP_ID, version, "pep", _PEP_TEXT)
 
 
@@ -312,6 +429,7 @@ ALL: tuple[Def, ...] = (
     PRECURSOR_COUNT,
     CONTAM_PSM_SHARE,
     CONTAM_INTENSITY_SHARE,
+    *PXREPRISE_TWINS.values(),
 )
 
 BY_ID = {d.definition_id: d for d in ALL}

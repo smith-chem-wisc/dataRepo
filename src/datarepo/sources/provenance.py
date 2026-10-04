@@ -83,6 +83,29 @@ def schema_version(doc: dict[str, Any]) -> int:
     return layout
 
 
+def definitions_namespace(doc: dict[str, Any]) -> str:
+    """The namespace this record's numbers are defined in: its `definitions` field (D37).
+
+    A producer states what its numbers mean in each stage's record, never in the manifest
+    (PXR-D5). A record that declares nothing is `aging`'s, which is what every record written
+    before PXReprise's switch is.
+
+    Raises:
+        UnsupportedProvenance: a namespace this ingester has not been taught. Refused rather than
+            read as `aging`, because a number filed under the wrong owner's id is a wrong citation
+            with a right-looking id.
+    """
+    raw = doc.get("definitions")
+    if raw is None:
+        return defs.DEFAULT_NAMESPACE
+    if raw not in defs.NAMESPACES:
+        raise UnsupportedProvenance(
+            f"provenance declares definitions {raw!r}; this ingester reads {list(defs.NAMESPACES)} "
+            f"(a record that declares nothing is read as {defs.DEFAULT_NAMESPACE!r})"
+        )
+    return str(raw)
+
+
 def record_row(
     doc: dict[str, Any], dataset_id: str, *, stage_dir_name: str, bundle_path: str, sha256: str
 ) -> dict[str, Any]:
@@ -108,11 +131,14 @@ def record_row(
     }
 
 
-def metric_rows(doc: dict[str, Any], dataset_id: str, version: int) -> list[dict[str, Any]]:
+def metric_rows(
+    doc: dict[str, Any], dataset_id: str, version: int, namespace: str = defs.DEFAULT_NAMESPACE
+) -> list[dict[str, Any]]:
     """Dataset-level Metric rows from the search stage's own numbers.
 
     The PSM count is stored under the definition it actually satisfies, which depends on the
-    provenance version, so a reader never has to know the field-naming history.
+    provenance version, so a reader never has to know the field-naming history. Pipeline counts
+    cite `namespace`'s id (D37); QuantProject's MBR block keeps its own.
     """
     rows: list[dict[str, Any]] = []
     id_rate = doc.get("id_rate") or {}
@@ -131,17 +157,17 @@ def metric_rows(doc: dict[str, Any], dataset_id: str, version: int) -> list[dict
             )
 
     if version >= 3:
-        add("psms_1pct", id_rate.get("psms_1pct"), defs.PSM_1PCT.definition_id,
+        add("psms_1pct", id_rate.get("psms_1pct"), defs.cite(defs.PSM_1PCT, namespace),
             "provenance.json id_rate.psms_1pct")
         add("psms_fdr_engine_1pct", id_rate.get("psms_fdr_engine_1pct"),
-            defs.PSM_FDR_ENGINE.definition_id, "provenance.json id_rate.psms_fdr_engine_1pct")
+            defs.cite(defs.PSM_FDR_ENGINE, namespace), "provenance.json id_rate.psms_fdr_engine_1pct")
     else:
         # aging 006: in /2 the field named psms_1pct holds the FDR engine's count.
-        add("psms_fdr_engine_1pct", id_rate.get("psms_1pct"), defs.PSM_FDR_ENGINE.definition_id,
+        add("psms_fdr_engine_1pct", id_rate.get("psms_1pct"), defs.cite(defs.PSM_FDR_ENGINE, namespace),
             "provenance.json id_rate.psms_1pct (aging-provenance/2 naming)")
 
-    add("ms2", id_rate.get("ms2"), defs.MS2_COUNT.definition_id, "provenance.json id_rate.ms2")
-    add("id_rate", id_rate.get("rate"), defs.ID_RATE.definition_id, "provenance.json id_rate.rate")
+    add("ms2", id_rate.get("ms2"), defs.cite(defs.MS2_COUNT, namespace), "provenance.json id_rate.ms2")
+    add("id_rate", id_rate.get("rate"), defs.cite(defs.ID_RATE, namespace), "provenance.json id_rate.rate")
 
     mbr = doc.get("mbr") or {}
     mbr_definition = mbr.get("definition") or defs.MBR.definition_id
@@ -161,7 +187,8 @@ def metric_rows(doc: dict[str, Any], dataset_id: str, version: int) -> list[dict
 
 
 def contamination_metric_rows(
-    doc: dict[str, Any], dataset_id: str, *, run_names: Any = None
+    doc: dict[str, Any], dataset_id: str, *, run_names: Any = None,
+    namespace: str = defs.DEFAULT_NAMESPACE,
 ) -> list[dict[str, Any]]:
     """Metric rows from the search stage's `contamination` block.
 
@@ -203,7 +230,7 @@ def contamination_metric_rows(
         dataset_id,
         "contamination_psm_share",
         block.get("psm_share"),
-        defs.CONTAM_PSM_SHARE.definition_id,
+        defs.cite(defs.CONTAM_PSM_SHARE, namespace),
         f"provenance.json contamination.psm_share ({block.get('psm_share_definition') or block.get('definition') or 'unnamed'})",
     )
     for name, key in (
@@ -215,7 +242,7 @@ def contamination_metric_rows(
             dataset_id,
             name,
             block.get(key),
-            defs.CONTAM_PSM_SHARE.definition_id,
+            defs.cite(defs.CONTAM_PSM_SHARE, namespace),
             f"provenance.json contamination.{key}",
         )
 

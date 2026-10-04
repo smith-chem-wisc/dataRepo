@@ -8,6 +8,7 @@ which is exactly the trap question P1 is built on, so the search's own parameter
 
 from __future__ import annotations
 
+import re
 import tomllib
 from pathlib import Path
 from typing import Any
@@ -126,6 +127,52 @@ def pep_regime(task_files: list[Path]) -> str | None:
     if len(regimes) != 1:
         return None
     return regimes.pop()
+
+
+#: The last MetaMorpheus release before iterative PEP training (#2844, merged at `c4515a797` on
+#: 2026-09-29). No release contains it yet (1.1.11 is the latest, 2026-09-18).
+LAST_RELEASE_WITHOUT_ITERATIVE_PEP = (1, 1, 11)
+
+
+def _release_tuple(release: str | None) -> tuple[int, ...] | None:
+    m = re.match(r"^\s*(\d+)\.(\d+)\.(\d+)\s*$", str(release or ""))
+    return tuple(int(x) for x in m.groups()) if m else None
+
+
+def pep_iterative(task_files: list[Path], release: str | None) -> str:
+    """Whether the search's PEP model was trained iteratively: `on`, `off` or `not recorded` (G81).
+
+    pep 005's rule. `SearchParameters.IterativePepTraining` in the search task's `.toml` is the
+    answer when present. When absent, a release up to `LAST_RELEASE_WITHOUT_ITERATIVE_PEP` predates
+    the setting, so the search trained once (`off`); a later or unreadable release would load the
+    missing key as its default, and that is not inferred here (`not recorded`, as pep offered).
+    Glyco, crosslink and non-specific searches always train once whatever the key says (`off`).
+    Two search tasks that disagree give `not recorded`. Very small searches that never iterate
+    are not detected: only `results.txt` says so, and it is not read for this.
+    """
+    answers = set()
+    for path in task_files:
+        if not path.is_file():
+            continue
+        try:
+            doc = tomllib.loads(path.read_text(encoding="utf-8-sig"))
+        except tomllib.TOMLDecodeError:
+            continue
+        task_type = str(doc.get("TaskType") or "")
+        if "search" not in task_type.lower():
+            continue
+        params = doc.get("SearchParameters") or {}
+        if task_type != "Search" or str(params.get("SearchType") or "") == "NonSpecific":
+            answers.add("off")
+        elif "IterativePepTraining" in params:
+            answers.add("on" if params["IterativePepTraining"] is True else "off")
+        else:
+            version = _release_tuple(release)
+            answers.add(
+                "off" if version is not None and version <= LAST_RELEASE_WITHOUT_ITERATIVE_PEP
+                else "not recorded"
+            )
+    return answers.pop() if len(answers) == 1 else "not recorded"
 
 
 #: MetaMorpheus's `SearchParameters.TCAmbiguity` default (`TaskLayer/SearchTask/SearchParameters.cs:50`).
