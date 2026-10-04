@@ -12,6 +12,10 @@ This folder is a `/project`-managed research project. **You are de facto working
   `6abd39e`). It has the REQ-DATAREPO-7 run-name fix and three new site figures (D38). **The live
   site is still built by 0.28.1** (aging's publish pin); **D39**: PXReprise switches to 0.32.0 NOW,
   and our definitions release is a second, later switch.
+  - **C# port state (end of 2026-10-04): everything but the MCP server is ported and VERIFIED** against
+    Python 0.32.0 on real data; see the status table at the top of `design/CSHARP_PORT.md`. Next: merge the
+    MCP port (an agent was on it), finish corpus ingest parity (scratchpad loop), then the switch plan
+    with aging/PXReprise (aging re-runs its benchmark on both catalogs first, aging 084). Nothing released.
   - **D41 (2026-10-04): dataRepo is being PORTED TO C#** ("any code of substance must be in C#";
     supersedes D36). Plan: `design/CSHARP_PORT.md` (phases 1-5, parity = row-by-row diff against
     Python 0.32.0 on aging's store). **No new substantive Python.** Python is frozen at 0.32.0.
@@ -378,6 +382,28 @@ This folder is a `/project`-managed research project. **You are de facto working
   `publish_catalog_and_site.ps1` points at a venv that only moves when PXReprise switches (D39).
 - **`threads.py new` needs `--date`** as well as `--project` and `--to`.
 - **The .gitignore template ignores `bin/`.** Add a `!/<dir>/bin/` exception before putting code in any bin folder (G4).
+- **C# port: parity is measured against what Python WROTE, never against what we expect it wrote.** Every
+  port in `dotnet/` was checked by running the Python on the same inputs (scratch scripts, never shipped) and
+  comparing rows, bytes or JSON. `dotnet/PORTING.md` is the convention; `DataRepo.Parity` is the tool
+  (`roundtrip`, `ingest`, `compare`, `build`, `site`, `site-compare`, `study`). `IngestRules.Python0320` keeps
+  0.32.0's rows reproducible forever and hashes ids from `parity-python-0.32.0`, so a parity bundle can
+  never pass for a real one.
+- **The ports surfaced platform-dependent Python.** pathlib sorted `Mods/*.txt` case-SENSITIVELY on Linux and
+  case-insensitively on Windows, so the same search resolved modifications differently by OS (the C# pins the
+  Windows order every stored bundle used). `dataset_databases.database` is `Path(p).name` of a Windows path.
+  DuckDB renders TIMESTAMPTZ in the session's zone (Chicago here, UTC on CI). **CI on Linux is what finds
+  these; never call a port done on a Windows-only run.**
+- **`*.parquet` is gitignored repo-wide (D8).** The C# test fixtures need the `!/dotnet/tests/...` exception
+  that exists; a new fixture folder elsewhere would silently not be committed and CI fails (it did, once).
+- **Python `Path.write_text` writes CRLF on Windows**, which compounds the heredoc-backslash trap: a `\r\n`
+  written by a Python patch script came out as CR CR LF. Patch C# with the Edit tool, or byte-level Python.
+- **One version for the whole C# solution** (`dotnet/Directory.Build.props`, `0.0.0-dev` until CI stamps a
+  release with `-p:Version` and `-p:SourceRevisionId`). It reaches bundle.json, `catalog_id` and the site's
+  generator; three projects once read three different values. `datarepo run` refuses a `-dev` build.
+- **Name no C# class after its namespace** (`DataRepo.Site.Site`): it cannot be reached by short name from
+  other `DataRepo.*` namespaces. Hence `SiteGenerator`, `StudyWriter`, `CatalogBuilder`.
+- **PXReprise rewrites the live `F:/aging_data/batch/manifest.yaml` non-atomically**: a reader caught it
+  half-written once (2026-10-04). Retry before diagnosing a YAML error in it; tell PXReprise.
 
 **Sibling project: `E:\CodeReview\aging`** (the NCEMS pipeline). aging *produces* results under
 `F:\aging_data\<run>\<PXD>\` with `provenance.json` (schema `aging-provenance/2`). dataRepo *ingests and serves*
