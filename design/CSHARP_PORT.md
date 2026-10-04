@@ -5,7 +5,7 @@
 | phase | state | measured against Python 0.32.0 |
 |---|---|---|
 | 1 schema and bundle | **done** | all 88 current-schema bundles in aging's store round-trip: 95,328,025 rows, 0 differences, every id recomputes |
-| 2 ingest | **done** (parity mode `IngestRules.Python0320`) | test dataset: 17/17 tables identical; corpus: every dataset compared so far identical (33 of 85 at writing; the loop follows the Python reference ingest) |
+| 2 ingest | **done** (parity mode `IngestRules.Python0320`) | test dataset: 17/17 tables identical; corpus: **85 of 85** datasets identical, every table and row (2026-10-04) |
 | 2 G76 / G81 / D37 | **built** under `IngestRules.Current` | G76 reproduces aging 075's fibronectin case; 46 of 937 within-gene merges rest on an Ensembl id alone (DATAREPO-70) |
 | 3 study layer | **done** (`DataRepo.Study`) | ids identical to Python's; aging's stored study bundle reproduced |
 | 3 catalog | **done** (`DataRepo.Catalog`) | 27M rows identical (13 aging datasets with study layer and 8 engine artefacts; 20-dataset reference); one view lists in undefined order in Python's own SQL |
@@ -127,9 +127,11 @@ or a Python bug, and each gets a named finding before the switch. The Python bug
 Every module is ported and verified. What remains moves the operator (aging, through PXReprise's batch) from
 Python 0.32.0 to the C# release. **Nothing here has been done; each step marked "user" waits for the user.**
 
-1. **Finish corpus ingest parity** (dataRepo): every `include` dataset ingested by both, every table compared.
-   The comparison loop in the scratchpad follows the Python reference ingest; at writing every compared dataset
-   is identical. Report the final count here.
+1. **Corpus ingest parity: DONE 2026-10-04.** All **85 of 85** `include` datasets in aging's live manifest,
+   ingested by Python 0.32.0 (pyMzLib 0.4.0) and by the C# ingester (`IngestRules.Python0320`): every table, every
+   row identical. 84 matched on the first pass. PXD077298 differed only because aging edited its manifest entry
+   (PXR-A17, `run_enrichment` for a mixed deposit) between the two ingests; both sides re-ingested from one
+   snapshot of the manifest are identical. Rerun this step at the switch if the C# code changes before then.
 2. **Decide the first C# version number** (user). Recommendation: **1.0.0**. It is a new implementation line,
    and bundle ids change for every dataset anyway (the ingest path is new), so a major version says so
    honestly. 0.33.0 would suggest a compatible step.

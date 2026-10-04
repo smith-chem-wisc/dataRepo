@@ -12,10 +12,11 @@ This folder is a `/project`-managed research project. **You are de facto working
   `6abd39e`). It has the REQ-DATAREPO-7 run-name fix and three new site figures (D38). **The live
   site is still built by 0.28.1** (aging's publish pin); **D39**: PXReprise switches to 0.32.0 NOW,
   and our definitions release is a second, later switch.
-  - **C# port state (end of 2026-10-04): everything but the MCP server is ported and VERIFIED** against
-    Python 0.32.0 on real data; see the status table at the top of `design/CSHARP_PORT.md`. Next: merge the
-    MCP port (an agent was on it), finish corpus ingest parity (scratchpad loop), then the switch plan
-    with aging/PXReprise (aging re-runs its benchmark on both catalogs first, aging 084). Nothing released.
+  - **C# port state (end of 2026-10-04): EVERY module is ported and VERIFIED** against Python 0.32.0 on
+    real data, MCP included; corpus ingest parity is 85 of 85 datasets identical. See the status table at
+    the top of `design/CSHARP_PORT.md`. Next: "The switch" in that file, which waits on the user (first C#
+    version, recommended 1.0.0, and the release) and on aging's benchmark on both catalogs (aging 084).
+    Nothing released.
   - **D41 (2026-10-04): dataRepo is being PORTED TO C#** ("any code of substance must be in C#";
     supersedes D36). Plan: `design/CSHARP_PORT.md` (phases 1-5, parity = row-by-row diff against
     Python 0.32.0 on aging's store). **No new substantive Python.** Python is frozen at 0.32.0.
