@@ -38,6 +38,8 @@ __pycache__/
 # Bundle stores. dataRepo is code, not data (D8): bundles belong in the producing instance.
 /store/
 *.parquet
+# The one exception: the C# port's test fixture, a bundle the Python ingester wrote (see its PROVENANCE.md).
+!/dotnet/tests/DataRepo.Tests/Fixtures/**/*.parquet
 
 # Cross-project thread read-state: per-machine, not project truth
 .project/threads.state
