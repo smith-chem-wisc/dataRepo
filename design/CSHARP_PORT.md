@@ -1,6 +1,6 @@
 # Porting dataRepo to C# (D41)
 
-**Status (2026-10-04, end of the first port day): everything but the MCP server is ported and verified against Python 0.32.0 on real data. Nothing is released; the operator stays on Python 0.32.0.**
+**Status (2026-10-04, end of the first port day): every module is ported and verified against Python 0.32.0 on real data. Nothing is released; the operator stays on Python 0.32.0.**
 
 | phase | state | measured against Python 0.32.0 |
 |---|---|---|
@@ -9,11 +9,12 @@
 | 2 G76 / G81 / D37 | **built** under `IngestRules.Current` | G76 reproduces aging 075's fibronectin case; 46 of 937 within-gene merges rest on an Ensembl id alone (DATAREPO-70) |
 | 3 study layer | **done** (`DataRepo.Study`) | ids identical to Python's; aging's stored study bundle reproduced |
 | 3 catalog | **done** (`DataRepo.Catalog`) | 27M rows identical (13 aging datasets with study layer and 8 engine artefacts; 20-dataset reference); one view lists in undefined order in Python's own SQL |
-| 4 MCP server | **in progress** (agent) | |
+| 4 MCP server | **done** (`DataRepo.Mcp`, `datarepo mcp`) | 367 + 367 fixture calls and 427 calls on aging's serving catalog byte-identical to Python's server; tools/list identical over real stdio; timeout watchdog verified on DuckDB 1.5.5. Not yet done: the stranger-agent check (a subagent with only the tools) |
 | 5 site | **done** (`DataRepo.Site`) | byte-identical: 1,321 files / 41 MB from aging's 85-dataset serving catalog |
 | 5 runner + logs engine | **done** (`DataRepo.Runner`) | aging's stored rat resolution re-run with its inputs: every row identical |
-| 5 CLI | **done but `mcp`** (`DataRepo.Cli`, `datarepo.exe`) | CI runs ingest/build/query/site end to end on Linux |
-| 5 binaries, release, operator switch | not started | |
+| 5 CLI | **done** (`DataRepo.Cli`, `datarepo.exe`): every command of the Python release | CI runs ingest/build/query/site end to end on Linux |
+| 5 binaries | **built and verified** in CI (`dotnet-binaries.yml`): win-x64, linux-x64, osx-arm64, osx-x64, each running the fixture end to end with no .NET | artifacts only, no release |
+| 5 release, operator switch | not started: the user decides the release; aging re-runs its benchmark on both catalogs first (084) | |
 
 Decided by the user on 2026-10-04: "any code of substance must
 be in C# and in our production code. python is only acceptable for quick work." Asked whether that covers
@@ -92,6 +93,10 @@ Each phase ends on a parity check against real data. The operator stays on Pytho
 4. **MCP server.**
    **Done when:** a subagent with only the tools, and no source, answers the same questions (`scratchpad/ask.py`
    rewritten against the C# server).
+   **Built 2026-10-04** (`DataRepo.Mcp`, `datarepo mcp` in `DataRepo.Cli`): every answer to a 367-call corpus is
+   byte for byte the Python 0.32.0 server's on the two fixture catalogs (CI), and 427 calls on aging's serving
+   catalog (RealData); see `dotnet/tests/DataRepo.Tests/Fixtures/mcp/PROVENANCE.md`. The subagent check above is
+   still to do.
 5. **Site, runner, CLI, binaries, release.** The operator switches once. The Python package is then
    deleted, and the docs say so.
 
@@ -122,7 +127,11 @@ or a Python bug, and each gets a named finding before the switch. The Python bug
 - **aging 084** (answers DATAREPO-68): no Python imports of datarepo anywhere; they run `ingest`, `build`,
   `study`, `site`, `manifest` and the MCP server (`python -m datarepo.cli mcp` today). **Phase 4/5:** keep a
   way to start the MCP server they can point `.claude.json` at (an exe is fine) and tell them the new
-  command line at the switch. **Phase 5 (site):** the "Unique peptides" tile's definition must say I and L
+  command line at the switch. **The command line (phase 4):** `datarepo.exe mcp --catalog <catalog.duckdb>`,
+  registered by `datarepo mcp --catalog <path> --install` as
+  `{"command": "<path>\\datarepo.exe", "args": ["mcp", "--catalog", "<absolute catalog path>"], "env": {}}`
+  (under the shared .NET host: `"command": "dotnet"`, `"args": ["<path>\\datarepo.dll", "mcp", ...]`). Same
+  options as the Python (`--list`, `--check`, `--name`, `--config`, `--force`). **Phase 5 (site):** the "Unique peptides" tile's definition must say I and L
   are equivalent and contaminants count (G76). They re-run their `results/eval/` benchmark on both catalogs
   from the same bundles before switching, and send every differing answer.
 - **go 020** (D39): once go's D39 is in an mzLib release, a shuffled partner (`Random_<acc>_f<n>`) in
