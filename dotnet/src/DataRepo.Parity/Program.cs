@@ -10,9 +10,12 @@ using DataRepo.Ingest;
 //       Phase 2: run the C# ingester on one dataset into a scratch store.
 //   compare <expected bundle dir> <actual bundle dir>
 //       Phase 2: every table of two bundles, row by row (Python's and C#'s ingest of the same inputs).
+//       Works on study bundles too (it compares the Parquet files only).
+//   study <study.yaml> --store <scratch> [--overwrite]
+//       Phase 3: run the C# study writer on one delivery into a scratch store.
 if (args.Length == 0)
 {
-    Console.Error.WriteLine("usage: roundtrip | ingest | compare (see Program.cs)");
+    Console.Error.WriteLine("usage: roundtrip | ingest | compare | study (see Program.cs)");
     return 2;
 }
 return args[0] switch
@@ -20,13 +23,31 @@ return args[0] switch
     "roundtrip" => RoundTripVerb(args),
     "ingest" => IngestVerb(args),
     "compare" => CompareVerb(args),
+    "study" => StudyVerb(args),
     _ => Usage(),
 };
 
 static int Usage()
 {
-    Console.Error.WriteLine("usage: roundtrip | ingest | compare (see Program.cs)");
+    Console.Error.WriteLine("usage: roundtrip | ingest | compare | study (see Program.cs)");
     return 2;
+}
+
+static int StudyVerb(string[] args)
+{
+    if (args.Length < 2) return Usage();
+    var store = Option(args, "--store");
+    if (store is null)
+    {
+        Console.Error.WriteLine("--store <scratch> is required: the parity tool never writes into an operator's store");
+        return 2;
+    }
+    var manifest = DataRepo.Study.StudyWriter.LoadStudyManifest(args[1]);
+    var result = DataRepo.Study.StudyWriter.WriteStudyBundle(manifest, store, args.Contains("--overwrite"));
+    Console.WriteLine($"{result.Layer}  (study layer, delivery {(manifest.Delivery is null ? "unlabelled" : PyFormat.StrAny(manifest.Delivery))})");
+    Console.WriteLine($"  bundle   {result.BundlePath}{(result.Skipped ? " (unchanged, not rewritten)" : "")}");
+    Console.WriteLine($"  tables   {string.Join(", ", result.RowCounts.OrderBy(kv => kv.Key, StringComparer.Ordinal).Select(kv => $"{kv.Key} {kv.Value}"))}");
+    return 0;
 }
 
 static string? Option(string[] args, string name)
