@@ -98,3 +98,17 @@ jobs:
           test -f "$RUNNER_TEMP/site/datasets/PXD999999.html"
           test -f "$RUNNER_TEMP/site/llms.txt"
           test -f "$RUNNER_TEMP/site/croissant.json"
+
+  # The C# port (D41, design/CSHARP_PORT.md). The generated tables must match the LinkML schema,
+  # exactly as tools/build_tables.py --check holds the Python ones to it.
+  dotnet:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: "10.0.x"
+      - name: Generated tables are current
+        run: dotnet run --project dotnet/src/DataRepo.SchemaGen -- --check
+      - name: Build and test
+        run: dotnet test dotnet/DataRepo.slnx

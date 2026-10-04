@@ -1,6 +1,6 @@
 # Porting dataRepo to C# (D41)
 
-**Status: PLAN, 2026-10-04. Nothing built.** Decided by the user on 2026-10-04: "any code of substance must
+**Status: PHASE 1 BUILT, 2026-10-04** (`dotnet/`: `DataRepo.SchemaGen`, `DataRepo.Bundle`, `DataRepo.Parity`, `DataRepo.Tests`; the fixture bundle Python wrote round-trips identically and its id recomputes). The parity run over aging's whole store is in progress; phase 1 is not called done until it passes. Phase 2 started. Decided by the user on 2026-10-04: "any code of substance must
 be in C# and in our production code. python is only acceptable for quick work." Asked whether that covers
 dataRepo's own package, they chose the port. This supersedes D36, which made the executables from the
 Python code.
@@ -44,7 +44,7 @@ One .NET solution in this repository, `dotnet/`, beside `src/` until the Python 
 | project | replaces | depends on |
 |---|---|---|
 | `DataRepo.Schema` | `_tables.py`, `_schema_docs.py` (generated) | the LinkML YAML |
-| `DataRepo.Bundle` | `bundle.py`, `manifest.py`, `definitions.py`, `errors.py` | Schema; writes Parquet through DuckDB `COPY`, so one engine reads and writes |
+| `DataRepo.Bundle` | `bundle.py`, `integrity.py`, `_tables.py`, `errors.py` (phase 1); `manifest.py`, `definitions.py` (phase 2) | Schema; writes Parquet through **ParquetSharp + Apache.Arrow**, the same Arrow C++ writer pyarrow uses, so column types and required/optional flags match a Python bundle exactly. (Changed from DuckDB `COPY` on 2026-10-04: DuckDB writes every column optional.) |
 | `DataRepo.Ingest` | `ingest.py`, `sources/*`, `readers.py`, `proforma.py`, `modlist.py`, `usi.py`, `reconcile.py`, `integrity.py` | Bundle; **mzLib NuGet** |
 | `DataRepo.Catalog` | `catalog.py`, `study.py` | Bundle; `DuckDB.NET.Data.Full` |
 | `DataRepo.Mcp` | `mcp.py`, `sandbox.py` | Catalog; the official `ModelContextProtocol` C# SDK |
