@@ -122,6 +122,42 @@ or a Python bug, and each gets a named finding before the switch. The Python bug
 - **pyMzLib stops being a dependency** once ingest is ported. Their DATAREPO-M1 answer says so. Our needs
   move to mzLib itself, through `/oracle mzLib`.
 
+## The switch: what is left, and whose step each is
+
+Every module is ported and verified. What remains moves the operator (aging, through PXReprise's batch) from
+Python 0.32.0 to the C# release. **Nothing here has been done; each step marked "user" waits for the user.**
+
+1. **Finish corpus ingest parity** (dataRepo): every `include` dataset ingested by both, every table compared.
+   The comparison loop in the scratchpad follows the Python reference ingest; at writing every compared dataset
+   is identical. Report the final count here.
+2. **Decide the first C# version number** (user). Recommendation: **1.0.0**. It is a new implementation line,
+   and bundle ids change for every dataset anyway (the ingest path is new), so a major version says so
+   honestly. 0.33.0 would suggest a compatible step.
+3. **Changes that only make sense at the release** (dataRepo, in the release commit):
+   - `BundleWriter.IngesterVersion` from `cs-0.0.0-dev` to the release's ingest path (e.g. `cs-1.0.0`);
+   - the schema's `peptidoforms.is_unique` / `is_isoform_specific` descriptions rewritten for G76 (D40: one gene
+     / one sequence, I = L, contaminants count, from mzLib's classifier), and the site tile's definition
+     (aging 084), plus `pep:DEF-PEP`'s version key gaining `iterative` (G81);
+   - retire the Python CI jobs' `--check` against the schema (the Python is frozen and its generated files would
+     go stale on the first schema edit), keeping the Python package in the repo until the switch is done;
+   - README and docs: the C# `datarepo` replaces `pip install`; the tutorial ids rerun (CLAUDE.md: a catalog id
+     hashes the package version, so every release makes printed ids stale).
+4. **Publish the release** (user: tag push and `gh release edit --draft=false`, as for 0.31/0.32). A release
+   workflow attaches the four `dotnet-binaries` builds to the draft; today that workflow uploads artifacts only.
+5. **aging's benchmark on both catalogs** (aging 084): build a C# catalog from the same bundles they serve, run
+   `results/eval/` on both, and send every differing answer. Our side: the MCP calls already match on 427 real
+   calls, so a difference would be news.
+6. **The operator switches** (aging/PXReprise): install the release, re-ingest the store once (every bundle id
+   changes, by design), rebuild the catalog and the site, repoint `.claude.json` at
+   `datarepo.exe mcp --catalog <catalog.duckdb>` (aging 084 asked for exactly this line), and start writing
+   `"definitions": "pxreprise"` in provenance (D37) whenever PXReprise is ready.
+7. **Retire the Python** (dataRepo): delete `src/datarepo`, the Python CI jobs and the PyInstaller workflow once
+   the operator has run on the C# release for a while. The parity tool keeps `IngestRules.Python0320` so the old
+   rows stay reproducible without the Python.
+
+Also to tell PXReprise at the switch: their batch rewrites `manifest.yaml` non-atomically, and a reader caught it
+half-written once (2026-10-04); write to a temporary file and rename.
+
 ## Requirements peers have handed the port (carry them to the phase named)
 
 - **aging 084** (answers DATAREPO-68): no Python imports of datarepo anywhere; they run `ingest`, `build`,
