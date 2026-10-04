@@ -112,3 +112,26 @@ jobs:
         run: dotnet run --project dotnet/src/DataRepo.SchemaGen -- --check
       - name: Build and test
         run: dotnet test dotnet/DataRepo.slnx
+
+      # The same whole path the Python ingester job checks, through the C# `datarepo`: producer output ->
+      # bundle -> catalog -> an answer -> the public site, on the fixture instance and on Linux.
+      - name: The C# command line, end to end
+        run: |
+          dotnet build dotnet/src/DataRepo.Cli -c Release -o "$RUNNER_TEMP/cs"
+          DR="$RUNNER_TEMP/cs/datarepo"
+          "$DR" --version
+          "$DR" manifest tests/data/manifest.yaml
+          "$DR" doctor
+          "$DR" ingest tests/data/manifest.yaml PXD999999 \
+            --store "$RUNNER_TEMP/cs-store" \
+            --mm-settings tests/data/work_root/mm_settings/1.1.11
+          "$DR" build tests/data/manifest.yaml PXD999999 \
+            --store "$RUNNER_TEMP/cs-store" --out "$RUNNER_TEMP/cs-catalog.duckdb"
+          "$DR" catalog "$RUNNER_TEMP/cs-catalog.duckdb"
+          "$DR" query "$RUNNER_TEMP/cs-catalog.duckdb" \
+            "SELECT dataset_id, n_runs, n_psms_1pct FROM dataset_overview"
+          "$DR" site "$RUNNER_TEMP/cs-catalog.duckdb" --out "$RUNNER_TEMP/cs-site" \
+            --base-url https://example.org/ --data-url https://example.org/store
+          test -f "$RUNNER_TEMP/cs-site/datasets/PXD999999.html"
+          test -f "$RUNNER_TEMP/cs-site/llms.txt"
+          test -f "$RUNNER_TEMP/cs-site/croissant.json"
