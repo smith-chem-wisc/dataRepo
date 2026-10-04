@@ -6,13 +6,11 @@
 
 | | |
 |---|---|
-| Commits | 369 |
+| Commits | 423 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
 | Locked decisions | 41 |
-| Open gaps | 77 |
+| Open gaps | 78 |
 | Gate items skipped | 4 |
-
-> **1 document(s) in `design/` not referenced above** -- `CSHARP_PORT.md`. Add a line for each, or say why not.
 
 <!-- END GENERATED -->
 
@@ -24,7 +22,29 @@ reanalyses. The results cover search, quant, provenance, design and organelle an
 use it, but AI agents are the main users. The question it serves is how organelle proteomes change
 with age.
 
-## Latest (2026-09-30, twenty-fifth session): why the site has no new figures, and the inbox cleared
+## Latest (2026-10-04, twenty-sixth session): D41, dataRepo ported to C#, every module verified
+
+- **The user decided (D41): "any code of substance must be in C#"**, and chose to port dataRepo itself. Python
+  is frozen at 0.32.0 (operator-blocking fixes only, U18). Plan and status table: `design/CSHARP_PORT.md`.
+- **Done the same day, each verified against what Python 0.32.0 actually wrote on real data:**
+  - bundle writer and content hash (88 stored bundles, 95.3M rows, 0 differences);
+  - ingester (fixture 17/17 tables; 44 of 44 corpus datasets identical, loop still following the Python reference);
+  - study layer (same ids), catalog (27M rows), site (41 MB byte-identical), runner + logs engine, MCP server
+    (1,161 tool calls byte-identical), CLI `datarepo.exe` with every command;
+  - CI runs the C# end to end on Linux; self-contained binaries on 4 platforms (artifacts only).
+- **Built behind `IngestRules.Current`:** G76 (D40: is_unique = one gene, is_isoform_specific = one sequence,
+  mzLib's classifier), G81 (`iterative` in DEF-PEP), D37 (per-stage `definitions` namespace). Parity mode
+  `IngestRules.Python0320` keeps 0.32.0's rows reproducible forever.
+- **Found on the way** (all in G83 or CLAUDE.md): ~17 Python quirks reproduced on purpose for parity;
+  platform-dependent Python (pathlib order on Linux, Windows `Path.name`, DuckDB TIMESTAMPTZ zone, core count);
+  46 of 937 within-gene merges rest on an Ensembl id alone (pyMzLib 019, DATAREPO-70).
+- **Threads:** go 017/019 (GO-D1..D3), pyMzLib 018/019 (M1..M3, DATAREPO-70), PXReprise 008, aging 083,
+  pep 006 (DATAREPO-67..69). aging 084 and go 020 answered; nothing owed by us.
+- **Pick up at:** the switch checklist in `design/CSHARP_PORT.md` ("The switch"). Waiting on the user: the
+  first C# version number (recommendation 1.0.0) and the release. Waiting on peers: PXReprise 008, pep 006,
+  pyMzLib DATAREPO-70. Check the corpus parity log (scratchpad `corpus_parity.log`) for the final count.
+
+## 2026-09-30 (twenty-fifth session): why the site has no new figures, and the inbox cleared
 
 - **The live site was built by datarepo 0.28.1** (`.datarepo-site.json` `generator`, catalog
   `437b6ad19e6ff393`, 64 datasets): aging's `instance/publish_catalog_and_site.ps1:24` still points at

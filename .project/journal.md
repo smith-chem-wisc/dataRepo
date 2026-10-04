@@ -1842,3 +1842,14 @@ has no scan and our USI is built from one, so it needs its own table (G82, a cor
 it comes). We asked for a typed mzLib reader beside their writer (DATAREPO-65) and how contaminants
 are labelled (DATAREPO-66), since their T/D/ET/ED labels name none. Small trap: `threads.py new`
 refuses without `--date`.
+
+## 2026-10-04 (twenty-sixth session): D41, the C# port, in one day
+
+The user ruled that any code of substance must be C# and chose to port dataRepo itself (D41, superseding
+D36). Every module was ported and verified the same day, most of them by parallel worktree agents, each told
+to port one Python module and prove it against Python's ACTUAL output on real data, reporting Python quirks
+rather than fixing them. The verification, not the porting, was the work: 95.3M rows of round-tripped bundles,
+44 corpus datasets ingested identically, 27M catalog rows, a 41 MB site byte for byte, 1,161 MCP tool calls.
+CI on Linux found four platform-dependent behaviours a Windows-only run never would (pathlib order, Path.name,
+TIMESTAMPTZ zone, core count). G76 (D40, the user's choice of mapping) and G81 are built in C#. The switch
+(version, release, aging's benchmark, re-ingest) is a checklist waiting on the user and the operator.
