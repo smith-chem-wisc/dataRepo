@@ -46,3 +46,6 @@ __pycache__/
 
 # A user running examples/study_delivery/study.yaml without --store lands here.
 .tmp-example-store/
+
+# Agent worktrees (Claude Code)
+.claude/worktrees/

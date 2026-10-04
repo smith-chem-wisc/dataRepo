@@ -450,6 +450,18 @@ decisions:
       half-built D37/G81 Python is parked on local branch wip/d37-g81-python (3e68781) as specification.
 gaps:
   - >-
+    G83 NEW 2026-10-04 (C# port, phase 2). Python 0.32.0 behaviours the port reproduces ON PURPOSE for
+    row parity, each to be decided after parity as its own INGESTER bump: (1) modlist lookup GUESSES when
+    no entry targets the residue (first candidate with a UNIMOD id, else the first): `[UniProt:N6-
+    acetyllysine on S]` resolves to UNIMOD:1 -- contradicts its own "never guessed" docstring; and parse
+    never checks the token's residue against the sequence. (2) modlist `_parse_entries`: TG/MM/DR lines
+    between `//` and the next ID leak into the next entry. (3) proforma `_split`: an unclosed bracket
+    loses its last character. (4) ProformaCache.unresolved counts PSM rows, not distinct sequences.
+    (5) whole-valued doubles from pyMzLib arrived as ints (bridge JSON), so str() of them reads "-1" not
+    "-1.0"; the C# readers reproduce it. (6) TMT/multiplexed SDRF: run_facts and sample_of_run keyed by
+    run, so the last channel's row wins. (7) read_tsv raises on a field over 131,072 chars (csv limit).
+    (8) a superscript replicate digit crashes (isdigit true, int() fails). Found by the porting agents.
+  - >-
     G1 Framework. Steps 1 (ingest), 2 (build) and 3 (MCP) are BUILT and locked as D9/D10/D12-D15.
     Step 3 shipped in datarepo 0.10.0 on 2026-09-22: `datarepo mcp --catalog <path>` with
     `--install`/`--check`/`--list`, three tools (`datarepo_describe`, `datarepo_search`,

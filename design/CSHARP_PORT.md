@@ -1,6 +1,6 @@
 # Porting dataRepo to C# (D41)
 
-**Status: PHASE 1 BUILT, 2026-10-04** (`dotnet/`: `DataRepo.SchemaGen`, `DataRepo.Bundle`, `DataRepo.Parity`, `DataRepo.Tests`; the fixture bundle Python wrote round-trips identically and its id recomputes). The parity run over aging's whole store is in progress; phase 1 is not called done until it passes. Phase 2 started. Decided by the user on 2026-10-04: "any code of substance must
+**Status: PHASE 1 BUILT, 2026-10-04** (`dotnet/`: `DataRepo.SchemaGen`, `DataRepo.Bundle`, `DataRepo.Parity`, `DataRepo.Tests`; the fixture bundle Python wrote round-trips identically and its id recomputes). **Phase 1 DONE 2026-10-04:** all 88 current-schema bundles in aging's store round-trip with identical rows and recomputed ids, 95,328,025 rows, 0 differences (1 older-schema bundle skipped). Phase 2 in progress. Decided by the user on 2026-10-04: "any code of substance must
 be in C# and in our production code. python is only acceptable for quick work." Asked whether that covers
 dataRepo's own package, they chose the port. This supersedes D36, which made the executables from the
 Python code.
