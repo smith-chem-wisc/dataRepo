@@ -10,13 +10,21 @@ using DataRepo.Ingest;
 //       Phase 2: run the C# ingester on one dataset into a scratch store.
 //   compare <expected bundle dir> <actual bundle dir>
 //       Phase 2: every table of two bundles, row by row (Python's and C#'s ingest of the same inputs).
+//       Works on study bundles too (it compares the Parquet files only).
+//   study <study.yaml> --store <scratch> [--overwrite]
+//       Phase 3: run the C# study writer on one delivery into a scratch store.
+//   site <catalog.duckdb> --out <dir> [--title T] [--base-url U] [--data-url U] [--notice T] [--about F]
+//        [--purpose T] [--keyword W]...
+//       Phase 5: `datarepo site` with every option, from the C# generator.
+//   site-compare <expected site dir> <actual site dir>
+//       Phase 5: every file of two sites, byte for byte, the generator's own version normalised (SiteParity).
 //   build <manifest> [accession ...] --store <store> --out <scratch catalog> [--latest] [--bundle A=id]...
 //         [--study layer=id]... [--study-latest layer]... [--overwrite]
 //       Phase 3: `datarepo build` through the C# catalog builder, with the Python CLI's selection and notes,
 //       so the two catalogs can be compared table by table. <store> is read only.
 if (args.Length == 0)
 {
-    Console.Error.WriteLine("usage: roundtrip | ingest | compare | build (see Program.cs)");
+    Console.Error.WriteLine("usage: roundtrip | ingest | compare | study | build | site | site-compare (see Program.cs)");
     return 2;
 }
 return args[0] switch
@@ -24,14 +32,34 @@ return args[0] switch
     "roundtrip" => RoundTripVerb(args),
     "ingest" => IngestVerb(args),
     "compare" => CompareVerb(args),
+    "study" => StudyVerb(args),
     "build" => BuildVerb(args),
+    "site" => DataRepo.Site.SiteCommand.Run(args[1..], Console.Out, Console.Error),
+    "site-compare" => SiteCompareVerb(args),
     _ => Usage(),
 };
 
 static int Usage()
 {
-    Console.Error.WriteLine("usage: roundtrip | ingest | compare | build (see Program.cs)");
+    Console.Error.WriteLine("usage: roundtrip | ingest | compare | study | build | site | site-compare (see Program.cs)");
     return 2;
+}
+
+static int StudyVerb(string[] args)
+{
+    if (args.Length < 2) return Usage();
+    var store = Option(args, "--store");
+    if (store is null)
+    {
+        Console.Error.WriteLine("--store <scratch> is required: the parity tool never writes into an operator's store");
+        return 2;
+    }
+    var manifest = DataRepo.Study.StudyWriter.LoadStudyManifest(args[1]);
+    var result = DataRepo.Study.StudyWriter.WriteStudyBundle(manifest, store, args.Contains("--overwrite"));
+    Console.WriteLine($"{result.Layer}  (study layer, delivery {(manifest.Delivery is null ? "unlabelled" : PyFormat.StrAny(manifest.Delivery))})");
+    Console.WriteLine($"  bundle   {result.BundlePath}{(result.Skipped ? " (unchanged, not rewritten)" : "")}");
+    Console.WriteLine($"  tables   {string.Join(", ", result.RowCounts.OrderBy(kv => kv.Key, StringComparer.Ordinal).Select(kv => $"{kv.Key} {kv.Value}"))}");
+    return 0;
 }
 
 static string? Option(string[] args, string name)
@@ -70,12 +98,12 @@ static int BuildVerb(string[] args)
     static Dictionary<string, string> Pins(IEnumerable<string> values) =>
         values.Select(v => v.Split('=', 2)).ToDictionary(p => p[0], p => p[1]);
     var started = DateTime.UtcNow;
-    var bundles = DataRepo.Catalog.Catalog.SelectBundles(manifest, accessions, store, Pins(Options(args, "--bundle")), args.Contains("--latest"));
-    var study = DataRepo.Catalog.Catalog.SelectStudyBundles(store, Pins(Options(args, "--study")), Options(args, "--study-latest"));
-    var (artefacts, engineChecks) = DataRepo.Catalog.Catalog.SelectArtefacts(store, bundles);
+    var bundles = DataRepo.Catalog.CatalogBuilder.SelectBundles(manifest, accessions, store, Pins(Options(args, "--bundle")), args.Contains("--latest"));
+    var study = DataRepo.Catalog.CatalogBuilder.SelectStudyBundles(store, Pins(Options(args, "--study")), Options(args, "--study-latest"));
+    var (artefacts, engineChecks) = DataRepo.Catalog.CatalogBuilder.SelectArtefacts(store, bundles);
     var notes = new Dictionary<string, object?> { ["manifest"] = manifest.Path.Replace('/', Path.DirectorySeparatorChar) };
     if (study.Count > 0) notes["study"] = study.ToDictionary(r => r.Layer, r => (object?)r.BundleId);
-    var result = DataRepo.Catalog.Catalog.BuildCatalog(bundles, output, args.Contains("--overwrite"), manifest.Instance, notes, study, artefacts, engineChecks);
+    var result = DataRepo.Catalog.CatalogBuilder.BuildCatalog(bundles, output, args.Contains("--overwrite"), manifest.Instance, notes, study, artefacts, engineChecks);
     Console.WriteLine($"catalog  {result.Path}");
     Console.WriteLine($"  id       {result.CatalogId}{(result.Skipped ? " (unchanged)" : "")}");
     foreach (var r in result.Bundles) Console.WriteLine($"  dataset  {r.DatasetId,-12} bundle {r.BundleId}");
@@ -114,6 +142,15 @@ static int CompareVerb(string[] args)
     var differences = RoundTrip.CompareBundles(args[1], args[2]);
     foreach (var d in differences) Console.WriteLine($"  DIFF  {d}");
     Console.WriteLine(differences.Count == 0 ? "  identical: every table, every row" : $"  {differences.Count} table(s) differ");
+    return differences.Count == 0 ? 0 : 1;
+}
+
+static int SiteCompareVerb(string[] args)
+{
+    if (args.Length < 3) return Usage();
+    var differences = DataRepo.Site.SiteParity.Compare(args[1], args[2], out var files, out var bytes);
+    foreach (var d in differences) Console.WriteLine($"  DIFF  {d}");
+    Console.WriteLine($"  {files} files, {bytes:N0} bytes compared; {differences.Count} difference(s)");
     return differences.Count == 0 ? 0 : 1;
 }
 

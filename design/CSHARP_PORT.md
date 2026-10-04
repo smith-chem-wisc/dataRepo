@@ -46,7 +46,8 @@ One .NET solution in this repository, `dotnet/`, beside `src/` until the Python 
 | `DataRepo.Schema` | `_tables.py`, `_schema_docs.py` (generated) | the LinkML YAML |
 | `DataRepo.Bundle` | `bundle.py`, `integrity.py`, `_tables.py`, `errors.py` (phase 1); `manifest.py`, `definitions.py` (phase 2) | Schema; writes Parquet through **ParquetSharp + Apache.Arrow**, the same Arrow C++ writer pyarrow uses, so column types and required/optional flags match a Python bundle exactly. (Changed from DuckDB `COPY` on 2026-10-04: DuckDB writes every column optional.) |
 | `DataRepo.Ingest` | `ingest.py`, `sources/*`, `readers.py`, `proforma.py`, `modlist.py`, `usi.py`, `reconcile.py`, `integrity.py` | Bundle; **mzLib NuGet** |
-| `DataRepo.Catalog` | `catalog.py`, `study.py` | Bundle; `DuckDB.NET.Data.Full` |
+| `DataRepo.Study` | `study.py` (phase 3, done 2026-10-04: same study bundle ids, rows and `study.json` as Python 0.32.0) | Bundle; Ingest (`PyYaml`, `Sdrf.NotAvailable`). Its own project so the writer did not wait on the catalog's DuckDB work. |
+| `DataRepo.Catalog` | `catalog.py` | Bundle; Study; `DuckDB.NET.Data.Full` |
 | `DataRepo.Mcp` | `mcp.py`, `sandbox.py` | Catalog; the official `ModelContextProtocol` C# SDK |
 | `DataRepo.Site` | `site.py` | Catalog |
 | `DataRepo.Runner` | `runner.py`, `engines/logs.py` | Bundle |
