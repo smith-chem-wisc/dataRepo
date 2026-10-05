@@ -132,10 +132,10 @@ Python 0.32.0 to the C# release. **Nothing here has been done; each step marked 
    row identical. 84 matched on the first pass. PXD077298 differed only because aging edited its manifest entry
    (PXR-A17, `run_enrichment` for a mixed deposit) between the two ingests; both sides re-ingested from one
    snapshot of the manifest are identical. Rerun this step at the switch if the C# code changes before then.
-2. **Decide the first C# version number** (user). Recommendation: **1.0.0**. It is a new implementation line,
+2. **Decide the first C# version number: 1.0.0** (the user, 2026-10-05). Recommendation was **1.0.0**. It is a new implementation line,
    and bundle ids change for every dataset anyway (the ingest path is new), so a major version says so
    honestly. 0.33.0 would suggest a compatible step.
-3. **Changes that only make sense at the release** (dataRepo, in the release commit):
+3. **Changes that only make sense at the release: DONE in `d029a53`** (CI green), docs in progress:
    - `BundleWriter.IngesterVersion` from `cs-0.0.0-dev` to the release's ingest path (e.g. `cs-1.0.0`);
    - the schema's `peptidoforms.is_unique` / `is_isoform_specific` descriptions rewritten for G76 (D40: one gene
      / one sequence, I = L, contaminants count, from mzLib's classifier), and the site tile's definition
@@ -148,8 +148,9 @@ Python 0.32.0 to the C# release. **Nothing here has been done; each step marked 
      go stale on the first schema edit), keeping the Python package in the repo until the switch is done;
    - README and docs: the C# `datarepo` replaces `pip install`; the tutorial ids rerun (CLAUDE.md: a catalog id
      hashes the package version, so every release makes printed ids stale).
-4. **Publish the release** (user: tag push and `gh release edit --draft=false`, as for 0.31/0.32). A release
-   workflow attaches the four `dotnet-binaries` builds to the draft; today that workflow uploads artifacts only.
+4. **Publish the release** (user: tag push and `gh release edit --draft=false`, as for 0.31/0.32). A `v1.0.0`
+   tag makes `dotnet-binaries.yml` stamp the version, verify each binary reports it, and attach the four
+   archives to a DRAFT release (built `d029a53`). `binaries.yml` (the frozen Python) now fires on `v0.*` only.
 5. **aging's benchmark on both catalogs** (aging 084): build a C# catalog from the same bundles they serve, run
    `results/eval/` on both, and send every differing answer. Our side: the MCP calls already match on 427 real
    calls, so a difference would be news.
