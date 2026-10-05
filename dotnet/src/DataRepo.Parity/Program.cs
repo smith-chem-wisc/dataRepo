@@ -105,7 +105,7 @@ static int BuildVerb(string[] args)
     var (artefacts, engineChecks) = DataRepo.Catalog.CatalogBuilder.SelectArtefacts(store, bundles);
     var notes = new Dictionary<string, object?> { ["manifest"] = manifest.Path.Replace('/', Path.DirectorySeparatorChar) };
     if (study.Count > 0) notes["study"] = study.ToDictionary(r => r.Layer, r => (object?)r.BundleId);
-    var result = DataRepo.Catalog.CatalogBuilder.BuildCatalog(bundles, output, args.Contains("--overwrite"), manifest.Instance, notes, study, artefacts, engineChecks);
+    var result = DataRepo.Catalog.CatalogBuilder.BuildCatalog(bundles, output, args.Contains("--overwrite"), manifest.Instance, notes, study, artefacts, engineChecks, manifest);
     Console.WriteLine($"catalog  {result.Path}");
     Console.WriteLine($"  id       {result.CatalogId}{(result.Skipped ? " (unchanged)" : "")}");
     foreach (var r in result.Bundles) Console.WriteLine($"  dataset  {r.DatasetId,-12} bundle {r.BundleId}");

@@ -468,12 +468,16 @@ gaps:
     (protein-group file, annotation XML, go.obo, aging's category map), go's definition id (charter S4),
     whether it calls mzLib's GoGroupAnnotator or takes go's files. Not blocking: no released mzLib writes go's file.
   - >-
-    G84 NEW 2026-10-04 (PXReprise 009 wish 2). A note can reach the catalog only through a re-ingest. Notes are
-    NON_CONTENT fields (rewording must not re-id), yet `datasets.notes` is written at ingest, so aging's ten
-    notes this week (PXR-A12, PXR-A18) sit in the manifest until the deposit is next ingested. Proposed (D32
-    shape, not built): `datarepo build` already takes the manifest, so the CATALOG takes every non-content field
-    from the manifest it is given, and the bundle keeps the ingest-time copy as provenance. No schema bump, no
-    re-ingest, no new command. Needs a CATALOG_VERSION bump. Do in C# after the switch.
+    G84 BUILT 2026-10-05 in C#, unreleased (PXReprise 009 wish 2; opened 2026-10-04). Filling it corrected the
+    premise: there was NO `datasets.notes` and no ingest-time copy -- the non-content fields (status, reason,
+    notes, flags, provenance_schema, sdrf) never reached a bundle row or the catalog at all, so a note was not
+    waiting for a re-ingest, it was invisible. Built: `datarepo build` writes derived table `dataset_annotations`
+    (1/dataset: in_manifest, status, reason, notes, flags, provenance_schema, sdrf) from the manifest it is given,
+    and `catalog_id` hashes them, so a reworded note moves the catalog and not the bundle. A dataset the manifest
+    lacks keeps NULLs + `catalog_checks` kind `manifest` names it. Content fields are never taken from the build
+    manifest. CatalogBuilder.AnnotationFields must equal NonContentFields minus `raw` (a test). CATALOG_VERSION
+    9 -> 10; Python0320 scope unchanged (8, no table). No schema change. Still open: tell PXReprise/aging (the
+    column names); maybe surface `notes` on `dataset_overview` (G85 builds on this table).
   - >-
     G85 NEW 2026-10-04 (PXReprise 009 wish 3). Runs excluded from ANALYSIS (searched, kept in the bundle) are
     prose in `notes` (S71's two runs; PXD012753 `20170317_VM_17`/`VM_18`). Proposed, not built: a manifest field
