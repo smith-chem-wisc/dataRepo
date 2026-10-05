@@ -12,3 +12,5 @@ tests/data/** -text
 dotnet/tests/DataRepo.Tests/Fixtures/study/** -text
 # The C# site port compares its output with Python's byte for byte, so the expected pages keep their LF bytes.
 dotnet/tests/DataRepo.Tests/Fixtures/site/** -text
+# The go engine fixtures: the C# go engine reads these exact bytes.
+dotnet/tests/DataRepo.Tests/Fixtures/go-engine/** -text

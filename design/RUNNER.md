@@ -21,6 +21,17 @@ written and the difference is listed here:
   with contaminants excluded).
 - go and ptmQtl engines are not built. They wait on their releases. go's per-row columns are in schema
   0.0.10 as D28 decided.
+- **2026-10-05: the go engine is BUILT in C# but cannot run: go has published no definition id** (charter
+  S4; asked as GO-D4, our go 021). `dotnet/src/DataRepo.Runner/GoEngine.cs`, engine `go.annotate_groups`:
+  mzLib 1.0.593's `GoGroupAnnotator` on one bundle's `protein_group_quant`, annotated from the bundle's
+  TARGET databases only (contaminant panels are not annotation input), unknown GO ids skipped and listed
+  (go D35); go's two TSVs written by mzLib's writers, read back by `Sources/Go.cs` as the acceptance check,
+  kept in the artefact beside the three tables. **One artefact per bundle**, keyed on its inputs (the
+  protein-group file, each target database, `ontology`, `category_map`), not the bundle id. The catalog
+  (version 9) loads it into `protein_localizations` / `organelle_term_categories` / `annotation_sources`
+  with the matched bundle's `dataset_id` and `bundle_id`, and a `go.annotate_groups coverage` check names
+  bundles without one. `datarepo run go.annotate_groups` refuses until `GoEngine.DefinitionId` is set to
+  the id go publishes; that constant is the one-line change that enables it.
 
 ## What it is for
 
