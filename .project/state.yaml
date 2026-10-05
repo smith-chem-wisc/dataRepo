@@ -450,14 +450,15 @@ decisions:
       half-built D37/G81 Python is parked on local branch wip/d37-g81-python (3e68781) as specification.
 gaps:
   - >-
-    G86 NEW 2026-10-05 (found answering ptmQtl 017 DATAREPO-P15). GO never reaches the catalog: Python
-    `sources/go.py` (GO-D1, fcdedcb) is a contract-checking READER that no ingest step calls, so
-    `protein_annotations` / `protein_localizations` / `organelle_term_categories` stay empty in every build, and
-    the C# port skipped it because an uncalled reader changes no row (every parity check passed without it). Owed:
-    port it to C# (`Sources/Go.cs`, go's 19 columns by name, `#!mzlib_release` guard, entrapment refusal until
-    go D39 is released) AND wire it into ingest, tested on tests/data/go. Not blocking today: no released mzLib
-    writes go's file yet (#1353 merged, unreleased). Lesson: "every module ported" was counted by parity, which
-    cannot see code that nothing calls.
+    G86 NEW 2026-10-05 (found answering ptmQtl 017 DATAREPO-P15). GO never reaches the catalog. Python
+    `sources/go.py` (GO-D1, fcdedcb) is a contract-checking reader nothing calls, and the C# port skipped it
+    (parity cannot see uncalled code). PART 1 DONE (83ed849, merged 5b47573): ported to C# `Sources/Go.cs`,
+    parity with the Python on go's fixtures (139 localization + 17 category rows, 37 edited cases). NOT wired
+    into ingest, correctly: CHARTER 2 (line 69) and RUNNER.md rule 3 make go an on-stored-results ENGINE whose
+    output is an artefact beside the bundle. PART 2 OWED: a `GoEngine` beside `LogsEngine` plus catalog loading of
+    go artefacts, with Go.cs as its acceptance check. Undecided inputs need go and aging: input roles
+    (protein-group file, annotation XML, go.obo, aging's category map), go's definition id (charter S4),
+    whether it calls mzLib's GoGroupAnnotator or takes go's files. Not blocking: no released mzLib writes go's file.
   - >-
     G84 NEW 2026-10-04 (PXReprise 009 wish 2). A note can reach the catalog only through a re-ingest. Notes are
     NON_CONTENT fields (rewording must not re-id), yet `datasets.notes` is written at ingest, so aging's ten
