@@ -450,6 +450,14 @@ decisions:
       half-built D37/G81 Python is parked on local branch wip/d37-g81-python (3e68781) as specification.
 gaps:
   - >-
+    G87 NEW 2026-10-05 (PXReprise 013, DATAREPO-72 built in PXReprise 52cd138, unreleased). qc_report.json gains
+    per-run `start_time` (as read, no zone: a RAW header's local clock), `instrument_model`,
+    `instrument_model_accession` (only when the reader gives one), `instrument_serial`; missing key = not read.
+    Owed in C#: read them into runs.acquisition_datetime / runs.instrument_model (IngesterVersion bump; catalogs
+    still accept older bundles, so only datasets with the new QC re-ingest). Accession and serial need columns =
+    next schema version. DECIDE FIRST: acquisition_datetime is `datetime`; a zoneless local time must not read as
+    UTC (store naive + an explicit "zone unknown" marker, or a string column). Tell PXReprise the choice (014).
+  - >-
     G86 NEW 2026-10-05 (found answering ptmQtl 017 DATAREPO-P15). GO never reaches the catalog. Python
     `sources/go.py` (GO-D1, fcdedcb) is a contract-checking reader nothing calls, and the C# port skipped it
     (parity cannot see uncalled code). PART 1 DONE (83ed849, merged 5b47573): ported to C# `Sources/Go.cs`,
