@@ -153,16 +153,22 @@ Python 0.32.0 to the C# release. **Nothing here has been done; each step marked 
 5. **aging's benchmark on both catalogs** (aging 084): build a C# catalog from the same bundles they serve, run
    `results/eval/` on both, and send every differing answer. Our side: the MCP calls already match on 427 real
    calls, so a difference would be news.
-6. **The operator switches** (aging/PXReprise): install the release, re-ingest the store once (every bundle id
-   changes, by design), rebuild the catalog and the site, repoint `.claude.json` at
-   `datarepo.exe mcp --catalog <catalog.duckdb>` (aging 084 asked for exactly this line), and start writing
-   `"definitions": "pxreprise"` in provenance (D37) whenever PXReprise is ready.
+6. **The operator switches** (aging/PXReprise), in the order PXReprise agreed (DATAREPO-71, their 011):
+   1. PXReprise drains its batch with STOP. This can take hours, because it waits for the search under way.
+   2. aging installs the release at a FIXED path (PXReprise pins a path, never a build folder) and re-ingests the
+      store once. Every bundle id changes, by design; about 2 h 20 min for 85 datasets here.
+   3. Repoint both callers:
+      - PXReprise's `machine.toml` `{datarepo}`, through a new pin; its first `batch.log` lines show it;
+      - **aging's own `$DataRepo` in `publish_catalog_and_site.ps1`**, which does not read PXReprise's pin.
+   4. aging rebuilds the catalog and the site, and repoints `.claude.json` at
+      `datarepo.exe mcp --catalog <catalog.duckdb>` (aging 084 asked for exactly this line).
+   5. PXReprise resumes; from v0.3.7 it writes `"definitions": "pxreprise"` in provenance (D37).
 7. **Retire the Python** (dataRepo): delete `src/datarepo`, the Python CI jobs and the PyInstaller workflow once
    the operator has run on the C# release for a while. The parity tool keeps `IngestRules.Python0320` so the old
    rows stay reproducible without the Python.
 
-Also to tell PXReprise at the switch: their batch rewrites `manifest.yaml` non-atomically, and a reader caught it
-half-written once (2026-10-04); write to a temporary file and rename.
+The half-written `manifest.yaml` seen on 2026-10-04 was PXReprise's in-place rewrite. It is fixed in their
+source (write beside, then rename; their 011) and ships in their next release.
 
 ## Requirements peers have handed the port (carry them to the phase named)
 
