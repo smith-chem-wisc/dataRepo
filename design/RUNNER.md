@@ -112,6 +112,24 @@ the artefact ids too, so a catalog cites exactly which resolution it serves. A c
 need an artefact that does not exist builds without it and says so in `catalog_checks`, the way an
 empty study layer does today.
 
+### Requirement for the first reader of a logs orthology snapshot (logs 030, our 029 §2)
+
+**Nothing in the product reads an orthology snapshot yet** (checked 2026-10-05: no C# under `dotnet/src`
+names orthology or `snapshot_id`; our 029 trial was a scratch read, stored nowhere). When something
+does -- an engine through this runner, a catalog loader, or a study layer -- its record (the
+artefact's `run.json`, or a catalog column) must carry, for each snapshot used:
+
+- the release tag (e.g. `orthology-compara-116-b63a3331`), the tar's sha256 and the manifest's sha256;
+- **the manifest's `snapshot_id`, verbatim** (logs 030 point 2). It is derivable from the manifest,
+  but logs' proposed residue rows (`logs:DEF-RESIDUE-CORRESPONDENCE v1`) carry it as
+  `orthology_snapshot_id`, so recording it lets those rows join to our record without opening a tar;
+- `format` and `format_version`, verbatim, refusing a `format_version` other than 1 rather than
+  reading it as 1 (`logs:DEF-ORTHOLOGY v1`, "The file contract");
+- the attribution from logs' `LICENSING.md` (data CC-BY-4.0, `views.sql` LGPL-3.0).
+
+Columns are selected by name (a column added at the end is not format 2), and `group_id` is never
+pinned: logs does not promise it across releases.
+
 ## What it will not do
 
 - Fetch anything. The operator supplies every input file; the runner hashes and checks it.
