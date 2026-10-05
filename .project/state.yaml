@@ -453,10 +453,16 @@ gaps:
     G87 NEW 2026-10-05 (PXReprise 013, DATAREPO-72 built in PXReprise 52cd138, unreleased). qc_report.json gains
     per-run `start_time` (as read, no zone: a RAW header's local clock), `instrument_model`,
     `instrument_model_accession` (only when the reader gives one), `instrument_serial`; missing key = not read.
-    Owed in C#: read them into runs.acquisition_datetime / runs.instrument_model (IngesterVersion bump; catalogs
-    still accept older bundles, so only datasets with the new QC re-ingest). Accession and serial need columns =
-    next schema version. DECIDE FIRST: acquisition_datetime is `datetime`; a zoneless local time must not read as
-    UTC (store naive + an explicit "zone unknown" marker, or a string column). Tell PXReprise the choice (014).
+    BUILT 2026-10-05 (C#, unreleased): schema 0.0.14 -> 0.0.15. Run gains `acquisition_start_local` (string, the
+    zoneless value VERBATIM, instrument's local clock, order-safe within one deposit and format only),
+    `instrument_model_source` (enum InstrumentModelSource: qc_report | sdrf), `instrument_model_accession`
+    (uriorcurie), `instrument_serial`. `acquisition_datetime` (TimestampUtc) only for a value with `Z`/offset,
+    converted to UTC. Model + accession come from ONE source: the QC report's, else the SDRF's NT/AC. A malformed
+    start_time refuses the ingest. Read in Sources/Runs.cs ApplyRunHeader under IngestRules.Current only;
+    Python0320 writes 0.0.13's column set (SchemaContract.AddedColumns/Columns). Scratch ingest of PXD077298 with
+    keys added by hand: 20 local, 1 UTC, 1 unread. OWED: IngesterVersion bump (release manager, 1.1.0); a 0.0.15
+    catalog refuses 0.0.14 bundles, so the 1.1.0 switch is a full re-ingest; tell PXReprise the choice (DATAREPO-72
+    follow-up: zoneless -> acquisition_start_local, never acquisition_datetime).
   - >-
     G86 NEW 2026-10-05 (found answering ptmQtl 017 DATAREPO-P15). GO never reaches the catalog. Python
     `sources/go.py` (GO-D1, fcdedcb) is a contract-checking reader nothing calls, and the C# port skipped it
