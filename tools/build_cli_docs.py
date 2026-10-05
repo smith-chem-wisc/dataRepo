@@ -138,7 +138,7 @@ def render(exe: Path) -> str:
         for name in names:
             out.append(f"| [`{name}`](#datarepo-{name}) | {_cell(summaries[name])} |\n")
     out.append(
-        "\n`datarepo --version` prints the version. A release build says its version (`datarepo 1.0.0`); "
+        "\n`datarepo --version` prints the version. A release build says its version (`datarepo X.Y.Z`); "
         "a build from source says `0.0.0-dev`.\n\n"
         "**Exit status.** `0` when the command did what it was asked, including a no-op it reports "
         "(an unchanged bundle or catalog, a delivery already written). `1` when it refused: a dataset "
