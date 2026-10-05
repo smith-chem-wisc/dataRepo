@@ -501,27 +501,41 @@ gaps:
     carries both). Python0320 scope: no table, no hash line. No schema change, no IngesterVersion change. Still
     open: dataset-level restrictions (aging 087, e.g. PXD012754 "never for protein statistics"): proposal sent.
   - >-
-    G83 NEW 2026-10-04 (C# port, phase 2). Python 0.32.0 behaviours the port reproduces ON PURPOSE for
-    row parity, each to be decided after parity as its own INGESTER bump: (1) modlist lookup GUESSES when
-    no entry targets the residue (first candidate with a UNIMOD id, else the first): `[UniProt:N6-
-    acetyllysine on S]` resolves to UNIMOD:1 -- contradicts its own "never guessed" docstring; and parse
-    never checks the token's residue against the sequence. (2) modlist `_parse_entries`: TG/MM/DR lines
-    between `//` and the next ID leak into the next entry. (3) proforma `_split`: an unclosed bracket
-    loses its last character. (4) ProformaCache.unresolved counts PSM rows, not distinct sequences.
-    (5) whole-valued doubles from pyMzLib arrived as ints (bridge JSON), so str() of them reads "-1" not
-    "-1.0"; the C# readers reproduce it. (6) TMT/multiplexed SDRF: run_facts and sample_of_run keyed by
-    run, so the last channel's row wins. (7) read_tsv raises on a field over 131,072 chars (csv limit).
-    (8) a superscript replicate digit crashes (isdigit true, int() fails). (9) modlist's Mods/*.txt order
-    was platform-dependent (pathlib case-sensitive on POSIX); the C# fixes it to the Windows order every
-    stored bundle used. (10) protein_db keeps B/Z residues that mzLib sanitises to X before searching
-    (6 mouse + 1 rat protein), so peptides there cannot be placed. (11) runs.build can make duplicate
-    run_ids (qc key `b` beside fetch `b.raw`; `c.mzML` + `c.raw`). (12) assign_enrichment: two runs with
-    one stem, only the later is filled. (13) metric_rows writes MBR keys whose value is null. (14)
-    modification_rows: a name without " on " gets residues = the whole name. (15) tc_ambiguity picks
-    search tasks by file stem (GlycoSearch counts), pep_regime by TaskType. (16) provenance schema regex
-    accepts a trailing newline; a null schema is stored as "None". (17) FASTA read as utf-8 not
-    utf-8-sig (a BOM drops the first protein); an XML entry with an empty first accession is skipped.
-    Found by the porting agents.
+    G83 DONE 2026-10-05 (C# port, phase 2): the Python 0.32.0 behaviours the port reproduced on purpose
+    for row parity, each now fixed under IngestRules.Current only (IngestRules.Python0320 still writes
+    0.32.0's rows; its parity tests pass it explicitly). No INGESTER_VERSION bump here: the release manager
+    bumps it once for 1.1.0. Tests: dotnet/tests/DataRepo.Tests/CurrentRulesTests.cs, each checking both
+    rules. MEASURED on aging's corpus (92 included datasets, read-only, scratch store): Current ingests of
+    PXD024803, PXD028852, PXD032044, PXD035107, PXD036557, PXD058611, PXD067622 are row-identical before
+    and after, and none of the inputs items 2, 3, 6-8, 11-17 describe occurs in any of the 92. So every fix
+    is to the class, with 0 rows changed today. Per item: (1) FIXED ae4404f: ModRegistry.Lookup answers only
+    for an entry targeting the residue (read as a TG line: Nxs is N) or X, and, with no residue, only when
+    the candidates agree; Parse checks a token on a residue against that residue. Terminal brackets are
+    EXEMPT: mzLib's reversed decoys carry the target's N-terminal mod onto another first residue
+    ([UniProt:N-acetylglycine on G]SVAA...), 17,667 PSM rows in 87 datasets, every one a decoy, and the
+    first version of the check would have tagged them all [Info:]. With the exemption: 0 tokens change in
+    AllPSMs/AllPeptides of all 92. (2) FIXED ae4404f: TG/MM/DR lines outside an entry are dropped (none in
+    MetaMorpheus 1.1.9-1.1.11). (3) FIXED ae4404f: an unclosed bracket keeps its last character (none in
+    the corpus). (4) FIXED ae4404f: ProformaCache.Unresolved counts distinct sequences (bundle.json notes
+    only, never a row). (5) LEFT AS IS: a whole-valued double arriving as an int is only ever parsed back to
+    a number (Float/Int) or written to a float column; no string column receives one, so no row can differ.
+    (6) FIXED 95683cc: a run on several SDRF rows keeps a run-level fact only where every row agrees (no
+    run is on two rows in the corpus; all label-free). (7) FIXED 95683cc: no csv field limit (largest
+    field 60,129 chars, PXD035171). (8) FIXED 95683cc: a superscript digit is NULL, not a crash (none).
+    (9) ALREADY FIXED in 1.0.0: Mods/*.txt sort is the Windows order on every platform; confirmed.
+    (10) FIXED 95683cc: database sequences go through mzLib's SanitizeAminoAcidSequence (B/Z/J -> X), as
+    the search saw them; 0 rows changed on PXD058611 (mouse) and PXD032044 (rat): no identified peptide
+    crosses those residues. (11) FIXED 95683cc: one run per run id, a QC name folds into the deposited
+    file; two deposited files with one stem are refused by name (no duplicate stems in the corpus).
+    (12) FIXED 95683cc: every run of a base name gets its enrichment. (13) FIXED 95683cc: a null MBR key
+    writes no metric (none null). (14) FIXED 95683cc: a name without " on " has residues "unspecified".
+    (15) FIXED 95683cc: TcAmbiguity goes by TaskType (GlycoSearch/XLSearch = RemoveContaminant, MetaMorpheus's
+    hard default); every corpus task file's stem and type agree. (16) FIXED 95683cc: the schema must match
+    exactly; a null schema is written "" not "None" (none in the corpus). ProvenanceRecord.provenance_schema
+    is required: true, so "" is the nearest to "not stated" it can hold: for the 1.1.0 schema owner, it
+    should not be required. (17) FIXED 95683cc: a FASTA BOM is dropped (no BOM in any searched database);
+    an XML entry with an empty first accession is LEFT AS IS: mzLib keys such an entry on "" too, so no PSM
+    can name it (none in the corpus).
   - >-
     G1 Framework. Steps 1 (ingest), 2 (build) and 3 (MCP) are BUILT and locked as D9/D10/D12-D15.
     Step 3 shipped in datarepo 0.10.0 on 2026-09-22: `datarepo mcp --catalog <path>` with
