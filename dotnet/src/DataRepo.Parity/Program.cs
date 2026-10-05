@@ -27,6 +27,8 @@ if (args.Length == 0)
     Console.Error.WriteLine("usage: roundtrip | ingest | compare | study | build | site | site-compare (see Program.cs)");
     return 2;
 }
+// Every verb compares against Python 0.32.0, which wrote schema 0.0.13.
+using var python0320 = SchemaContract.Python0320();
 return args[0] switch
 {
     "roundtrip" => RoundTripVerb(args),
@@ -193,7 +195,7 @@ static int RoundTripVerb(string[] args)
         {
             var schema = System.Text.Json.JsonDocument.Parse(File.ReadAllText(Path.Combine(dir, BundleWriter.ManifestName)))
                 .RootElement.GetProperty("schema_version").GetString();
-            if (schema != Tables.SchemaVersion)
+            if (schema != SchemaContract.Version)
             {
                 skipped++;
                 continue;

@@ -11,7 +11,9 @@ name: binaries
 on:
   workflow_dispatch:
   push:
-    tags: ["v*"]
+    # The Python is frozen at 0.32.0 (D41): only a 0.x tag (an operator-blocking fix to it) builds these. From
+    # 1.0.0 a release is the C# executables, built by dotnet-binaries.yml.
+    tags: ["v0.*"]
   pull_request:
     paths:
       - "tools/build_binary.py"

@@ -42,10 +42,14 @@ jobs:
       - name: Generated docs are up to date
         run: python tools/build_docs.py --check
 
+  # The Python package is FROZEN at 0.32.0 (D41): it is tested at its own release tag, against the schema it was
+  # released with, so the schema can move on (0.0.14, the C# release) without a frozen generator going stale.
   ingester:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          ref: v0.32.0
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
