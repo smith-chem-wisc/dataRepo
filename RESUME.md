@@ -2,14 +2,14 @@
 
 <!-- BEGIN GENERATED -- render_resume.py owns this block; edit state.yaml, not here -->
 
-**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-10-04
+**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-10-05
 
 | | |
 |---|---|
-| Commits | 430 |
+| Commits | 487 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
 | Locked decisions | 41 |
-| Open gaps | 80 |
+| Open gaps | 82 |
 | Gate items skipped | 4 |
 
 <!-- END GENERATED -->
@@ -22,7 +22,38 @@ reanalyses. The results cover search, quant, provenance, design and organelle an
 use it, but AI agents are the main users. The question it serves is how organelle proteomes change
 with age.
 
-## Latest (2026-10-04, twenty-sixth session): D41, dataRepo ported to C#, every module verified
+## Latest (2026-10-05, twenty-seventh session): datarepo 1.0.0 and 1.1.0 released, both in C#
+
+- **1.0.0** (tag on `5f5dfcc`): the C# port's first release. Corpus ingest parity was 85 of 85 datasets
+  identical. Schema 0.0.14, ingest path `cs-1.0.0`. G76 (D40), G81, D37 and `covered_zero` ship, plus
+  `ingest --json` and the `run_enrichment` checks in `manifest` (PXReprise 009). Docs and the tutorial are tested
+  again, in C# (DocsTests). The frozen Python's CI job runs at the v0.32.0 tag.
+- **1.1.0** (tag on `8779917`, the same day): schema 0.0.15, ingest path `cs-1.1.0`, catalog format 10.
+  - G83: the 0.32.0 defects kept for parity are fixed; 0 rows change on the corpus.
+  - G87: run start time and instrument from PXReprise's QC report. A zoneless time is stored verbatim in
+    `acquisition_start_local`, never as UTC.
+  - Read at build, with no re-ingest:
+    - G84 `dataset_annotations` (notes never reached a catalog before);
+    - G85 `excluded_runs` -> `run_exclusions` (searched runs only);
+    - the `candidates:` census -> `dataset_candidates`.
+  - G86: the go engine `go.annotate_groups`, in C#, calling mzLib 1.0.593. It REFUSES until go publishes a
+    definition id.
+  - A site shard was over its cap (it measured without its header). `provenance_schema` is optional.
+- **Found by filling, again:** the go reader was never wired in (parity cannot see code nothing calls). G84's
+  premise was wrong: notes never reached any catalog. Both ptmQtl answers needed a correction thread (019 -> 020)
+  for that reason.
+- **Threads:** aging 085/086/090, PXReprise 010/012/014/015, ptmQtl 019/020, go 021/022, QuantProject 010.
+  aging holds and re-ingests on 1.1.0 by 085's order (DATAREPO-73 agreed, 087).
+- **Pick up at:** run the inbox. We are waiting on:
+  - go: GO-D4 (definition id), GO-D5 and GO-D6;
+  - aging: DATAREPO-74 (dataset `restrictions`), then their re-ingest and their benchmark on both catalogs;
+  - pep: DATAREPO-69;
+  - pyMzLib: DATAREPO-70.
+
+  When aging answers 74, build `restrictions` and surface notes and exclusions on `dataset_overview`, in one
+  release. Retire the Python only after aging has run on 1.1.0 for a while.
+
+## 2026-10-04 (twenty-sixth session): D41, dataRepo ported to C#, every module verified
 
 - **The user decided (D41): "any code of substance must be in C#"**, and chose to port dataRepo itself. Python
   is frozen at 0.32.0 (operator-blocking fixes only, U18). Plan and status table: `design/CSHARP_PORT.md`.

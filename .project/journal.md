@@ -1860,3 +1860,19 @@ PXReprise 009 chose the executable over the library (two mzLib pins cannot share
 JSON envelope and for `manifest` to apply ingest's run-map rules. Both were built (`dd9bd40`) with one function
 shared by `manifest` and ingest, so the two refuse a map in the same words. Notes reaching the catalog without
 a re-ingest is proposed as a BUILD-time read (G84, the D32 shape).
+
+## 2026-10-05 (twenty-seventh session): 1.0.0 and 1.1.0, the first C# releases
+
+The user picked 1.0.0 and published it in the morning, and 1.1.0 by evening. 1.1.0 carries the schema change for
+PXReprise's run start times, so aging re-ingests once, not twice: we told them to hold for it (086). The day's
+findings again came from filling, not from reviewing:
+- Answering ptmQtl showed the go reader had never been called, so "every module ported", counted by parity, had
+  missed it.
+- The go engine's real run showed the contaminant database carries 3,557 GO references. The default we had sent
+  go was wrong, and was corrected in 022.
+- Building G84 showed notes had never reached any catalog.
+- A real-corpus test caught a site shard over its own cap.
+- The agent fixing a G83 lookup caught, on the full corpus, that its first version would have flagged 17,667
+  decoy PSMs: mzLib's reversed decoys carry the target's N-terminal modification onto another residue.
+
+Fourteen agent worktrees were merged and removed.
