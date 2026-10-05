@@ -114,6 +114,8 @@ jobs:
           dotnet-version: "10.0.x"
       - name: Generated tables are current
         run: dotnet run --project dotnet/src/DataRepo.SchemaGen -- --check
+      # Includes DocsTests: the tutorial's ids and output (docs/getting-started.md) and every relative link in
+      # README.md, CONTRIBUTING.md and docs/.
       - name: Build and test
         run: dotnet test dotnet/DataRepo.slnx
 
@@ -144,3 +146,8 @@ jobs:
           test -f "$RUNNER_TEMP/cs-site/datasets/PXD999999.html"
           test -f "$RUNNER_TEMP/cs-site/llms.txt"
           test -f "$RUNNER_TEMP/cs-site/croissant.json"
+
+      # docs/cli.md is generated from this executable's own `-h` output; a changed flag or help line must
+      # regenerate it (python tools/build_cli_docs.py).
+      - name: The command reference matches the program
+        run: python tools/build_cli_docs.py --check --exe "$RUNNER_TEMP/cs/datarepo"
