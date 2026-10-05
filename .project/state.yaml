@@ -485,12 +485,21 @@ gaps:
     9 -> 10; Python0320 scope unchanged (8, no table). No schema change. Still open: tell PXReprise/aging (the
     column names); maybe surface `notes` on `dataset_overview` (G85 builds on this table).
   - >-
-    G85 NEW 2026-10-04 (PXReprise 009 wish 3). Runs excluded from ANALYSIS (searched, kept in the bundle) are
-    prose in `notes` (S71's two runs; PXD012753 `20170317_VM_17`/`VM_18`). Proposed, not built: a manifest field
-    `excluded_runs: {run: reason}`, checked like `run_enrichment` (every name a run, by `datarepo manifest` and
-    ingest). It changes no number we derive, so it is NON_CONTENT and reaches the catalog the G84 way, as a
-    column set at build: no re-ingest, no core schema bump. It is aging's content, so aging must agree to fill
-    it.
+    G85 BUILT 2026-10-05 in C#, unreleased (PXReprise 009 wish 3; aging 087 agreed to fill it from their
+    results/qc_findings/DECISIONS.md). Manifest field `excluded_runs: {run base name: reason}` on a dataset entry,
+    NON-content (reason recorded in NonContentFields). Read from the YAML node so a run name is the key's text
+    (PyYAML would make `2017_03` an int); a non-mapping, or an empty/non-string reason, is refused at load; a run
+    listed twice is refused by YamlDotNet as a duplicate key (invalid YAML). INGEST NEITHER READS NOR REFUSES IT
+    (a non-content field must not change an ingest outcome; a test shows the same bundle id with an unknown run).
+    Gates: `datarepo manifest` checks names against the runs ingest reads (exit 1, `UNMATCHED`), and `build`
+    FAILS a `catalog_checks` row (kind `manifest`) on a name that is no run of the bundle, in the same words
+    (Runs.ExclusionProblems). Catalog: derived table `run_exclusions(dataset_id, bundle_id, run_id, run_name,
+    reason)`, run_id = runs.run_id, always created (empty when nothing excluded); hashed into catalog_id as one
+    line per exclusion, none without, so catalogs that exclude nothing keep their ids. No run-level view exists,
+    so no `excluded_from_analysis` column: DerivedDocs prescribes the anti-join. AnnotationFields +
+    RunExclusionFields == NonContentFields minus raw (test). CATALOG_VERSION stays 10 (10 unreleased; 1.1.0
+    carries both). Python0320 scope: no table, no hash line. No schema change, no IngesterVersion change. Still
+    open: dataset-level restrictions (aging 087, e.g. PXD012754 "never for protein statistics"): proposal sent.
   - >-
     G83 NEW 2026-10-04 (C# port, phase 2). Python 0.32.0 behaviours the port reproduces ON PURPOSE for
     row parity, each to be decided after parity as its own INGESTER bump: (1) modlist lookup GUESSES when
