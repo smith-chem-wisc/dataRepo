@@ -12,12 +12,14 @@ This folder is a `/project`-managed research project. **You are de facto working
   `6abd39e`). It has the REQ-DATAREPO-7 run-name fix and three new site figures (D38). **The live
   site is still built by 0.28.1** (aging's publish pin); **D39**: PXReprise switches to 0.32.0 NOW,
   and our definitions release is a second, later switch.
-  - **datarepo 1.0.0 (C#) RELEASED 2026-10-05** (tag `v1.0.0` on `5f5dfcc`, four self-contained archives;
-    schema 0.0.14, ingest path `cs-1.0.0`). The Python is frozen at 0.32.0 (its CI job runs at the v0.32.0
-    tag). The switch is aging's: our aging 085 (DATAREPO-73) asks them to re-ingest into a NEW store, benchmark
-    both catalogs, then switch (PXReprise drains only for the final catch-up, our PXReprise 014). In flight:
-    the go engine (C#, runner, worktree agent; refuses until go publishes a definition id, go 021 GO-D4/D5);
-    G86 (go loading), G87 (PXReprise's per-run start time/instrument, zone question first).
+  - **datarepo 1.1.0 (C#) RELEASED 2026-10-05** (tag `v1.1.0` on `8779917`; 1.0.0 was `5f5dfcc` the same
+    morning). Schema 0.0.15, ingest path `cs-1.1.0`, catalog format 10. 1.1.0 = G83 fixes (0 rows changed on the
+    corpus), G87 run start time/instrument (zoneless time verbatim in `acquisition_start_local`), G84
+    `dataset_annotations`, G85 `excluded_runs`/`run_exclusions` (searched runs only), the `candidates:` census
+    into `dataset_candidates`, the go engine `go.annotate_groups` (REFUSES until go publishes a definition id:
+    set `GoEngine.DefinitionId`, flip one test). The switch is aging's (090: re-ingest on 1.1.0 into a new store,
+    benchmark both catalogs, PXReprise drains for the catch-up). Waiting: go GO-D4/D5/D6, aging DATAREPO-74
+    (dataset `restrictions`), pep DATAREPO-69, pyMzLib DATAREPO-70. The Python is frozen at 0.32.0.
   - **D41 (2026-10-04): dataRepo is being PORTED TO C#** ("any code of substance must be in C#";
     supersedes D36). Plan: `design/CSHARP_PORT.md` (phases 1-5, parity = row-by-row diff against
     Python 0.32.0 on aging's store). **No new substantive Python.** Python is frozen at 0.32.0.
@@ -36,7 +38,7 @@ This folder is a `/project`-managed research project. **You are de facto working
       aging fixes samples.tsv (079 §2) and delivers `curated_sample_characteristics`.
     - sdrf: their G42 drafter change (commit to come) and G43. phred: check charter v0.5 (004).
       go: PR B (#1353).
-  - Versions (C#, 1.0.0): ingest path **cs-1.0.0**, core schema **0.0.14**; frozen Python: datarepo **0.32.0**, schema **0.0.13**, `bundle.INGESTER_VERSION` **0.22.0**,
+  - Versions (C#, 1.1.0): ingest path **cs-1.1.0**, core schema **0.0.15**, catalog format **10**; frozen Python: datarepo **0.32.0**, schema **0.0.13**, `bundle.INGESTER_VERSION` **0.22.0**,
     aging study layer **0.5.0**, `study.STUDY_INGESTER_VERSION` **0.6.0**, `runner.RUNNER_VERSION`
     **1**, `catalog.CATALOG_VERSION` **8**.
   - **D27: dataRepo SHIPS, the instance operator (aging) RUNS.** Charter **v0.5** (`5935931`); G73
