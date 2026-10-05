@@ -5,7 +5,7 @@
 | phase | state | measured against Python 0.32.0 |
 |---|---|---|
 | 1 schema and bundle | **done** | all 88 current-schema bundles in aging's store round-trip: 95,328,025 rows, 0 differences, every id recomputes |
-| 2 ingest | **done** (parity mode `IngestRules.Python0320`) | test dataset: 17/17 tables identical; corpus: **85 of 85** datasets identical, every table and row (2026-10-04) |
+| 2 ingest | **done** (parity mode `IngestRules.Python0320`) | test dataset: 17/17 tables identical; corpus: **85 of 85** datasets identical, every table and row (2026-10-04). **Not ported: `sources/go.py`** (G86), a reader nothing in the Python ingest called, so no row or parity check depended on it |
 | 2 G76 / G81 / D37 | **built** under `IngestRules.Current` | G76 reproduces aging 075's fibronectin case; 46 of 937 within-gene merges rest on an Ensembl id alone (DATAREPO-70) |
 | 3 study layer | **done** (`DataRepo.Study`) | ids identical to Python's; aging's stored study bundle reproduced |
 | 3 catalog | **done** (`DataRepo.Catalog`) | 27M rows identical (13 aging datasets with study layer and 8 engine artefacts; 20-dataset reference); one view lists in undefined order in Python's own SQL |
