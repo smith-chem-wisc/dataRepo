@@ -448,7 +448,78 @@ decisions:
       substantive Python goes into dataRepo; the Python 0.32.0 stays the operator's running version and
       the reference the port is diffed against until parity. Plan: design/CSHARP_PORT.md. The
       half-built D37/G81 Python is parked on local branch wip/d37-g81-python (3e68781) as specification.
+  - id: D42
+    date: 2026-10-06
+    text: >-
+      The go engine runs under go's published `go:DEF-GROUP-GO-ANNOTATION v1` (go 023), released in 1.2.0.
+      - Each protein_localizations row carries its own accession's inherited, propagated and evidence, from go's
+        per-member columns (GO-D7, e0df39b). A row whose per-member columns contradict it refuses the run.
+      - A catalog serves one go.obo and one category map, by sha256 (GO-D9, 20827d4).
+  - id: D43
+    date: 2026-10-06
+    text: >-
+      logs' orthology snapshot is registered now, not at first use (logs 031, DATAREPO-76), by
+      `logs.register_orthology` (aa830de, released in 1.3.0).
+      - It copies no rows: the snapshot is read in place from the artefact's snapshot/ through its views.sql.
+      - The tar must be a release logs published (OrthologyEngine.Releases).
+      - The gene-set cross-check runs at build, where the snapshot and gene_resolutions are loaded together.
+  - id: D44
+    date: 2026-10-06
+    text: >-
+      dataRepo hosts ptmQtl's engines (the user, 2026-10-06; ptmQtl 025, our 026) and writes the C# glue; ptmQtl owns
+      the method.
+      - site_pairs runs per bundle; pool_pairs runs over site_pairs artefacts, never at build (P22).
+      - The enrichment gate is an operator --input, hashed into every artefact id (P23).
+      - The site-trait side fields stay in the artefact until the next schema version that is needed anyway (P24):
+        a schema bump forces a full re-ingest.
+      - Plan and status: design/PTMQTL_ENGINE.md.
+  - id: D45
+    date: 2026-10-06
+    text: >-
+      "Biological" (ptmQtl S2) is the mzLib category (Modification.ModificationType, MetaMorpheus's name prefix):
+      Common Biological, UniProt, Trypsin Digested or AspN Digested (the user: "We definitely want to include
+      UniProt: too", then the digest categories for ubiquitination and sumoylation). ptmQtl's D27 excludes
+      Hydroxylation on N and Formylation on K. AspN Digested on D is refused until mzLib #1432 ships and the data are
+      re-searched. No IdWithMotif-to-class table is kept anywhere (oracle: mzLib already carries the class).
+  - id: D46
+    date: 2026-10-06
+    text: >-
+      aging finishes the 1.3.0 switch now (the user chose option 1). The ptmQtl engines ship later as 1.4.0, on the
+      first mzLib release carrying #1430. That mzLib also carries #1403 (ProForma writes UNIMOD ids), which changes
+      peptidoform keys, so 1.4.0 has a new ingest path and a second re-ingest. It shares aging's MetaMorpheus
+      re-search if the timing allows (aging 096).
 gaps:
+  - >-
+    G91 NEW 2026-10-06 (the user; QuantProject 019, DATAREPO-Q2 asked). QuantProject will write fraction-combined
+    per-sample occupancy and peptide intensity. Until it does, the ptmQtl engines combine fractions themselves (S4,
+    CombineRuns/CombineObservations): runs sharing a label-free sample_id with distinct fraction numbers are
+    combined, anything else is refused. When Q2 is answered (definition ids, row keys, rule, release), the engine
+    reads combined values and refuses a dataset that would mix the two.
+  - >-
+    G90 NEW 2026-10-06 (ptmQtl 024, DATAREPO-P20, proposed in our 026; waits on aging AGING-P14). "This deposit
+    enriches PTM X" becomes a per-dataset manifest field filled by aging (UNIMOD accessions, with runs when not
+    every run is a capture), read at build. ptm_stoichiometry gets a build-derived flag, and datarepo_sql warns over
+    flagged rows. Not in the schema. When it exists, the ptmQtl engines' --input enrichment retires.
+  - >-
+    G89 NEW 2026-10-06 (ptmQtl 030, DATAREPO-P24; our 031). trait_effects has no columns for site-trait df,
+    replicates, median fraction, covariate effects, replicate/residual variance and fit status. They live in the
+    site_traits artefact's site_trait_fits.tsv. Add them as columns at the next schema version that is needed
+    anyway. If ptmQtl needs the fit status queryable sooner, find a way without a re-ingest.
+  - >-
+    G88 NEW 2026-10-06. The ptmQtl engines are BUILT on branch feat/ptmqtl-engine (a7b9c20, cac982d, b0e5622,
+    ec584c7; worktree code/_wt_ptmqtl), NOT merged. They reproduce ptmQtl's reference case exactly and ran on
+    PXD035107 and PXD017944 (scratch). The branch builds against mzLib packed from #1430 (1.0.595-pr1430.b2d218d,
+    feed E:\x\feed, built in worktree E:\x\pr1430).
+    On the first mzLib release carrying #1430:
+    - delete dotnet/nuget.config;
+    - point DataRepo.Ingest at the released mzLib;
+    - bump BundleWriter.IngesterVersion (#1403 changes psmtsv ProForma: UniProt names -> UNIMOD ids, so
+      peptidoform keys move);
+    - re-run the 12 branch failures, which are mzLib-version effects (go GO-A1 refusal of an unreleased writer, the
+      psmtsv parity tests);
+    - rerun the tutorial ids;
+    - merge and release 1.4.0, then send aging a procedure in 095's form.
+    Open with ptmQtl: P25 (put the observation rule into the definitions) and P26 (confirm meta:NCBITaxon:<id>).
   - >-
     G87 NEW 2026-10-05 (PXReprise 013, DATAREPO-72 built in PXReprise 52cd138, unreleased). qc_report.json gains
     per-run `start_time` (as read, no zone: a RAW header's local clock), `instrument_model`,
@@ -464,6 +535,8 @@ gaps:
     catalog refuses 0.0.14 bundles, so the 1.1.0 switch is a full re-ingest; tell PXReprise the choice (DATAREPO-72
     follow-up: zoneless -> acquisition_start_local, never acquisition_datetime).
   - >-
+    G86 CLOSED 2026-10-06: the go engine was released in 1.2.0 under go:DEF-GROUP-GO-ANNOTATION v1 (D42; GO-D7
+    e0df39b, GO-D9 20827d4). Rows reach a catalog when aging runs go.annotate_groups (095 step 6). Was:
     G86 NEW 2026-10-05 (found answering ptmQtl 017 DATAREPO-P15). GO never reaches the catalog. Python
     `sources/go.py` (GO-D1, fcdedcb) is a contract-checking reader nothing calls, and the C# port skipped it
     (parity cannot see uncalled code). PART 1 DONE (83ed849, merged 5b47573): ported to C# `Sources/Go.cs`,
@@ -1272,7 +1345,18 @@ skip_log:
       every slide, and a per-box text-fit estimate (one title shortened). Open it in PowerPoint once
       before presenting.
 
-repos: []  # PR D and PR E worktrees retired 2026-09-24: both merged, in mzLib 1.0.592
+repos:  # PR D and PR E worktrees retired 2026-09-24: both merged, in mzLib 1.0.592
+  - name: dataRepo
+    worktree: code/_wt_ptmqtl
+    branch: feat/ptmqtl-engine
+    base_clone: "E:/CodeReview/dataRepo (origin = smith-chem-wisc/dataRepo)"
+    pinned: ec584c73be1e962d96537bac74cede50ae712cac
+  - name: mzLib
+    worktree: code/_wt_mzlib_sumo
+    branch: fix/sumo-remnant-target-lysine
+    base_clone: "E:/GitClones/mzLib (origin = trishorts/mzLib)"
+    pinned: 6974a4d4cede89b84a1409411593e391ecbd252a
+    pr: "https://github.com/smith-chem-wisc/mzLib/pull/1432"
 
 github:
   remote: "https://github.com/smith-chem-wisc/dataRepo"

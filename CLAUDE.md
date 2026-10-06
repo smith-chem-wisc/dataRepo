@@ -6,20 +6,23 @@ This folder is a `/project`-managed research project. **You are de facto working
 
 - **Phase:** INCEPTION
 - **Goal:** An AI-ready, API-accessible repository for the search + quant results of the many PRIDE datasets the `aging` pipeline reanalyzes. Humans can use it, but AI agents are the main users. The question it serves is how organelle proteomes change with age.
-- **Pick up at:** **First thing: run the thread checker.** At the second 2026-09-30 close nothing
-  was owed by us (inbox read; PXReprise 007 and dia 002 posted).
-  **v0.32.0 is RELEASED** (https://github.com/smith-chem-wisc/dataRepo/releases/tag/v0.32.0, tag on
-  `6abd39e`). It has the REQ-DATAREPO-7 run-name fix and three new site figures (D38). **The live
-  site is still built by 0.28.1** (aging's publish pin); **D39**: PXReprise switches to 0.32.0 NOW,
-  and our definitions release is a second, later switch.
-  - **datarepo 1.1.0 (C#) RELEASED 2026-10-05** (tag `v1.1.0` on `8779917`; 1.0.0 was `5f5dfcc` the same
-    morning). Schema 0.0.15, ingest path `cs-1.1.0`, catalog format 10. 1.1.0 = G83 fixes (0 rows changed on the
-    corpus), G87 run start time/instrument (zoneless time verbatim in `acquisition_start_local`), G84
-    `dataset_annotations`, G85 `excluded_runs`/`run_exclusions` (searched runs only), the `candidates:` census
-    into `dataset_candidates`, the go engine `go.annotate_groups` (REFUSES until go publishes a definition id:
-    set `GoEngine.DefinitionId`, flip one test). The switch is aging's (090: re-ingest on 1.1.0 into a new store,
-    benchmark both catalogs, PXReprise drains for the catch-up). Waiting: go GO-D4/D5/D6, aging DATAREPO-74
-    (dataset `restrictions`), pep DATAREPO-69, pyMzLib DATAREPO-70. The Python is frozen at 0.32.0.
+- **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`). Then follow RESUME's "Pick up at"
+  (2026-10-06):
+  1. aging's reply to 095/096 (the go refusal list, then benchmark differences);
+  2. ptmQtl P25/P26;
+  3. QuantProject Q2;
+  4. mzLib #1430 / #1432 / #1404.
+  - **Released: datarepo 1.3.0** (tag `v1.3.0` on `187a42e`). 1.2.0 (`4e49846`) enabled go under
+    `go:DEF-GROUP-GO-ANNOTATION v1` with per-accession qualifiers and one go.obo/map per catalog (D42). 1.3.0 added
+    `logs.register_orthology` (D43). Ingest path `cs-1.1.0`, schema 0.0.15, catalog format 10: no re-ingest from 1.1.0.
+  - **aging's switch:** our **aging 095** is the one procedure (it supersedes 085/090/092/093). aging is re-ingesting
+    on 1.3.0 into `F:\aging_data\repo_1.3.0\store`. Until they switch, the serving catalog (and this folder's MCP
+    server) is still the 0.32.0 build.
+  - **ptmQtl engines:** on branch **`feat/ptmqtl-engine`** (worktree `code/_wt_ptmqtl`, `ec584c7`), NOT merged (G88,
+    D44, D45). The branch builds against a local mzLib packed from #1430 (`E:\x\feed`; the branch-only
+    `dotnet/nuget.config`). Merge = 1.4.0 on the first mzLib release carrying #1430, which also needs a NEW ingest
+    path (#1403 ProForma) and a re-ingest (D46, aging 096).
+  - Waiting: aging DATAREPO-74, pep DATAREPO-69, pyMzLib DATAREPO-70. The Python is frozen at 0.32.0.
   - **D41 (2026-10-04): dataRepo is being PORTED TO C#** ("any code of substance must be in C#";
     supersedes D36). Plan: `design/CSHARP_PORT.md` (phases 1-5, parity = row-by-row diff against
     Python 0.32.0 on aging's store). **No new substantive Python.** Python is frozen at 0.32.0.
@@ -31,14 +34,8 @@ This folder is a `/project`-managed research project. **You are de facto working
   - **No row change:** G79 (b), move the per-layer rule dicts into `schema/study/aging.yaml`.
     G80: report mzLib's run-name defect upstream.
   - See RESUME's "Pick up at", which also has the release recipe.
-  - **In flight:**
-    - PXReprise: build venv-0.32.0 and switch (our 007); their 0.3.1 re-ingests PXD075372. Then
-      aging repoints `$DataRepo` and adds `--purpose "how organelle proteomes change with age"
-      --keyword aging` (082). Then check the live page (generator 0.32.0, the new tiles). Also:
-      aging fixes samples.tsv (079 §2) and delivers `curated_sample_characteristics`.
-    - sdrf: their G42 drafter change (commit to come) and G43. phred: check charter v0.5 (004).
-      go: PR B (#1353).
-  - Versions (C#, 1.1.0): ingest path **cs-1.1.0**, core schema **0.0.15**, catalog format **10**; frozen Python: datarepo **0.32.0**, schema **0.0.13**, `bundle.INGESTER_VERSION` **0.22.0**,
+  - Versions (C#, 1.3.0): ingest path **cs-1.1.0**, core schema **0.0.15**, catalog format **10** (11 on the ptmQtl
+    branch), `RunnerVersion` **1**; frozen Python: datarepo **0.32.0**, schema **0.0.13**, `bundle.INGESTER_VERSION` **0.22.0**,
     aging study layer **0.5.0**, `study.STUDY_INGESTER_VERSION` **0.6.0**, `runner.RUNNER_VERSION`
     **1**, `catalog.CATALOG_VERSION` **8**.
   - **D27: dataRepo SHIPS, the instance operator (aging) RUNS.** Charter **v0.5** (`5935931`); G73
@@ -408,6 +405,18 @@ This folder is a `/project`-managed research project. **You are de facto working
   other `DataRepo.*` namespaces. Hence `SiteGenerator`, `StudyWriter`, `CatalogBuilder`.
 - **PXReprise rewrites the live `F:/aging_data/batch/manifest.yaml` non-atomically**: a reader caught it
   half-written once (2026-10-04). Retry before diagnosing a YAML error in it; tell PXReprise.
+- **Moving dataRepo past mzLib 1.0.593 changes ingested rows.** From 1.0.594, #1403 writes UniProt-named
+  modifications as UNIMOD ids in psmtsv ProForma (`[UniProt:N6,N6-dimethyllysine on K]` -> `[UNIMOD:36]`), so
+  peptidoform keys move. Any mzLib bump means a new `BundleWriter.IngesterVersion` and a re-ingest for aging. The
+  psmtsv parity tests are the canary.
+- **A pre-release mzLib makes the go engine refuse, by design** (GO-A1: go files from an unreleased writer are never
+  stored). On a branch built against a locally packed mzLib, the go tests fail for that reason alone.
+- **MetaMorpheus modification names can hold brackets** (`[Metal:Cu[I] on D]`). Parse full sequences by bracket depth
+  (`PtmQtlCore.ModificationNames`), never with a flat `\[...\]` pattern. ptmQtl's own tooling had the flat one.
+- **In the Bash tool, a `cat > file` with no heredoc and no input blocks until the 2-minute timeout**, and nothing
+  after it in the command runs. Write files with the Write tool.
+- **"Biological" is mzLib's category, not a table of ours** (D45). Never add an IdWithMotif-to-class map. Read the
+  category off MetaMorpheus's names.
 
 **Sibling project: `E:\CodeReview\aging`** (the NCEMS pipeline). aging *produces* results under
 `F:\aging_data\<run>\<PXD>\` with `provenance.json` (schema `aging-provenance/2`). dataRepo *ingests and serves*

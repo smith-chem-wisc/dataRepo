@@ -2,15 +2,22 @@
 
 <!-- BEGIN GENERATED -- render_resume.py owns this block; edit state.yaml, not here -->
 
-**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-10-05
+**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-10-06
 
 | | |
 |---|---|
-| Commits | 487 |
+| Commits | 529 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
-| Locked decisions | 41 |
-| Open gaps | 82 |
+| Locked decisions | 46 |
+| Open gaps | 86 |
 | Gate items skipped | 4 |
+
+**Worktrees** -- details in `code/PINNED.md`
+
+| Worktree | Branch | HEAD | Pin | Status |
+|---|---|---|---|---|
+| `code/_wt_ptmqtl` | feat/ptmqtl-engine | `ec584c73` | `ec584c73` | at pin |
+| `code/_wt_mzlib_sumo` | fix/sumo-remnant-target-lysine | `6974a4d4` | `6974a4d4` | at pin |
 
 <!-- END GENERATED -->
 
@@ -22,7 +29,45 @@ reanalyses. The results cover search, quant, provenance, design and organelle an
 use it, but AI agents are the main users. The question it serves is how organelle proteomes change
 with age.
 
-## Latest (2026-10-05, twenty-seventh session): datarepo 1.0.0 and 1.1.0 released, both in C#
+## Latest (2026-10-06, twenty-eighth session): 1.2.0 and 1.3.0 released; the ptmQtl engines built on a branch
+
+- **1.2.0** (tag on `4e49846`): the go engine runs under `go:DEF-GROUP-GO-ANNOTATION v1` (D42).
+  - Per-accession qualifiers (GO-D7, `e0df39b`).
+  - One go.obo and one category map per catalog (GO-D9, `20827d4`).
+- **1.3.0** (tag on `187a42e`): `datarepo run logs.register_orthology` (D43, `aa830de`). It registers logs' compara-116
+  snapshot, which is read in place, and the build checks it against the gene resolutions.
+- Both releases keep ingest path `cs-1.1.0` and schema 0.0.15, so neither needs a re-ingest. The catalog format is 10.
+- **aging's switch:** our **aging 095** is the ONE procedure (it supersedes 085/090/092/093). aging has started the
+  1.3.0 re-ingest into `F:\aging_data\repo_1.3.0\store` (their 094).
+  - Order: study bundle; then `logs.resolve_genes`, `logs.register_orthology`, and `go.annotate_groups` one dataset at a
+    time; then the manifest edits, a scratch build and their benchmark; then rename the store, build again, publish,
+    repoint MCP.
+  - 096 tells them a 1.4.0 re-ingest comes later (D46).
+- **ptmQtl engines** (D44, D45, G88): built on branch **`feat/ptmqtl-engine`** (worktree `code/_wt_ptmqtl`, 4 commits
+  to `ec584c7`, pushed).
+  - They reproduce ptmQtl's reference case exactly, ran on two real aging bundles, and load into the catalog
+    (format 11 on the branch).
+  - They cannot merge until an mzLib release carries #1430. That release also carries #1403 (ProForma UNIMOD ids),
+    so 1.4.0 needs a re-ingest.
+  - The plan is `design/PTMQTL_ENGINE.md`.
+- **"Biological" (D45):** mzLib categories Common Biological / UniProt / Trypsin Digested / AspN Digested, minus
+  ptmQtl's two exclusions. Reading `Mods.txt` for it found the human SUMO entries target D, not K: mzLib **#1431**,
+  fixed by our PR **#1432** (on board #16, In review).
+- **Threads:** aging 092/093/095/096; PXReprise 017/018; go 025/026; ptmQtl 022/023/026/027/029/031/032; logs 032;
+  QuantProject 019. Closed fork PR trishorts/MetaMorpheus#25 (superseded by #2778).
+- **Pick up at:** run the inbox (`threads.py inbox`). Then:
+  1. **aging:** read their reply to 095/096. On the go refusal list (095 step 6), count the datasets and send them to
+     go and ptmQtl. On the benchmark differences, explain or fix each before they switch.
+  2. **ptmQtl:** P25 (the observation rule in the definitions) and P26 (`meta:NCBITaxon:<id>`). Apply their answer
+     on `feat/ptmqtl-engine`.
+  3. **QuantProject:** Q2 (fraction-combined values, G91).
+  4. **mzLib:** check #1430 (theirs), #1432 and #1404 (ours) with
+     `gh pr view <n> -R smith-chem-wisc/mzLib --json state,mergedAt`. When a release carries #1430, do G88's
+     steps, release 1.4.0 and write aging a procedure in 095's form. When #1432 merges, move it to Shipped on
+     board #16.
+  - Still waiting: aging DATAREPO-74, pep DATAREPO-69, pyMzLib DATAREPO-70.
+
+## 2026-10-05 (twenty-seventh session): datarepo 1.0.0 and 1.1.0 released, both in C#
 
 - **1.0.0** (tag on `5f5dfcc`): the C# port's first release. Corpus ingest parity was 85 of 85 datasets
   identical. Schema 0.0.14, ingest path `cs-1.0.0`. G76 (D40), G81, D37 and `covered_zero` ship, plus

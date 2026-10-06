@@ -1876,3 +1876,53 @@ findings again came from filling, not from reviewing:
   decoy PSMs: mzLib's reversed decoys carry the target's N-terminal modification onto another residue.
 
 Fourteen agent worktrees were merged and removed.
+
+## 2026-10-06 (twenty-eighth session): 1.2.0 and 1.3.0 released; the ptmQtl engines built on a branch; one switch procedure for aging
+
+**Two releases.** go published `go:DEF-GROUP-GO-ANNOTATION v1` overnight (go 023), so the go engine was switched
+on. GO-D7 went in with it (`e0df39b`): each `protein_localizations` row now takes its own accession's `inherited`,
+`propagated` and `evidence`, read from go's per-member columns. Before, the group's pooled flags were copied onto
+every member, so one member's direct IDA annotation was stated on another member's row. GO-D9 followed (`20827d4`):
+a catalog that mixes go.obo files or category maps is refused at build. GO-D10 was settled by measurement rather
+than argument: aging's catalog stores every protein group whatever its q-value (106,294 of 347,776 target groups
+are above 0.01). Released as **1.2.0** (tag on `4e49846`). logs then asked for an orthology engine now rather than
+at first use (031). `logs.register_orthology` (`aa830de`) checks their released snapshot against the file contract
+and registers it, read in place. The gene-set cross-check runs at build, where both inputs are loaded together.
+Released as **1.3.0** (tag on `187a42e`). The ingest path stayed `cs-1.1.0` through both releases, so neither one
+needed a re-ingest.
+
+**aging asked for one procedure.** After four releases in two days, each amending the last message, aging started
+the 1.3.0 re-ingest and held every later step (094, DATAREPO-77). 095 replaces 085/090/092/093 as the procedure.
+Their store-rename plan is safe because bundles and engine records hold no store path, and the catalog id does not
+hash paths; the only condition is that the final build runs after the rename. That was read in the code, not
+assumed.
+
+**ptmQtl's engines.** The user approved hosting them (ptmQtl 025, our 026). ptmQtl published `DEF-PTM-PAIR v2`,
+`DEF-SITE-TRAIT v1` and a reference case (030). The user ruled what "biological" means: the mzLib categories
+Common Biological, UniProt, Trypsin Digested and AspN Digested. `/oracle mzLib` showed the category is mzLib's own
+`ModificationType`, so ptmQtl's Python `mod_class.tsv` retires. ptmQtl added two exclusions of its own (D27).
+Reading `Mods.txt` for the digest categories found that the human SUMO-1 and SUMO-2/3 entries target D, while their
+formulas are lysine remnants (checked residue by residue). That became mzLib issue #1431 and fix PR #1432,
+submitted at the user's request. The engines are on branch `feat/ptmqtl-engine` (four commits, pushed): the core
+reproduces ptmQtl's reference case exactly, the bundle reader and the three `datarepo run` engines ran on two real
+aging bundles in a scratch store, and the catalog loads the rows (format 11). It builds against mzLib packed
+locally from #1430 and cannot merge until a release carries it. That release also carries #1403 (ProForma writes
+UNIMOD ids), which changes peptidoform keys, so 1.4.0 needs a re-ingest. The user chose option 1: aging finishes
+the 1.3.0 switch now, and the second re-ingest comes later (aging 096), shared with their MetaMorpheus re-search
+if the timing allows.
+
+**Found by filling, again.**
+- The go engine had been carrying group flags per accession for a day; go noticed before any row was served.
+- The bundle reader for ptmQtl caught, on real data, the bracket pattern both we and ptmQtl used: it cannot read
+  metal names like `[Metal:Cu[I] on D]`. 36 cells on PXD035107, none of them biological.
+- Writing the observation query showed that neither ptmQtl definition says which PSMs make an observation. That is
+  asked as P25.
+- Writing S4 showed that one sample in 1,869 holds several runs. The bundle's sample records decide fractions
+  versus injections; QuantProject will combine fractions upstream (asked as Q2).
+- The `trait_effects` side fields stay in the artefact (P24): a schema bump mid-switch would cost aging a second
+  full re-ingest.
+
+**Process notes.** The user asked twice that this work be communicated: to ptmQtl, PXReprise and aging, and to go.
+Every step went out by thread, and live sessions were pinged too. The user also said "C# please" when a Python fill
+script appeared, so patches are now done with the Edit/Write tools or C# (memory updated). Fork PR
+trishorts/MetaMorpheus#25 was closed as superseded: #2778 merged an equivalent test.
