@@ -114,10 +114,11 @@ empty study layer does today.
 
 ### Requirement for the first reader of a logs orthology snapshot (logs 030, our 029 §2)
 
-**Nothing in the product reads an orthology snapshot yet** (checked 2026-10-05: no C# under `dotnet/src`
-names orthology or `snapshot_id`; our 029 trial was a scratch read, stored nowhere). When something
-does -- an engine through this runner, a catalog loader, or a study layer -- its record (the
-artefact's `run.json`, or a catalog column) must carry, for each snapshot used:
+**Built (DATAREPO-75, logs 031): `logs.register_orthology`** (`dotnet/src/DataRepo.Runner/OrthologyEngine.cs`).
+Its `run.json` carries every item below under `snapshot`. The extracted snapshot sits in the artefact's
+`snapshot/` directory, and the catalog cites it. The requirement, as written before it was built, stands as its
+contract. Any record of a snapshot (the artefact's `run.json`, or a catalog column) must carry, for each
+snapshot used:
 
 - the release tag (e.g. `orthology-compara-116-b63a3331`), the tar's sha256 and the manifest's sha256;
 - **the manifest's `snapshot_id`, verbatim** (logs 030 point 2). It is derivable from the manifest,
