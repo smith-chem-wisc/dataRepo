@@ -1,7 +1,17 @@
 # The ptmQtl engines in `datarepo run` (plan)
 
-**Status: planned, not built.** Approved by the user on 2026-10-06 (ptmQtl 025 -> our 026, DATAREPO-P21..P23).
-dataRepo writes `PtmQtlEngine.cs` in C#. ptmQtl owns the method: the definitions, the mzLib code, and review of the PR.
+**Status: built on branch `feat/ptmqtl-engine`, not merged, not released (2026-10-06).** Approved by the user on
+2026-10-06 (ptmQtl 025 -> our 026, DATAREPO-P21..P23). dataRepo wrote `PtmQtlCore.cs`, `PtmQtlBundle.cs`,
+`PtmQtlEngine.cs` and `CatalogPtmQtl.cs` in C#. ptmQtl owns the method: the definitions, the mzLib code, and review
+of the PR.
+- **It reproduces ptmQtl's reference case exactly** (`Fixtures/ptmqtl-reference-v1`).
+- **It ran on aging's PXD035107 and PXD017944 bundles** (scratch store).
+- **Merge waits on an mzLib release carrying #1430.** That release also carries #1403, which changes peptidoform
+  keys, so 1.4.0 has a new ingest path and aging re-ingests once (our aging 096).
+- The branch's `dotnet/nuget.config` and pre-release mzLib reference revert at merge.
+
+**Superseded below:** S2 is now four categories minus ptmQtl D27's two exclusions (ptmQtl 030, `DEFINITIONS.md`). The
+engine takes it from there, not from the two-category text in "Three gates".
 
 ## Engines
 
