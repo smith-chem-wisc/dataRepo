@@ -155,6 +155,8 @@ This folder is a `/project`-managed research project. **You are de facto working
   is waste on both sides. **Open a channel only where there is a concrete need or finding**;
   opening one with nothing to say is noise. And check the peer is `/project`-managed first --
   MetaMorpheus is a source clone and our convention does not belong in it.
+- **PXReprise runs the aging pipeline. Tell it in our PXReprise thread about anything of ours that touches any
+  pipeline stage: when it merges, when it is released, and when a known bug affects it (user, 2026-10-07).**
 - **To check whether a thread landed, run aging's checker** — don't guess and don't edit aging's
   tracking table yourself:
   `python "$env:USERPROFILE/.claude/skills/project/assets/threads.py" inbox`
