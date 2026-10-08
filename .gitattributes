@@ -14,3 +14,5 @@ dotnet/tests/DataRepo.Tests/Fixtures/study/** -text
 dotnet/tests/DataRepo.Tests/Fixtures/site/** -text
 # The go engine fixtures: the C# go engine reads these exact bytes.
 dotnet/tests/DataRepo.Tests/Fixtures/go-engine/** -text
+# PXReprise's design mocks: their PROVENANCE.md records each file's sha256.
+dotnet/tests/DataRepo.Tests/Fixtures/design-labels/** -text
