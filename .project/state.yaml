@@ -488,7 +488,35 @@ decisions:
       first mzLib release carrying #1430. That mzLib also carries #1403 (ProForma writes UNIMOD ids), which changes
       peptidoform keys, so 1.4.0 has a new ingest path and a second re-ingest. It shares aging's MetaMorpheus
       re-search if the timing allows (aging 096).
+  - id: D47
+    date: 2026-10-08
+    text: >-
+      PXR-R9 (PXReprise 024/028) ships as datarepo 1.3.1 with NO ingest-path bump (stays cs-1.1.0). With a design,
+      MetaMorpheus labels the protein-group columns by sample ({Condition}_{Biorep}); 1.3.0 read every label as a run
+      and refused every such search. The new code reads a table exactly as before whenever every column holding a
+      value names a searched run (the design is not even opened), and places columns through the search's
+      ExperimentalDesign.tsv only where 1.3.0 refused. So no input yields two row sets under one id, which is what the
+      hash rule protects (D26's reasoning, extended: a change that only turns refusals into bundles needs no bump).
+      Census 2026-10-08: of 94 bundles in aging's store (all cs-1.1.0), none was written from a folder holding a
+      design (PXD058082's folder has one now, from a re-search after its bundle; the sha256 differs); the test
+      APerRunTableIsReadAsBeforeEvenBesideADesign holds the class. A one-file sample goes to its run's assay; a
+      several-file sample is left out with sample_quant_not_stored (G92), never split onto runs.
 gaps:
+  - >-
+    G93 NEW 2026-10-08 (seen in the R9 scratch ingests, not caused by R9). Our psms_target_1pct count differs
+    slightly from results.txt "All target PSMs with q-value <= 0.01", so ingest raises count_mismatch (a warning;
+    both numbers kept). NOT new with 1.1.12: 62 of the 94 bundles in aging's store (2026-10-08) carry it, the
+    producer's count minus ours ranging from -18 to +1,180 PSMs (4 of the 62 are over, e.g. PXD018097 744,125 vs
+    744,107). On 1.1.12: PXD051715 1,712,254 vs 1,712,558
+    (304), PXD017058 4, PXD052797 2, PXD012213 1, PXD058082 0. G7 closed this for PXD036557 with the notch clause; the
+    corpus says the predicate is still not MetaMorpheus's. Find which PSMs differ on one dataset before asking anyone.
+  - >-
+    G92 NEW 2026-10-08 (PXReprise 024/028, PXR-R9; U19). A design sample spanning several files (fractions,
+    technical replicates) has one protein-group value and one occupancy per SAMPLE, and a stored quantity belongs to
+    one assay (one run). 1.3.1 leaves those values out with the finding sample_quant_not_stored. Storing them needs
+    a sample-level home in the schema (a core schema bump, so a full re-ingest) and QuantProject's say on what the
+    value means; it is the same question as G91 from the protein side. Measure how many aging deposits have
+    multi-file samples before proposing one.
   - >-
     G91 NEW 2026-10-06 (the user; QuantProject 019, DATAREPO-Q2 asked). QuantProject will write fraction-combined
     per-sample occupancy and peptide intensity. Until it does, the ptmQtl engines combine fractions themselves (S4,
