@@ -1926,3 +1926,54 @@ if the timing allows.
 Every step went out by thread, and live sessions were pinged too. The user also said "C# please" when a Python fill
 script appeared, so patches are now done with the Edit/Write tools or C# (memory updated). Fork PR
 trishorts/MetaMorpheus#25 was closed as superseded: #2778 merged an equivalent test.
+
+## 2026-10-08 (twenty-ninth session): PXR-R9 fixed and released as datarepo 1.3.1; PXReprise asked to confirm
+
+The user opened with PXReprise's priority message (028): datarepo 1.3.0 had refused every delivery of the aging batch
+since 2026-10-07, because every search now carries an experimental design (PXReprise D31), and with a design
+MetaMorpheus labels the protein-group columns by SAMPLE (`Intensity_all_1`, `{Condition}_{Biorep}`) rather than by
+file. Reading mzLib's own `SampleGroupBuilder` (1.0.594) settled the rule before any code: the switch is table-wide,
+labels go by file only when no condition and no fraction is defined, a sample's column is the sum over its fractions
+and technical replicates, and the peptide and peak tables stay per file. PXReprise's two mocks, built on our own
+PXD999999 fixture, reproduced the refusal on the 1.3.0 binary in seconds, which made them the first test.
+
+The fix is `SampleColumns` (`c3ecc66`). It decides once per table: if every column that holds a value names a searched
+run, the table is read exactly as before and the design is never opened; otherwise the search's own
+`ExperimentalDesign.tsv`, read by position as MetaMorpheus reads it, places each label. A one-file sample goes to
+that run's assay; a several-file sample is withheld with `sample_quant_not_stored` and never split onto runs; a label
+neither a run nor a design sample refuses by name. The SDRF `source name` (`all 1`, with a space) is deliberately not
+used. Occupancy is placed the same way. The design is hashed and copied only when it placed the columns. Storing
+sample-level values was rejected for now: it needs a core schema bump, which is a full re-ingest for aging, plus
+QuantProject's definition of the number, so it is U19 with "withheld" as the default (G92), and none of the six real
+designs has such a sample.
+
+The ingest path was NOT bumped (D47). The hash rule exists so that one id never names two row sets; the new code runs
+only where 1.3.0 refused, so it cannot. That claim was checked rather than asserted: a census of the 94 bundles in
+aging's store found none written from a folder with a design (PXD058082 has one now only because PXReprise re-searched
+it after its bundle was written, and the sha256 differs), and a test pins the class (a per-run table with a design
+beside it keeps its bundle id). Reviewing the diff found one hole in the "only where 1.3.0 refused" claim: the pass
+that decides which labels hold values did not skip accession-less rows the melt skips. It was closed, and a test was
+proven to fail without the guard.
+
+Verification went beyond the reproduction. The mocks: A's rows are identical to the baseline's, B withholds exactly
+the 10 sample values. All six real searches 1.3.0 refused (PXD051715, PXD052797, PXD012307, PXD058082, PXD012213 and
+the trial PXD017058) ingest in scratch stores, every protein-group value on its one file's assay, 1,175,576 values in
+all. The first count looked short on PXD058082; that was the long-standing collapse of rows MetaMorpheus writes twice,
+not the fix. The user then gave permission for the agent to push, tag and publish, and the classifier allowed it.
+CI was green on Linux, the release binary reproduced every scratch bundle id, and 1.3.1 was published (tag `v1.3.1` on
+`5f3dd11`). Thread 029 asks PXReprise for PXR-R13, their own two scratch ingests on the release, with the exact ids
+they should get, because a bundle id hashes only roles and sha256s, never paths. They installed the genuine 1.3.1 at
+`F:\aging_batch\datarepo-1.3.1` within two hours; their reply had not arrived at close.
+
+**Two claims nearly went out wrong.** The draft of G93 said 1.1.11 output reconciled PSMs exactly; measuring aging's
+store showed 62 of 94 bundles carry the same small `count_mismatch`, so it is long-standing, not a 1.1.12 effect. And
+the trial's `unmatched_runs` warning looked like a hole in the fix until reading its provenance showed PXReprise's
+pre-fix QC payload keyed contamination by sample label; production provenance keys by file. Both went into 029 as
+"not R9". PXR-R12 (the `https://` UniProt namespace) was accepted for 1.4.0, because reading those entries changes
+rows for inputs 1.3.0 already ingests and so needs the new ingest path 1.4.0 brings anyway.
+
+**At close, PXReprise 030 answered R13.** On the release binary, both of their scratch ingests gave exactly the ids 029
+predicted: PXD017058 `d1a2590bba125a7f` and PXD051715 `8afe1d2348cea66f`. That confirms the fix on their side,
+independently of our build. The pin swap waits only for the two live searches (PXD012213, PXD058082) to drain. It is
+STOP, a `machine.toml` edit and a restart, after which all five refused deposits re-ingest without a new search. They
+will report the first delivery.

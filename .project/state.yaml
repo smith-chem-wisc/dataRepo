@@ -1375,6 +1375,14 @@ skip_log:
       and LibreOffice is not installed. Done instead: the pptx skill's validator (PASS), a text dump of
       every slide, and a per-box text-fit estimate (one title shortened). Open it in PowerPoint once
       before presenting.
+  - date: 2026-10-08
+    item: "PXReprise PXR-R7, R8, R10, R11 and the unread aging/QuantProject/ptmQtl/dia messages"
+    reason: >-
+      The user asked for PXR-R9 to be fixed immediately, since it blocked every aging batch delivery. The session
+      went to the fix, the 1.3.1 release and thread 029 only. R7 (charter row), R8 (several searches per
+      accession), R10 (database identity per dataset) and R11 (what a canonical-searched dataset needs) are
+      unanswered, and 029 says answers follow separately. aging 097/098/101/102, QuantProject 022-027, ptmQtl and dia
+      were not read (their aging mirrors were committed unread, identical to aging's copies).
 
 repos:  # PR D and PR E worktrees retired 2026-09-24: both merged, in mzLib 1.0.592
   - name: dataRepo

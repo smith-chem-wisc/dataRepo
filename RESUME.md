@@ -2,15 +2,15 @@
 
 <!-- BEGIN GENERATED -- render_resume.py owns this block; edit state.yaml, not here -->
 
-**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-10-06
+**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-10-08
 
 | | |
 |---|---|
-| Commits | 529 |
+| Commits | 563 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
-| Locked decisions | 46 |
-| Open gaps | 86 |
-| Gate items skipped | 4 |
+| Locked decisions | 47 |
+| Open gaps | 88 |
+| Gate items skipped | 5 |
 
 **Worktrees** -- details in `code/PINNED.md`
 
@@ -18,6 +18,8 @@
 |---|---|---|---|---|
 | `code/_wt_ptmqtl` | feat/ptmqtl-engine | `ec584c73` | `ec584c73` | at pin |
 | `code/_wt_mzlib_sumo` | fix/sumo-remnant-target-lysine | `6974a4d4` | `6974a4d4` | at pin |
+
+> **1 document(s) in `design/` not referenced above** -- `NOTE_FROM_CodeReview_2026-10-06_dq2-talk-directly.md`. Add a line for each, or say why not.
 
 <!-- END GENERATED -->
 
@@ -29,7 +31,57 @@ reanalyses. The results cover search, quant, provenance, design and organelle an
 use it, but AI agents are the main users. The question it serves is how organelle proteomes change
 with age.
 
-## Latest (2026-10-06, twenty-eighth session): 1.2.0 and 1.3.0 released; the ptmQtl engines built on a branch
+## Latest (2026-10-08, twenty-ninth session): PXR-R9 fixed and released as datarepo 1.3.1
+
+- **The bug (PXReprise 024/028, PXR-R9):** with an experimental design MetaMorpheus labels the
+  `AllQuantifiedProteinGroups.tsv` columns by SAMPLE (`Intensity_all_1`, `{Condition}_{Biorep}`). 1.3.0 read each
+  label as a run and refused every such search. Since 2026-10-07 every aging batch search has a design, so every
+  delivery was refused.
+- **The fix (`c3ecc66`, `dotnet/src/DataRepo.Ingest/Sources/SampleColumns.cs`):** decided once per table.
+  - Every column holding a value names a searched run: the table is read exactly as before (the design is not opened).
+  - Otherwise the search's `ExperimentalDesign.tsv` places each label:
+    - one file: that run's assay;
+    - several files: withheld with `sample_quant_not_stored`, never split onto runs (G92, U19);
+    - neither a run nor a design sample: refused by name.
+  - Occupancy is placed the same way. The design is hashed and copied only when it placed the columns.
+- **No ingest-path bump (D47):** still `cs-1.1.0`, schema 0.0.15, no re-ingest. The new path runs only where 1.3.0
+  refused. Census: no stored bundle came from a folder with a design.
+- **Released:** datarepo **1.3.1**, tag `v1.3.1` on `5f3dd11`, published 2026-10-08 19:03 UTC
+  (https://github.com/smith-chem-wisc/dataRepo/releases/tag/v1.3.1). The agent pushed, tagged and published with the
+  user's explicit permission. CI green; the release binary reproduced every scratch bundle id.
+- **Verified:**
+  - PXReprise's mocks (now fixtures under `dotnet/tests/DataRepo.Tests/Fixtures/design-labels`): A matches the
+    baseline row for row, and B withholds 10 values.
+  - All six searches 1.3.0 refused ingest in scratch stores, every protein-group value on its one file's assay:
+    PXD051715 `8afe1d2348cea66f`, PXD052797 `66809aa1cf86884f`, PXD012307 `f602ae2e38c90064`, PXD058082
+    `3b292839ac60c3d2`, PXD012213 `5d7e70f329029334` and the trial PXD017058 `d1a2590bba125a7f`.
+- **Thread PXReprise 029** (`9fb8b96`) asked **PXR-R13**: their two scratch ingests on 1.3.1, then the pin swap.
+  **PXReprise 030 confirmed it:**
+  - both ids match exactly on the release binary: PXD017058 `d1a2590bba125a7f` and PXD051715 `8afe1d2348cea66f`;
+  - the swap (STOP, drain, `machine.toml` to 1.3.1, restart) waits for the two live searches, PXD012213 and
+    PXD058082;
+  - after the restart, all five refused deposits re-ingest without a new search.
+- **New gaps:**
+  - G92: storing sample-level values (U19).
+  - G93: the small PSM `count_mismatch` is long-standing, on 62 of 94 stored bundles, not caused by 1.1.12.
+  - PXR-R12 (the `https://` UniProt namespace) is queued in G88 for the 1.4.0 ingest path.
+- **Pick up at:** run the inbox (`threads.py inbox`). Then:
+  1. **Confirm the 1.3.1 pin swap delivered** (R13 itself is answered: the ids match, PXReprise 030).
+     - Look for PXReprise's message reporting the first delivery.
+     - Or check directly: `Select-String '"1.3.1"' F:\aging_data\repo\store\PXD051715\*\bundle.json`, and the same for
+       PXD052797, PXD012307, PXD012213 and PXD058082.
+     - A delivered bundle's id should equal the scratch id in the list above. PXD012213 and PXD058082 can differ:
+       PXReprise 030 calls them still under way, and their output may have changed after our 13:35 CDT scratch
+       ingest.
+  2. **Answer PXReprise R7, R8, R10, R11** (see 022, 023, 026).
+  3. **Read the unread threads:**
+     - aging 097, 098 (its title says the 1.3.0 switch is done: catalog `fedb05c27090147e` live), 101 and 102;
+     - QuantProject 022-027;
+     - ptmQtl 033-035;
+     - dia 004.
+  4. **The 2026-10-06 list below:** ptmQtl P25/P26, QuantProject Q2, mzLib #1430/#1432/#1404.
+
+## 2026-10-06 (twenty-eighth session): 1.2.0 and 1.3.0 released; the ptmQtl engines built on a branch
 
 - **1.2.0** (tag on `4e49846`): the go engine runs under `go:DEF-GROUP-GO-ANNOTATION v1` (D42).
   - Per-accession qualifiers (GO-D7, `e0df39b`).
@@ -55,7 +107,7 @@ with age.
   fixed by our PR **#1432** (on board #16, In review).
 - **Threads:** aging 092/093/095/096; PXReprise 017/018; go 025/026; ptmQtl 022/023/026/027/029/031/032; logs 032;
   QuantProject 019. Closed fork PR trishorts/MetaMorpheus#25 (superseded by #2778).
-- **Pick up at:** run the inbox (`threads.py inbox`). Then:
+- **Pick up at (superseded 2026-10-08 by the list above; items 2-4 are still open):** run the inbox. Then:
   1. **aging:** read their reply to 095/096. On the go refusal list (095 step 6), count the datasets and send them to
      go and ptmQtl. On the benchmark differences, explain or fix each before they switch.
   2. **ptmQtl:** P25 (the observation rule in the definitions) and P26 (`meta:NCBITaxon:<id>`). Apply their answer

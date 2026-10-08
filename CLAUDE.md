@@ -7,17 +7,22 @@ This folder is a `/project`-managed research project. **You are de facto working
 - **Phase:** INCEPTION
 - **Goal:** An AI-ready, API-accessible repository for the search + quant results of the many PRIDE datasets the `aging` pipeline reanalyzes. Humans can use it, but AI agents are the main users. The question it serves is how organelle proteomes change with age.
 - **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`). Then follow RESUME's "Pick up at"
-  (2026-10-06):
-  1. aging's reply to 095/096 (the go refusal list, then benchmark differences);
-  2. ptmQtl P25/P26;
-  3. QuantProject Q2;
-  4. mzLib #1430 / #1432 / #1404.
-  - **Released: datarepo 1.3.0** (tag `v1.3.0` on `187a42e`). 1.2.0 (`4e49846`) enabled go under
-    `go:DEF-GROUP-GO-ANNOTATION v1` with per-accession qualifiers and one go.obo/map per catalog (D42). 1.3.0 added
-    `logs.register_orthology` (D43). Ingest path `cs-1.1.0`, schema 0.0.15, catalog format 10: no re-ingest from 1.1.0.
-  - **aging's switch:** our **aging 095** is the one procedure (it supersedes 085/090/092/093). aging is re-ingesting
-    on 1.3.0 into `F:\aging_data\repo_1.3.0\store`. Until they switch, the serving catalog (and this folder's MCP
-    server) is still the 0.32.0 build.
+  (2026-10-08):
+  1. **Confirm the 1.3.1 pin swap delivered.** PXReprise 030 confirmed the fix: both of their release ingests gave
+     our ids. The swap waits for two live searches to drain. Look for their delivery message, or for `"1.3.1"` in
+     `F:\aging_data\repo\store\PXD051715\*\bundle.json` (expected id `8afe1d2348cea66f`).
+  2. Answer PXReprise R7, R8, R10, R11.
+  3. Read the unread threads (aging 097/098/101/102, QuantProject 022-027, ptmQtl, dia).
+  4. ptmQtl P25/P26; QuantProject Q2; mzLib #1430 / #1432 / #1404.
+  - **Released: datarepo 1.3.1** (tag `v1.3.1` on `5f3dd11`, 2026-10-08). It fixes PXR-R9: with an experimental
+    design, protein-group columns are labelled by sample and placed through the search's `ExperimentalDesign.tsv`
+    (`SampleColumns`). Several-file samples are withheld (G92, U19). There is no ingest-path bump (D47). Before it:
+    - 1.3.0 (`187a42e`) added `logs.register_orthology` (D43);
+    - 1.2.0 (`4e49846`) enabled go (D42).
+    - Ingest path `cs-1.1.0`, schema 0.0.15, catalog format 10: no re-ingest from 1.1.0.
+  - **aging's switch to 1.3.0** is done, per the title of aging 098 (catalog `fedb05c27090147e`; read it). The store
+    `F:\aging_data\repo\store` holds 94 bundles, all `cs-1.1.0`. PXReprise runs the batch and its datarepo pin
+    (`F:\aging_batch\datarepo-<version>`).
   - **ptmQtl engines:** on branch **`feat/ptmqtl-engine`** (worktree `code/_wt_ptmqtl`, `ec584c7`), NOT merged (G88,
     D44, D45). The branch builds against a local mzLib packed from #1430 (`E:\x\feed`; the branch-only
     `dotnet/nuget.config`). Merge = 1.4.0 on the first mzLib release carrying #1430, which also needs a NEW ingest
@@ -34,7 +39,7 @@ This folder is a `/project`-managed research project. **You are de facto working
   - **No row change:** G79 (b), move the per-layer rule dicts into `schema/study/aging.yaml`.
     G80: report mzLib's run-name defect upstream.
   - See RESUME's "Pick up at", which also has the release recipe.
-  - Versions (C#, 1.3.0): ingest path **cs-1.1.0**, core schema **0.0.15**, catalog format **10** (11 on the ptmQtl
+  - Versions (C#, 1.3.1): ingest path **cs-1.1.0**, core schema **0.0.15**, catalog format **10** (11 on the ptmQtl
     branch), `RunnerVersion` **1**; frozen Python: datarepo **0.32.0**, schema **0.0.13**, `bundle.INGESTER_VERSION` **0.22.0**,
     aging study layer **0.5.0**, `study.STUDY_INGESTER_VERSION` **0.6.0**, `runner.RUNNER_VERSION`
     **1**, `catalog.CATALOG_VERSION` **8**.
@@ -376,9 +381,11 @@ This folder is a `/project`-managed research project. **You are de facto working
   `.d` and the msalign extensions ANYWHERE in `File Name`. So `X.raw.thermo.raw` reads as `X.thermo`,
   and `run.day2` as `runay2`. `usi.RunNameMap` mirrors the rule (0.32.0, G80). A run-name mismatch
   is decided in mzLib's source, not by guessing strip order.
-- **The auto-mode classifier refuses the agent's push and tag of a release.** Commit locally, then give
-  the user the `!` commands one at a time. Watch the tag run in the background and say explicitly
-  when `gh release edit --draft=false` is safe (the user asked for exactly that).
+- **The auto-mode classifier refuses the agent's push and tag of a release** unless the user grants it in the
+  session. For 1.3.1 (2026-10-08) the user said "you run it for me ... you have my permission", and the push, tag and
+  `gh release edit --draft=false` all went through. Without that, commit locally and give the user the `!` commands
+  one at a time. Either way: push master, wait for CI and dotnet-binaries to go green, tag, and publish only after the
+  downloaded draft binary reproduces known bundle ids.
 - **"The site doesn't show the new release" is usually the operator's pin, not our code.** Read
   `https://trishorts.github.io/aging-pipeline/.datarepo-site.json`: its `generator` names the datarepo
   that built the page. On 2026-09-30 it said 0.28.1 a day after 0.32.0 shipped, because aging's
@@ -419,6 +426,23 @@ This folder is a `/project`-managed research project. **You are de facto working
   after it in the command runs. Write files with the Write tool.
 - **"Biological" is mzLib's category, not a table of ours** (D45). Never add an IdWithMotif-to-class map. Read the
   category off MetaMorpheus's names.
+- **With a design, protein-group columns are SAMPLES, not runs** (PXR-R9, 1.3.1). MetaMorpheus labels
+  `Intensity_`/`SpectralCount_`/`*Occupancy_` columns `{Condition}_{Biorep}` whenever a condition or fraction is
+  defined (mzLib `SampleGroupBuilder`), and sums each sample's files. The peptide and peak tables stay per file. Every
+  aging batch search has a design since 2026-10-07. Anything that maps a protein-group label to a run goes through
+  `SampleColumns`, never `RunNameMap` alone. PXReprise's pre-fix trial provenance also keyed contamination by sample
+  label.
+- **A PSM `count_mismatch` is the norm, not a signal** (G93). 62 of 94 stored bundles miss results.txt by up to
+  ~1,300 PSMs. Measure the store before calling one new; a draft once claimed 1.1.11 "matched exactly".
+- **A peer can reproduce our bundle id exactly, which makes it the best cross-check.** The id hashes each source's role
+  and sha256, never its path, and the manifest entry's content fields, never `work_root`. PXReprise 030 matched both
+  predicted ids. A scratch copy of a manifest with a relative `work_root` (the trial's `../runs`) must make it
+  absolute.
+- **`RealRunFoldersMatchPython` (RealData) fails while PXReprise re-searches a deposit**: its `04_search` folder
+  vanishes mid-search (PXD008934, 2026-10-08). That is environmental. Run CI-equivalent with
+  `--filter "TestCategory!=RealData"`.
+- **Large real ingests need time and RAM.** PXD012307's 6.2 GB psmtsv took 17 min and ~30 GB; PXD051715's 3.3 GB
+  took 9 min. Run them in the background, and the small ones in parallel (512 GB here).
 
 **Sibling project: `E:\CodeReview\aging`** (the NCEMS pipeline). aging *produces* results under
 `F:\aging_data\<run>\<PXD>\` with `provenance.json` (schema `aging-provenance/2`). dataRepo *ingests and serves*
