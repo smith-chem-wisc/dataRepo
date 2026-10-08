@@ -507,8 +507,8 @@ gaps:
     slightly from results.txt "All target PSMs with q-value <= 0.01", so ingest raises count_mismatch (a warning;
     both numbers kept). NOT new with 1.1.12: 62 of the 94 bundles in aging's store (2026-10-08) carry it, the
     producer's count minus ours ranging from -18 to +1,180 PSMs (4 of the 62 are over, e.g. PXD018097 744,125 vs
-    744,107). On 1.1.12: PXD051715 1,712,254 vs 1,712,558
-    (304), PXD017058 4, PXD052797 2, PXD012213 1, PXD058082 0. G7 closed this for PXD036557 with the notch clause; the
+    744,107). On 1.1.12: PXD012307 2,067,679 vs 2,068,987 (1,308), PXD051715 1,712,254 vs
+    1,712,558 (304), PXD017058 4, PXD052797 2, PXD012213 1, PXD058082 0. G7 closed this for PXD036557 with the notch clause; the
     corpus says the predicate is still not MetaMorpheus's. Find which PSMs differ on one dataset before asking anyone.
   - >-
     G92 NEW 2026-10-08 (PXReprise 024/028, PXR-R9; U19). A design sample spanning several files (fractions,
@@ -543,6 +543,9 @@ gaps:
     - point DataRepo.Ingest at the released mzLib;
     - bump BundleWriter.IngesterVersion (#1403 changes psmtsv ProForma: UniProt names -> UNIMOD ids, so
       peptidoform keys move);
+    - in the same ingest-path bump, PXR-R12 (PXReprise 027, accepted in our 029): ProteinDb.cs reads UniProt XML
+      under both http:// and https:// namespaces (or by local name, as mzLib does), and an entry-less database is
+      a refusal, not an empty read;
     - re-run the 12 branch failures, which are mzLib-version effects (go GO-A1 refusal of an unreleased writer, the
       psmtsv parity tests);
     - rerun the tutorial ids;
