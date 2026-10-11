@@ -1977,3 +1977,34 @@ predicted: PXD017058 `d1a2590bba125a7f` and PXD051715 `8afe1d2348cea66f`. That c
 independently of our build. The pin swap waits only for the two live searches (PXD012213, PXD058082) to drain. It is
 STOP, a `machine.toml` edit and a restart, after which all five refused deposits re-ingest without a new search. They
 will report the first delivery.
+
+## 2026-10-11 (thirtieth session): datarepo 1.3.2, and PXReprise's public-data contract adopted (D48)
+
+**The crash was ours, and the port had introduced it.** PXReprise reported two catalog builds dying at
+`Catalog.cs:1343` (R14). That line is the build's final `File.Move(staging, catalog, overwrite: true)`. On Windows a
+file held open cannot be replaced, but it can be deleted when the holder allows it, and DuckDB does, even read-only.
+Python 0.32.0 deleted the old catalog and then renamed. The C# port collapsed that into one replace, and row parity
+could never see the difference. aging had raised the same failure on 10-06 (DATAREPO-78, unread until today). They
+concluded a 1.3.0 MCP server does not block, because their test deleted the file; a delete is not a replace. Running
+the released 1.3.1 binary with `datarepo mcp` attached reproduced PXReprise's exit code and stack exactly. Who held
+the catalog at the two batch crashes is still unknown: no Claude session was active at either time. Each crash leaked
+a ~30 GB staging file, on a disk that hit the batch's free-space floor; aging deleted both.
+
+**1.3.2** (`80e7fb0`, `09b8d8d`; tag on `a5991e2`) deletes the old file under its reader, retries 10 min for other
+holders, names the holder through the Restart Manager, and makes an unexpected CLI error exit 70 with its message last
+(aging's DATAREPO-81 a-d). The first fix only retried and refused. Reading aging 098 and testing delete-then-rename
+turned it into a fix that never waits on a DuckDB reader. The user granted push, tag and publish in-session. The
+release binary reproduced the tutorial ids. The classifier refused, first, a git reset meant to reorder unpushed
+commits; history was left as it was.
+
+**D48.** PXReprise relayed the user's D41: the catalog becomes small, versioned views over bundle Parquet, PSMs leave
+it, and per-deposit work runs once. The user confirmed it here. The measurements came before the plan:
+- views over aging's 109 deposits build in 0.5 s; with today's derived SQL unchanged, 17.1 s and 39 MB, against
+  ~45 min and 28 GB;
+- file pruning holds on path-derived ids;
+- the MCP sandbox needs `allowed_directories`, and absolute paths;
+- a linear projection to 4,350 deposits (~11 min, 1.6 GB) is why step 2 computes per-deposit tables once.
+
+The DuckLake evaluation found that it takes ownership of registered files. One default CHECKPOINT scheduled
+immutable bundle files for deletion, which was re-run here before it was reported. Charter v0.8 adds PXReprise.
+PXReprise 036 answers six of their asks and asks three (R17-R19).

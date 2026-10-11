@@ -7,14 +7,25 @@ This folder is a `/project`-managed research project. **You are de facto working
 - **Phase:** INCEPTION
 - **Goal:** An AI-ready, API-accessible repository for the search + quant results of the many PRIDE datasets the `aging` pipeline reanalyzes. Humans can use it, but AI agents are the main users. The question it serves is how organelle proteomes change with age.
 - **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`). Then follow RESUME's "Pick up at"
-  (2026-10-08):
-  1. **Confirm the 1.3.1 pin swap delivered.** PXReprise 030 confirmed the fix: both of their release ingests gave
-     our ids. The swap waits for two live searches to drain. Look for their delivery message, or for `"1.3.1"` in
-     `F:\aging_data\repo\store\PXD051715\*\bundle.json` (expected id `8afe1d2348cea66f`).
-  2. Answer PXReprise R7, R8, R10, R11.
-  3. Read the unread threads (aging 097/098/101/102, QuantProject 022-027, ptmQtl, dia).
-  4. ptmQtl P25/P26; QuantProject Q2; mzLib #1430 / #1432 / #1404.
-  - **Released: datarepo 1.3.1** (tag `v1.3.1` on `5f3dd11`, 2026-10-08). It fixes PXR-R9: with an experimental
+  (2026-10-11):
+  1. **PXReprise's replies to 036** (PXR-R17 the rule refinements, R18 the split-search key, R19 a database
+     registry). Then build **step 1 of `design/PUBLIC_DATA.md`** (G94, D48): the catalog as views, versioned files
+     plus `latest.json`, `release_id`, the sandbox with `allowed_directories`, with G96/G97 in the same release.
+  2. **Confirm 1.3.2 is in use:** PXReprise's ingest pin, aging's publish script `-DataRepo` and aging's MCP entry.
+     Then point OUR project's datarepo MCP entry (frozen Python, fails to connect) at the 1.3.2 binary.
+  3. aging DATAREPO-79/80 (their 102) and DATAREPO-74 (`restrictions`, accepted in 101).
+  4. Unread: QuantProject 15 (DATAREPO-D1..D3 owed), ptmQtl 3 (P27 owed), dia 1. Then ptmQtl P25/P26, QuantProject
+     Q2, mzLib #1430 (still open; #1404 and #1432 merged and Shipped on board #16).
+  - **Released: datarepo 1.3.2** (tag `v1.3.2` on `a5991e2`, 2026-10-11, published by the agent with the user's
+    in-session permission). On Windows `build` no longer crashes when anything reads the catalog: the port had
+    lost Python's delete-then-rename (aging DATAREPO-78/81, PXR-R14). It deletes the old file under its reader,
+    retries 10 min for other holders, names the holder, and unexpected CLI errors exit 70 with the message last. No
+    re-ingest.
+  - **D48 (2026-10-11): PXReprise's public-data contract adopted** (the user's PXReprise D41). It supersedes D10's
+    materialised one-file catalog. The plan and measurements are in `design/PUBLIC_DATA.md` (views over aging's 109
+    deposits: 17 s, 39 MB). DuckLake: adopt later, because it takes ownership of registered files. Charter v0.8 adds
+    PXReprise.
+  - **Released before: datarepo 1.3.1** (tag `v1.3.1` on `5f3dd11`, 2026-10-08). It fixes PXR-R9: with an experimental
     design, protein-group columns are labelled by sample and placed through the search's `ExperimentalDesign.tsv`
     (`SampleColumns`). Several-file samples are withheld (G92, U19). There is no ingest-path bump (D47). Before it:
     - 1.3.0 (`187a42e`) added `logs.register_orthology` (D43);
@@ -39,7 +50,7 @@ This folder is a `/project`-managed research project. **You are de facto working
   - **No row change:** G79 (b), move the per-layer rule dicts into `schema/study/aging.yaml`.
     G80: report mzLib's run-name defect upstream.
   - See RESUME's "Pick up at", which also has the release recipe.
-  - Versions (C#, 1.3.1): ingest path **cs-1.1.0**, core schema **0.0.15**, catalog format **10** (11 on the ptmQtl
+  - Versions (C#, 1.3.2): ingest path **cs-1.1.0**, core schema **0.0.15**, catalog format **10** (11 on the ptmQtl
     branch), `RunnerVersion` **1**; frozen Python: datarepo **0.32.0**, schema **0.0.13**, `bundle.INGESTER_VERSION` **0.22.0**,
     aging study layer **0.5.0**, `study.STUDY_INGESTER_VERSION` **0.6.0**, `runner.RUNNER_VERSION`
     **1**, `catalog.CATALOG_VERSION` **8**.
@@ -441,6 +452,16 @@ This folder is a `/project`-managed research project. **You are de facto working
 - **`RealRunFoldersMatchPython` (RealData) fails while PXReprise re-searches a deposit**: its `04_search` folder
   vanishes mid-search (PXD008934, 2026-10-08). That is environmental. Run CI-equivalent with
   `--filter "TestCategory!=RealData"`.
+- **On Windows a file another process holds open can be DELETED (DuckDB allows it) but not REPLACED.** 1.3.0/1.3.1's
+  `File.Move(overwrite)` crashed aging's builds whenever anything read the catalog; Python had deleted first, then
+  renamed. Row parity could never see it. aging's 098 "measured" that an MCP server does not block by deleting the file:
+  a delete test is not a replace test. Test the operation you ship (fixed in 1.3.2).
+- **DuckLake takes ownership of every file registered with `ducklake_add_data_files`.** One default `CHECKPOINT`
+  merged registered bundle files and scheduled the originals for deletion, even outside DATA_PATH (re-run
+  independently, 2026-10-11). Never register the store itself.
+- **A view over Parquet in the MCP sandbox needs `allowed_directories` set BEFORE `enable_external_access=false`**, set
+  as SET statements (not a connect option), and only absolute paths pass. A relative path resolved through
+  `file_search_path` is refused (`results/public_data_2026-10-11/sandbox_allowed.py`).
 - **Large real ingests need time and RAM.** PXD012307's 6.2 GB psmtsv took 17 min and ~30 GB; PXD051715's 3.3 GB
   took 9 min. Run them in the background, and the small ones in parallel (512 GB here).
 

@@ -2,14 +2,14 @@
 
 <!-- BEGIN GENERATED -- render_resume.py owns this block; edit state.yaml, not here -->
 
-**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-10-08
+**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-10-11
 
 | | |
 |---|---|
-| Commits | 563 |
+| Commits | 586 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
-| Locked decisions | 47 |
-| Open gaps | 88 |
+| Locked decisions | 48 |
+| Open gaps | 92 |
 | Gate items skipped | 5 |
 
 **Worktrees** -- details in `code/PINNED.md`
@@ -31,7 +31,41 @@ reanalyses. The results cover search, quant, provenance, design and organelle an
 use it, but AI agents are the main users. The question it serves is how organelle proteomes change
 with age.
 
-## Latest (2026-10-08, twenty-ninth session): PXR-R9 fixed and released as datarepo 1.3.1
+## Latest (2026-10-11, thirtieth session): datarepo 1.3.2 released; PXReprise's public-data contract adopted (D48)
+
+- **1.3.1 delivered.** PXReprise 031: the pin swap is done, and all six deposits 1.3.0 refused are in aging's store
+  (PXD051715 `8afe1d2348cea66f` as predicted).
+- **PXR-R14 / DATAREPO-78 / DATAREPO-81, fixed in datarepo 1.3.2** (tag `v1.3.2` on `a5991e2`, published 12:54 UTC,
+  with the user's in-session permission):
+  - **The cause.** `Catalog.cs:1343` replaced the catalog with `File.Move(overwrite: true)`. On Windows a file held
+    open cannot be replaced, though DuckDB lets it be deleted. Python had deleted first; the port lost that.
+  - **The result.** Every reader of the catalog crashed a build (0xE0434352) and leaked a ~30 GB `.building` file. It
+    happened twice in aging's batch, holder unidentified (no Claude session was active).
+  - **Verified.** Reproduced exactly with the 1.3.1 binary and a running `datarepo mcp`. aging's 098 "a 1.3.0 server
+    does not block" had tested a delete.
+  - **The fix.** `80e7fb0` deletes the old file under its reader and moves the new one in. `09b8d8d` retries 10 min
+    for other holders, names the holder (Restart Manager), and makes unexpected CLI errors exit 70 with the message
+    on the last line.
+  - **Released.** The release binary reproduced the tutorial ids (catalog `961134200ac945a8`). Threads: PXReprise
+    033/035, aging 104/105.
+- **D48: PXReprise's D41 contract adopted** (the user, "record the decision and plan your part"):
+  - The catalog becomes views over the bundles' Parquet, with versioned files and a `latest` pointer, and PSMs leave
+    it.
+  - **The plan** is `design/PUBLIC_DATA.md` (G94), measured on aging's store. Views over 109 deposits build in
+    0.5 s; with today's derived tables, 17.1 s and 39.3 MB (today ~45 min, 28 GB). One dataset's filter scans 1 of
+    109 files. The MCP sandbox works with `allowed_directories`, on absolute paths only.
+  - **At 4,350 deposits** it projects to ~11 min and 1.6 GB, so step 2 computes the per-deposit derived tables once.
+  - **Rules refined:** 5 (beside the bundle, not inside), 9 (`release_id` plus `catalog_id`), 4 (absolute paths per
+    data root).
+  - **DuckLake (R16): later.** One default CHECKPOINT schedules registered bundle files for deletion.
+  - **Charter v0.8** adds PXReprise (R7).
+  - **PXReprise 036** answers R7, R8, R10, R11, R15 and R16, and asks R17-R19. Gaps G95 (split searches), G96
+    (database registry) and G97 (loud engine coverage).
+- mzLib #1404 and #1432 merged; both are Shipped on board #16. #1430 is still open.
+- **Pick up at:** see CLAUDE.md's list (PXReprise's 036 replies, then build step 1; confirm 1.3.2 in use; aging
+  79/80/74; the unread QuantProject, ptmQtl and dia threads).
+
+## 2026-10-08 (twenty-ninth session): PXR-R9 fixed and released as datarepo 1.3.1
 
 - **The bug (PXReprise 024/028, PXR-R9):** with an experimental design MetaMorpheus labels the
   `AllQuantifiedProteinGroups.tsv` columns by SAMPLE (`Intensity_all_1`, `{Condition}_{Biorep}`). 1.3.0 read each
