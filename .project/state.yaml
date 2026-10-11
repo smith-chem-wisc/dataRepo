@@ -501,7 +501,48 @@ decisions:
       design (PXD058082's folder has one now, from a re-search after its bundle; the sha256 differs); the test
       APerRunTableIsReadAsBeforeEvenBesideADesign holds the class. A one-file sample goes to its run's assay; a
       several-file sample is left out with sample_quant_not_stored (G92), never split onto runs.
+  - id: D48
+    date: 2026-10-11
+    text: >-
+      dataRepo builds to PXReprise's public-data contract (PXReprise design/PLAN_public-data.md, efb70cb: the user's
+      PXReprise D41 of 2026-10-11; confirmed here by the user the same day, "record the decision and plan your part").
+      PXReprise owns the pipeline's publication architecture. dataRepo is one component, and implements the
+      contract's rules 3 (catalog side), 4, 5, 9 and 10.
+      - SUPERSEDES the part of D10 that materialises tables so the catalog is one movable file. The catalog becomes
+        views over the bundles' Parquet plus the corpus-wide indexes, written whole at each publish as a new
+        versioned file with a `latest` pointer. A file a reader may hold is never replaced. PSMs leave the catalog
+        and stay in the bundles. (PXReprise's contract calls this rule our "D1"; it is D10.)
+      - SUPERSEDES D16 in part: bulk Parquet becomes the primary interface. The REST deferral stands.
+      - SUPERSEDES docs/operating.md's one instance per question: one corpus serves every question (rule 2).
+        PXReprise builds the corpus manifest.
+      - KEPT: the immutable, content-addressed bundle as the unit; D11 (a release pins its bundles); D12 and D19 (the
+        three MCP tools); D20 (provenance from the server). D14's sandbox stays, adapted so that views can read the
+        store.
+      - Where a rule cannot be met as written, we say which and why in the PXReprise thread rather than let it lapse.
+        The plan, and the rules we would refine, are in design/PUBLIC_DATA.md (G94).
 gaps:
+  - >-
+    G97 NEW 2026-10-11 (PXR-R11, our PXReprise 036). The engine-coverage checks pass and list uncovered databases or
+    bundles only in their detail, so a gap is easy to miss. In step 1's release: `build` prints an uncovered dataset
+    as a warning, and `build --require-engines <engine,...>` refuses when any selected dataset lacks one.
+  - >-
+    G96 NEW 2026-10-11 (PXR-R10/R19, our PXReprise 036). A dataset's database kind (UniProt reviewed or canonical,
+    release, proteome). 16 of 112 stored bundles were searched against canonical gene-centric files and 96 against
+    reviewed sets, known today only by file name, which we will not parse. Proposed: PXReprise publishes a registry
+    keyed by sha256, named in the manifest; the build reads it into dataset_databases and dataset_overview
+    (`search_database_set`). No re-ingest, no schema change (D32). Waits on PXR-R19.
+  - >-
+    G95 NEW 2026-10-11 (PXR-R8/R18, our PXReprise 036). Several searches under one accession (PXReprise's D33 split
+    deposits; contract rule 2). Today one accession is one manifest entry, one bundle per catalog, and every id is
+    prefixed by the dataset id, so two searches collide. Proposed key `<accession>-<group>` for each search of a split
+    deposit (a deposit's only search keeps the bare accession). Widening the schema's dataset_id pattern rides
+    1.4.0's re-ingest. Waits on PXR-R18; split deposits stay parked until then.
+  - >-
+    G94 NEW 2026-10-11 (D48; PXReprise 034, PXR-R15/R16). Our part of the public-data contract. Step 1: the catalog
+    as views over the store's Parquet, written as versioned files with a `latest` pointer, with no re-ingest. Step 2:
+    per-deposit work at ingest, and PSMs out of the catalog. Plan, measurements and the DuckLake evaluation:
+    design/PUBLIC_DATA.md. The acceptance tests are the contract's section 7 (publish under 10 min, catalog under
+    1 GB, builds succeed with readers attached), measured on aging's real store.
   - >-
     G93 NEW 2026-10-08 (seen in the R9 scratch ingests, not caused by R9). Our psms_target_1pct count differs
     slightly from results.txt "All target PSMs with q-value <= 0.01", so ingest raises count_mismatch (a warning;
