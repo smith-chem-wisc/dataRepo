@@ -2008,3 +2008,12 @@ it, and per-deposit work runs once. The user confirmed it here. The measurements
 The DuckLake evaluation found that it takes ownership of registered files. One default CHECKPOINT scheduled
 immutable bundle files for deletion, which was re-run here before it was reported. Charter v0.8 adds PXReprise.
 PXReprise 036 answers six of their asks and asks three (R17-R19).
+## 2026-10-11 (thirty-first session): one round of replies to four peers; a keratin double placement found
+
+Every open question was answered, and the answers rest on measurements of aging's store, read-only, not on
+recollection. Checking ptmQtl's P30 premise (can every site get a sequence window?) found that all 1,885,950 sites
+have a sequence. It also turned up an older defect: ptm_sites places a site against every sequence its accession has.
+MetaMorpheus's contaminant panel carries older versions of two human keratins, so 411 sites are written twice
+(G101). Checking P29 found that aging's publish builds with `--latest`. A second search of PXD073999 under the bare
+accession would therefore silently replace the first in the served catalog (PXR-R20). Both came from going to fill
+an answer, not from reviewing one.

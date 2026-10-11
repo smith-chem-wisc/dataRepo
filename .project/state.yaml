@@ -522,6 +522,44 @@ decisions:
         The plan, and the rules we would refine, are in design/PUBLIC_DATA.md (G94).
 gaps:
   - >-
+    G101 NEW 2026-10-11 (found measuring ptmQtl's DATAREPO-P31; our ptmQtl 040). ptm_sites places a site against
+    EVERY sequence its accession has in the searched databases (Identifications.Placements adds a placement per
+    candidate). MetaMorpheus's contaminant panel carries older versions of two human keratins: O76011 at 436 residues
+    against the proteome's 394, and P19013 at 534 against 520. So each modification on them is written twice, 42 or 14
+    residues apart, with the same n_psms (PXD022180: Carbamidomethyl on C at O76011 351 and 393). 411 sites in 25 of
+    113 bundles have two windows. Fix at 1.4.0's re-ingest (it changes rows, so it needs an IngesterVersion bump):
+    decide which sequence a PSM was matched against, or write no site and count it. Tell PXReprise and aging in the
+    next message to them (a known bug in a stored table).
+  - >-
+    G100 NEW 2026-10-11 (QuantProject 023 DATAREPO-D1/D2/D3, answered yes in our QuantProject 038). We write
+    QuantProject's statistics engine (DEF-DIFF), shaped like the ptmQtl engines, from their M7 spec, once an mzLib
+    release carries the framework (M4 #1453, M5 #1455). Inputs by role and sha256: the stored peptide values, the
+    search's AllQuantifiedPeptides.tsv (bundle source role `peptide_quant`) for group membership, which we do not store
+    for shared peptides (734 of 7,161 quantified peptidoforms in PXD001054), aging's curated design tables (G98) and a
+    settings file. Outputs beside the bundle (D48 rule 5), keyed with the curated design. `is_unique` is gene-unique
+    and must not be read as group-unique.
+  - >-
+    G99 NEW 2026-10-11 (ptmQtl 034-039, our ptmQtl 040). Engine changes to make on feat/ptmqtl-engine before the 1.4.0
+    merge:
+    - S3b, protein pulldowns. Sample type from runs.enrichment, overridden by the capture list (PXD032240, PXD011314
+      and PXD013640 are stored as pulldowns). `other` means unknown, so no type A rows. The pulldown factor comes from
+      curated_design_factors.
+    - S2c, the blocking-modification C-terminal gate.
+    - S7, PSMs by the shared quantified-PSM rule: mzLib QuantifiedPsmRule (#1425) if released, else the same three
+      steps.
+    - DEF-SITE-TRAIT v1 or v2 follows the mzLib release we build against (#1464).
+    - run.json lists every database per bundle.
+    - Pooling joins on `sequence_window`.
+    And at 1.4.0's re-ingest: a `sequence_window` column on ptm_sites (P30). No stored site lacks a sequence today.
+    P31 (one accession, two sequences) defaults to no window.
+  - >-
+    G98 NEW 2026-10-11 (aging 102 DATAREPO-79/80, ptmQtl 033 A1-A4; our aging 106). Next release, before step 1 (G94),
+    together with DATAREPO-74 `restrictions` (aging 101):
+    - aging-layer tables curated_run_design and curated_design_factors, with level_value/level_unit, is_primary,
+      `<col>_reserved` for reserved words, and build checks (reference level, run in run_design, same factor rows
+      across a sample's runs, run_id held, no level both reference and not);
+    - curated_sample_characteristics.name described as any SDRF header, comment[...] included.
+  - >-
     G97 NEW 2026-10-11 (PXR-R11, our PXReprise 036). The engine-coverage checks pass and list uncovered databases or
     bundles only in their detail, so a gap is easy to miss. In step 1's release: `build` prints an uncovered dataset
     as a warning, and `build --require-engines <engine,...>` refuses when any selected dataset lacks one.
@@ -536,7 +574,10 @@ gaps:
     deposits; contract rule 2). Today one accession is one manifest entry, one bundle per catalog, and every id is
     prefixed by the dataset id, so two searches collide. Proposed key `<accession>-<group>` for each search of a split
     deposit (a deposit's only search keeps the bare accession). Widening the schema's dataset_id pattern rides
-    1.4.0's re-ingest. Waits on PXR-R18; split deposits stay parked until then.
+    1.4.0's re-ingest. Waits on PXR-R18; split deposits stay parked until then. R18 answered (PXReprise 037): the key
+    form is yes, and the group vocabulary comes with their corpus manifest. A second search of the SAME files
+    (PXD073999, AGING-P18) is not covered. Under the bare accession, aging's `--latest` publish would serve it in place
+    of the first. Asked as PXR-R20 (our PXReprise 038); our default is its own key, in a separate store until 1.4.0.
   - >-
     G94 NEW 2026-10-11 (D48; PXReprise 034, PXR-R15/R16). Our part of the public-data contract. Step 1: the catalog
     as views over the store's Parquet, written as versioned files with a `latest` pointer, with no re-ingest. Step 2:

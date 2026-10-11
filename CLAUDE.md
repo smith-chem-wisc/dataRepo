@@ -8,14 +8,24 @@ This folder is a `/project`-managed research project. **You are de facto working
 - **Goal:** An AI-ready, API-accessible repository for the search + quant results of the many PRIDE datasets the `aging` pipeline reanalyzes. Humans can use it, but AI agents are the main users. The question it serves is how organelle proteomes change with age.
 - **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`). Then follow RESUME's "Pick up at"
   (2026-10-11):
-  1. **PXReprise's replies to 036** (PXR-R17 the rule refinements, R18 the split-search key, R19 a database
-     registry). Then build **step 1 of `design/PUBLIC_DATA.md`** (G94, D48): the catalog as views, versioned files
-     plus `latest.json`, `release_id`, the sandbox with `allowed_directories`, with G96/G97 in the same release.
-  2. **Confirm 1.3.2 is in use:** PXReprise's ingest pin, aging's publish script `-DataRepo` and aging's MCP entry.
-     Then point OUR project's datarepo MCP entry (frozen Python, fails to connect) at the 1.3.2 binary.
-  3. aging DATAREPO-79/80 (their 102) and DATAREPO-74 (`restrictions`, accepted in 101).
-  4. Unread: QuantProject 15 (DATAREPO-D1..D3 owed), ptmQtl 3 (P27 owed), dia 1. Then ptmQtl P25/P26, QuantProject
-     Q2, mzLib #1430 (still open; #1404 and #1432 merged and Shipped on board #16).
+  1. **Build the next release: DATAREPO-74 `restrictions` + DATAREPO-79 aging's `curated_run_design` /
+     `curated_design_factors` + DATAREPO-80's description (G98).** The shape is promised in aging 106: `level_value` /
+     `level_unit`, `is_primary`, `<col>_reserved`, five build checks. Nothing owed to any peer as of 2026-10-11.
+  2. **Then step 1 of `design/PUBLIC_DATA.md`** (G94, D48). PXReprise accepted R17-R19 (their 037). The release waits
+     for their database registry path (R19, G96). Keep `psms`/`psms_1pct` in the catalog until ptmQtl answers
+     PXReprise's PXR-P14.
+  3. **Waiting on:** PXReprise PXR-R20 (key for the second PXD073999 search; our default is its own key, in a
+     separate store until 1.4.0) and ptmQtl P31 (one accession, two sequences; default no window). Also pep
+     DATAREPO-69 and pyMzLib DATAREPO-70.
+  4. **For 1.4.0 (with mzLib #1430):**
+     - `sequence_window` on `ptm_sites` (P30);
+     - the keratin double placement (G101: ptm_sites writes a site once per sequence version of its accession). Tell
+       PXReprise and aging in the next message to them;
+     - the ptmQtl engine changes S3b, S2c, S7 and v1/v2 (G99);
+     - widening the dataset key for split searches (G95).
+  5. Confirm 1.3.2 is in use (PXReprise pins it at their v0.4.6; aging's publish script and MCP entry). Then point
+     OUR datarepo MCP entry at the 1.3.2 binary. dia 004's output folder awaits a read (G82). QuantProject's
+     statistics engine (G100) waits for an mzLib release with M4/M5.
   - **Released: datarepo 1.3.2** (tag `v1.3.2` on `a5991e2`, 2026-10-11, published by the agent with the user's
     in-session permission). On Windows `build` no longer crashes when anything reads the catalog: the port had
     lost Python's delete-then-rename (aging DATAREPO-78/81, PXR-R14). It deletes the old file under its reader,

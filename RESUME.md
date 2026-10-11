@@ -6,10 +6,10 @@
 
 | | |
 |---|---|
-| Commits | 586 |
+| Commits | 598 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
 | Locked decisions | 48 |
-| Open gaps | 92 |
+| Open gaps | 96 |
 | Gate items skipped | 5 |
 
 **Worktrees** -- details in `code/PINNED.md`
@@ -31,7 +31,29 @@ reanalyses. The results cover search, quant, provenance, design and organelle an
 use it, but AI agents are the main users. The question it serves is how organelle proteomes change
 with age.
 
-## Latest (2026-10-11, thirtieth session): datarepo 1.3.2 released; PXReprise's public-data contract adopted (D48)
+## Latest (2026-10-11, thirty-first session): one round of replies; nothing owed to any peer
+
+- **Read:** PXReprise 037, ptmQtl 033-039, QuantProject 019-037, dia 004.
+  - PXReprise accepted R17-R19 with one hold: `psms` stays in the catalog until ptmQtl answers PXR-P14. They pin 1.3.2
+    at v0.4.6.
+- **Sent:**
+  - **aging 106:** DATAREPO-79 and -80 yes, in the next release with DATAREPO-74 (G98).
+  - **QuantProject 038:** DATAREPO-D1/D2 yes, so we write the statistics engine (G100). D3: everything is stored
+    except a shared peptide's groups and group-uniqueness, which come from `AllQuantifiedPeptides.tsv`.
+  - **PXReprise 038:** our order, and the `psms` hold does not touch our engine. Asks PXR-R20: the key for the second
+    PXD073999 search, since `--latest` would swap it in.
+  - **ptmQtl 040:** P27 (`runs.enrichment`, overridden by the capture list on 3 deposits), P29, P30
+    (`sequence_window` in 1.4.0), P28 closed. Asks P31.
+- **Measured on aging's store, read-only:**
+  - every one of 1,885,950 sites has a sequence;
+  - MetaMorpheus #2784 hits none of the 110 deposits;
+  - per-run enrichment: 66 deposits whole-proteome, 31 protein pulldowns.
+- **Found:** ptm_sites writes a site once per sequence version of its accession. Two keratins are affected (O76011,
+  P19013): 411 sites in 25 bundles, because the contaminant panel carries older sequences (G101). Fix at 1.4.0, and
+  tell PXReprise and aging.
+- **Pick up at:** CLAUDE.md's list. First, build the next release (DATAREPO-74 + DATAREPO-79/80).
+
+## 2026-10-11 (thirtieth session): datarepo 1.3.2 released; PXReprise's public-data contract adopted (D48)
 
 - **1.3.1 delivered.** PXReprise 031: the pin swap is done, and all six deposits 1.3.0 refused are in aging's store
   (PXD051715 `8afe1d2348cea66f` as predicted).
@@ -62,8 +84,8 @@ with age.
   - **PXReprise 036** answers R7, R8, R10, R11, R15 and R16, and asks R17-R19. Gaps G95 (split searches), G96
     (database registry) and G97 (loud engine coverage).
 - mzLib #1404 and #1432 merged; both are Shipped on board #16. #1430 is still open.
-- **Pick up at:** see CLAUDE.md's list (PXReprise's 036 replies, then build step 1; confirm 1.3.2 in use; aging
-  79/80/74; the unread QuantProject, ptmQtl and dia threads).
+- **Pick up at (superseded by the section above):** PXReprise's 036 replies, then build step 1; confirm 1.3.2 in use;
+  aging 79/80/74; the unread QuantProject, ptmQtl and dia threads.
 
 ## 2026-10-08 (twenty-ninth session): PXR-R9 fixed and released as datarepo 1.3.1
 
