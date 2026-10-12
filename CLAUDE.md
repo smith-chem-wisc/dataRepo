@@ -8,9 +8,16 @@ This folder is a `/project`-managed research project. **You are de facto working
 - **Goal:** An AI-ready, API-accessible repository for the search + quant results of the many PRIDE datasets the `aging` pipeline reanalyzes. Humans can use it, but AI agents are the main users. The question it serves is how organelle proteomes change with age.
 - **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`). Then follow RESUME's "Pick up at"
   (2026-10-11):
+  0. **UNREAD at the 2026-10-12 close: aging 107 and 108, ptmQtl 041 and 042. Read them before building.** We owe
+     aging DATAREPO-82/83. aging 108 amends DATAREPO-79's shape before we build it: a stratum has no reference level, a
+     reserved word is never a level, a pool's individual is its own label, plus QuantProject's `role` column. 107 says
+     aging moved to 1.3.2 (publish and MCP: item 5) and that a catalog lost ~5 GB of its tail after a whole read; 108
+     says a killed build leaves its staged catalog behind. Both may be bugs of ours: diagnose them, then tell PXReprise.
+     ptmQtl 041 answers P31 (our default) and changes D37 bounds; 042: PXD061654 holds acetyl-K captures stored as
+     `none`, which their capture list v3 holds out.
   1. **Build the next release: DATAREPO-74 `restrictions` + DATAREPO-79 aging's `curated_run_design` /
-     `curated_design_factors` + DATAREPO-80's description (G98).** The shape is promised in aging 106: `level_value` /
-     `level_unit`, `is_primary`, `<col>_reserved`, five build checks. Nothing owed to any peer as of 2026-10-11.
+     `curated_design_factors` + DATAREPO-80's description (G98).** The shape is promised in aging 106 (`level_value` /
+     `level_unit`, `is_primary`, `<col>_reserved`, five build checks), as amended by aging 108.
   2. **Then step 1 of `design/PUBLIC_DATA.md`** (G94, D48). PXReprise accepted R17-R19 (their 037). The release waits
      for their database registry path (R19, G96). Keep `psms`/`psms_1pct` in the catalog until ptmQtl answers
      PXReprise's PXR-P14.
