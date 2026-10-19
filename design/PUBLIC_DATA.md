@@ -125,6 +125,49 @@ And one about D14's sandbox, which the MCP server must keep:
 
 ## 4. Step 2: PSMs out of the catalog; per-deposit work done once
 
+**Measured before building it (2026-10-19, aging's store, 170 bundles, pinned to aging's first folder catalog
+`32c632fd8bc361d4`).** `build` now prints how long each phase took. A 1.3.5-code folder build took 573 s:
+
+| phase | seconds |
+|---|---:|
+| tables (views) | 3.8 |
+| derived | 77.9 |
+| study and engines | 21.8 |
+| manifest | 0.8 |
+| **checks** | **431.7** |
+| indexes | 11.0 |
+| catalog tables | 24.2 |
+| move | 0.1 |
+
+Three quarters of a publish was the row-count check: `count(*) ... WHERE bundle_id = ?` over a view, once per bundle and
+table (3,310 times), listing every bundle's file each time (0.13 s each). A Parquet file's footer holds its row count, so
+2a reads all footers in one query instead. PSM counts: `bundle.json` already holds both of `dataset_overview`'s, and on
+all 170 bundles they equal what 1.3.5's views counted (`n_psms_1pct` = the reconciliation's `psms_target_1pct`,
+`n_psms_all` = `tables.psms`).
+
+**2a built and measured (2026-10-19, same inputs): 144 s against 573 s.** The engine and go row checks had the same
+shape (one `count(*)` per artefact and table over a view, 72 s) and read footers too. Every table both catalogs hold has
+the same rows; the site is identical apart from `llms.txt`'s PSM sentence. What is left, by phase:
+
+| phase | seconds |
+|---|---:|
+| derived: protein_datasets | 21.4 |
+| derived: protein_index | 19.2 |
+| derived: peptide_index | 18.3 |
+| derived: modifications | 9.4 |
+| derived: overview | 5.8 |
+| study and engines | 23.7 |
+| catalog tables (`count(*)` of every table and view) | 18.8 |
+| indexes | 11.9 |
+| everything else | 15 |
+
+Linear in deposits, that is about an hour at 4,350, so 2b is what meets the contract at scale: the derived tables are
+per deposit except `protein_index` and `peptide_index`, and those aggregate per-deposit rows.
+
+ptmQtl answered PXReprise's PXR-P14 on 2026-10-11 (ptmQtl 014 in the PXReprise thread): it needs every target PSM of a
+search, one deposit at a time, and removing `psms` and `psms_1pct` from the catalog breaks only its own two exporters and
+two scripts. Tell ptmQtl before releasing 2a.
+
 - **PSMs leave the catalog.** No `psms` view. They stay in every bundle, readable with DuckDB over the store.
   Everything that reads PSMs at build moves to the counts each bundle already recorded at ingest (`bundle.json`
   table counts and the reconciliation's `psms_target_1pct`). Section 7 lists every reader.
