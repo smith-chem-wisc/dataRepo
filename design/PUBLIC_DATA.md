@@ -164,6 +164,22 @@ the same rows; the site is identical apart from `llms.txt`'s PSM sentence. What 
 Linear in deposits, that is about an hour at 4,350, so 2b is what meets the contract at scale: the derived tables are
 per deposit except `protein_index` and `peptide_index`, and those aggregate per-deposit rows.
 
+**2b built and measured (2026-10-19, same inputs).** A folder keeps each deposit's derived rows under
+`derived/<derivation id>/<dataset>/<bundle>/`, computed once from that deposit's files with the corpus build's own SQL,
+and reused while the derivation id (that SQL, the catalog format, the schema, DuckDB's version) is the same. The two
+indexes aggregate per-deposit partial rows.
+- The first build derived all 170 deposits once: 155 s in all, 90 s of it the deposits. **A rebuild took 61 s**, with
+  every deposit reused in 1.0 s.
+- `dataset_overview`, `protein_datasets`, `protein_index`, `peptide_index` and `search_modifications_placed` have the
+  same rows as 2a's (checksums). The site regenerated from it is identical.
+- The derived directory is 155 MB (0.9 MB a deposit); the catalog file is 132 MB, against 298 MB.
+- What is left in a warm publish: study and engines 17 s, `catalog_tables`' counts 15 s, `peptide_index` 9 s,
+  `protein_index` 7 s. Projected to 4,350 deposits, the two indexes and the counts grow with the rows; the per-deposit
+  work is done once per deposit.
+
+Not done in 2b: the engine-derived tables (`protein_genes`, `dataset_databases`) are still built at every publish, and
+`--keep` does not prune derived directories of an older derivation id.
+
 ptmQtl answered PXReprise's PXR-P14 on 2026-10-11 (ptmQtl 014 in the PXReprise thread): it needs every target PSM of a
 search, one deposit at a time, and removing `psms` and `psms_1pct` from the catalog breaks only its own two exporters and
 two scripts. Tell ptmQtl before releasing 2a.
