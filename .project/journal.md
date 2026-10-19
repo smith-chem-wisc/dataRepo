@@ -2053,3 +2053,12 @@ delivery, sitting unsent in their repo: 1,676 runs and 1,991 factor rows passed 
 every run was in their serving catalog. The cross-run check found nothing to refuse, because no designed run shares a
 sample with another yet. That check only starts to bite once PXR-R22 brings curated SDRFs whose samples span several
 files.
+
+Then datarepo 1.3.5 shipped D48 step 1, the catalog folder. The user's first instruction was to cap the publish at 2 h.
+It was already 6 h, and 2 h would have killed the very publishes it was meant to rescue, so the cap was not applied and
+the user was told. Step 1 was checked against aging's live catalog over the same 169 bundles, not only against a fixture:
+all 47 tables equal, 8.4 minutes against hours, 298 MB against 62 GiB. The one real finding came from regenerating the
+site, not from comparing tables. Two findings sharing a code were ordered by scan order, which a copied table happens to
+keep and a view over Parquet does not, so "the same catalog gives byte-identical pages" quietly depended on the storage
+layout. PXReprise also read our 044 while it was still the blank template; bodies are now written before a number is
+allocated.

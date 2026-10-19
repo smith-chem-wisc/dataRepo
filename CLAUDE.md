@@ -19,13 +19,15 @@ This folder is a `/project`-managed research project. **You are de facto working
   1. (done in 1.3.4: DATAREPO-74 restrictions, DATAREPO-79 design tables as amended by DATAREPO-82, DATAREPO-80;
      catalog format 11, so the ptmQtl branch's "11" becomes "12" at its merge. The user chose "1.3.4": "1.4.0" stays
      the re-ingest release.)
-  2. **Step 1 of `design/PUBLIC_DATA.md` is BUILT on master, unreleased** (G94; `5afea11`, `8af6736`; CHANGELOG
-     [Unreleased]). On aging's store a folder catalog builds in 8.4 min and is 298 MB, against 1-3 h and 62.4 GiB, with
-     every table equal. To release: decide the version with the user (1.3.5 by the 1.3.4 reasoning), rerun the tutorial
-     ids, then tell aging and PXReprise how to switch: `--out <folder>` in the publish script, the MCP entry on the
-     folder, and aging's own `publish_tools.cs summary`, which reads `$Catalog`, must take the folder's `latest.json`.
-     The user's ask to cap the publish at 2 h was not applied: it is 6 h in aging's question.toml (PXReprise
-     2026-10-17), and 2 h would kill today's 2-3 h publishes; with step 1 a publish takes minutes. aging's catalog is 62.4 GiB (169 datasets, 192M PSMs)
+  2. **Step 1 of `design/PUBLIC_DATA.md` is RELEASED as datarepo 1.3.5** (tag `v1.3.5` on `e1525b3`, published
+     2026-10-19 17:48 UTC with the user's permission; G94). On aging's store a folder catalog builds in 8.4 min and is
+     298 MB, against 1-3 h and 62.4 GiB, with every table equal. Switch instructions sent: aging 112 (seven steps: 1.3.5
+     install, study bundle rewrite, `--out F:\aging_data\repo\catalogs --keep 5` without `--overwrite`, `$CatalogFile`
+     from latest.json for their own tools, drop the staged-file and disk checks, MCP on the folder, delete the 62 GB
+     file) and PXReprise 048 (one pin swap to 1.3.5; the publish limit can come down). Watch for aging's first folder
+     publish and its new catalog id. The user's ask to cap the publish at 2 h was not applied: it was already 6 h
+     (PXReprise 2026-10-17), and 2 h would have killed the 2-3 h one-file publishes; told the user. Next on this
+     line: step 2 (PSMs out; per-deposit derived tables), then a `--data-root` URL for hosting. aging's catalog is 62.4 GiB (169 datasets, 192M PSMs)
      and a publish takes about an hour against PXReprise's 3600 s limit; we offered aging (109) to do step 1 first if
      needed. PXReprise accepted R17-R19 (their 037). The release waits for their database registry path (R19, G96).
      Keep `psms`/`psms_1pct` in the catalog until ptmQtl answers PXReprise's PXR-P14.
@@ -41,7 +43,10 @@ This folder is a `/project`-managed research project. **You are de facto working
        (G26: `Unimod:` names such as `NEM:2H(5)` get no accession), sdrf's `massive dataset record` (G104 a).
   5. dia 004's output folder awaits a read (G82). QuantProject's statistics engine (G100) waits for their M7 spec.
      TMT tables (G105) wait for DEF-TMT-* and MetaMorpheus #2904.
-  - **Released: datarepo 1.3.4** (2026-10-19). A manifest entry's `restrictions: {use: reason}` from a fixed list of six
+  - **Released: datarepo 1.3.5** (2026-10-19). `build --out <folder>`: versioned `catalog-<id>.duckdb` + `latest.json`,
+    bundle and engine tables as views over the store, `release_id`, catalog format 12; readers take the folder; the
+    folder sandbox allows only the store. `--out <name>.duckdb` unchanged. Tutorial catalog `78df2ea37c0fc6eb`.
+  - **Released before: datarepo 1.3.4** (2026-10-19). A manifest entry's `restrictions: {use: reason}` from a fixed list of six
     uses goes to `dataset_restrictions` and `dataset_overview.restrictions`. The aging layer moves to 0.6.0 with
     `curated_run_design` and `curated_design_factors`; `datarepo study` refuses rule-breaking deliveries, and `build`
     refuses unknown runs and a sample whose runs disagree. A parity scope pins study layers (`SchemaContract.StudyTables`).

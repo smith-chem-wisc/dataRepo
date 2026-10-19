@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Commits | 639 |
+| Commits | 642 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
 | Locked decisions | 48 |
 | Open gaps | 100 |
@@ -31,7 +31,29 @@ reanalyses. The results cover search, quant, provenance, design and organelle an
 use it, but AI agents are the main users. The question it serves is how organelle proteomes change
 with age.
 
-## Latest (2026-10-19, thirty-second session): datarepo 1.3.3 and 1.3.4 released; nothing owed to any peer
+## Latest (2026-10-19, thirty-second session): datarepo 1.3.3, 1.3.4 and 1.3.5 released; nothing owed to any peer
+
+- **Released datarepo 1.3.5: D48 step 1** (tag `v1.3.5` on `e1525b3`, published 17:48 UTC with the user's permission).
+  `build --out <folder>` writes versioned catalog files and a `latest.json` pointer, with the bundle and engine tables
+  as views over the store.
+  - **Measured on aging's store,** pinned to the serving catalog's 169 bundles:
+    - the build takes 8.4 min against 1-3 h, and the catalog is 298 MB against 62.4 GiB;
+    - all 47 tables and views are equal;
+    - the site is byte-identical, except that 22 pages reorder two tied findings once (the site now orders them by
+      `finding_id`);
+    - `mcp --check` on the folder takes 0.6 s.
+  - The release binary reproduces the tutorial's `695a592f6bdfbf63` / `78df2ea37c0fc6eb`, builds and serves a folder,
+    and gives PXD011740 `fc49ca1c4a3f078c`.
+- **The user's 2 h publish cap was not applied.** The limit was already 6 h, and 2 h would have killed the one-file
+  publishes, which take 2-3 h.
+- **Sent:**
+  - aging 112: seven switch steps;
+  - PXReprise 046 (R24 yes, R25 corrected, R26 done) and 048 (one pin swap to 1.3.5; the publish limit can come down).
+  - Read PXReprise 045/047.
+- **Pick up at:** watch aging's first folder publish; then step 2 (PSMs out, per-deposit derived tables) or the 1.4.0
+  re-ingest plan with PXReprise.
+
+### Earlier the same session: 1.3.4 and 1.3.3
 
 - **Also released datarepo 1.3.4** (tag `v1.3.4` on `68db9b1`, published 16:31 UTC with the user's permission; the
   user chose the number so that "1.4.0" stays the re-ingest release). No re-ingest, catalog format 11. It includes
