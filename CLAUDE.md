@@ -19,7 +19,13 @@ This folder is a `/project`-managed research project. **You are de facto working
   1. (done in 1.3.4: DATAREPO-74 restrictions, DATAREPO-79 design tables as amended by DATAREPO-82, DATAREPO-80;
      catalog format 11, so the ptmQtl branch's "11" becomes "12" at its merge. The user chose "1.3.4": "1.4.0" stays
      the re-ingest release.)
-  2. **Next build: step 1 of `design/PUBLIC_DATA.md`** (G94, D48). aging's catalog is 62.4 GiB (169 datasets, 192M PSMs)
+  2. **Step 1 of `design/PUBLIC_DATA.md` is BUILT on master, unreleased** (G94; `5afea11`, `8af6736`; CHANGELOG
+     [Unreleased]). On aging's store a folder catalog builds in 8.4 min and is 298 MB, against 1-3 h and 62.4 GiB, with
+     every table equal. To release: decide the version with the user (1.3.5 by the 1.3.4 reasoning), rerun the tutorial
+     ids, then tell aging and PXReprise how to switch: `--out <folder>` in the publish script, the MCP entry on the
+     folder, and aging's own `publish_tools.cs summary`, which reads `$Catalog`, must take the folder's `latest.json`.
+     The user's ask to cap the publish at 2 h was not applied: it is 6 h in aging's question.toml (PXReprise
+     2026-10-17), and 2 h would kill today's 2-3 h publishes; with step 1 a publish takes minutes. aging's catalog is 62.4 GiB (169 datasets, 192M PSMs)
      and a publish takes about an hour against PXReprise's 3600 s limit; we offered aging (109) to do step 1 first if
      needed. PXReprise accepted R17-R19 (their 037). The release waits for their database registry path (R19, G96).
      Keep `psms`/`psms_1pct` in the catalog until ptmQtl answers PXReprise's PXR-P14.
@@ -438,6 +444,9 @@ This folder is a `/project`-managed research project. **You are de facto working
   that built the page. On 2026-09-30 it said 0.28.1 a day after 0.32.0 shipped, because aging's
   `publish_catalog_and_site.ps1` points at a venv that only moves when PXReprise switches (D39).
 - **`threads.py new` needs `--date`** as well as `--project` and `--to`.
+- **A peer can read our message while it is still the blank template.** PXReprise read our 044 between `threads.py new`
+  and our writing its body, replied to an empty message, and nearly swapped to the wrong release (2026-10-19). Write the
+  body to a scratch file FIRST, then allocate the number and fill both copies in the same command.
 - **The .gitignore template ignores `bin/`.** Add a `!/<dir>/bin/` exception before putting code in any bin folder (G4).
 - **C# port: parity is measured against what Python WROTE, never against what we expect it wrote.** Every
   port in `dotnet/` was checked by running the Python on the same inputs (scratch scripts, never shipped) and

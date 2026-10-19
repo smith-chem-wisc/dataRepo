@@ -635,7 +635,11 @@ gaps:
     (PXD073999, AGING-P18) is not covered. Under the bare accession, aging's `--latest` publish would serve it in place
     of the first. Asked as PXR-R20 (our PXReprise 038); our default is its own key, in a separate store until 1.4.0.
   - >-
-    G94 NEW 2026-10-11 (D48; PXReprise 034, PXR-R15/R16). Our part of the public-data contract. Step 1: the catalog
+    G94 STEP 1 BUILT 2026-10-19, on master, unreleased (5afea11, 8af6736): `--out <folder>` = versioned
+    catalog-<id>.duckdb + latest.json, bundle/engine tables as views, release_id, folder sandbox (allowed_directories),
+    readers resolve the pointer; catalog format 12. Measured on aging's store (169 bundles pinned to the serving
+    catalog): 8.4 min against 1-3 h, 298 MB against 62.4 GiB, all 47 tables/views equal, site byte-identical but for a
+    one-time finding reorder. Not built: --data-root URL (hosting), step 2. Was: G94 NEW 2026-10-11 (D48; PXReprise 034, PXR-R15/R16). Our part of the public-data contract. Step 1: the catalog
     as views over the store's Parquet, written as versioned files with a `latest` pointer, with no re-ingest. Step 2:
     per-deposit work at ingest, and PSMs out of the catalog. Plan, measurements and the DuckLake evaluation:
     design/PUBLIC_DATA.md. The acceptance tests are the contract's section 7 (publish under 10 min, catalog under
