@@ -24,8 +24,9 @@ This folder is a `/project`-managed research project. **You are de facto working
      298 MB, against 1-3 h and 62.4 GiB, with every table equal. Switch instructions sent: aging 112 (seven steps: 1.3.5
      install, study bundle rewrite, `--out F:\aging_data\repo\catalogs --keep 5` without `--overwrite`, `$CatalogFile`
      from latest.json for their own tools, drop the staged-file and disk checks, MCP on the folder, delete the 62 GB
-     file) and PXReprise 048 (one pin swap to 1.3.5; the publish limit can come down). Watch for aging's first folder
-     publish and its new catalog id. The user's ask to cap the publish at 2 h was not applied: it was already 6 h
+     file) and PXReprise 048 (one pin swap to 1.3.5; the publish limit can come down). **aging has switched:** its first
+     folder publish is `F:\aging_data\repo\catalogs\catalog-32c632fd8bc361d4.duckdb` (release `4e016c10250d3833`, built
+     by 1.3.5, pointed 2026-10-19 19:33 UTC, 170 datasets). The 62 GB `catalog.duckdb` is still beside it. The user's ask to cap the publish at 2 h was not applied: it was already 6 h
      (PXReprise 2026-10-17), and 2 h would have killed the 2-3 h one-file publishes; told the user. Next on this
      line: step 2 (PSMs out; per-deposit derived tables), then a `--data-root` URL for hosting. aging's catalog is 62.4 GiB (169 datasets, 192M PSMs)
      and a publish takes about an hour against PXReprise's 3600 s limit; we offered aging (109) to do step 1 first if
@@ -40,7 +41,10 @@ This folder is a `/project`-managed research project. **You are de facto working
      - PXR-R22, the SDRF the search used (G102); PXR-R23 = QuantProject DATAREPO-D4, sample-level protein-group
        values (G92; send the shape to both first);
      - `sequence_window` (P30), the keratin double placement (G101, told), split-search keys (G95), the registry
-       (G26: `Unimod:` names such as `NEM:2H(5)` get no accession), sdrf's `massive dataset record` (G104 a).
+       (G26: `Unimod:` names such as `NEM:2H(5)` get no accession), sdrf's `massive dataset record` (G104 a);
+     - G106: a source name whose SDRF rows disagree on a characteristic gets no value and a finding, never the first
+       row's (PXD012307 reads 24M for all 32 runs, half of them 3M; told aging-2b by session message 2026-10-19).
+     - aging-2b asked (2026-10-19) whether the PXR-R23 shape has been sent and when 1.4.0 is: not sent, no date.
   5. dia 004's output folder awaits a read (G82). QuantProject's statistics engine (G100) waits for their M7 spec.
      TMT tables (G105) wait for DEF-TMT-* and MetaMorpheus #2904.
   - **Released: datarepo 1.3.5** (2026-10-19). `build --out <folder>`: versioned `catalog-<id>.duckdb` + `latest.json`,
