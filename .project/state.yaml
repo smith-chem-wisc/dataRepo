@@ -522,10 +522,22 @@ decisions:
         The plan, and the rules we would refine, are in design/PUBLIC_DATA.md (G94).
 gaps:
   - >-
+    G107 NEW 2026-10-19 (aging-2b, session message; for 1.4.0, to agree with PXReprise). An operator's SDRF for a
+    search that used `pxreprise_default`, read with NO re-search, when it only describes the search's own samples.
+    PXD012307 needs it: aging's curated design (8 individuals, fraction a stratum) cannot be delivered while the core
+    sample is one `Sample 1`, because build's A3 check refuses one sample's runs with different factor rows. A
+    re-search would re-fetch ~96 GB and pool the fractions, which aging does not want. Proposed rule: the manifest
+    entry names the SDRF (a content field, so hashed); every searched file has exactly one row; its source names
+    partition the files exactly as the search's ExperimentalDesign.tsv samples (condition, biorep) do, else refuse
+    by name; characteristics are read, factor values left out (as for a question SDRF, G102); it replaces the
+    metadata/ SDRF. aging-2b accepted it as written (32 source names, characteristics only, the fraction as a
+    characteristic, waiting in aging's instance/design/pending/). In PXReprise 049's 1.4.0 list (manifest field `sdrf`).
+  - >-
     G106 NEW 2026-10-19 (aging-2b's question on PXD012307, answered by session message). Sdrf.cs keeps the FIRST row's
     characteristics for a source name and drops later rows' different values with no finding. PXD012307's community
-    SDRF names two animals (old_14 at 24M, young_11 at 3M, 16 files each) `Sample 1`, so catalog 32c632fd8bc361d4 says
-    all 32 runs are 24M. Scan of the 170 served bundles: 27 carry an SDRF, PXD012307 is the only conflict. Our default
+    SDRF names all 32 files `Sample 1`; they are 8 lung samples (4 at 24M, 4 at 3M; individual = `old_14_1`..`_4`,
+    `young_11_1`..`_4`) x 4 QDSP fractions (FR1-3, ECM), per aging-2b from the PRIDE record and Angelidis 2019. So
+    catalog 32c632fd8bc361d4 says all 32 runs are 24M. Scan of the 170 served bundles: 27 carry an SDRF, PXD012307 is the only conflict. Our default
     for 1.4.0 (changes rows, so the new ingest path): a characteristic whose rows disagree for one source name gets no
     value, and a finding names the column, the values and the runs; never the first row's. PXD012307's search used
     pxreprise_default (every deposited SDRF refused: no factor value), so PXR-R22 does not change which SDRF it reads.
@@ -551,7 +563,10 @@ gaps:
     compare API, 0cac951 is behind the tag). One new ingest path and one full re-ingest of aging's store (171 deposits
     on 2026-10-19), no re-search, carrying every row change owed: the mzLib bump (#1403 ProForma keys), the ptmQtl
     engines (G88, G99), PXR-R22 (G102), PXR-R23 / QuantProject D4 (G92), G101, sequence_window (P30), G95, G26, G104 (a),
-    G106 (PXD012307's conflicting ages).
+    G106 (PXD012307's conflicting ages), G107 (an operator SDRF without a re-search, proposed). The twelve-item list,
+    ingest path cs-1.2.0, schema 0.0.16, catalog format 13, and the order (answer, build, scratch re-ingest of the whole
+    store compared row by row, release, PXReprise's window) went out as PXReprise 049 PXR-R27 on 2026-10-19; no date.
+    G26 for 1.4.0 asks mzLib's loader in process (told QuantProject 047).
     Told aging (109), PXReprise (042) and QuantProject (044). Agree contents and date with PXReprise, who runs the
     batch, before building; then tell ptmQtl.
   - >-
@@ -672,8 +687,12 @@ gaps:
     multi-file samples before proposing one. 2026-10-19: PXReprise measured it (041, PXR-R23): 9 of 10 curated designs,
     including every one carrying ages. QuantProject defined the values (043, DATAREPO-D4): key (protein group, design
     sample), the design kept with them, never split onto runs, intensity labelled by method (FlashLFQ median polish,
-    strongest fraction, techreps averaged). Answered yes for 1.4.0 (our PXReprise 042, QuantProject 044). Send the
-    shape to both before building; ptm_stoichiometry already has denominator_grouping for a pooled sample group.
+    strongest fraction, techreps averaged). Answered yes for 1.4.0 (our PXReprise 042, QuantProject 044). SHAPE SENT
+    2026-10-19 (PXReprise 049, QuantProject 047 DATAREPO-D6), not built: a pooled assay (`assay_kind` design_sample,
+    run_id NULL, `design_label`, id `<dataset>:design:<label>`), new `assay_runs` (Fraction, Techrep), protein values
+    and occupancy (denominator_grouping sample_group) against it; withheld as now when a design sample is not exactly
+    one SDRF sample. Measured: all 181 samples of the 10 designed searches are one-to-one with their SDRF's source
+    names (165 multi-file). Build after both answer.
     QuantProject 045: cite DEF-PROT-INT v3.10 (one Intensity_<sample> column per design sample; per peptide techreps
     averaged within a fraction, the strongest fraction kept, then median polish) and the v3.10 grain table
     (DEF-OCC-COUNT/INT pooled over the sample's files).

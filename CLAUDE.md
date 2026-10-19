@@ -26,12 +26,17 @@ This folder is a `/project`-managed research project. **You are de facto working
      from latest.json for their own tools, drop the staged-file and disk checks, MCP on the folder, delete the 62 GB
      file) and PXReprise 048 (one pin swap to 1.3.5; the publish limit can come down). **aging has switched:** its first
      folder publish is `F:\aging_data\repo\catalogs\catalog-32c632fd8bc361d4.duckdb` (release `4e016c10250d3833`, built
-     by 1.3.5, pointed 2026-10-19 19:33 UTC, 170 datasets). The 62 GB `catalog.duckdb` is still beside it. The user's ask to cap the publish at 2 h was not applied: it was already 6 h
+     by 1.3.5, pointed 2026-10-19 19:33 UTC, 170 datasets). aging's user deleted the 62 GB `catalog.duckdb` the same
+     day. Our `datarepo` MCP entry now serves the folder on the 1.3.5 binary (repointed by a second session, datarepo-9b).
+     **Now: step 2** (the user, 2026-10-19: "begin immediately on the public data plan"). ptmQtl answered PXR-P14
+     (PXReprise thread, ptmQtl 014): removing `psms`/`psms_1pct` breaks only their two exporters and two scripts, so
+     tell ptmQtl before releasing step 2a. The user's ask to cap the publish at 2 h was not applied: it was already 6 h
      (PXReprise 2026-10-17), and 2 h would have killed the 2-3 h one-file publishes; told the user. Next on this
      line: step 2 (PSMs out; per-deposit derived tables), then a `--data-root` URL for hosting. aging's catalog is 62.4 GiB (169 datasets, 192M PSMs)
      and a publish takes about an hour against PXReprise's 3600 s limit; we offered aging (109) to do step 1 first if
      needed. PXReprise accepted R17-R19 (their 037). The release waits for their database registry path (R19, G96).
-     Keep `psms`/`psms_1pct` in the catalog until ptmQtl answers PXReprise's PXR-P14.
+     ptmQtl answered PXReprise's PXR-P14 (2026-10-11): it needs every target PSM per deposit, and dropping
+     `psms`/`psms_1pct` from the catalog breaks only its own exporters.
   3. **Waiting on:** pep DATAREPO-69 and pyMzLib DATAREPO-70. PXR-R20 is settled by aging 107 (a side search kept
      out of their store); ptmQtl answered P31 (our default).
   4. **1.4.0, now unblocked (G103): mzLib 1.0.595 carries #1430 and #1446.** One new ingest path, one full
@@ -43,8 +48,12 @@ This folder is a `/project`-managed research project. **You are de facto working
      - `sequence_window` (P30), the keratin double placement (G101, told), split-search keys (G95), the registry
        (G26: `Unimod:` names such as `NEM:2H(5)` get no accession), sdrf's `massive dataset record` (G104 a);
      - G106: a source name whose SDRF rows disagree on a characteristic gets no value and a finding, never the first
-       row's (PXD012307 reads 24M for all 32 runs, half of them 3M; told aging-2b by session message 2026-10-19).
-     - aging-2b asked (2026-10-19) whether the PXR-R23 shape has been sent and when 1.4.0 is: not sent, no date.
+       row's (PXD012307 reads 24M for all 32 runs, half of them 3M; told aging-2b by session message 2026-10-19);
+     - G107: an operator's SDRF (manifest field `sdrf`) for a `pxreprise_default` search, read with no re-search when
+       its source names group the files exactly as the search's design does (aging accepted; PXD012307 first).
+     - **SENT 2026-10-19: PXReprise 049 (PXR-R27: the twelve items, the window) and QuantProject 047 (DATAREPO-D6: the
+       PXR-R23 shape, pooled assays).** Wait for both answers before building; no date until a scratch re-ingest of the
+       whole store is measured.
   5. dia 004's output folder awaits a read (G82). QuantProject's statistics engine (G100) waits for their M7 spec.
      TMT tables (G105) wait for DEF-TMT-* and MetaMorpheus #2904.
   - **Released: datarepo 1.3.5** (2026-10-19). `build --out <folder>`: versioned `catalog-<id>.duckdb` + `latest.json`,
