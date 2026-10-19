@@ -580,7 +580,14 @@ gaps:
     G106 (PXD012307's conflicting ages), G107 (an operator SDRF without a re-search, proposed). The twelve-item list,
     ingest path cs-1.2.0, schema 0.0.16, catalog format 13, and the order (answer, build, scratch re-ingest of the whole
     store compared row by row, release, PXReprise's window) went out as PXReprise 049 PXR-R27 on 2026-10-19; no date.
-    G26 for 1.4.0 asks mzLib's loader in process (told QuantProject 047). PXR-R12 (UniProt XML under http:// and
+    G26 for 1.4.0 asks mzLib's loader in process (told QuantProject 047). BUILT on feat/1.4.0-ingest bc57bf6
+    (datarepo-9b, 2026-10-19): of the store's 420 tokens, ten change ProForma and no accession is lost (the NEM family
+    gains UNIMOD:108/776/320; Hydroxybutyrylation, 1.1.11's GG, S-(2,3-dicarboxypropyl)cysteine and NBF get formula
+    masses in place of [Info:]; phosphocholine-serine and trimethylserine lose UniProt's extra proton). PXD011740 moves
+    12,551 peptidoform keys one-for-one, PXD022180 15. So 1.4.0 DOES move peptidoform keys, through G26 (not the mzLib
+    bump): say so when 1.4.0 is announced (ptmQtl and QuantProject key by peptidoform). A negatively charged entry's
+    mass is withheld for an mzLib before 1.0.592 (#1299); none in aging's installs is negative, so no stored mass is
+    affected. Verify on the release binary before announcing. PXR-R12 (UniProt XML under http:// and
     https://; an entry-less database refused) added as the 13th item (PXReprise 050). Catalog format for 1.4.0 is 14
     (step 2a took 13). datarepo-9b builds the ingest side on feat/1.4.0-ingest (code/_wt_140_ingest): 64ad03d G106
     (ingest path cs-1.2.0), 2272997 PXR-R12, 12cfa6e G101; next the mzLib 1.0.595 bump. The ptmqtl.* engines must be
