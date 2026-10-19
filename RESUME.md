@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Commits | 625 |
+| Commits | 632 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
 | Locked decisions | 48 |
 | Open gaps | 100 |
@@ -31,7 +31,34 @@ reanalyses. The results cover search, quant, provenance, design and organelle an
 use it, but AI agents are the main users. The question it serves is how organelle proteomes change
 with age.
 
-## Latest (2026-10-19, thirty-second session): datarepo 1.3.3 released; nothing owed to any peer
+## Latest (2026-10-19, thirty-second session): datarepo 1.3.3 and 1.3.4 released; nothing owed to any peer
+
+- **Also released datarepo 1.3.4** (tag `v1.3.4` on `68db9b1`, published 16:31 UTC with the user's permission; the
+  user chose the number so that "1.4.0" stays the re-ingest release). No re-ingest, catalog format 11. It includes
+  1.3.3. What it adds:
+  - **DATAREPO-74:** `restrictions: {use: reason}` per manifest entry, from a fixed list of six uses (anything else
+    refuses the manifest). Build writes `dataset_restrictions` and `dataset_overview.restrictions`; the column is NULL
+    when the manifest has no entry for the dataset, empty when the entry has no restrictions.
+  - **DATAREPO-79, as amended by DATAREPO-82:** the aging layer moves to 0.6.0 with `curated_run_design` and
+    `curated_design_factors`, carrying `role`, `level_value`/`level_unit`, `is_primary` and the `_reserved`
+    companions. `datarepo study` refuses rule-breaking deliveries; build refuses unknown runs and a sample whose runs
+    disagree.
+  - **DATAREPO-80:** a description change.
+  - A Python0320 scope now pins study layers too.
+- **Verified 1.3.4 on aging's own delivery files:**
+  - all 1,676 runs and 1,991 factor rows pass, as study bundle `1e66b652e159d175`;
+  - every run is in their catalog;
+  - no sample's runs disagree, though none shares a sample yet.
+- **The release binary reproduces** the tutorial's `695a592f6bdfbf63` / `c538581ce730f487` and PXD011740's
+  `fc49ca1c4a3f078c`.
+- **Sent:**
+  - aging 111: re-run `datarepo study` with 1.3.4;
+  - PXReprise 044: one pin swap to 1.3.4, aging's study bundle rewritten in the same swap, `restrictions` now read;
+  - ptmQtl 045: the design tables, and their 041-044 acknowledged.
+- **Read:** QuantProject 045/046 (DEF-PROT-INT v3.10 for D4, DEF-TMT-* for G105, STAT1 v3.11; nothing owed).
+- **Pick up at:** CLAUDE.md's list. Next is D48 step 1 (G94), then 1.4.0's one re-ingest (G103).
+
+### Earlier the same session: 1.3.3
 
 - **Read:** aging 107/108, PXReprise 039-041, QuantProject 039-043, ptmQtl 041-044 and sdrf 029/030.
 - **Released datarepo 1.3.3.** Tag `v1.3.3` on `a883fbd`, published 15:40 UTC by the agent with the user's in-session

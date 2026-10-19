@@ -8,19 +8,18 @@ This folder is a `/project`-managed research project. **You are de facto working
 - **Goal:** An AI-ready, API-accessible repository for the search + quant results of the many PRIDE datasets the `aging` pipeline reanalyzes. Humans can use it, but AI agents are the main users. The question it serves is how organelle proteomes change with age.
 - **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`). Then follow RESUME's "Pick up at"
   (2026-10-19). Nothing was owed to any peer at the end of 2026-10-19:
-  0. **datarepo 1.3.3 is released** (tag `v1.3.3` on `a883fbd`, published 2026-10-19 15:40 UTC by the agent with the
-     user's in-session permission; threads PXReprise 042/043, aging 109/110). PXReprise swaps its pin and re-ingests
-     PXD011740 and PXD010091 (predicted `fc49ca1c4a3f078c`, reproduced on the release binary, and `ed3e2de3811bb5d5`).
-     Then aging points its publish script and MCP entry at 1.3.3, and we point OURS at it too.
-  1. **Build the next release: DATAREPO-74 `restrictions` + DATAREPO-79 aging's `curated_run_design` /
-     `curated_design_factors` + DATAREPO-80's description (G98).** The shape is promised in aging 106 (`level_value` /
-     `level_unit`, `is_primary`, `<col>_reserved`, five build checks), as amended by DATAREPO-82 (aging 108, yes in our
-     109): a `role` enum (condition | stratum), a stratum has no reference level, a reserved word is never a level,
-     a pool's individual is its own label. Code read for it: `Manifest.cs` `ExcludedRunPairs` and `Catalog.cs`
-     `RunExclusions`/`CatalogIdOf` (the G85 pattern for 74), `StudyWriter.FlagReserved` and `Integrity`'s study keys
-     and references (for 79). 74 changes `dataset_overview`, so catalog format 11 (the ptmQtl branch's 11 then becomes
-     12). Version number: decide with the user; peers were told "1.4.0" means the re-ingest release.
-  2. **Then step 1 of `design/PUBLIC_DATA.md`** (G94, D48). aging's catalog is 62.4 GiB (169 datasets, 192M PSMs)
+  0. **datarepo 1.3.3 and 1.3.4 are both released (2026-10-19)**, by the agent with the user's in-session permission
+     each time. 1.3.3 is tag `v1.3.3` on `a883fbd`; 1.3.4 is tag `v1.3.4` on `68db9b1` and includes 1.3.3. Threads:
+     aging 109-111, PXReprise 042-044, ptmQtl 045, QuantProject 044.
+     - PXReprise swaps its pin once, to 1.3.4, and re-ingests PXD011740 and PXD010091. The predicted ids are
+       `fc49ca1c4a3f078c` (reproduced on both release binaries) and `ed3e2de3811bb5d5`.
+     - aging must re-run `datarepo study` with 1.3.4 before its first 1.3.4 publish: layer 0.6.0 refuses 0.5.0 study
+       bundles. Their delivery folder gives `1e66b652e159d175` for the three tables alone.
+     - Then point OUR datarepo MCP entry at the 1.3.4 binary.
+  1. (done in 1.3.4: DATAREPO-74 restrictions, DATAREPO-79 design tables as amended by DATAREPO-82, DATAREPO-80;
+     catalog format 11, so the ptmQtl branch's "11" becomes "12" at its merge. The user chose "1.3.4": "1.4.0" stays
+     the re-ingest release.)
+  2. **Next build: step 1 of `design/PUBLIC_DATA.md`** (G94, D48). aging's catalog is 62.4 GiB (169 datasets, 192M PSMs)
      and a publish takes about an hour against PXReprise's 3600 s limit; we offered aging (109) to do step 1 first if
      needed. PXReprise accepted R17-R19 (their 037). The release waits for their database registry path (R19, G96).
      Keep `psms`/`psms_1pct` in the catalog until ptmQtl answers PXReprise's PXR-P14.
@@ -36,7 +35,12 @@ This folder is a `/project`-managed research project. **You are de facto working
        (G26: `Unimod:` names such as `NEM:2H(5)` get no accession), sdrf's `massive dataset record` (G104 a).
   5. dia 004's output folder awaits a read (G82). QuantProject's statistics engine (G100) waits for their M7 spec.
      TMT tables (G105) wait for DEF-TMT-* and MetaMorpheus #2904.
-  - **Released: datarepo 1.3.3** (2026-10-19). A modification name holding `:` keys its site (Unimod's isotope
+  - **Released: datarepo 1.3.4** (2026-10-19). A manifest entry's `restrictions: {use: reason}` from a fixed list of six
+    uses goes to `dataset_restrictions` and `dataset_overview.restrictions`. The aging layer moves to 0.6.0 with
+    `curated_run_design` and `curated_design_factors`; `datarepo study` refuses rule-breaking deliveries, and `build`
+    refuses unknown runs and a sample whose runs disagree. A parity scope pins study layers (`SchemaContract.StudyTables`).
+    No re-ingest. Tutorial catalog `c538581ce730f487`.
+  - **Released before: datarepo 1.3.3** (2026-10-19). A modification name holding `:` keys its site (Unimod's isotope
     labels, PXR-R21; only an unparsed token is refused). `build` removes staged catalogs whose builder is gone (an
     `.owner` record; DATAREPO-83 a) and checks the file's length before the move. The MCP server refuses a catalog
     shorter than its header says (aging 107, which was cut on disk after publication, not by DuckDB or us). No

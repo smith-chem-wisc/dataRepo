@@ -2043,3 +2043,13 @@ mzLib 1.0.595 shipped with #1430 and #1446, so 1.4.0 is unblocked (G103). PXR-R2
 change rows, so they ride its one re-ingest rather than forcing a second. One slip: a PowerShell replace loop over a
 single flattened pair turned every `/` in docs/mcp.md into `o`. It was caught by the diff and restored from git, and
 is now in CLAUDE.md.
+
+Later the same day, datarepo 1.3.4 shipped DATAREPO-74 (restrictions) and DATAREPO-79 (aging's design tables, as
+amended by DATAREPO-82). The user chose to number it 1.3.4 so that "1.4.0" keeps meaning the re-ingest. Bumping the aging
+layer to 0.6.0 exposed a parity gap that had never mattered before: nothing pinned study layers inside a Python 0.32.0
+scope, so every parity catalog and study bundle would have moved with the layer. `SchemaContract.StudyVersion` and
+`StudyTables` now pin them, as `AddedColumns` pins the core. The best test of the design rules was aging's own generated
+delivery, sitting unsent in their repo: 1,676 runs and 1,991 factor rows passed every rule on the release binary, and
+every run was in their serving catalog. The cross-run check found nothing to refuse, because no designed run shares a
+sample with another yet. That check only starts to bite once PXR-R22 brings curated SDRFs whose samples span several
+files.
