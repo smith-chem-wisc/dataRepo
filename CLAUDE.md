@@ -28,14 +28,16 @@ This folder is a `/project`-managed research project. **You are de facto working
      folder publish is `F:\aging_data\repo\catalogs\catalog-32c632fd8bc361d4.duckdb` (release `4e016c10250d3833`, built
      by 1.3.5, pointed 2026-10-19 19:33 UTC, 170 datasets). aging's user deleted the 62 GB `catalog.duckdb` the same
      day. Our `datarepo` MCP entry now serves the folder on the 1.3.5 binary (repointed by a second session, datarepo-9b).
-     **Step 2 (the user, 2026-10-19: "begin immediately on the public data plan") is BUILT on master, NOT released**
-     (catalog format 13, no re-ingest):
+     **Step 2 is RELEASED as datarepo 1.3.6** (tag `v1.3.6` on `7694304`, published 2026-10-19 21:33 UTC with the
+     user's permission). Switch: aging 115 (its MCP entry and publish script move to 1.3.6 TOGETHER: a 1.3.5 sandbox
+     does not allow `derived/`; ours too, which datarepo-9b repointed for 1.3.5), PXReprise 054 (pin swap their call),
+     ptmQtl 050. Release binary on aging's store: 168 s, then 67 s; tutorial catalog `0581c61e99837046`. Built as:
      - 2a `b59eb57`: no `psms`/`psms_1pct` in a catalog, PSM counts from `bundle.json`, row checks from Parquet
        footers, a `timing` line; 144 s against 573 s;
      - 2b `a054974`: a folder derives each deposit's rows once (`derived/<derivation id>/`) and reuses them; **a
        rebuild of aging's store takes 61 s**; derived tables and site identical; catalog file 132 MB.
-     - Warned ptmQtl (048), aging (113, 114), PXReprise (050, 052). **Next: release 2a+2b with the user's permission**
-       (a patch number; 1.4.0 stays the re-ingest). Then the tutorial page is rerun, and ptmQtl gets the tag. The user's ask to cap the publish at 2 h was not applied: it was already 6 h
+     - Next on this line: a `--data-root` URL for hosting (PXReprise's step 3); per-deposit engine-derived tables;
+       `--keep` pruning old derivation ids. Watch aging's first 1.3.6 publish (`derived  170 deposit(s) computed`). The user's ask to cap the publish at 2 h was not applied: it was already 6 h
      (PXReprise 2026-10-17), and 2 h would have killed the 2-3 h one-file publishes; told the user. Next on this
      line: step 2 (PSMs out; per-deposit derived tables), then a `--data-root` URL for hosting. aging's catalog is 62.4 GiB (169 datasets, 192M PSMs)
      and a publish takes about an hour against PXReprise's 3600 s limit; we offered aging (109) to do step 1 first if
@@ -63,9 +65,9 @@ This folder is a `/project`-managed research project. **You are de facto working
        **PXReprise 051 answered PXR-R27: yes to all thirteen and the shape**; the window is the 1.4.0 pin swap's
        gap (~4 h, three ingests at once, no publish). A mixed 0.0.15/0.0.16 catalog is refused; the last 1.3.5 catalog
        serves through the gap (our 052). No date until a scratch re-ingest of the whole store is measured.
-     - **PXR-R22 blocker** (datarepo-9b): seven recorded question SDRFs were edited after their searches. Default sent
-       (052/114): `operator_sdrf: <path>` (G107; non-content path, file a hashed source) wins when named; else sha256
-       must match; PXR-R28 asks PXReprise to copy the SDRF into `04_search/` at search time.
+     - **PXR-R22 and G107 SETTLED** (PXReprise 053): `operator_sdrf: <path>` (non-content path, file a hashed source)
+       wins when named; else the recorded SDRF's sha256 must match. PXR-R28 done in PXReprise v0.4.27: searches keep
+       their SDRF in `04_search/design/`. The seven edited SDRFs take `operator_sdrf` (aging 114).
      - **The mzLib 1.0.595 bump moves no row** (measured by datarepo-9b); corrected to PXReprise, aging, QuantProject.
      - **G101's workaround was wrong** (n_psms doubled on P19013's shared stretch): leave O76011 and P19013 out
        entirely; corrected in PXReprise 050, aging 113, ptmQtl 048.
@@ -73,7 +75,10 @@ This folder is a `/project`-managed research project. **You are de facto working
        G106, PXR-R12, G101 so far. It stays out of threads, state.yaml, CLAUDE.md and the catalog/MCP/site code.
   5. dia 004's output folder awaits a read (G82). QuantProject's statistics engine (G100) waits for their M7 spec.
      TMT tables (G105) wait for DEF-TMT-* and MetaMorpheus #2904.
-  - **Released: datarepo 1.3.5** (2026-10-19). `build --out <folder>`: versioned `catalog-<id>.duckdb` + `latest.json`,
+  - **Released: datarepo 1.3.6** (2026-10-19). No `psms`/`psms_1pct` in a catalog (counts from `bundle.json`); row
+    checks from Parquet footers; a folder derives each deposit's rows once under `derived/<derivation id>/`; a `timing`
+    line; catalog format 13; no re-ingest. Tutorial catalog `0581c61e99837046`.
+  - **Released before: datarepo 1.3.5** (2026-10-19). `build --out <folder>`: versioned `catalog-<id>.duckdb` + `latest.json`,
     bundle and engine tables as views over the store, `release_id`, catalog format 12; readers take the folder; the
     folder sandbox allows only the store. `--out <name>.duckdb` unchanged. Tutorial catalog `78df2ea37c0fc6eb`.
   - **Released before: datarepo 1.3.4** (2026-10-19). A manifest entry's `restrictions: {use: reason}` from a fixed list of six

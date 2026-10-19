@@ -588,6 +588,9 @@ gaps:
     Told aging (109), PXReprise (042) and QuantProject (044). Agree contents and date with PXReprise, who runs the
     batch, before building; then tell ptmQtl.
   - >-
+    G102 SETTLED 2026-10-19 (PXReprise 053): yes to operator_sdrf (a) and the sha256 rule (b); PXR-R28 built in
+    PXReprise v0.4.27 (c89d173): from its next pin swap each search copies its SDRF to 04_search/design/ and
+    experimental_design.sdrf names the copy (sdrf_origin names the source; a path, not hashed). The seven take (a).
     G102 BLOCKER FOUND 2026-10-19 (datarepo-9b, measured before building): the ten designed searches name `question`
     SDRFs under E:\CodeReview\aging\designs\; three match their sdrf_sha256, SEVEN DIFFER (PXD047289, PXD047292,
     PXD047293, PXD051203, PXD051644, PXD056458, PXD058248: the ones carrying ages), edited by aging after the searches
@@ -689,6 +692,10 @@ gaps:
     (PXD073999, AGING-P18) is not covered. Under the bare accession, aging's `--latest` publish would serve it in place
     of the first. Asked as PXR-R20 (our PXReprise 038); our default is its own key, in a separate store until 1.4.0.
   - >-
+    G94 STEP 2 RELEASED 2026-10-19 as datarepo 1.3.6 (tag v1.3.6 on 7694304, published 21:33 UTC with the user's
+    permission; switch: aging 115, PXReprise 054, ptmQtl 050). Release binary on aging's store: 168 s first build, 67 s
+    rebuild, mcp --check and sandboxed queries of the derived rows pass; tutorial catalog 0581c61e99837046. aging's MCP
+    entry (and ours) must move to 1.3.6 with the publish script: a 1.3.5 sandbox does not allow derived/.
     G94 STEP 2b BUILT 2026-10-19 on master (a054974, pushed, not released; still format 13): a folder keeps each
     deposit's derived rows under <folder>/derived/<derivation id>/<dataset>/<bundle>/ (overview, protein_datasets,
     search_modifications_placed, protein/peptide partials), computed once with the corpus SQL over the deposit's files,

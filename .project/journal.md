@@ -2062,3 +2062,19 @@ site, not from comparing tables. Two findings sharing a code were ordered by sca
 keep and a view over Parquet does not, so "the same catalog gives byte-identical pages" quietly depended on the storage
 layout. PXReprise also read our 044 while it was still the blank template; bodies are now written before a number is
 allocated.
+
+In the evening datarepo 1.3.6 shipped D48 step 2. Measuring before building changed what step 2 was for. `build` now
+prints how long each phase took, and on aging's store three quarters of a 573 s publish was the row-count check: one
+`count(*) WHERE bundle_id = ?` per bundle and table over a view, 3,310 times, each listing every file. A Parquet footer
+already holds the count. Reading the footers took the check from 432 s to 0.6 s, and the same pattern in the engine
+checks went from 72 s to 2.7 s. PSMs then left the catalog, as the contract's rule 3 asks. Both PSM counts the overview
+needs were already in each `bundle.json`, and equal to the views' on all 170 bundles. Last, each deposit's derived
+rows are computed once with the corpus build's own SQL and reused, so a rebuild takes 61 s. Every table and the
+regenerated site were compared against the step before.
+
+A second session (datarepo-9b) built the 1.4.0 ingest side in parallel, and its measurements corrected three things we
+had told peers. The mzLib bump moves no row: our keys are our own ProForma, and the CLAUDE.md bullet saying otherwise
+had stood for two weeks. G101's workaround still double-counted. And seven of aging's recorded SDRFs had been edited
+after their searches, so a sha256 check would have refused exactly the seven deposits PXR-R22 exists for. All three were
+found by trying to build the thing, not by reviewing the plan. PXReprise agreed the operator_sdrf rule and built R28 (a
+search keeps its SDRF) within the hour.
