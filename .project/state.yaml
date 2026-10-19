@@ -595,6 +595,12 @@ gaps:
     Told aging (109), PXReprise (042) and QuantProject (044). Agree contents and date with PXReprise, who runs the
     batch, before building; then tell ptmQtl.
   - >-
+    PXR-R23 BUILT on feat/1.4.0-ingest 332d154: PXD022196 gets 4 pooled assays (8 fractions each, one SDRF sample
+    each) carrying 12,727 DEF-PROT-INT + 23,196 DEF-PROT-SPC values and all 8,369 occupancy rows as sample_group;
+    peptide values stay per run; sample_quant_not_stored gone. Decided for the branch (our message to datarepo-9b):
+    n_quant_values counts every stored value via q.dataset_id (was assays->runs, which drops pooled values) with a
+    description; run_exclusions' description says a pooled value containing an excluded run must be left out too.
+    Next on the branch (with its user's OK): the ptmQtl engine merge (rebuilt on 1.0.595), then the scratch re-ingest.
     SCHEMA 0.0.16 on feat/1.4.0-ingest 27dcf3d (datarepo-9b): assay_kind/design_label/assay_runs (R23's shape; the
     pooled rows come next), sequence_window, G95's dataset_id pattern (USIs on the bare accession), G104 (a)'s word.
     SchemaContract.AddedTables (assay_runs) keeps a Python0320 catalog at 0.0.13's tables. MERGE NOTE for Catalog.cs:
