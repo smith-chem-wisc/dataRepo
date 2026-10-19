@@ -595,6 +595,12 @@ gaps:
     Told aging (109), PXReprise (042) and QuantProject (044). Agree contents and date with PXReprise, who runs the
     batch, before building; then tell ptmQtl.
   - >-
+    G102 + G107 BUILT 2026-10-19 on feat/1.4.0-ingest 2adb7ba (datarepo-9b): operator_sdrf wins with the partition
+    check; else a question/deposit SDRF only on a sha256 match, refused by name otherwise; else metadata/; a question
+    SDRF gives characteristics only; bundle.json `sdrf` records read/chosen_by/factor_values/sdrf_origin; operator_sdrf
+    served in dataset_annotations (branch catalog format 14). Real data: PXD011740 reads its question SDRF (12 samples,
+    factor value[compartment] left out, no_sdrf gone); all seven edited ones are refused with both sha256s, so their
+    1.4.0 re-ingest FAILS until aging names operator_sdrf (told in aging 114 item 5; repeat it with 1.4.0's date).
     G102 SETTLED 2026-10-19 (PXReprise 053): yes to operator_sdrf (a) and the sha256 rule (b); PXR-R28 built in
     PXReprise v0.4.27 (c89d173): from its next pin swap each search copies its SDRF to 04_search/design/ and
     experimental_design.sdrf names the copy (sdrf_origin names the source; a path, not hashed). The seven take (a).
