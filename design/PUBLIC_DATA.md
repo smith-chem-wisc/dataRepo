@@ -1,6 +1,17 @@
 # dataRepo's part of the public-data contract (D48, G94)
 
-**Status: PLAN, 2026-10-11. Nothing below is built.** The contract is PXReprise's
+**Status, 2026-10-19: step 1 is BUILT on master, not yet released** (`5afea11`, then the site's finding order). Measured
+on aging's store, pinned to the serving catalog's 169 bundles:
+- the build took 8.4 minutes against 1 to 3 hours, and the catalog file is 298 MB against 62.4 GiB;
+- all 47 tables and views both hold are equal (counts, plus checksums below 10M rows);
+- the site regenerated from it is byte-identical apart from a one-time reordering of tied findings;
+- `mcp --check` on the folder answers in 0.6 s.
+
+What is not built: `--data-root` for a hosted URL (the views name the local store; hosting is PXReprise's step 3), and
+the per-deposit derived tables of step 2. The largest copied tables are `protein_datasets` (5.0M rows) and
+`protein_genes` (2.6M), both per-deposit work for step 2.
+
+**Original status: PLAN, 2026-10-11.** The contract is PXReprise's
 `design/PLAN_public-data.md` (efb70cb), decided by the user as PXReprise D41 and adopted here as D48. PXReprise owns the
 architecture. This file is how dataRepo meets the rules the contract assigns to it (rules 3 on the catalog side, 4,
 5, 9 and 10), in what order, at what cost, and where we would refine a rule rather than let it lapse. The answer to
