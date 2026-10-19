@@ -566,7 +566,11 @@ gaps:
     G106 (PXD012307's conflicting ages), G107 (an operator SDRF without a re-search, proposed). The twelve-item list,
     ingest path cs-1.2.0, schema 0.0.16, catalog format 13, and the order (answer, build, scratch re-ingest of the whole
     store compared row by row, release, PXReprise's window) went out as PXReprise 049 PXR-R27 on 2026-10-19; no date.
-    G26 for 1.4.0 asks mzLib's loader in process (told QuantProject 047).
+    G26 for 1.4.0 asks mzLib's loader in process (told QuantProject 047). PXR-R12 (UniProt XML under http:// and
+    https://; an entry-less database refused) added as the 13th item (PXReprise 050). Catalog format for 1.4.0 is 14
+    (step 2a took 13). datarepo-9b builds the ingest side on feat/1.4.0-ingest (code/_wt_140_ingest): 64ad03d G106
+    (ingest path cs-1.2.0), 2272997 PXR-R12, 12cfa6e G101; next the mzLib 1.0.595 bump. The ptmqtl.* engines must be
+    rebuilt against 1.0.595 at the merge (ptmQtl 046: #1446's optional CoVarying parameters break older binaries).
     Told aging (109), PXReprise (042) and QuantProject (044). Agree contents and date with PXReprise, who runs the
     batch, before building; then tell ptmQtl.
   - >-
@@ -586,7 +590,12 @@ gaps:
     113 bundles have two windows. Fix at 1.4.0's re-ingest (it changes rows, so it needs an IngesterVersion bump):
     decide which sequence a PSM was matched against, or write no site and count it. Told aging (109) and PXReprise
     (042) on 2026-10-19, with the workaround: leave out O76011 and P19013, or count one row per (accession,
-    modification, n_psms).
+    modification, n_psms). CORRECTED 2026-10-19 (found by datarepo-9b building the fix; verified on PXD022180
+    adc1c484fcda9f2f: P19013 C17 n_psms 30 with 15 covering PSMs at 1%, M35 28 with 14): on the stretch both copies
+    share (P19013's first ~70 residues) each PSM is placed twice at the SAME key, so n_psms is doubled; the only safe
+    workaround is to leave both accessions out entirely. Told PXReprise 050, aging 113, ptmQtl 048. Fix on branch
+    feat/1.4.0-ingest (12cfa6e): keep only the copy the search kept (TCAmbiguity / RemoveContaminant), else place no
+    site and count the pair as ambiguous_sequence.
   - >-
     G100 NEW 2026-10-11 (QuantProject 023 DATAREPO-D1/D2/D3, answered yes in our QuantProject 038). We write
     QuantProject's statistics engine (DEF-DIFF), shaped like the ptmQtl engines, from their M7 spec, once an mzLib
@@ -660,7 +669,12 @@ gaps:
     (PXD073999, AGING-P18) is not covered. Under the bare accession, aging's `--latest` publish would serve it in place
     of the first. Asked as PXR-R20 (our PXReprise 038); our default is its own key, in a separate store until 1.4.0.
   - >-
-    G94 STEP 1 RELEASED 2026-10-19 as datarepo 1.3.5 (tag v1.3.5 on e1525b3; aging 112 and PXReprise 048 carry the
+    G94 STEP 2a BUILT 2026-10-19 on master (b59eb57, pushed, not released; catalog format 13): no psms/psms_1pct in a
+    catalog (Python0320 keeps them), dataset_overview's PSM counts from bundle.json, row checks from Parquet footers,
+    `timing` line. aging's store (170 bundles, pinned to 32c632fd8bc361d4): 144 s against 573 s; tables equal (bar
+    ptm_sites_by_chemistry's unordered lists), site identical but llms.txt's PSM sentence. ptmQtl warned (048), aging
+    (113), PXReprise (050). Next 2b: per-deposit derived tables (75 of the 144 s; about an hour at 4,350 deposits).
+    STEP 1 RELEASED 2026-10-19 as datarepo 1.3.5 (tag v1.3.5 on e1525b3; aging 112 and PXReprise 048 carry the
     switch). Built in 5afea11, 8af6736: `--out <folder>` = versioned
     catalog-<id>.duckdb + latest.json, bundle/engine tables as views, release_id, folder sandbox (allowed_directories),
     readers resolve the pointer; catalog format 12. Measured on aging's store (169 bundles pinned to the serving
@@ -692,7 +706,12 @@ gaps:
     run_id NULL, `design_label`, id `<dataset>:design:<label>`), new `assay_runs` (Fraction, Techrep), protein values
     and occupancy (denominator_grouping sample_group) against it; withheld as now when a design sample is not exactly
     one SDRF sample. Measured: all 181 samples of the 10 designed searches are one-to-one with their SDRF's source
-    names (165 multi-file). Build after both answer.
+    names (165 multi-file). Build after both answer. QuantProject 048 (DATAREPO-D6): YES on all four defaults; two
+    description fixes: a one-file sample's value is "the sample's value under the design the search used" (not "what a
+    per-file table would have written"), and DEF-OCC-INT sums each file's intensity shares over the sample's files
+    (MS/MS only) while DEF-OCC-COUNT pools the PSMs: each column cites its own id. ptmQtl 046 DATAREPO-P32 (pooled
+    occupancy for fraction-only samples) answered by this shape in our ptmQtl 048: injection-pooling samples are stored
+    too, filterable on assay_runs.technical_replicate. Waits only on PXReprise's PXR-R27.
     QuantProject 045: cite DEF-PROT-INT v3.10 (one Intensity_<sample> column per design sample; per peptide techreps
     averaged within a fraction, the strongest fraction kept, then median polish) and the v3.10 grain table
     (DEF-OCC-COUNT/INT pooled over the sample's files).
