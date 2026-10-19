@@ -2,14 +2,14 @@
 
 <!-- BEGIN GENERATED -- render_resume.py owns this block; edit state.yaml, not here -->
 
-**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-10-11
+**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-10-19
 
 | | |
 |---|---|
-| Commits | 598 |
+| Commits | 625 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
 | Locked decisions | 48 |
-| Open gaps | 96 |
+| Open gaps | 100 |
 | Gate items skipped | 5 |
 
 **Worktrees** -- details in `code/PINNED.md`
@@ -31,7 +31,36 @@ reanalyses. The results cover search, quant, provenance, design and organelle an
 use it, but AI agents are the main users. The question it serves is how organelle proteomes change
 with age.
 
-## Latest (2026-10-11, thirty-first session): one round of replies; nothing owed to any peer
+## Latest (2026-10-19, thirty-second session): datarepo 1.3.3 released; nothing owed to any peer
+
+- **Read:** aging 107/108, PXReprise 039-041, QuantProject 039-043, ptmQtl 041-044 and sdrf 029/030.
+- **Released datarepo 1.3.3.** Tag `v1.3.3` on `a883fbd`, published 15:40 UTC by the agent with the user's in-session
+  permission. It is three fixes and needs no re-ingest (D47):
+  - **PXR-R21:** a modification name holding `:` keys its site. These are Unimod's isotope labels, such as
+    `NEM:2H(5) on C`. Only a token that does not parse as `Category:Name on X` is refused. PXD011740 and PXD010091
+    ingest in scratch, as `fc49ca1c4a3f078c` (647 such sites) and `ed3e2de3811bb5d5` (506). `modification` is NULL on
+    those sites (G26).
+  - **DATAREPO-83 (a):** `build` records an `.owner` beside its staged file and removes staged files whose builder is
+    gone.
+  - **aging 107:** `build` checks the written length before the move, and the MCP sandbox refuses a short catalog.
+- **Verified:**
+  - CI and dotnet-binaries are green on 4 platforms;
+  - the downloaded win-x64 binary gives the tutorial's `695a592f6bdfbf63` / `511e89f90d259bf9`;
+  - it gives PXD011740 `fc49ca1c4a3f078c` from PXReprise's kept search.
+- **Diagnosed aging 107:** the catalog was cut after publication at a 4 KiB boundary. Its length is off DuckDB's block
+  grid, and nothing of ours writes a published catalog, so the disk or the file system is likeliest.
+- **Sent:**
+  - aging 109: DATAREPO-82 yes, DATAREPO-83, the 107 diagnosis, G101, 1.4.0;
+  - aging 110: the release;
+  - PXReprise 042: R21, and R22/R23 yes in 1.4.0, plus the diagnosis and G101;
+  - PXReprise 043: the release;
+  - QuantProject 044: D4 yes in 1.4.0, D5 yes later.
+- **1.4.0 is unblocked:** mzLib 1.0.595 carries #1430/#1446 (G103). New gaps: G102 (R22), G103, G104 (sdrf's new
+  source word) and G105 (TMT).
+- **Pick up at:** CLAUDE.md's list. Next is the DATAREPO-74/79/80 release, and its version number is to be decided
+  with the user.
+
+## 2026-10-11 (thirty-first session): one round of replies; nothing owed to any peer
 
 - **Read:** PXReprise 037, ptmQtl 033-039, QuantProject 019-037, dia 004.
   - PXReprise accepted R17-R19 with one hold: `psms` stays in the catalog until ptmQtl answers PXR-P14. They pin 1.3.2

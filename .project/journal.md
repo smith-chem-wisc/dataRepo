@@ -2017,3 +2017,29 @@ MetaMorpheus's contaminant panel carries older versions of two human keratins, s
 (G101). Checking P29 found that aging's publish builds with `--latest`. A second search of PXD073999 under the bare
 accession would therefore silently replace the first in the served catalog (PXR-R20). Both came from going to fill
 an answer, not from reviewing one.
+
+## 2026-10-19 (thirty-second session): datarepo 1.3.3 released; a catalog cut on disk diagnosed from block arithmetic
+
+Sixteen messages were waiting: aging 107/108, PXReprise 039-041, QuantProject 039-043 (043 arrived mid-session),
+ptmQtl 041-044 and sdrf 029/030. Two deposits were held back by our own guard. The site key refused any modification
+name holding `:`, on the theory that only an unparsed token could hold one. Unimod names every isotope label that way
+(`NEM:2H(5)`), and the guard's real job was narrower: catch a token that did not match `Category:Name on X`. The fix
+refuses a strict subset of what 1.3.2 refused, so D47 applies and no bundle id moves. Both kept searches ingested in
+scratch, and the release binary reproduced the predicted id.
+
+aging 107's truncated catalog looked like it might be ours. The arithmetic says it is not. The failing read was
+exactly DuckDB block 123,492, which aging had read at 08:58, so the file was whole then. A whole DuckDB file is exactly
+12288 + total_blocks x 262144 bytes; that held to the byte on a fresh file and on aging's 62 GiB catalog. The cut file
+sits 4,096 bytes off that grid, at an NTFS cluster boundary, and nothing of ours opens a published catalog for writing.
+A test now builds a file with its metadata in freed low blocks, cuts its tail, and reproduces aging's symptom: it opens,
+answers from its head, and fails at the tail. That is why the MCP server now checks the length when it opens a catalog,
+not only the build.
+
+DATAREPO-83 (a) became an owner record beside each staged file: pid and start time, so a reused pid is not mistaken for
+the builder. A staged file from 1.3.2 has no record; on Windows it goes only when an exclusive open succeeds, because
+a live DuckDB writer always holds it. Elsewhere it is named and left alone.
+
+mzLib 1.0.595 shipped with #1430 and #1446, so 1.4.0 is unblocked (G103). PXR-R22, PXR-R23 and QuantProject's D4 all
+change rows, so they ride its one re-ingest rather than forcing a second. One slip: a PowerShell replace loop over a
+single flattened pair turned every `/` in docs/mcp.md into `o`. It was caught by the diff and restored from git, and
+is now in CLAUDE.md.

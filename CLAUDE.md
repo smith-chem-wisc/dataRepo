@@ -7,33 +7,41 @@ This folder is a `/project`-managed research project. **You are de facto working
 - **Phase:** INCEPTION
 - **Goal:** An AI-ready, API-accessible repository for the search + quant results of the many PRIDE datasets the `aging` pipeline reanalyzes. Humans can use it, but AI agents are the main users. The question it serves is how organelle proteomes change with age.
 - **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`). Then follow RESUME's "Pick up at"
-  (2026-10-11):
-  0. **UNREAD at the 2026-10-12 close: aging 107 and 108, ptmQtl 041 and 042. Read them before building.** We owe
-     aging DATAREPO-82/83. aging 108 amends DATAREPO-79's shape before we build it: a stratum has no reference level, a
-     reserved word is never a level, a pool's individual is its own label, plus QuantProject's `role` column. 107 says
-     aging moved to 1.3.2 (publish and MCP: item 5) and that a catalog lost ~5 GB of its tail after a whole read; 108
-     says a killed build leaves its staged catalog behind. Both may be bugs of ours: diagnose them, then tell PXReprise.
-     ptmQtl 041 answers P31 (our default) and changes D37 bounds; 042: PXD061654 holds acetyl-K captures stored as
-     `none`, which their capture list v3 holds out.
+  (2026-10-19). Nothing was owed to any peer at the end of 2026-10-19:
+  0. **datarepo 1.3.3 is released** (tag `v1.3.3` on `a883fbd`, published 2026-10-19 15:40 UTC by the agent with the
+     user's in-session permission; threads PXReprise 042/043, aging 109/110). PXReprise swaps its pin and re-ingests
+     PXD011740 and PXD010091 (predicted `fc49ca1c4a3f078c`, reproduced on the release binary, and `ed3e2de3811bb5d5`).
+     Then aging points its publish script and MCP entry at 1.3.3, and we point OURS at it too.
   1. **Build the next release: DATAREPO-74 `restrictions` + DATAREPO-79 aging's `curated_run_design` /
      `curated_design_factors` + DATAREPO-80's description (G98).** The shape is promised in aging 106 (`level_value` /
-     `level_unit`, `is_primary`, `<col>_reserved`, five build checks), as amended by aging 108.
-  2. **Then step 1 of `design/PUBLIC_DATA.md`** (G94, D48). PXReprise accepted R17-R19 (their 037). The release waits
-     for their database registry path (R19, G96). Keep `psms`/`psms_1pct` in the catalog until ptmQtl answers
-     PXReprise's PXR-P14.
-  3. **Waiting on:** PXReprise PXR-R20 (key for the second PXD073999 search; our default is its own key, in a
-     separate store until 1.4.0) and ptmQtl P31 (one accession, two sequences; default no window). Also pep
-     DATAREPO-69 and pyMzLib DATAREPO-70.
-  4. **For 1.4.0 (with mzLib #1430):**
-     - `sequence_window` on `ptm_sites` (P30);
-     - the keratin double placement (G101: ptm_sites writes a site once per sequence version of its accession). Tell
-       PXReprise and aging in the next message to them;
-     - the ptmQtl engine changes S3b, S2c, S7 and v1/v2 (G99);
-     - widening the dataset key for split searches (G95).
-  5. Confirm 1.3.2 is in use (PXReprise pins it at their v0.4.6; aging's publish script and MCP entry). Then point
-     OUR datarepo MCP entry at the 1.3.2 binary. dia 004's output folder awaits a read (G82). QuantProject's
-     statistics engine (G100) waits for an mzLib release with M4/M5.
-  - **Released: datarepo 1.3.2** (tag `v1.3.2` on `a5991e2`, 2026-10-11, published by the agent with the user's
+     `level_unit`, `is_primary`, `<col>_reserved`, five build checks), as amended by DATAREPO-82 (aging 108, yes in our
+     109): a `role` enum (condition | stratum), a stratum has no reference level, a reserved word is never a level,
+     a pool's individual is its own label. Code read for it: `Manifest.cs` `ExcludedRunPairs` and `Catalog.cs`
+     `RunExclusions`/`CatalogIdOf` (the G85 pattern for 74), `StudyWriter.FlagReserved` and `Integrity`'s study keys
+     and references (for 79). 74 changes `dataset_overview`, so catalog format 11 (the ptmQtl branch's 11 then becomes
+     12). Version number: decide with the user; peers were told "1.4.0" means the re-ingest release.
+  2. **Then step 1 of `design/PUBLIC_DATA.md`** (G94, D48). aging's catalog is 62.4 GiB (169 datasets, 192M PSMs)
+     and a publish takes about an hour against PXReprise's 3600 s limit; we offered aging (109) to do step 1 first if
+     needed. PXReprise accepted R17-R19 (their 037). The release waits for their database registry path (R19, G96).
+     Keep `psms`/`psms_1pct` in the catalog until ptmQtl answers PXReprise's PXR-P14.
+  3. **Waiting on:** pep DATAREPO-69 and pyMzLib DATAREPO-70. PXR-R20 is settled by aging 107 (a side search kept
+     out of their store); ptmQtl answered P31 (our default).
+  4. **1.4.0, now unblocked (G103): mzLib 1.0.595 carries #1430 and #1446.** One new ingest path, one full
+     re-ingest, no re-search. Agree its contents and date with PXReprise before building, then tell ptmQtl:
+     - the mzLib bump (#1403 ProForma keys) and the ptmQtl engines (G88, G99, now with S2d and D37/D39/D40 bounds:
+       do NOT build further on the ceiling rule);
+     - PXR-R22, the SDRF the search used (G102); PXR-R23 = QuantProject DATAREPO-D4, sample-level protein-group
+       values (G92; send the shape to both first);
+     - `sequence_window` (P30), the keratin double placement (G101, told), split-search keys (G95), the registry
+       (G26: `Unimod:` names such as `NEM:2H(5)` get no accession), sdrf's `massive dataset record` (G104 a).
+  5. dia 004's output folder awaits a read (G82). QuantProject's statistics engine (G100) waits for their M7 spec.
+     TMT tables (G105) wait for DEF-TMT-* and MetaMorpheus #2904.
+  - **Released: datarepo 1.3.3** (2026-10-19). A modification name holding `:` keys its site (Unimod's isotope
+    labels, PXR-R21; only an unparsed token is refused). `build` removes staged catalogs whose builder is gone (an
+    `.owner` record; DATAREPO-83 a) and checks the file's length before the move. The MCP server refuses a catalog
+    shorter than its header says (aging 107, which was cut on disk after publication, not by DuckDB or us). No
+    re-ingest (D47). Tutorial catalog `511e89f90d259bf9`.
+  - **Released before: datarepo 1.3.2** (tag `v1.3.2` on `a5991e2`, 2026-10-11, published by the agent with the user's
     in-session permission). On Windows `build` no longer crashes when anything reads the catalog: the port had
     lost Python's delete-then-rename (aging DATAREPO-78/81, PXR-R14). It deletes the old file under its reader,
     retries 10 min for other holders, names the holder, and unexpected CLI errors exit 70 with the message last. No
@@ -393,6 +401,13 @@ This folder is a `/project`-managed research project. **You are de facto working
   `00_sdrf/metadata/`, junction `<work_root>/db` to `F:/aging_data/db`, and pass `--mm-settings
   F:/aging_data/mm_settings/1.1.11`. Without the last two, occupancy, contaminant and
   unresolved-mod findings are artefacts of the scratch setup (2026-09-27, PXD049018).
+- **A PowerShell `@(@("old","new"))` is ONE flat pair, not a list of one pair.** A replace loop over it took `"/"` and
+  `"o"` as the pair and turned every `/` in `docs/mcp.md` into `o` (2026-10-19, restored from git). Make text
+  replacements with the Edit tool (`replace_all` for a version bump), never a hand-rolled PowerShell loop.
+- **A whole DuckDB 1.5 file is exactly `12288 + total_blocks * block_size` bytes** (`pragma_database_size()`;
+  measured on a fresh file and on aging's 62 GiB catalog). A file cut short still OPENS and answers until a query
+  reaches the missing block. That is how aging 107 was diagnosed: the length was 4 KiB off the block grid, so the
+  cut was not DuckDB's. `CatalogFile.Shortfall` checks it at build and in the MCP sandbox (1.3.3).
 - **PowerShell `Set-Content -Encoding utf8` adds a BOM to .py files too** (0.28.0 version bump).
   Use `[IO.File]::WriteAllText` with `UTF8Encoding $false`, or the Edit tool.
 - **A zip loses the Unix executable bit.** The first CI run of the binaries failed on Linux and both

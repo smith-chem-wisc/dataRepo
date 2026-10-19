@@ -522,14 +522,44 @@ decisions:
         The plan, and the rules we would refine, are in design/PUBLIC_DATA.md (G94).
 gaps:
   - >-
+    G105 NEW 2026-10-19 (QuantProject 043 DATAREPO-D5; PXReprise 041 "For later: TMT"). Register MetaMorpheus's TMT
+    tables (PeptideQuantification.tsv, ProteinGroupQuantification.tsv, RawQuantification.tsv), stored per file and
+    channel as written, never summed over a plex's fractions (combining is QuantProject's, STAT1 M11). Answered yes in
+    our QuantProject 044, after their DEF-TMT-* definitions exist and MetaMorpheus #2904 merges (a Calibrate -> Search
+    writes no TMT tables before it). No TMT search is in aging's store.
+  - >-
+    G104 NEW 2026-10-19 (sdrf 029/030, notices; mzLib #1482/#1483 in review). (a) New source word `massive dataset
+    record`: add it to sample_characteristics.source's vocabulary in the schema description, and map it in sdrf_status
+    as `pride project record` is (repaired). The mapping changes rows for an input that already ingests, so it rides
+    1.4.0's ingest path. (b) A `deposited` cell WITH a source reference came from a deposited design table, not a
+    deposited SDRF; two new columns can appear (comment[fraction identifier source reference], comment[technical
+    replicate source reference]) beside fraction_source / technical_replicate_source. Kept verbatim today; describe
+    them when a draft carrying them is first ingested.
+  - >-
+    G103 NEW 2026-10-19. 1.4.0 is now unblocked: mzLib 1.0.595 (2026-10-15) carries #1430 and #1446 (verified with the
+    compare API, 0cac951 is behind the tag). One new ingest path and one full re-ingest of aging's store (171 deposits
+    on 2026-10-19), no re-search, carrying every row change owed: the mzLib bump (#1403 ProForma keys), the ptmQtl
+    engines (G88, G99), PXR-R22 (G102), PXR-R23 / QuantProject D4 (G92), G101, sequence_window (P30), G95, G26, G104 (a).
+    Told aging (109), PXReprise (042) and QuantProject (044). Agree contents and date with PXReprise, who runs the
+    batch, before building; then tell ptmQtl.
+  - >-
+    G102 NEW 2026-10-19 (PXReprise 041 PXR-R22; answered yes in our 042). The ingest takes the first
+    */metadata/*.sdrf.tsv (Ingester.cs:289-291), so aging's curated SDRFs never reach sample_characteristics: 7 current
+    searches used a question SDRF carrying characteristics[age] and got synthetic samples (no_sdrf). At 1.4.0 read
+    provenance experimental_design.sdrf when its source is `question` or `deposit` (sha256 checked against
+    sdrf_sha256, refused on mismatch); `pxreprise_default` reads metadata/ as now. Our default: from a question's SDRF
+    keep characteristics and leave out factor values (one bundle serves every question; a question's grouping reaches
+    aging's catalog through DATAREPO-79); from a deposit's SDRF keep everything, as now.
+  - >-
     G101 NEW 2026-10-11 (found measuring ptmQtl's DATAREPO-P31; our ptmQtl 040). ptm_sites places a site against
     EVERY sequence its accession has in the searched databases (Identifications.Placements adds a placement per
     candidate). MetaMorpheus's contaminant panel carries older versions of two human keratins: O76011 at 436 residues
     against the proteome's 394, and P19013 at 534 against 520. So each modification on them is written twice, 42 or 14
     residues apart, with the same n_psms (PXD022180: Carbamidomethyl on C at O76011 351 and 393). 411 sites in 25 of
     113 bundles have two windows. Fix at 1.4.0's re-ingest (it changes rows, so it needs an IngesterVersion bump):
-    decide which sequence a PSM was matched against, or write no site and count it. Tell PXReprise and aging in the
-    next message to them (a known bug in a stored table).
+    decide which sequence a PSM was matched against, or write no site and count it. Told aging (109) and PXReprise
+    (042) on 2026-10-19, with the workaround: leave out O76011 and P19013, or count one row per (accession,
+    modification, n_psms).
   - >-
     G100 NEW 2026-10-11 (QuantProject 023 DATAREPO-D1/D2/D3, answered yes in our QuantProject 038). We write
     QuantProject's statistics engine (DEF-DIFF), shaped like the ptmQtl engines, from their M7 spec, once an mzLib
@@ -551,7 +581,19 @@ gaps:
     - run.json lists every database per bundle.
     - Pooling joins on `sequence_window`.
     And at 1.4.0's re-ingest: a `sequence_window` column on ptm_sites (P30). No stored site lacks a sequence today.
-    P31 (one accession, two sequences) defaults to no window.
+    P31 (one accession, two sequences) defaults to no window; ptmQtl 041 answered: our default (no window, counted,
+    no pooling).
+    Added 2026-10-19:
+    - S2d (ptmQtl 044, copy of aging 052): undeclared cysteine labels. (a) list rules: in aging's 13 S76 (NEM)
+      deposits leave out every site an identified Cys-containing peptidoform covers, and Cys peptidoforms leave
+      same-molecule pairs; in cysteine-poor deposits leave out cysteine sites. (b) the D53 data rule (over-represented
+      on Cys peptides and mass = a label minus carbamidomethyl within 0.002 Da). A gate like S2c; every left-out site
+      labelled with its reason (excluded_sites.tsv).
+    - ptmQtl 041 (their D37, D39, D40): a one-form cell is a bound, never a quantified 0. Do NOT build further on the
+      ceiling rule. v2 as written stands until their mzLib change (their G46); it stays v2 if no v2 row is loaded by
+      then.
+    - Capture list v3 (ptmQtl 042) replaces v2: PXD050351, PXD069093 ptm_capture; PXD061654 capture_runs
+      Seq70745_HFX..Seq70762_HFX (18 acetyl-K captures stored as `none`).
   - >-
     G98 NEW 2026-10-11 (aging 102 DATAREPO-79/80, ptmQtl 033 A1-A4; our aging 106). Next release, before step 1 (G94),
     together with DATAREPO-74 `restrictions` (aging 101):
@@ -559,6 +601,13 @@ gaps:
       `<col>_reserved` for reserved words, and build checks (reference level, run in run_design, same factor rows
       across a sample's runs, run_id held, no level both reference and not);
     - curated_sample_characteristics.name described as any SDRF header, comment[...] included.
+    - aging 108 DATAREPO-82, answered yes in our 109: a `role` column (enum condition | stratum, required; 362 of
+      1,347 rows are strata in 16 datasets); a condition needs an is_reference level and another, a stratum >= 2
+      levels with is_reference empty on every row; `level` never holds a reserved word (refused; a run the factor
+      does not concern has no row); a pool's `individual` is its own label (our 106 example was wrong), pool_size > 1
+      marks it. Descriptions carry their conventions: a pool-size range leaves pool_size and pool_size_reserved empty
+      with the range in evidence; level_value units (age group in years UO:0000036 to 4 places as
+      sample_ages.age_years, week UO:0000034, gray UO:0000134); a range or bound has no number.
   - >-
     G97 NEW 2026-10-11 (PXR-R11, our PXReprise 036). The engine-coverage checks pass and list uncovered databases or
     bundles only in their detail, so a gap is easy to miss. In step 1's release: `build` prints an uncovered dataset
@@ -598,7 +647,11 @@ gaps:
     one assay (one run). 1.3.1 leaves those values out with the finding sample_quant_not_stored. Storing them needs
     a sample-level home in the schema (a core schema bump, so a full re-ingest) and QuantProject's say on what the
     value means; it is the same question as G91 from the protein side. Measure how many aging deposits have
-    multi-file samples before proposing one.
+    multi-file samples before proposing one. 2026-10-19: PXReprise measured it (041, PXR-R23): 9 of 10 curated designs,
+    including every one carrying ages. QuantProject defined the values (043, DATAREPO-D4): key (protein group, design
+    sample), the design kept with them, never split onto runs, intensity labelled by method (FlashLFQ median polish,
+    strongest fraction, techreps averaged). Answered yes for 1.4.0 (our PXReprise 042, QuantProject 044). Send the
+    shape to both before building; ptm_stoichiometry already has denominator_grouping for a pooled sample group.
   - >-
     G91 NEW 2026-10-06 (the user; QuantProject 019, DATAREPO-Q2 asked). QuantProject will write fraction-combined
     per-sample occupancy and peptide intensity. Until it does, the ptmQtl engines combine fractions themselves (S4,
@@ -765,7 +818,7 @@ gaps:
   - "G24 Re-ingest is owed to aging and is theirs to schedule. datarepo 0.4.0 changes __version__, which is in the bundle hash, so every dataset gets a new bundle id: PXD036557 re-ingests to aca8113f17e96c06 with all five reconciliation checks green and metrics 140 -> 164. v0.1 stays valid exactly as released - 31fac552c5d748f0 is on disk and citable and re-ingesting does not touch it. Whether v0.1 is re-cut on 0.4.0 is aging's call; the only changes to an existing bundle are the five definition IDs and the contamination metrics, both additive, and the case for re-cutting is that PXD027318 can now be in it. UPDATED 2026-09-20: 0.5.0 makes this bigger. It changes __version__ AND the schema (0.0.3 to 0.0.4), and this time the ROWS change - ptm_sites gains 42 rows across the three datasets and every ptm_site_id string is different. aging 019 section 6 has already ruled that v0.1 stays as released and is not re-cut, and that a new release waits on the PXD060431 ruling. Nothing here changes that; we told them in 021 section 7 that the study layer is next and does not touch ptm_sites, so there is no hurry from our side."
 
   - "G25 ptm_site_id rekey. CLOSED 2026-09-20 in datarepo 0.5.0 / schema 0.0.4, taking aging's option (1) from their 019 section 3 and 020. The key is now <dataset_id>:<accession>:<residue><position>:<modification_name>, where the last component is the engine's own IdWithMotif; PtmSite.modification is nullable and PtmSite.modification_name is required. WHY IT WAS BIGGER THAN THE REQUEST: a key ending in the UNIMOD accession cannot be formed for a modification that has none, so those sites were not written as nulls - they were not written. Across the three datasets that was 42 sites over 10 chemistries, 195 PSMs, and only ONE of the ten was ever named in a finding: the other nine resolve to a MASS but not an accession, so they never entered proforma.unresolved and left no trace anywhere. PXD036557's 0.4.0 bundle records unresolved {} and was missing PXD036557:P16401:K37:N6-succinyllysine on K, which means the RELEASED v0.1 catalog is missing a row and contains nothing that says so. The recovered chemistries are succinyl-, glutaryl-, malonyl-, crotonyl- and methacryl-lysine, nitrotyrosine, two hydroxylations and O-palmitoleoyl serine - a lysine-acylation-shaped hole in an aging repository. aging's 020 added the decisive case: GG (Ubiquitination Site) on K has no cross-reference in mzLib 1.0.591, so on a diGly dataset the deletion is the subject of the experiment. THE COST, which is real: the name key is FINER than the accession key, because one chemistry can arrive under two names (Phosphorylation on S from the variable-mod list, Phosphoserine on S from a UniProt annotation), and 5 sites in 35,615 split. It is recoverable exactly and the deletion was not - the new catalog view ptm_sites_by_chemistry groups them back and reproduces the accession-keyed table on all 35,568 groups of the three datasets, n_psms summing and best_q_value taking the minimum, zero mismatches. That asymmetry is the whole argument, and it is U8's grain rule deciding a case where the coarser table was the one we already had."
-  - "G26 The modification registry parses mzLib's resources instead of asking its loader. OPEN, logged as U9, raised to aging and QuantProject in thread 021 section 5, and found only because aging's 020 postscript told us to look. ModRegistry.from_metamorpheus reads Mods/*.txt and Data/ptmlist.txt and parses the DR Unimod lines itself. It never reads Data/unimod.xml - mzLib's largest and only fully-mapped source - and its precedence is alphabetical by filename, so Mods.txt beats ptmlist.txt, the REVERSE of the loader's Unimod then UniProt then MetaMorpheus. Measured against QuantProject/design/reference/IdWithMotif-to-Unimod.1.0.591.tsv (3,139 names, generated by running the loader): no entry at all for 2,445, agrees on 635, returns null for 57 the loader resolves, and differs on exactly TWO - Decarboxylation on D and on E, where Mods.txt line 537 cross-references UNIMOD:914 (methylmalonylation on serine) and the loader gives 1915. The table marks both AMBIGUOUS rather than picking. NEITHER HAS FIRED: of the 100 distinct modification names that have actually reached ptm_sites across the three datasets we agree with the loader on all 100, so nothing shipped is wrong. The registry is right by luck on a narrow corpus and blind on a wide one. Default in U9: consume the pinned TSV, fall back to the resource parse only where the mzLib version has no table, and say in the reader log which was used. Deliberately NOT done in the same change as G25 - it would wire a third repository's file into the bundle content hash on our own authority and confound two large movements in one bundle id. The open part is distribution, not correctness."
+  - "G26 The modification registry parses mzLib's resources instead of asking its loader. OPEN, logged as U9, raised to aging and QuantProject in thread 021 section 5, and found only because aging's 020 postscript told us to look. ModRegistry.from_metamorpheus reads Mods/*.txt and Data/ptmlist.txt and parses the DR Unimod lines itself. It never reads Data/unimod.xml - mzLib's largest and only fully-mapped source - and its precedence is alphabetical by filename, so Mods.txt beats ptmlist.txt, the REVERSE of the loader's Unimod then UniProt then MetaMorpheus. Measured against QuantProject/design/reference/IdWithMotif-to-Unimod.1.0.591.tsv (3,139 names, generated by running the loader): no entry at all for 2,445, agrees on 635, returns null for 57 the loader resolves, and differs on exactly TWO - Decarboxylation on D and on E, where Mods.txt line 537 cross-references UNIMOD:914 (methylmalonylation on serine) and the loader gives 1915. The table marks both AMBIGUOUS rather than picking. NEITHER HAS FIRED: of the 100 distinct modification names that have actually reached ptm_sites across the three datasets we agree with the loader on all 100, so nothing shipped is wrong. The registry is right by luck on a narrow corpus and blind on a wide one. Default in U9: consume the pinned TSV, fall back to the resource parse only where the mzLib version has no table, and say in the reader log which was used. Deliberately NOT done in the same change as G25 - it would wire a third repository's file into the bundle content hash on our own authority and confound two large movements in one bundle id. The open part is distribution, not correctness. 2026-10-19: since 1.3.3 (PXR-R21) MetaMorpheus's Unimod-category names reach ptm_sites (NEM:2H(5) on C: 647 sites in PXD011740, 506 in PXD010091), and every Unimod: name is unresolved, so modification is NULL on them. Rides 1.4.0 (G103); asked QuantProject (044) for a 1.0.595 loader table."
   - "G27 Bundle id identity. CLOSED 2026-09-20 in datarepo 0.5.0, answering aging 019 section 1. Their hypothesis was right: add_declaration hashed entry.raw, so reason, notes and flags were in the bundle id, and rewording a reason moved the id while every row stayed identical - which is why their PXD027318 ingest produced d77407d41e82858b and ours 809772ab5cdbd2e0 from the same search output. The id now covers manifest.CONTENT_FIELDS only (accession, run, stages, search_results, title, files, organism, acquisition, quant_method, labelling, labelling_plex, enrichment, metamorpheus); NON_CONTENT_FIELDS names the rest with a reason each, and a test fails on any DatasetEntry field in neither list. The answer for operators: a bundle id is an identity for the measurements plus the ingest configuration, and nothing editorial. TWO SMALL THINGS FOUND WHILE CLASSIFYING, both told to aging: the manifest's provenance_schema is a declared expectation nothing checks (we read the schema from provenance.json itself), and sdrf is declared but never read (we glob the run folder). The manifest promises two things it does not deliver."
   - "G28 search_modifications does not mean what its description claims. OPEN, asked as thread 021 section 6. The description says 'Every modification the search considered for a dataset (P1; J8 mass-silent checks)', but the table is built from the search task's parameters, so it holds what was DECLARED, not what was PLACED. All three datasets declare 33 UNIMOD accessions; their peptidoforms carry 16, 46 and 57, of which 4, 17 and 29 are absent from the table. A GPTMD run draws modifications from UniProt annotations on the database entries and those are not in the task's mod list - S-(2,3-dicarboxypropyl)cysteine on C is in PXD032202's peptidoforms and is not a row in its search_modifications at all. Nothing is lost (the evidence is in the peptidoforms) but a J8 mass-silent check reading this table to ask what the search COULD have found gets a wrong answer on the two GPTMD-heavy datasets. Default: fix the description rather than the table, and add a derived view for what was actually placed. 0 rows of consequence today."
   - "G29 One version was doing two jobs. CLOSED 2026-09-20 in datarepo 0.6.0, and it was forced rather than chosen: 0.6.0 is entirely a `build` change, but __version__ was in the BUNDLE hash, so releasing it would have re-identified every bundle in every store for rows that are byte-identical - the same over-hashing failure G27 had just fixed one level down, one release later. bundle.INGESTER_VERSION is now the only version in a bundle's content hash and is bumped in the same commit as any change to what an ingest reads, parses, derives or writes; it sits at 0.5.0 and lags __version__ on purpose. catalog_id keeps __version__, gains every study layer's version, and CATALOG_VERSION went 1 -> 2, so adding the whole study layer moved every catalog id and not one bundle id - verified on the three real datasets, which re-ingest to 0c11db8240f2634f / 9b73a64dc7d790f5 / 0bae469980d59d24 unchanged. Two tests pin both directions. bundle.json records both versions because they answer different questions: what an operator installed, and what the id was computed from. THE PATTERN WORTH KEEPING: three times in two days the same boundary failed - under-hashed manifest entry, over-hashed manifest prose, over-hashed package version - and each time the test is the same one sentence, does this change what the rows say."
