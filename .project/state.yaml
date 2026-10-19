@@ -595,6 +595,13 @@ gaps:
     Told aging (109), PXReprise (042) and QuantProject (044). Agree contents and date with PXReprise, who runs the
     batch, before building; then tell ptmQtl.
   - >-
+    SCHEMA 0.0.16 on feat/1.4.0-ingest 27dcf3d (datarepo-9b): assay_kind/design_label/assay_runs (R23's shape; the
+    pooled rows come next), sequence_window, G95's dataset_id pattern (USIs on the bare accession), G104 (a)'s word.
+    SchemaContract.AddedTables (assay_runs) keeps a Python0320 catalog at 0.0.13's tables. MERGE NOTE for Catalog.cs:
+    the branch's LoadTables and catalog_tables loops use SchemaContract.CoreTables and the integrity checks skip
+    !TableInForce; master's step 2 put LeftInBundles filters on the same loops and added DepositDerived.cs (whose
+    DepositInputs use Tables.ByName): combine both filters. The branch also rewrote the 1.1.11 fixture Mods file in
+    Mods.txt grammar for G26 and regenerated the modlist-proforma fixtures with 0.32.0 (it reproduced the committed ones first).
     G102 + G107 BUILT 2026-10-19 on feat/1.4.0-ingest 2adb7ba (datarepo-9b): operator_sdrf wins with the partition
     check; else a question/deposit SDRF only on a sha256 match, refused by name otherwise; else metadata/; a question
     SDRF gives characteristics only; bundle.json `sdrf` records read/chosen_by/factor_values/sdrf_origin; operator_sdrf
