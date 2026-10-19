@@ -522,7 +522,17 @@ decisions:
         The plan, and the rules we would refine, are in design/PUBLIC_DATA.md (G94).
 gaps:
   - >-
-    G107 NEW 2026-10-19 (aging-2b, session message; for 1.4.0, to agree with PXReprise). An operator's SDRF for a
+    G108 NEW 2026-10-19 (QuantProject 049, measured on catalog 32c632fd8bc361d4, their aging 084): protein_genes
+    (logs.resolve_genes, logs:DEF-GENE-RESOLUTION v1) gives no gene to 303 of PXD057407's 4,374 quantified target groups
+    (6.9%, outcome not_in_source), reviewed entries among them (P07759 Serpina3k, P04939 Mup3, P12367 Prkar2a); 75 genes
+    spelled differently from UniProt (Rab7/Rab7a). Find why before telling logs. Told QuantProject 050 we will look.
+  - >-
+    G107 UPDATED 2026-10-19 (PXReprise 052, aging 114): the field is `operator_sdrf: <path>`, NOT `sdrf:` (3 entries use
+    `sdrf:` as prose; DatasetEntry.Sdrf is a declared non-content field). The path is NON-content; the file enters as a
+    source (role sdrf, sha256 hashed). When named it WINS over the search's recorded SDRF for any design source, with
+    the partition check against ExperimentalDesign.tsv, characteristics only. It also carries aging's corrected SDRFs
+    for the seven R22 searches (G102). PXReprise 051: keys it does not own survive its manifest writes. datarepo-9b
+    builds it on feat/1.4.0-ingest. Was: G107 NEW 2026-10-19 (aging-2b, session message; for 1.4.0, to agree with PXReprise). An operator's SDRF for a
     search that used `pxreprise_default`, read with NO re-search, when it only describes the search's own samples.
     PXD012307 needs it: aging's curated design (8 individuals, fraction a stratum) cannot be delivered while the core
     sample is one `Sample 1`, because build's A3 check refuses one sample's runs with different factor rows. A
@@ -551,6 +561,9 @@ gaps:
     v3.10 (QuantProject 045): 0 means no value, columns {sample}_{file}_{channel}, never combine fractions. Waits only on
     MetaMorpheus #2904.
   - >-
+    G104 (a) CORRECTED 2026-10-19 (datarepo-9b): no sdrf_status mapping exists to extend (the C# writes only
+    trusted/partial/unmatched/absent; sdrf 002's `pride project record` -> repaired was never built), so (a) is a
+    description word in sample_characteristics.source and changes no row; it rides schema 0.0.16 as a description.
     G104 NEW 2026-10-19 (sdrf 029/030, notices; mzLib #1482/#1483 in review). (a) New source word `massive dataset
     record`: add it to sample_characteristics.source's vocabulary in the schema description, and map it in sdrf_status
     as `pride project record` is (repaired). The mapping changes rows for an input that already ingests, so it rides
@@ -561,7 +574,8 @@ gaps:
   - >-
     G103 NEW 2026-10-19. 1.4.0 is now unblocked: mzLib 1.0.595 (2026-10-15) carries #1430 and #1446 (verified with the
     compare API, 0cac951 is behind the tag). One new ingest path and one full re-ingest of aging's store (171 deposits
-    on 2026-10-19), no re-search, carrying every row change owed: the mzLib bump (#1403 ProForma keys), the ptmQtl
+    on 2026-10-19), no re-search, carrying every row change owed: the mzLib bump (CORRECTED 2026-10-19 by datarepo-9b's
+    measurement: it moves no row, since our keys are our own Proforma.cs; PXReprise 049 item 1 to be corrected), the ptmQtl
     engines (G88, G99), PXR-R22 (G102), PXR-R23 / QuantProject D4 (G92), G101, sequence_window (P30), G95, G26, G104 (a),
     G106 (PXD012307's conflicting ages), G107 (an operator SDRF without a re-search, proposed). The twelve-item list,
     ingest path cs-1.2.0, schema 0.0.16, catalog format 13, and the order (answer, build, scratch re-ingest of the whole
@@ -574,7 +588,13 @@ gaps:
     Told aging (109), PXReprise (042) and QuantProject (044). Agree contents and date with PXReprise, who runs the
     batch, before building; then tell ptmQtl.
   - >-
-    G102 NEW 2026-10-19 (PXReprise 041 PXR-R22; answered yes in our 042). The ingest takes the first
+    G102 BLOCKER FOUND 2026-10-19 (datarepo-9b, measured before building): the ten designed searches name `question`
+    SDRFs under E:\CodeReview\aging\designs\; three match their sdrf_sha256, SEVEN DIFFER (PXD047289, PXD047292,
+    PXD047293, PXD051203, PXD051644, PXD056458, PXD058248: the ones carrying ages), edited by aging after the searches
+    (c4e93f5); no search folder keeps a copy. Default sent (PXReprise 052, aging 114): operator_sdrf wins when named
+    (G107); without it a question/deposit SDRF is read only on a sha256 match, else refused by name; PXR-R28 asks
+    PXReprise to copy the SDRF into 04_search/ at search time. The current files pass the partition check (181 samples
+    1:1). Was: G102 NEW 2026-10-19 (PXReprise 041 PXR-R22; answered yes in our 042). The ingest takes the first
     */metadata/*.sdrf.tsv (Ingester.cs:289-291), so aging's curated SDRFs never reach sample_characteristics: 7 current
     searches used a question SDRF carrying characteristics[age] and got synthetic samples (no_sdrf). At 1.4.0 read
     provenance experimental_design.sdrf when its source is `question` or `deposit` (sha256 checked against
@@ -669,6 +689,13 @@ gaps:
     (PXD073999, AGING-P18) is not covered. Under the bare accession, aging's `--latest` publish would serve it in place
     of the first. Asked as PXR-R20 (our PXReprise 038); our default is its own key, in a separate store until 1.4.0.
   - >-
+    G94 STEP 2b BUILT 2026-10-19 on master (a054974, pushed, not released; still format 13): a folder keeps each
+    deposit's derived rows under <folder>/derived/<derivation id>/<dataset>/<bundle>/ (overview, protein_datasets,
+    search_modifications_placed, protein/peptide partials), computed once with the corpus SQL over the deposit's files,
+    reused while the derivation id (SQL, format, schema, DuckDB) holds; catalog_meta.derived_root, allowed by the folder
+    sandbox. aging's store: first build 155 s (170 derived), rebuild 61 s (all reused); derived tables equal 2a's; site
+    identical; derived 155 MB, catalog 132 MB. Not done: engine-derived tables per deposit; --keep does not prune
+    derived dirs of an old derivation id. Release of 2a+2b (no re-ingest) needs the user's permission.
     G94 STEP 2a BUILT 2026-10-19 on master (b59eb57, pushed, not released; catalog format 13): no psms/psms_1pct in a
     catalog (Python0320 keeps them), dataset_overview's PSM counts from bundle.json, row checks from Parquet footers,
     `timing` line. aging's store (170 bundles, pinned to 32c632fd8bc361d4): 144 s against 573 s; tables equal (bar
@@ -711,7 +738,9 @@ gaps:
     per-file table would have written"), and DEF-OCC-INT sums each file's intensity shares over the sample's files
     (MS/MS only) while DEF-OCC-COUNT pools the PSMs: each column cites its own id. ptmQtl 046 DATAREPO-P32 (pooled
     occupancy for fraction-only samples) answered by this shape in our ptmQtl 048: injection-pooling samples are stored
-    too, filterable on assay_runs.technical_replicate. Waits only on PXReprise's PXR-R27.
+    too, filterable on assay_runs.technical_replicate. SETTLED 2026-10-19: PXReprise 051 says yes to the shape.
+    datarepo-9b builds schema 0.0.16 + PXR-R23 on feat/1.4.0-ingest after G26 (it will list catalog readers of assays
+    that need assay_kind = 'run' for us).
     QuantProject 045: cite DEF-PROT-INT v3.10 (one Intensity_<sample> column per design sample; per peptide techreps
     averaged within a fraction, the strongest fraction kept, then median polish) and the v3.10 grain table
     (DEF-OCC-COUNT/INT pooled over the sample's files).

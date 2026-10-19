@@ -28,11 +28,14 @@ This folder is a `/project`-managed research project. **You are de facto working
      folder publish is `F:\aging_data\repo\catalogs\catalog-32c632fd8bc361d4.duckdb` (release `4e016c10250d3833`, built
      by 1.3.5, pointed 2026-10-19 19:33 UTC, 170 datasets). aging's user deleted the 62 GB `catalog.duckdb` the same
      day. Our `datarepo` MCP entry now serves the folder on the 1.3.5 binary (repointed by a second session, datarepo-9b).
-     **Now: step 2** (the user, 2026-10-19: "begin immediately on the public data plan"). **Step 2a is on master,
-     `b59eb57`, CI green, NOT released** (catalog format 13): no `psms`/`psms_1pct` in a catalog, PSM counts from
-     `bundle.json`, row checks from Parquet footers, a `timing` line. aging's store: 144 s against 573 s, tables equal,
-     site identical but `llms.txt`. Warned ptmQtl (048), aging (113), PXReprise (050). **Next: 2b** (per-deposit derived
-     tables, 75 of the 144 s), then a release with the user's permission (patch number: 1.4.0 stays the re-ingest). The user's ask to cap the publish at 2 h was not applied: it was already 6 h
+     **Step 2 (the user, 2026-10-19: "begin immediately on the public data plan") is BUILT on master, NOT released**
+     (catalog format 13, no re-ingest):
+     - 2a `b59eb57`: no `psms`/`psms_1pct` in a catalog, PSM counts from `bundle.json`, row checks from Parquet
+       footers, a `timing` line; 144 s against 573 s;
+     - 2b `a054974`: a folder derives each deposit's rows once (`derived/<derivation id>/`) and reuses them; **a
+       rebuild of aging's store takes 61 s**; derived tables and site identical; catalog file 132 MB.
+     - Warned ptmQtl (048), aging (113, 114), PXReprise (050, 052). **Next: release 2a+2b with the user's permission**
+       (a patch number; 1.4.0 stays the re-ingest). Then the tutorial page is rerun, and ptmQtl gets the tag. The user's ask to cap the publish at 2 h was not applied: it was already 6 h
      (PXReprise 2026-10-17), and 2 h would have killed the 2-3 h one-file publishes; told the user. Next on this
      line: step 2 (PSMs out; per-deposit derived tables), then a `--data-root` URL for hosting. aging's catalog is 62.4 GiB (169 datasets, 192M PSMs)
      and a publish takes about an hour against PXReprise's 3600 s limit; we offered aging (109) to do step 1 first if
@@ -43,7 +46,8 @@ This folder is a `/project`-managed research project. **You are de facto working
      out of their store); ptmQtl answered P31 (our default).
   4. **1.4.0, now unblocked (G103): mzLib 1.0.595 carries #1430 and #1446.** One new ingest path, one full
      re-ingest, no re-search. Agree its contents and date with PXReprise before building, then tell ptmQtl:
-     - the mzLib bump (#1403 ProForma keys) and the ptmQtl engines (G88, G99, now with S2d and D37/D39/D40 bounds:
+     - the mzLib 1.0.595 bump (moves no row: our keys are our own ProForma, measured) and the ptmQtl engines (G88,
+       G99, now with S2d and D37/D39/D40 bounds:
        do NOT build further on the ceiling rule);
      - PXR-R22, the SDRF the search used (G102); PXR-R23 = QuantProject DATAREPO-D4, sample-level protein-group
        values (G92; send the shape to both first);
@@ -56,7 +60,13 @@ This folder is a `/project`-managed research project. **You are de facto working
      - **SENT 2026-10-19: PXReprise 049 (PXR-R27: the twelve items, the window) and QuantProject 047 (DATAREPO-D6: the
        PXR-R23 shape, pooled assays).** QuantProject said YES (048, two description fixes in G92); ptmQtl's DATAREPO-P32
        is answered by the same shape (our 048). PXR-R12 is the 13th item (PXReprise 050); 1.4.0's catalog format is 14.
-       **Waiting only on PXReprise's PXR-R27**; no date until a scratch re-ingest of the whole store is measured.
+       **PXReprise 051 answered PXR-R27: yes to all thirteen and the shape**; the window is the 1.4.0 pin swap's
+       gap (~4 h, three ingests at once, no publish). A mixed 0.0.15/0.0.16 catalog is refused; the last 1.3.5 catalog
+       serves through the gap (our 052). No date until a scratch re-ingest of the whole store is measured.
+     - **PXR-R22 blocker** (datarepo-9b): seven recorded question SDRFs were edited after their searches. Default sent
+       (052/114): `operator_sdrf: <path>` (G107; non-content path, file a hashed source) wins when named; else sha256
+       must match; PXR-R28 asks PXReprise to copy the SDRF into `04_search/` at search time.
+     - **The mzLib 1.0.595 bump moves no row** (measured by datarepo-9b); corrected to PXReprise, aging, QuantProject.
      - **G101's workaround was wrong** (n_psms doubled on P19013's shared stretch): leave O76011 and P19013 out
        entirely; corrected in PXReprise 050, aging 113, ptmQtl 048.
      - **A second session, datarepo-9b, builds the 1.4.0 ingest side** on `feat/1.4.0-ingest` (`code/_wt_140_ingest`):
@@ -495,10 +505,13 @@ This folder is a `/project`-managed research project. **You are de facto working
   other `DataRepo.*` namespaces. Hence `SiteGenerator`, `StudyWriter`, `CatalogBuilder`.
 - **PXReprise rewrites the live `F:/aging_data/batch/manifest.yaml` non-atomically**: a reader caught it
   half-written once (2026-10-04). Retry before diagnosing a YAML error in it; tell PXReprise.
-- **Moving dataRepo past mzLib 1.0.593 changes ingested rows.** From 1.0.594, #1403 writes UniProt-named
-  modifications as UNIMOD ids in psmtsv ProForma (`[UniProt:N6,N6-dimethyllysine on K]` -> `[UNIMOD:36]`), so
-  peptidoform keys move. Any mzLib bump means a new `BundleWriter.IngesterVersion` and a re-ingest for aging. The
-  psmtsv parity tests are the canary.
+- **Moving dataRepo to mzLib 1.0.595 moves NO ingested row** (measured 2026-10-19 by datarepo-9b on
+  `feat/1.4.0-ingest`: PXD022180 `6e3e74097cf82695` and PXD011740 `c56354676fd7c929` on both 1.0.593 and 1.0.595,
+  every table equal). From 1.0.594, #1403 writes UniProt-named modifications as UNIMOD ids in mzLib's psmtsv
+  `ProForma` field (`[UniProt:N6,N6-dimethyllysine on K]` -> `[UNIMOD:36]`), but no ingest code reads that field:
+  peptidoform keys and USIs come from our own `Proforma.cs` over the full sequence (`Identifications.cs`). This bullet
+  said the keys move for two weeks, and the 1.4.0 plan (PXReprise 049 item 1) repeated it: a belief, not a measurement.
+  Still re-run the psmtsv parity tests on any mzLib bump; they are the canary.
 - **A pre-release mzLib makes the go engine refuse, by design** (GO-A1: go files from an unreleased writer are never
   stored). On a branch built against a locally packed mzLib, the go tests fail for that reason alone.
 - **MetaMorpheus modification names can hold brackets** (`[Metal:Cu[I] on D]`). Parse full sequences by bracket depth
