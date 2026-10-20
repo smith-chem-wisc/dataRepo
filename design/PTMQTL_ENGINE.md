@@ -1,7 +1,25 @@
 # The ptmQtl engines in `datarepo run` (plan)
 
-**Status: planned, not built.** Approved by the user on 2026-10-06 (ptmQtl 025 -> our 026, DATAREPO-P21..P23).
-dataRepo writes `PtmQtlEngine.cs` in C#. ptmQtl owns the method: the definitions, the mzLib code, and review of the PR.
+**Status: built on branch `feat/ptmqtl-engine` (2026-10-06), merged into `feat/1.4.0-ingest` on 2026-10-19, not
+released.** Approved by the user on 2026-10-06 (ptmQtl 025 -> our 026, DATAREPO-P21..P23). dataRepo wrote
+`PtmQtlCore.cs`, `PtmQtlBundle.cs`, `PtmQtlEngine.cs` and `CatalogPtmQtl.cs` in C#. ptmQtl owns the method: the
+definitions, the mzLib code, and review of the PR.
+- **It reproduces ptmQtl's reference case exactly** (`Fixtures/ptmqtl-reference-v1`), now on the released mzLib
+  1.0.595, which carries #1430. It is built against 1.0.595, not 1.0.594: #1446 added two optional parameters to
+  `PtmPairs.CoVarying`, so a binary compiled against 1.0.594 throws `MissingMethodException` there (ptmQtl 046).
+- **It ran on aging's PXD035107 and PXD017944 bundles** (scratch store, on the branch).
+- The branch's `dotnet/nuget.config` and pre-release mzLib reference were dropped at the merge. #1403 moves no
+  ingested row (measured 2026-10-19: our peptidoform keys are our own ProForma), but 1.4.0 has a new ingest path
+  anyway (`cs-1.2.0`, schema 0.0.16) and aging re-ingests once.
+- In a catalog folder `ptm_pairs` and `trait_effects` are views over the artefacts' Parquet, as go's tables are,
+  checked from the files' footers. The catalog format is 14, which also covers schema 0.0.16.
+- **Before 1.4.0 the engines take ptmQtl's changes since 2026-10-06** (G99): S3b pulldowns with the capture list v4
+  (ptmQtl 047), S2c, S2d, S7, DEF-SITE-TRAIT by the mzLib release, every database in `run.json`, pooling on
+  `sequence_window`, DATAREPO-P32's pooled assays (ptmQtl 049), and a one-form cell as a bound (their D37/D39/D40;
+  the ceiling rule is frozen).
+
+**Superseded below:** S2 is now four categories minus ptmQtl D27's two exclusions (ptmQtl 030, `DEFINITIONS.md`). The
+engine takes it from there, not from the two-category text in "Three gates".
 
 ## Engines
 
