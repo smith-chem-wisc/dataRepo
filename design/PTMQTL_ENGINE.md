@@ -57,7 +57,13 @@ list exactly.
 - PXD011740 is NEM-labelled only in runs sample1-sample6, not sample1sec-sample6sec. A cysteine list keyed by deposit
   over-applies it there. It needs a run column, or the deposit split by run. Not built: their user rules.
 - Hydroxybutyryl-K is in S2d (b) on purpose: it is ring-opened NEM, +86.036. 2-hydroxyisobutyryl-K has the same
-  composition, so the mass match takes it too. (Question 1 below is about S2c's pattern, which is separate.)
+  composition, so the mass match takes it too.
+- S2c (question 1): `utyryl` takes hydroxybutyryl-K and 2-hydroxyisobutyryl-K by intent. Trypsin cannot cut after a
+  lysine whose ε-amine is acylated, so DEFINITIONS is the one that is incomplete.
+  - Neither the code nor the definitions catch six more acyl-K names: N6-isonicotinyl, N6-methacryl, N6-benzoyl,
+    N6-propionyl, N6-biotinyl and N6-lipoyl. On catalog 9f943cd4 these are 298, 274, 102, 72, 57 and 54 sites.
+  - Whether S2c grows to take them is their user's call. The engines keep the code's patterns until the thread
+    answers.
 - New: in PXD008934, 72 % of methyl-K/R PSMs also carry a carbamyl. Carbamyl plus methyl is carbamidomethyl,
   iodoacetamide over-alkylation split in two. Whether it becomes an S2 rule is their user's call; nothing is built.
 
