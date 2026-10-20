@@ -54,8 +54,18 @@ list exactly.
   - S2d (b) leaves out only stored sites of the modification.
 
 **ptmQtl's first answers (session message, 2026-10-19), pending their user's rulings:**
-- PXD011740 is NEM-labelled only in runs sample1-sample6, not sample1sec-sample6sec. A cysteine list keyed by deposit
-  over-applies it there. It needs a run column, or the deposit split by run. Not built: their user rules.
+- PXD011740: corrected by ptmQtl the same day. Their D56 applies S2d (a) to the whole deposit on purpose, not only its
+  six NEM runs (sample1-sample6): the exclusion list is per site, so this is the safer error. A deposit-level cysteine
+  list matches what they ran.
+- **Ruled, their D57 (their user, 2026-10-19), S7 "Name":** a peptidoform with several `engine_full_sequences` is kept
+  under its first name when every name is the same modifications at the same positions; otherwise it is left out and
+  counted.
+  - The test is mzLib's sequence converter (`Omics.SequenceConversion`): the names' mzLib-to-Unimod forms must agree.
+    A name with no UNIMOD form must resolve every modification, through `MzLibModificationLookup` and then
+    `GlobalModificationLookup`, to the same chemical formula at the same position.
+  - Isomers pass and are counted apart. MetaMorpheus #2917's `|`-joined rows, stored as several names, are left out.
+  - **Not built yet.** We build it from ptmQtl's runner once their commit lands, so that both sides read names the
+    same way. Until then the engine leaves every several-name peptidoform out.
 - Hydroxybutyryl-K is in S2d (b) on purpose: it is ring-opened NEM, +86.036. 2-hydroxyisobutyryl-K has the same
   composition, so the mass match takes it too.
 - S2c (question 1): `utyryl` takes hydroxybutyryl-K and 2-hydroxyisobutyryl-K by intent. Trypsin cannot cut after a
