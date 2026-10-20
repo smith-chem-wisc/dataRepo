@@ -64,8 +64,10 @@ list exactly.
     A name with no UNIMOD form must resolve every modification, through `MzLibModificationLookup` and then
     `GlobalModificationLookup`, to the same chemical formula at the same position.
   - Isomers pass and are counted apart. MetaMorpheus #2917's `|`-joined rows, stored as several names, are left out.
-  - **Not built yet.** We build it from ptmQtl's runner once their commit lands, so that both sides read names the
-    same way. Until then the engine leaves every several-name peptidoform out.
+  - **Built**, mirroring their runner (`tools/PtmQtlRunner`, ptmQtl `19a8340`): `PtmQtlRules.SameModifications`.
+    `run.json` carries their three counters, which count distinct name combinations, not rows:
+    `several_names_kept_unimod`, `several_names_kept_formula` and `several_names_left_out`. On PXD011740 one
+    combination is kept by its Unimod form, six observations.
 - Hydroxybutyryl-K is in S2d (b) on purpose: it is ring-opened NEM, +86.036. 2-hydroxyisobutyryl-K has the same
   composition, so the mass match takes it too.
 - S2c (question 1): `utyryl` takes hydroxybutyryl-K and 2-hydroxyisobutyryl-K by intent. Trypsin cannot cut after a
