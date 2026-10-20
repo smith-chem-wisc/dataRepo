@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Commits | 668 |
+| Commits | 670 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
 | Locked decisions | 48 |
 | Open gaps | 103 |
@@ -17,9 +17,8 @@
 | Worktree | Branch | HEAD | Pin | Status |
 |---|---|---|---|---|
 | `code/_wt_ptmqtl` | feat/ptmqtl-engine | `ec584c73` | `ec584c73` | at pin |
+| `code/_wt_140_ingest` | feat/1.4.0-ingest | `ea36a0a2` | `54453e12` | **off pin** -- `git -C code/_wt_140_ingest checkout --detach 54453e128ffc` |
 | `code/_wt_mzlib_sumo` | fix/sumo-remnant-target-lysine | `6974a4d4` | `6974a4d4` | at pin |
-
-> **1 document(s) in `design/` not referenced above** -- `NOTE_FROM_CodeReview_2026-10-06_dq2-talk-directly.md`. Add a line for each, or say why not.
 
 <!-- END GENERATED -->
 
@@ -31,7 +30,27 @@ reanalyses. The results cover search, quant, provenance, design and organelle an
 use it, but AI agents are the main users. The question it serves is how organelle proteomes change
 with age.
 
-## Latest (2026-10-19, thirty-second session): datarepo 1.3.3, 1.3.4 and 1.3.5 released; nothing owed to any peer
+## Latest (2026-10-19, close): 1.3.6 released; 1.4.0's ingest side built on a branch; its whole-store scratch re-ingest is running
+
+- **Released datarepo 1.3.6: D48 step 2** (tag `v1.3.6` on `7694304`, with the user's permission).
+  - PSMs are no longer in a catalog; their counts come from `bundle.json`.
+  - Row checks read Parquet footers.
+  - A catalog folder derives each deposit's rows once, under `derived/`.
+  - aging's publish of 170 deposits drops from 573 s to 61 s.
+  - Sent aging 115, PXReprise 054 and ptmQtl 050. PXReprise installed 1.3.6 (055). aging still serves a 1.3.5 catalog
+    (`c4a89ff3b31f3d62`).
+- **1.4.0 (G103):** a second session, datarepo-9b, owns `feat/1.4.0-ingest` (`code/_wt_140_ingest`, pushed tip
+  `54453e1`) and has built G106, PXR-R12, G101, G26, G102/G107, schema 0.0.16 and PXR-R23 on it.
+  - G26 moves peptidoform keys (ten tokens). The mzLib bump moves none.
+  - At close it was merging the ptmQtl engines and running the scratch re-ingest of aging's 171 deposits.
+  - No date is set until that report is read.
+- **Our MCP entry** runs the 1.3.6 binary on aging's catalog folder.
+- **`design/NOTE_FROM_CodeReview_2026-10-06_dq2-talk-directly.md`:** the user's request to settle DATAREPO-Q2 directly
+  with sdrf and QuantProject, not through the user. Still open as G91.
+- **Pick up at:** CLAUDE.md's list. First, read datarepo-9b's re-ingest report; a difference no item explains blocks
+  1.4.0. Then propose 1.4.0's date to PXReprise (thread 056).
+
+## Earlier (2026-10-19, thirty-second session): datarepo 1.3.3, 1.3.4 and 1.3.5 released; nothing owed to any peer
 
 - **Released datarepo 1.3.5: D48 step 1** (tag `v1.3.5` on `e1525b3`, published 17:48 UTC with the user's permission).
   `build --out <folder>` writes versioned catalog files and a `latest.json` pointer, with the bundle and engine tables

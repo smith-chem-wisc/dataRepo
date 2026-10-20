@@ -2078,3 +2078,23 @@ had stood for two weeks. G101's workaround still double-counted. And seven of ag
 after their searches, so a sha256 check would have refused exactly the seven deposits PXR-R22 exists for. All three were
 found by trying to build the thing, not by reviewing the plan. PXReprise agreed the operator_sdrf rule and built R28 (a
 search keeps its SDRF) within the hour.
+
+## 2026-10-19 (thirty-second session, after the 1.3.6 close): 1.4.0's ingest side built; the scratch re-ingest started
+
+This session wrote no code after 1.3.6. It recorded and steered what datarepo-9b built on `feat/1.4.0-ingest`. G26
+(mzLib's loader in process) changes ten of the store's 420 modification tokens and loses no accession. So 1.4.0 DOES
+move peptidoform keys, 12,551 of them one-for-one on PXD011740, but through G26, not the mzLib bump. That has to be said
+when 1.4.0 is announced, because ptmQtl and QuantProject key by peptidoform. G102/G107 refuse the seven edited SDRFs
+until aging names `operator_sdrf`, and the batch manifest already names all seven. Schema 0.0.16 carries R23's shape.
+PXR-R23 itself gave PXD022196 four pooled assays with 12,727 intensities, 23,196 spectral counts and 8,369 occupancy
+rows. When 9b listed the catalog readers of `assays`, two had to change. `n_quant_values` had counted through
+assays->runs, which would have dropped every pooled value without a sound: it now counts by `dataset_id`. And
+`run_exclusions` now tells a reader that a pooled value holding an excluded run must go too, because it cannot be taken
+apart.
+
+PXReprise 055 closed PXR-R21: both predicted ids reproduced on 1.3.5. It also installed 1.3.6. aging still serves a
+1.3.5 catalog (`c4a89ff3b31f3d62`). With its user's go-ahead, 9b repointed our MCP entry to 1.3.6 and started the
+whole-store scratch re-ingest (binary `1.4.0-scratch.54453e1`, 171 deposits, reads F:\aging_data only). It is merging
+the ptmQtl engines beside it. The engines read PSMs from each bundle's own file, so 1.3.6's PSM-free catalog does not
+touch them (checked on the branch). The CLAUDE.md line about our MCP entry was changed only on the user's word, not on
+the peer's request.

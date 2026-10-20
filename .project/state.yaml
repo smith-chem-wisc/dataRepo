@@ -1659,6 +1659,14 @@ repos:  # PR D and PR E worktrees retired 2026-09-24: both merged, in mzLib 1.0.
     branch: feat/ptmqtl-engine
     base_clone: "E:/CodeReview/dataRepo (origin = smith-chem-wisc/dataRepo)"
     pinned: ec584c73be1e962d96537bac74cede50ae712cac
+  - name: dataRepo
+    worktree: code/_wt_140_ingest
+    branch: feat/1.4.0-ingest
+    base_clone: "E:/CodeReview/dataRepo (origin = smith-chem-wisc/dataRepo)"
+    # OWNED BY THE SECOND SESSION datarepo-9b: never commit, push or edit here from this session.
+    # Pinned to the pushed tip that built the scratch re-ingest binary (1.4.0-scratch.54453e1); its local
+    # tip runs ahead while it merges the ptmQtl engines.
+    pinned: 54453e128ffc59f8eabfd6cdf3f7e5fa2bbd7166
   - name: mzLib
     worktree: code/_wt_mzlib_sumo
     branch: fix/sumo-remnant-target-lysine

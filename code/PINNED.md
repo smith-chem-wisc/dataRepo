@@ -22,6 +22,7 @@ after the PRs shipped in **mzLib 1.0.592** / pyMzLib 0.2.0. The branches remain 
 | repo | worktree | branch | base clone | pinned commit |
 |---|---|---|---|---|
 | dataRepo | `code/_wt_ptmqtl` | `feat/ptmqtl-engine` (pushed to `origin` = smith-chem-wisc/dataRepo) | this repo, off `master` 7d47d64 | `ec584c73be1e962d96537bac74cede50ae712cac`: the ptmQtl engines (G88, D44); no PR yet |
+| dataRepo | `code/_wt_140_ingest` | `feat/1.4.0-ingest` (pushed to `origin` = smith-chem-wisc/dataRepo) | this repo, off `master` | `54453e128ffc59f8eabfd6cdf3f7e5fa2bbd7166`: 1.4.0's ingest side (G103), the pushed tip that built the scratch re-ingest binary. **Owned by the second session datarepo-9b**; this session never commits there. No PR yet |
 | mzLib | `code/_wt_mzlib_sumo` | `fix/sumo-remnant-target-lysine` (pushed to `origin` = trishorts/mzLib) | `E:\GitClones\mzLib`, off `smith/master` b1e925ff9 | `6974a4d4cede89b84a1409411593e391ecbd252a`: [smith-chem-wisc/mzLib#1432](https://github.com/smith-chem-wisc/mzLib/pull/1432), closes #1431 |
 
 **`feat/ptmqtl-engine` merges only after an mzLib release carries #1430.**

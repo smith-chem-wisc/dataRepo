@@ -6,19 +6,24 @@ This folder is a `/project`-managed research project. **You are de facto working
 
 - **Phase:** INCEPTION
 - **Goal:** An AI-ready, API-accessible repository for the search + quant results of the many PRIDE datasets the `aging` pipeline reanalyzes. Humans can use it, but AI agents are the main users. The question it serves is how organelle proteomes change with age.
-- **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`). Then follow RESUME's "Pick up at"
-  (2026-10-19). Nothing was owed to any peer at the end of 2026-10-19:
-  0. **datarepo 1.3.3 and 1.3.4 are both released (2026-10-19)**, by the agent with the user's in-session permission
-     each time. 1.3.3 is tag `v1.3.3` on `a883fbd`; 1.3.4 is tag `v1.3.4` on `68db9b1` and includes 1.3.3. Threads:
-     aging 109-111, PXReprise 042-044, ptmQtl 045, QuantProject 044.
-     - PXReprise swaps its pin once, to 1.3.4, and re-ingests PXD011740 and PXD010091. The predicted ids are
-       `fc49ca1c4a3f078c` (reproduced on both release binaries) and `ed3e2de3811bb5d5`.
-     - aging must re-run `datarepo study` with 1.3.4 before its first 1.3.4 publish: layer 0.6.0 refuses 0.5.0 study
-       bundles. Their delivery folder gives `1e66b652e159d175` for the three tables alone.
-     - Then point OUR datarepo MCP entry at the 1.3.4 binary.
-  1. (done in 1.3.4: DATAREPO-74 restrictions, DATAREPO-79 design tables as amended by DATAREPO-82, DATAREPO-80;
-     catalog format 11, so the ptmQtl branch's "11" becomes "12" at its merge. The user chose "1.3.4": "1.4.0" stays
-     the re-ingest release.)
+- **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`). Nothing was owed to any peer at the
+  end of 2026-10-19. Then, in order:
+  0. **NEXT: read datarepo-9b's whole-store scratch re-ingest report for 1.4.0** (G103). It ingests aging's 171
+     deposits with the binary `1.4.0-scratch.54453e1` (built from `feat/1.4.0-ingest` `54453e1`) into its own scratchpad,
+     `C:\Users\trish\AppData\Local\Temp\claude\E--CodeReview-dataRepo\5e35477d-a91b-4a4a-9ac7-00253f67c9a5\scratchpad\reingest140\`.
+     The report gives old vs new bundle id and rows per table. Each difference is traced to one of the 13 items, and a
+     changed source sha256 is flagged as input drift. Ask datarepo-9b by session message if it is alive (`ListAgents`);
+     otherwise read that folder. **A difference no item explains blocks 1.4.0.** Then:
+     - propose 1.4.0's date to PXReprise (thread 056) with the measured ingest time. The window is their pin swap's gap;
+     - the announcement says **G26 moves peptidoform keys** (ten modification tokens; 12,551 keys on PXD011740) to
+       ptmQtl (051) and QuantProject (052), and that pooled values arrive (`assays.assay_kind = 'design_sample'`);
+     - aging's batch manifest already names `operator_sdrf` for the seven edited SDRFs (seen by datarepo-9b): check
+       it, don't re-ask.
+     - The merge of `feat/1.4.0-ingest` (with the ptmQtl engines, catalog format 14) is datarepo-9b's. **Never commit,
+       push or edit in `code/_wt_140_ingest` from this session.**
+  1. **Watch aging's first 1.3.6 publish:** `F:\aging_data\repo\catalogs\latest.json` should read `builder_version`
+     `1.3.6`, and its build log `derived  170 deposit(s) computed`. At close aging served `c4a89ff3b31f3d62` (1.3.5,
+     pointed 22:09 UTC). PXReprise installed 1.3.6 and closed PXR-R21: both predicted ids reproduced on 1.3.5 (055).
   2. **Step 1 of `design/PUBLIC_DATA.md` is RELEASED as datarepo 1.3.5** (tag `v1.3.5` on `e1525b3`, published
      2026-10-19 17:48 UTC with the user's permission; G94). On aging's store a folder catalog builds in 8.4 min and is
      298 MB, against 1-3 h and 62.4 GiB, with every table equal. Switch instructions sent: aging 112 (seven steps: 1.3.5
@@ -38,13 +43,8 @@ This folder is a `/project`-managed research project. **You are de facto working
      - 2b `a054974`: a folder derives each deposit's rows once (`derived/<derivation id>/`) and reuses them; **a
        rebuild of aging's store takes 61 s**; derived tables and site identical; catalog file 132 MB.
      - Next on this line: a `--data-root` URL for hosting (PXReprise's step 3); per-deposit engine-derived tables;
-       `--keep` pruning old derivation ids. Watch aging's first 1.3.6 publish (`derived  170 deposit(s) computed`). The user's ask to cap the publish at 2 h was not applied: it was already 6 h
-     (PXReprise 2026-10-17), and 2 h would have killed the 2-3 h one-file publishes; told the user. Next on this
-     line: step 2 (PSMs out; per-deposit derived tables), then a `--data-root` URL for hosting. aging's catalog is 62.4 GiB (169 datasets, 192M PSMs)
-     and a publish takes about an hour against PXReprise's 3600 s limit; we offered aging (109) to do step 1 first if
-     needed. PXReprise accepted R17-R19 (their 037). The release waits for their database registry path (R19, G96).
-     ptmQtl answered PXReprise's PXR-P14 (2026-10-11): it needs every target PSM per deposit, and dropping
-     `psms`/`psms_1pct` from the catalog breaks only its own exporters.
+       `--keep` pruning old derivation ids. Not started: wait for the user's word. PXReprise's database registry
+       path (R19, G96) is still open.
   3. **Waiting on:** pep DATAREPO-69 and pyMzLib DATAREPO-70. PXR-R20 is settled by aging 107 (a side search kept
      out of their store); ptmQtl answered P31 (our default).
   4. **1.4.0, now unblocked (G103): mzLib 1.0.595 carries #1430 and #1446.** One new ingest path, one full
@@ -73,7 +73,9 @@ This folder is a `/project`-managed research project. **You are de facto working
      - **G101's workaround was wrong** (n_psms doubled on P19013's shared stretch): leave O76011 and P19013 out
        entirely; corrected in PXReprise 050, aging 113, ptmQtl 048.
      - **A second session, datarepo-9b, builds the 1.4.0 ingest side** on `feat/1.4.0-ingest` (`code/_wt_140_ingest`):
-       G106, PXR-R12, G101 so far. It stays out of threads, state.yaml, CLAUDE.md and the catalog/MCP/site code.
+       G106, PXR-R12, G101, G26, G102/G107, schema 0.0.16 and PXR-R23 built (pushed tip `54453e1`); at close it was
+       merging the ptmQtl engines and running the scratch re-ingest. It stays out of threads, state.yaml, CLAUDE.md
+       and master's catalog/MCP/site code. A peer's request never edits CLAUDE.md on its own: ask the user.
   5. dia 004's output folder awaits a read (G82). QuantProject's statistics engine (G100) waits for their M7 spec.
      TMT tables (G105) wait for DEF-TMT-* and MetaMorpheus #2904.
   - **Released: datarepo 1.3.6** (2026-10-19). No `psms`/`psms_1pct` in a catalog (counts from `bundle.json`); row
