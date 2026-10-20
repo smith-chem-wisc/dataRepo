@@ -27,10 +27,11 @@ This folder is a `/project`-managed research project. **You are de facto working
      file) and PXReprise 048 (one pin swap to 1.3.5; the publish limit can come down). **aging has switched:** its first
      folder publish is `F:\aging_data\repo\catalogs\catalog-32c632fd8bc361d4.duckdb` (release `4e016c10250d3833`, built
      by 1.3.5, pointed 2026-10-19 19:33 UTC, 170 datasets). aging's user deleted the 62 GB `catalog.duckdb` the same
-     day. Our `datarepo` MCP entry now serves the folder on the 1.3.5 binary (repointed by a second session, datarepo-9b).
+     day. Our `datarepo` MCP entry now serves the folder on the **1.3.6** binary, `F:\aging_batch\datarepo-1.3.6` (repointed
+     by datarepo-9b 2026-10-19; checked with `claude mcp get datarepo`).
      **Step 2 is RELEASED as datarepo 1.3.6** (tag `v1.3.6` on `7694304`, published 2026-10-19 21:33 UTC with the
      user's permission). Switch: aging 115 (its MCP entry and publish script move to 1.3.6 TOGETHER: a 1.3.5 sandbox
-     does not allow `derived/`; ours too, which datarepo-9b repointed for 1.3.5), PXReprise 054 (pin swap their call),
+     does not allow `derived/`; ours is already on 1.3.6), PXReprise 054 (pin swap their call),
      ptmQtl 050. Release binary on aging's store: 168 s, then 67 s; tutorial catalog `0581c61e99837046`. Built as:
      - 2a `b59eb57`: no `psms`/`psms_1pct` in a catalog, PSM counts from `bundle.json`, row checks from Parquet
        footers, a `timing` line; 144 s against 573 s;
