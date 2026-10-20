@@ -59,8 +59,11 @@ or to an input that changed on disk.
   - With the curated SDRF their samples are pooled assays of two injections. Their values are now stored.
   - The ptmQtl engines leave those values out, as DATAREPO-P32 (b) asks.
 - Every bundle id moves, as a new ingest path must.
-  - These ids are not the release's: the branch has changed the ingest since `54453e1`, in `ccf7acf`.
-  - That change gives a protein N-terminal site the window of residue 1. It moves no row count.
+  - These ids are the release's for unchanged inputs. A bundle id hashes the inputs, the ingest path and the schema,
+    never the code (checked 2026-10-20: PXD047288 re-ingested at `929f92f` gives the same `bfbcd286d8033e4d`).
+  - The rows are not quite the release's: the branch has changed the ingest since `54453e1`. For example, `ccf7acf`
+    gives a protein N-terminal site the window of residue 1, which moves no row count. So no scratch bundle is ever
+    served.
 
 ## Found on the way
 

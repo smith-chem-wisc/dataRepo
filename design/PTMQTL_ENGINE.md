@@ -20,6 +20,17 @@ definitions, the mzLib code, and review of the PR.
   - every database in `run.json`;
   - S2c and S2d, with `excluded_sites.tsv`;
   - S3b's sample types, from the capture list v4 and `runs.enrichment`.
+- **And ptmQtl's two rulings of 2026-10-20** (their 051, 052), built the same day:
+  - S2c v3 (their D59): the blocking modifications are mzLib's own classification (`Modification.BlocksCleavage`,
+    #1119, in 1.0.595), resolved by `MzLibModificationLookup` then `GlobalModificationLookup` on the MetaMorpheus name,
+    plus five lysine acyl amides mzLib's list misses (isonicotinyl, lipoyl, methacryl, myristoyl, palmitoyl). Each
+    site's reason says whose list it is on.
+  - S2e (their D58): a methyl-K/R site (UNIMOD 34, 36, 37, under any name) is left out when at least half of the PSMs
+    placing the methyl there also carry a carbamyl (UNIMOD:5), read off the bundle's ProForma as ptmQtl's script reads
+    it. It is written once per name the bundle stores at that place. Its gate lifts for a search that declared
+    carbamidomethyl (UNIMOD:4) on M, K and the N-terminus; no stored search does.
+  - S2e counts the whole-proteome runs only, the runs whose occupancy it protects, as ptmQtl's list does. It is a
+    share, so another run's PSMs could move a site either way. S2c's "any" keeps reading every run (question 9).
   - **Not built:**
     - DEF-SITE-TRAIT v2: mzLib 1.0.595 lacks #1464, so the rows stay v1, as G99 ties the version to the release.
     - The bounds (their D37, D39-D49): their mzLib change, G46; the ceiling rule is frozen, not extended.
@@ -53,6 +64,22 @@ list exactly.
     does (aging's S76).
   - S2d (b) leaves out only stored sites of the modification.
 
+**Measured 2026-10-20, S2c v3 and S2e** (`ptmqtl_check` `runs_v3`, scratch), on the 105 of ptmQtl's 107 deposits that
+have a re-ingested bundle (PXD031223 and PXD031782 have none), against `g40_blocking_rule_v3` and
+`g39_carbamyl_methyl_v1`:
+- **96 deposits** (whole-proteome runs only, the search ptmQtl's catalog served): S2c is identical site for site, each
+  site's list agreeing too. S2e's carbamyl-carried sites number the same in all 96, with the same PSM counts on every
+  site both write.
+  - ptmQtl lists 261 sites more. None has a stored `ptm_sites` row of that methyl, so none has occupancy to leave out.
+  - Their methyl PSMs pass S7's PEP q-value tier, but none has the q-value of 0.01 or less that `ptm_sites` needs. For
+    example, PXD008934's O14561 K106: 6 PSMs at q 0.041 to 0.121.
+- **4 deposits read another search:** PXD001054, PXD005014, PXD010091 and PXD011740. These are PXReprise's NEM
+  re-searches, ingested after catalog `32c632fd`.
+- **5 deposits have capture runs:** PXD018097, PXD030939, PXD038328, PXD061654 and PXD077298.
+  - S2c reads every run here, so it leaves out 3,252 more sites, 2,600 of them in PXD061654 (question 9).
+  - S2e reads the whole-proteome runs, and its counts equal ptmQtl's in all five. Counting every run had put 61 sites in
+    and taken 14 out across the five, which is why it reads the whole-proteome runs.
+
 **ptmQtl's first answers (session message, 2026-10-19), pending their user's rulings:**
 - PXD011740: corrected by ptmQtl the same day. Their D56 applies S2d (a) to the whole deposit on purpose, not only its
   six NEM runs (sample1-sample6): the exclusion list is per site, so this is the safer error. A deposit-level cysteine
@@ -74,13 +101,12 @@ list exactly.
   lysine whose ε-amine is acylated, so DEFINITIONS is the one that is incomplete.
   - Neither the code nor the definitions catch six more acyl-K names: N6-isonicotinyl, N6-methacryl, N6-benzoyl,
     N6-propionyl, N6-biotinyl and N6-lipoyl. On catalog 9f943cd4 these are 298, 274, 102, 72, 57 and 54 sites.
-  - Whether S2c grows to take them is their user's call. The engines keep the code's patterns until the thread
-    answers.
+  - **Ruled, their D59 (2026-10-20):** S2c v3, built (above). Propionyl, benzoyl and biotinyl come from mzLib's list;
+    isonicotinyl, methacryl and lipoyl from ptmQtl's five.
 - New: in PXD008934, 72 % of methyl-K/R PSMs also carry a carbamyl. Carbamyl plus methyl is carbamidomethyl,
-  iodoacetamide over-alkylation split in two. Whether it becomes an S2 rule is their user's call; nothing is built.
+  iodoacetamide over-alkylation split in two. **Ruled, their D58 (2026-10-20):** S2e, built (above).
 
-1. **S2c's names.** `measure.py`'s `utyryl` also takes hydroxybutyryl-K and 2-hydroxyisobutyryl-K; DEFINITIONS lists
-   only butyryl. *Default: the code's patterns.*
+1. **S2c's names.** Answered by D59: mzLib's classification plus five acyl amides.
 2. **Do S2c's and S2d's site exclusions reach type P?** DEFINITIONS reads them as site rules; the runner removes
    occupancy cells only (`Program.cs:143-144`), so type P is 27,271 rows in all three of its runs. *Default:*
    - type A and site-trait fits only;
@@ -104,7 +130,8 @@ list exactly.
 8. **Pooling a deposit with some non-whole-proteome runs** (the five `capture_runs` deposits). *Default: none of its
    rows pool.* The alternative is to pool its type A rows, which read whole-proteome runs only.
 9. **S2c's evidence runs.** Every observation of the deposit is read; `measure.py` read the exported whole-proteome
-   runs only. *Default: every run* (more evidence is the safer error).
+   runs only. *Default: every run* (more evidence is the safer error). It decides 3,252 sites in five deposits on v3.
+   S2e, a share, reads the whole-proteome runs, as theirs does.
 10. **For information:**
     - The runner implements neither D35 nor P32.
     - It writes `meta:human`, not `meta:NCBITaxon:<taxid>`; `export_to_datarepo.py` still writes DEF-PTM-PAIR v1.
