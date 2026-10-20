@@ -601,6 +601,15 @@ gaps:
     n_quant_values counts every stored value via q.dataset_id (was assays->runs, which drops pooled values) with a
     description; run_exclusions' description says a pooled value containing an excluded run must be left out too.
     Next on the branch (with its user's OK): the ptmQtl engine merge (rebuilt on 1.0.595), then the scratch re-ingest.
+    SCRATCH RE-INGEST STARTED 2026-10-19 (datarepo-9b, its user's go-ahead): binary 1.4.0-scratch.54453e1
+    (self-contained, from 54453e1), a snapshot of the batch manifest (171 included, the 7 operator_sdrf entries named),
+    `ingest <manifest> <acc> --json --store <scratch>`, three at a time, largest first; reads F:\aging_data only, writes
+    only under 9b's scratchpad. Baseline: each deposit's newest stored bundle. Report: old vs new id and rows per table,
+    each difference traced to one of the 13 items, sha256 drift flagged as input drift. The ptmQtl engine merge runs
+    beside it in the worktree. Our MCP entry is on F:\aging_batch\datarepo-1.3.6 (checked with `claude mcp get`).
+    PXReprise 055: PXR-R21 closed (fc49ca1c4a3f078c and ed3e2de3811bb5d5 reproduced on 1.3.5; PXD005014
+    43103c95bebbf8d1, PXD001054 3b677c1a7e86ab40); 1.3.6 installed at F:\aging_batch\datarepo-1.3.6, their ingest pin
+    takes it at the next swap (v0.4.27). aging serves c4a89ff3b31f3d62 (1.3.5, pointed 22:09 UTC); no 1.3.6 publish yet.
     SCHEMA 0.0.16 on feat/1.4.0-ingest 27dcf3d (datarepo-9b): assay_kind/design_label/assay_runs (R23's shape; the
     pooled rows come next), sequence_window, G95's dataset_id pattern (USIs on the bare accession), G104 (a)'s word.
     SchemaContract.AddedTables (assay_runs) keeps a Python0320 catalog at 0.0.13's tables. MERGE NOTE for Catalog.cs:
