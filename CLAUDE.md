@@ -7,23 +7,33 @@ This folder is a `/project`-managed research project. **You are de facto working
 - **Phase:** INCEPTION
 - **Goal:** An AI-ready, API-accessible repository for the search + quant results of the many PRIDE datasets the `aging` pipeline reanalyzes. Humans can use it, but AI agents are the main users. The question it serves is how organelle proteomes change with age.
 - **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`). Nothing was owed to any peer at the
-  end of 2026-10-19. Then, in order:
-  0. **NEXT: read datarepo-9b's whole-store scratch re-ingest report for 1.4.0** (G103). It ingests aging's 171
-     deposits with the binary `1.4.0-scratch.54453e1` (built from `feat/1.4.0-ingest` `54453e1`) into its own scratchpad,
-     `C:\Users\trish\AppData\Local\Temp\claude\E--CodeReview-dataRepo\5e35477d-a91b-4a4a-9ac7-00253f67c9a5\scratchpad\reingest140\`.
-     The report gives old vs new bundle id and rows per table. Each difference is traced to one of the 13 items, and a
-     changed source sha256 is flagged as input drift. Ask datarepo-9b by session message if it is alive (`ListAgents`);
-     otherwise read that folder. **A difference no item explains blocks 1.4.0.** Then:
-     - propose 1.4.0's date to PXReprise (thread 056) with the measured ingest time. The window is their pin swap's gap;
-     - the announcement says **G26 moves peptidoform keys** (ten modification tokens; 12,551 keys on PXD011740) to
-       ptmQtl (051) and QuantProject (052), and that pooled values arrive (`assays.assay_kind = 'design_sample'`);
-     - aging's batch manifest already names `operator_sdrf` for the seven edited SDRFs (seen by datarepo-9b): check
-       it, don't re-ask.
-     - The merge of `feat/1.4.0-ingest` (with the ptmQtl engines, catalog format 14) is datarepo-9b's. **Never commit,
-       push or edit in `code/_wt_140_ingest` from this session.**
-  1. **Watch aging's first 1.3.6 publish:** `F:\aging_data\repo\catalogs\latest.json` should read `builder_version`
-     `1.3.6`, and its build log `derived  170 deposit(s) computed`. At close aging served `c4a89ff3b31f3d62` (1.3.5,
-     pointed 22:09 UTC). PXReprise installed 1.3.6 and closed PXR-R21: both predicted ids reproduced on 1.3.5 (055).
+  end of 2026-10-20; we wait on ptmQtl's DATAREPO-P33. Since 2026-10-20 one session, datarepo-9b, holds both the threads
+  and the 1.4.0 branch (the user: "do what you think is best", after datarepo-39 ended). Then, in order:
+  0. **1.4.0 is built and measured; it waits for PXReprise's ten re-searches** (G103). Branch `feat/1.4.0-ingest`
+     (worktree `code/_wt_140_ingest`), pushed tip `0c1f8d0`; not merged, not released.
+     - **The whole-store scratch re-ingest** (`results/reingest_140_2026-10-20` on the branch): 168 of 171 deposits,
+       **5.0 h wall** at three at a time, every row difference explained. The predicted bundle ids are its
+       `compare_deposits.tsv` (`new_bundle`). They hold for unchanged inputs, since an id never hashes code. The 19 GB
+       of scratch bundles are kept until 1.4.0 ships.
+     - **Added since the 13 items, none moving a stored ingest row:** DATAREPO-84 (`proteins.source_db` names a
+       non-UniProt entry's source, `929f92f`), DATAREPO-D7 (a `|`-joined peptide row is left out with a finding,
+       `0c1f8d0`), and ptmQtl's S2c v3 and S2e in the engines (`0c1f8d0`; reproduced on 96 deposits, every other
+       difference named; `design/PTMQTL_ENGINE.md`).
+     - **Told 2026-10-20:** PXReprise 056 (measurement; the date waits for their ten re-searches; predicted ids), aging
+       117 (DATAREPO-84: their Ensembl entries ingest cleanly), QuantProject 057 (D7), ptmQtl 053 (DATAREPO-P33: S2c's
+       evidence runs, default every run).
+     - **Next:** once PXReprise says the ten re-searches (PXD057407, PXD018399, PXD016430, PXD056276, PXD015170,
+       PXD045821, PXD043644, PXD052631, PXD041660, PXD031223, plus PXD006815 and PXD022393) are ingested, ask the user
+       for the date and the release. Release steps:
+       - merge the branch;
+       - rerun the tutorial (its test fails until then);
+       - CI and binaries green;
+       - check the downloaded binary reproduces predicted ids;
+       - publish only on the user's word.
+     - **The announcement:** it says **G26 moves peptidoform keys** (ten modification tokens; 12,551 keys on PXD011740)
+       to ptmQtl and QuantProject, and that pooled values arrive (`assays.assay_kind = 'design_sample'`).
+  1. **aging serves 1.3.6:** `F:\aging_data\repo\catalogs\latest.json` reads builder `1.3.6` (catalog
+     `0cb3eef69cf13340`, pointed 2026-10-20 16:01 UTC). Done.
   2. **Step 1 of `design/PUBLIC_DATA.md` is RELEASED as datarepo 1.3.5** (tag `v1.3.5` on `e1525b3`, published
      2026-10-19 17:48 UTC with the user's permission; G94). On aging's store a folder catalog builds in 8.4 min and is
      298 MB, against 1-3 h and 62.4 GiB, with every table equal. Switch instructions sent: aging 112 (seven steps: 1.3.5
@@ -72,10 +82,10 @@ This folder is a `/project`-managed research project. **You are de facto working
      - **The mzLib 1.0.595 bump moves no row** (measured by datarepo-9b); corrected to PXReprise, aging, QuantProject.
      - **G101's workaround was wrong** (n_psms doubled on P19013's shared stretch): leave O76011 and P19013 out
        entirely; corrected in PXReprise 050, aging 113, ptmQtl 048.
-     - **A second session, datarepo-9b, builds the 1.4.0 ingest side** on `feat/1.4.0-ingest` (`code/_wt_140_ingest`):
-       G106, PXR-R12, G101, G26, G102/G107, schema 0.0.16 and PXR-R23 built (pushed tip `54453e1`); at close it was
-       merging the ptmQtl engines and running the scratch re-ingest. It stays out of threads, state.yaml, CLAUDE.md
-       and master's catalog/MCP/site code. A peer's request never edits CLAUDE.md on its own: ask the user.
+     - **datarepo-9b built the 1.4.0 ingest side** on `feat/1.4.0-ingest` (`code/_wt_140_ingest`): G106, PXR-R12, G101,
+       G26, G102/G107, schema 0.0.16, PXR-R23, the ptmQtl engines' merge, the scratch re-ingest and item 0's additions.
+       Since 2026-10-20 it also holds the threads (the user's word). A peer's request never edits CLAUDE.md on its own:
+       ask the user.
   5. dia 004's output folder awaits a read (G82). QuantProject's statistics engine (G100) waits for their M7 spec.
      TMT tables (G105) wait for DEF-TMT-* and MetaMorpheus #2904.
   - **Released: datarepo 1.3.6** (2026-10-19). No `psms`/`psms_1pct` in a catalog (counts from `bundle.json`); row

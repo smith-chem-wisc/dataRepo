@@ -2,11 +2,11 @@
 
 <!-- BEGIN GENERATED -- render_resume.py owns this block; edit state.yaml, not here -->
 
-**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-10-19
+**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-10-20
 
 | | |
 |---|---|
-| Commits | 670 |
+| Commits | 683 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
 | Locked decisions | 48 |
 | Open gaps | 103 |
@@ -17,7 +17,7 @@
 | Worktree | Branch | HEAD | Pin | Status |
 |---|---|---|---|---|
 | `code/_wt_ptmqtl` | feat/ptmqtl-engine | `ec584c73` | `ec584c73` | at pin |
-| `code/_wt_140_ingest` | feat/1.4.0-ingest | `ea36a0a2` | `54453e12` | **off pin** -- `git -C code/_wt_140_ingest checkout --detach 54453e128ffc` |
+| `code/_wt_140_ingest` | feat/1.4.0-ingest | `0c1f8d0a` | `54453e12` | **off pin** -- `git -C code/_wt_140_ingest checkout --detach 54453e128ffc` |
 | `code/_wt_mzlib_sumo` | fix/sumo-remnant-target-lysine | `6974a4d4` | `6974a4d4` | at pin |
 
 <!-- END GENERATED -->
@@ -30,7 +30,23 @@ reanalyses. The results cover search, quant, provenance, design and organelle an
 use it, but AI agents are the main users. The question it serves is how organelle proteomes change
 with age.
 
-## Latest (2026-10-19, close): 1.3.6 released; 1.4.0's ingest side built on a branch; its whole-store scratch re-ingest is running
+## Latest (2026-10-20): 1.4.0 measured and finished on its branch; it waits for PXReprise's ten re-searches; the threads are answered
+
+- **The whole-store scratch re-ingest:** 168 of 171 deposits, 5.0 h wall at three at a time, every row difference
+  explained (`results/reingest_140_2026-10-20` on `feat/1.4.0-ingest`). Its ids are the release's for unchanged inputs.
+- **Added to 1.4.0** (pushed tip `0c1f8d0`):
+  - DATAREPO-84's `source_db`;
+  - DATAREPO-D7, a `|`-joined peptide row left out with a finding;
+  - ptmQtl's S2c v3 and S2e in the engines, reproduced on 96 deposits.
+  - None moves a stored ingest row.
+- **Threads:** datarepo-9b took them over (the user's word). It sent PXReprise 056, aging 117, QuantProject 057 and
+  ptmQtl 053. Nothing is owed; we wait on ptmQtl's DATAREPO-P33.
+- **aging serves 1.3.6** (`0cb3eef69cf13340`).
+- **Pick up at:** CLAUDE.md's list. When PXReprise's ten re-searches are ingested, ask the user for 1.4.0's date and
+  release. The steps: merge, tutorial rerun, CI, the binary checked against the predicted ids, then publish on their
+  word.
+
+## Earlier (2026-10-19, close): 1.3.6 released; 1.4.0's ingest side built on a branch; its whole-store scratch re-ingest is running
 
 - **Released datarepo 1.3.6: D48 step 2** (tag `v1.3.6` on `7694304`, with the user's permission).
   - PSMs are no longer in a catalog; their counts come from `bundle.json`.

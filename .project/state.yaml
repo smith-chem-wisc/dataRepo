@@ -572,7 +572,14 @@ gaps:
     replicate source reference]) beside fraction_source / technical_replicate_source. Kept verbatim today; describe
     them when a draft carrying them is first ingested.
   - >-
-    G103 NEW 2026-10-19. 1.4.0 is now unblocked: mzLib 1.0.595 (2026-10-15) carries #1430 and #1446 (verified with the
+    G103 UPDATED 2026-10-20 (datarepo-9b, which took over the threads at the user's word): the whole-store scratch
+    re-ingest is MEASURED (results/reingest_140_2026-10-20, b347ff9): 168 of 171 deposits, 5.0 h wall at three at a
+    time, every row difference traced to an item or to an input that changed on disk. Added to 1.4.0 since:
+    DATAREPO-84 source_db (929f92f), ptmQtl's S2c v3 and S2e (their D59, D58) and DATAREPO-D7 (0c1f8d0); none moves a
+    stored ingest row. Told PXReprise 056, aging 117, QuantProject 057, ptmQtl 053 (DATAREPO-P33 open: S2c's evidence
+    runs). The date waits for PXReprise's ten re-searches (session message 2026-10-20) and is the user's; the merge of
+    feat/1.4.0-ingest and the release follow, the release only on the user's ask. Scratch bundles (19 GB) kept until
+    1.4.0 ships. G103 NEW 2026-10-19. 1.4.0 is now unblocked: mzLib 1.0.595 (2026-10-15) carries #1430 and #1446 (verified with the
     compare API, 0cac951 is behind the tag). One new ingest path and one full re-ingest of aging's store (171 deposits
     on 2026-10-19), no re-search, carrying every row change owed: the mzLib bump (CORRECTED 2026-10-19 by datarepo-9b's
     measurement: it moves no row, since our keys are our own Proforma.cs; PXReprise 049 item 1 to be corrected), the ptmQtl

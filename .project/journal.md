@@ -2098,3 +2098,23 @@ whole-store scratch re-ingest (binary `1.4.0-scratch.54453e1`, 171 deposits, rea
 the ptmQtl engines beside it. The engines read PSMs from each bundle's own file, so 1.3.6's PSM-free catalog does not
 touch them (checked on the branch). The CLAUDE.md line about our MCP entry was changed only on the user's word, not on
 the peer's request.
+
+## 2026-10-20 (datarepo-9b): 1.4.0 measured and finished; the threads taken over
+
+The whole-store scratch re-ingest finished: 168 of 171 deposits, 5.0 h wall at three at a time. Every row difference
+traced to one of the thirteen items or to an input that changed on disk. Two inputs had: PXReprise's deleted pin folders
+held the contaminant database for 24 deposits (restored by them at 01:48 UTC), and three searches are gone while they
+are re-searched. On the new bundles the ptmQtl engines refused 8 deposits whose samples were two injections; the reader
+now keeps each injection a run (c4f9b51). aging asked whether five Ensembl-only entries would ingest. Following each path
+found one false label: `source_db` said `uniprot` for any target. It now names the entry's own source (929f92f), moving no
+stored row.
+
+datarepo-39 had ended, and the user said "do what you think is best", so 9b took over the threads. Eight unread messages
+were answered in four replies. ptmQtl's two new rulings went into the engines. S2c now takes mzLib's own
+`BlocksCleavage` plus five acyl amides, and S2e leaves out methyl sites that are carbamidomethyl split in two. On the 96
+deposits where both read the same search and runs, they reproduce ptmQtl's lists. The first S2e comparison counted
+capture-run PSMs, and 14 sites fell under the threshold: a share is not an "any", so S2e now reads the whole-proteome
+runs whose occupancy it protects. QuantProject's D7 found a latent false site: a `|`-joined peptide row would have been
+stored under its first sequence. It is left out with a finding now; none of 5.6M stored rows has one. The re-ingest
+report had said its ids were not the release's; one re-ingest with today's code gave the same id, so the sentence was
+corrected. The date waits for PXReprise's ten re-searches, then the user's word.
