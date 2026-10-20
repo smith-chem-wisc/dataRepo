@@ -41,6 +41,26 @@ Read off ptmQtl's own code on 2026-10-19 (`g40_blocking_rule_v2`, `g39_cysteine_
 the runner's `Program.cs`). The engines follow DEFINITIONS.md. Where it is silent they follow the code, and where the
 two disagree they follow the definitions. Each default below holds until ptmQtl answers.
 
+**Measured 2026-10-19 on re-ingested bundles (`ptmqtl_check`, scratch):** each rule reproduces ptmQtl's own exclusion
+list exactly.
+- S2c: PXD018545 53/53 and PXD027754 28/28, against `g40_blocking_rule_v2`.
+- S2d, against `g39_cysteine_rule_v2`:
+  - (a), NEM: PXD047288, 109/109 places;
+  - (a), cysteine-poor: PXD057490, 424/424;
+  - (b): PXD057490 10/10 and PXD009212 114/114.
+- Two fixes came from that comparison.
+  - An NEM deposit also loses its residue cysteine sites that no passing PSM covers, as `measure.py`'s `covered | on_c`
+    does (aging's S76).
+  - S2d (b) leaves out only stored sites of the modification.
+
+**ptmQtl's first answers (session message, 2026-10-19), pending their user's rulings:**
+- PXD011740 is NEM-labelled only in runs sample1-sample6, not sample1sec-sample6sec. A cysteine list keyed by deposit
+  over-applies it there. It needs a run column, or the deposit split by run. Not built: their user rules.
+- Hydroxybutyryl-K is in S2d (b) on purpose: it is ring-opened NEM, +86.036. 2-hydroxyisobutyryl-K has the same
+  composition, so the mass match takes it too. (Question 1 below is about S2c's pattern, which is separate.)
+- New: in PXD008934, 72 % of methyl-K/R PSMs also carry a carbamyl. Carbamyl plus methyl is carbamidomethyl,
+  iodoacetamide over-alkylation split in two. Whether it becomes an S2 rule is their user's call; nothing is built.
+
 1. **S2c's names.** `measure.py`'s `utyryl` also takes hydroxybutyryl-K and 2-hydroxyisobutyryl-K; DEFINITIONS lists
    only butyryl. *Default: the code's patterns.*
 2. **Do S2c's and S2d's site exclusions reach type P?** DEFINITIONS reads them as site rules; the runner removes
