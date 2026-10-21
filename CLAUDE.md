@@ -7,10 +7,13 @@ This folder is a `/project`-managed research project. **You are de facto working
 - **Phase:** INCEPTION
 - **Goal:** An AI-ready, API-accessible repository for the search + quant results of the many PRIDE datasets the `aging` pipeline reanalyzes. Humans can use it, but AI agents are the main users. The question it serves is how organelle proteomes change with age.
 - **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`). Nothing was owed to any peer at the
-  end of 2026-10-20; we wait on ptmQtl's DATAREPO-P33. Since 2026-10-20 one session, datarepo-9b, holds both the threads
+  end of 2026-10-21; we wait on ptmQtl's DATAREPO-P33. Since 2026-10-20 one session, datarepo-9b, holds both the threads
   and the 1.4.0 branch (the user: "do what you think is best", after datarepo-39 ended). Then, in order:
-  0. **1.4.0 is built and measured; it waits for PXReprise's ten re-searches** (G103). Branch `feat/1.4.0-ingest`
-     (worktree `code/_wt_140_ingest`), pushed tip `0c1f8d0`; not merged, not released.
+  0. **1.4.0 is built and measured; it waits only on the first searches of PXD006815 and PXD022393** (G103).
+     PXReprise 057 (2026-10-21) REVERTED the ten lowres@4 re-searches (they lost 1-16% of PSMs), so the predicted ids
+     hold for the ten again. They re-ingested three with `--overwrite` so `--latest` serves the earlier bundles (G109:
+     is "newest written" the right rule? reply optional). Branch `feat/1.4.0-ingest` (worktree `code/_wt_140_ingest`),
+     pushed tip `0c1f8d0`; not merged, not released.
      - **The whole-store scratch re-ingest** (`results/reingest_140_2026-10-20` on the branch): 168 of 171 deposits,
        **5.0 h wall** at three at a time, every row difference explained. The predicted bundle ids are its
        `compare_deposits.tsv` (`new_bundle`). They hold for unchanged inputs, since an id never hashes code. The 19 GB
@@ -22,9 +25,8 @@ This folder is a `/project`-managed research project. **You are de facto working
      - **Told 2026-10-20:** PXReprise 056 (measurement; the date waits for their ten re-searches; predicted ids), aging
        117 (DATAREPO-84: their Ensembl entries ingest cleanly), QuantProject 057 (D7), ptmQtl 053 (DATAREPO-P33: S2c's
        evidence runs, default every run).
-     - **Next:** once PXReprise says the ten re-searches (PXD057407, PXD018399, PXD016430, PXD056276, PXD015170,
-       PXD045821, PXD043644, PXD052631, PXD041660, PXD031223, plus PXD006815 and PXD022393) are ingested, ask the user
-       for the date and the release. Release steps:
+     - **Next:** once PXReprise says PXD006815 and PXD022393 (first searches) are ingested, ask the user for the date
+       and the release. The ten re-searches are undone (PXReprise 057). Release steps:
        - merge the branch;
        - rerun the tutorial (its test fails until then);
        - CI and binaries green;

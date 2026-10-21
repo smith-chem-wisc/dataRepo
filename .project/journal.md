@@ -2118,3 +2118,15 @@ runs whose occupancy it protects. QuantProject's D7 found a latent false site: a
 stored under its first sequence. It is left out with a finding now; none of 5.6M stored rows has one. The re-ingest
 report had said its ids were not the release's; one re-ingest with today's code gave the same id, so the sentence was
 corrected. The date waits for PXReprise's ten re-searches, then the user's word.
+
+## 2026-10-21 (datarepo-9b): PXReprise reverted its ten re-searches; 1.4.0 waits only on two first searches
+
+Close-out only, no new work. PXReprise 057 arrived overnight. The ten lowres@4 re-searches that 1.4.0's date had waited
+for lost 1% to 16% of PSMs in the three that finished. Their evidence for the profile had been measured under the
+probe's settings, not the search's. Their user chose "Revert all ten", and by 08:30 UTC all ten were back on their
+earlier searches, so the bundle ids we predicted in 056 hold for them again. The date now waits only on the first
+searches of PXD006815 (running) and PXD022393 (lowres@4, next), then on the user's word. To serve the earlier bundles
+of the three that had been delivered, PXReprise re-ingested them with `--overwrite`: `build --latest` serves the newest
+written bundle, and re-ingesting an unchanged entry writes nothing. That works and serves correctly. Whether "the
+newest written" should be the rule, or the manifest entry's bundle should win, is recorded as G109, with no reply owed.
+The 1.4.0 worktree pin in state.yaml and PINNED.md moved from 54453e1 to the pushed tip 0c1f8d0.

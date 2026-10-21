@@ -522,6 +522,13 @@ decisions:
         The plan, and the rules we would refine, are in design/PUBLIC_DATA.md (G94).
 gaps:
   - >-
+    G109 NEW 2026-10-21 (PXReprise 057, no ask): returning a deposit to an EARLIER search's bundle needs `ingest
+    --overwrite`, because `build --latest` serves the newest written bundle (Catalog.cs SelectBundles) and re-ingesting
+    the earlier entry says `unchanged` and writes nothing. PXReprise did that for PXD052631, PXD016430 and PXD015170;
+    the lowres@4 bundles stay in the store unserved. They offered a `--bundle` pin or moving the newer folder out
+    instead. Decide whether "the newest written" is the right rule or the manifest entry's bundle should win; reply to
+    PXReprise either way. Not urgent: what they did serves correctly.
+  - >-
     G108 NEW 2026-10-19 (QuantProject 049, measured on catalog 32c632fd8bc361d4, their aging 084): protein_genes
     (logs.resolve_genes, logs:DEF-GENE-RESOLUTION v1) gives no gene to 303 of PXD057407's 4,374 quantified target groups
     (6.9%, outcome not_in_source), reviewed entries among them (P07759 Serpina3k, P04939 Mup3, P12367 Prkar2a); 75 genes
@@ -571,6 +578,12 @@ gaps:
     deposited SDRF; two new columns can appear (comment[fraction identifier source reference], comment[technical
     replicate source reference]) beside fraction_source / technical_replicate_source. Kept verbatim today; describe
     them when a draft carrying them is first ingested.
+  - >-
+    G103 UPDATED 2026-10-21: PXReprise 057 reverted the ten lowres@4 re-searches (they lost 1-16% of PSMs; their
+    user chose "Revert all ten"), so the predicted bundle ids hold for the ten again and the 1.4.0 date now waits only
+    on the first searches of PXD006815 (running 2026-10-21) and PXD022393 (lowres@4, next). To serve the earlier
+    bundles of PXD052631, PXD016430 and PXD015170 again they re-ingested them with --overwrite, since --latest picks
+    the newest written bundle (G109). The date and the release remain the user's.
   - >-
     G103 UPDATED 2026-10-20 (datarepo-9b, which took over the threads at the user's word): the whole-store scratch
     re-ingest is MEASURED (results/reingest_140_2026-10-20, b347ff9): 168 of 171 deposits, 5.0 h wall at three at a
@@ -1670,10 +1683,9 @@ repos:  # PR D and PR E worktrees retired 2026-09-24: both merged, in mzLib 1.0.
     worktree: code/_wt_140_ingest
     branch: feat/1.4.0-ingest
     base_clone: "E:/CodeReview/dataRepo (origin = smith-chem-wisc/dataRepo)"
-    # OWNED BY THE SECOND SESSION datarepo-9b: never commit, push or edit here from this session.
-    # Pinned to the pushed tip that built the scratch re-ingest binary (1.4.0-scratch.54453e1); its local
-    # tip runs ahead while it merges the ptmQtl engines.
-    pinned: 54453e128ffc59f8eabfd6cdf3f7e5fa2bbd7166
+    # Held by datarepo-9b (which since 2026-10-20 also holds the threads). The scratch re-ingest binary was built
+    # from 54453e1; the pushed tip 0c1f8d0 adds DATAREPO-84, DATAREPO-D7 and ptmQtl's S2c v3 and S2e.
+    pinned: 0c1f8d0aeb281dde98a8668088892874febd4001
   - name: mzLib
     worktree: code/_wt_mzlib_sumo
     branch: fix/sumo-remnant-target-lysine
