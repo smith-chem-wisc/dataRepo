@@ -2,14 +2,14 @@
 
 <!-- BEGIN GENERATED -- render_resume.py owns this block; edit state.yaml, not here -->
 
-**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-10-21
+**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-10-25
 
 | | |
 |---|---|
-| Commits | 685 |
+| Commits | 702 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
-| Locked decisions | 48 |
-| Open gaps | 105 |
+| Locked decisions | 50 |
+| Open gaps | 109 |
 | Gate items skipped | 5 |
 
 **Worktrees** -- details in `code/PINNED.md`
@@ -19,6 +19,8 @@
 | `code/_wt_ptmqtl` | feat/ptmqtl-engine | `ec584c73` | `ec584c73` | at pin |
 | `code/_wt_140_ingest` | feat/1.4.0-ingest | `0c1f8d0a` | `0c1f8d0a` | at pin |
 | `code/_wt_mzlib_sumo` | fix/sumo-remnant-target-lysine | `6974a4d4` | `6974a4d4` | at pin |
+
+> **1 document(s) in `design/` not referenced above** -- `NOTE_FROM_USER_2026-10-21_github-actions-minutes.md`. Add a line for each, or say why not.
 
 <!-- END GENERATED -->
 
@@ -30,7 +32,30 @@ reanalyses. The results cover search, quant, provenance, design and organelle an
 use it, but AI agents are the main users. The question it serves is how organelle proteomes change
 with age.
 
-## Latest (2026-10-21): PXReprise reverted its ten re-searches; 1.4.0 now waits only on two first searches
+## Latest (2026-10-25): GO's 34 GB of copies deleted; GO and pathways designed per target set; 1.4.0 on hold
+
+- **1.4.0 is ON HOLD** by the user's word (D49), although PXReprise 058 delivered PXD006815 and PXD022393. Don't
+  propose a date until the user lifts it. The predicted ids are stale for the 20 deposits PXReprise re-searches from
+  2026-10-22 (G113).
+- **PXR-R29 is done:**
+  - The 269 per-deposit `go_annotation.tsv` (34.2 GB) are deleted (the user ran the delete). Nothing read them.
+  - A scratch build matched the serving catalog's GO tables row for row (PXReprise 060).
+  - The record of what was deleted is `results/go_tsv_cleanup_2026-10-25/deleted.tsv`.
+  - The engine still copies a fresh TSV on each new run. Drop that next release (G110).
+- **GO per target set (D50, G111):** go's mzLib#1497 is open, built to our go 028 amendments.
+  - The view fixture is `E:\CodeReview\go\data\fixtures\go-view-v1-a83d1c63\` (go 029, 030).
+  - Build when #1497 is released.
+- **Pathways (D50, G112):** kegg (new peer, threads 001-006) proposes Reactome membership per target set plus a
+  per-release table, and KEGG gene ids as link-outs only.
+  - Our 006 accepted v2 with `organism` as an `NCBITaxon:` string.
+  - The coverage measurement is in `results/kegg_coverage_2026-10-25/`.
+  - Build when kegg's mzLib PR-3 is released.
+- **Pick up at:** run the inbox (`threads.py inbox`); nothing was owed at close. Then, while 1.4.0 is held, the next
+  change on master is G110: remove the TSV `files` argument at `DataRepo.Runner/GoEngine.cs:362` and its test
+  expectation at `GoEngineTests.cs:122`, for the next release (ask the user which release). G111 and G112 wait on mzLib
+  releases; go and kegg will post them.
+
+## Earlier (2026-10-21): PXReprise reverted its ten re-searches; 1.4.0 now waits only on two first searches
 
 - **PXReprise 057 (no ask):** the ten lowres@4 re-searches lost 1-16% of PSMs, so their user reverted all ten. They are
   back on their earlier searches by 08:30 UTC, and our predicted bundle ids hold for them again.
@@ -38,7 +63,7 @@ with age.
 - **How they went back:** they re-ingested three deposits with `--overwrite`, since `build --latest` serves the newest
   written bundle. The lowres@4 bundles stay in the store, unserved. Is that the rule we want? That's G109; a reply is
   optional.
-- **Pick up at:** run the inbox. When PXReprise says PXD006815 and PXD022393 are ingested, ask the user for 1.4.0's
+- **Pick up at (superseded 2026-10-25: 1.4.0 is on hold):** run the inbox. When PXReprise says PXD006815 and PXD022393 are ingested, ask the user for 1.4.0's
   date and release. The steps: merge `feat/1.4.0-ingest` (`0c1f8d0`), rerun the tutorial, CI and binaries green, the
   downloaded binary checked against the predicted ids, then publish on the user's word.
 

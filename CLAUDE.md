@@ -7,8 +7,18 @@ This folder is a `/project`-managed research project. **You are de facto working
 - **Phase:** INCEPTION
 - **Goal:** An AI-ready, API-accessible repository for the search + quant results of the many PRIDE datasets the `aging` pipeline reanalyzes. Humans can use it, but AI agents are the main users. The question it serves is how organelle proteomes change with age.
 - **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`). Nothing was owed to any peer at the
-  end of 2026-10-21; we wait on ptmQtl's DATAREPO-P33. Since 2026-10-20 one session, datarepo-9b, holds both the threads
+  end of 2026-10-25; we wait on ptmQtl's DATAREPO-P33, pep, pyMzLib, and on mzLib releases from go (#1497) and kegg.
+  Since 2026-10-20 one session, datarepo-9b, holds both the threads
   and the 1.4.0 branch (the user: "do what you think is best", after datarepo-39 ended). Then, in order:
+  - **2026-10-25 (supersedes item 0's "Next"):**
+    - **1.4.0 is ON HOLD by the user** (D49): do not propose a date until they lift it. PXReprise 058 delivered both
+      deposits it waited on. The predicted ids are stale for 20 re-searched deposits (G113).
+    - **The next change on master is G110:** stop GoEngine copying `go_annotation.tsv` into artefacts
+      (`DataRepo.Runner/GoEngine.cs:362`, test `GoEngineTests.cs:122`). Ask the user which release carries it. The 269
+      old copies (34.2 GB) are deleted (PXR-R29, PXReprise 060).
+    - **D50:** reference annotation is stored once per TARGET SET (go's `annotation_db_sha256`), never per deposit.
+      - GO per target set (G111): build on go's fixture `go-view-v1-a83d1c63` when mzLib#1497 is released.
+      - kegg's Reactome engines (G112, kegg threads 001-006): build when kegg's PR-3 is released.
   0. **1.4.0 is built and measured; it waits only on the first searches of PXD006815 and PXD022393** (G103).
      PXReprise 057 (2026-10-21) REVERTED the ten lowres@4 re-searches (they lost 1-16% of PSMs), so the predicted ids
      hold for the ten again. They re-ingested three with `--overwrite` so `--latest` serves the earlier bundles (G109:
@@ -159,7 +169,8 @@ This folder is a `/project`-managed research project. **You are de facto working
   created 2026-09-25 at pride's PRIDE-G1). **Every PR this project opens goes on it**, in any repo:
   add it when opened (`gh project item-add 16 --owner smith-chem-wisc --url <pr>`, Status "In review"),
   move it to "Shipped" when merged. Status options: Planned / In progress / In review / Shipped. Use Bash,
-  not PowerShell, for `gh ... --jq`. Today it holds mzLib #1345 (PR E) and #1346 (PR D), both Shipped.
+  not PowerShell, for `gh ... --jq`. Today it holds seven mzLib PRs (#1345, #1346, #1397, #1403, #1404, #1409, #1432), all merged and Shipped
+  (checked 2026-10-25). dataRepo has no open or draft PR anywhere; the 1.4.0 branch has none yet.
 - **Every question for the user goes in `design/OPEN_QUESTIONS.md`** (D7), with a default. They take it to NCEMS and working-group meetings. Work proceeds on the defaults.
 - **The benchmark questions belong to aging** (D6). Don't write domain questions here.
 
@@ -567,6 +578,14 @@ This folder is a `/project`-managed research project. **You are de facto working
   `file_search_path` is refused (`results/public_data_2026-10-11/sandbox_allowed.py`).
 - **Large real ingests need time and RAM.** PXD012307's 6.2 GB psmtsv took 17 min and ~30 GB; PXD051715's 3.3 GB
   took 9 min. Run them in the background, and the small ones in parallel (512 GB here).
+- **Key a reference annotation by the TARGET SET, never by one database file** (D50, kegg 004). aging's proteome XMLs
+  hold no isoform entries. Every isoform is in an overlay file loaded beside them, and 173 of 178 datasets load two to
+  four target files. A per-file key cuts an isoform from its entry, which breaks go's D37 inheritance. Our kegg 003
+  shipped that mistake and patched over it with a view rule. go's review caught it, not ours.
+- **The auto-mode classifier refuses the agent's delete of store files, even with the user's order** (2026-10-25,
+  "Irreversible Local Destruction"). Hand the user the command. **The `!` prefix runs bash here, not PowerShell**: give
+  `find ... -delete` rather than `Get-ChildItem | Remove-Item`. Record what is deleted (path, size, the hash run.json
+  keeps) first, and verify with a scratch build after.
 
 **Sibling project: `E:\CodeReview\aging`** (the NCEMS pipeline). aging *produces* results under
 `F:\aging_data\<run>\<PXD>\` with `provenance.json` (schema `aging-provenance/2`). dataRepo *ingests and serves*

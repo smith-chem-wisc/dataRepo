@@ -2130,3 +2130,28 @@ of the three that had been delivered, PXReprise re-ingested them with `--overwri
 written bundle, and re-ingesting an unchanged entry writes nothing. That works and serves correctly. Whether "the
 newest written" should be the rule, or the manifest entry's bundle should win, is recorded as G109, with no reply owed.
 The 1.4.0 worktree pin in state.yaml and PINNED.md moved from 54453e1 to the pushed tip 0c1f8d0.
+
+## 2026-10-25: 34 GB of unread GO copies deleted; GO and pathways move to one artefact per target set; 1.4.0 on hold
+
+PXReprise 058 cleared the last two deposits 1.4.0's date waited on, and the user put 1.4.0 on hold anyway (D49). 059
+brought two things. First, the GO engine's per-deposit artefacts were 32 GB, more than every bundle in the store, and
+almost all of it was `go_annotation.tsv`, the same annotation stored up to 34 times. Second, a new peer, kegg, was set
+up for a collaborator who wants pathways in the catalog. Reading the code settled the first quickly. GoEngine writes
+the TSV to a temp folder, reads it back once to accept it, and then copies it into the artefact "so a reader can
+re-check them". Nothing ever does, and the catalog reads only the Parquet files and `run.json`. The user ordered the
+269 files deleted. The auto-mode classifier refused the agent's `rm` as irreversible, and the user ran it (bash `!`,
+not PowerShell: the first command we handed over was PowerShell syntax and failed). A scratch build afterwards with
+the 1.3.6 binary matched the serving catalog's GO tables row for row, with the same release id. The list of deleted
+files, with each file's recorded hash, is kept so any one can be regenerated and checked.
+
+The rest of the day was design by thread, toward the user's "small footprint, high impact". go proposed three
+per-database tables. We amended the per-deposit one to hold one row per accession, since the bundle already holds
+group membership, and asked for direct GO terms only, with ancestors once per go.obo. go built it the same day as
+mzLib#1497, with a view fixture. kegg's proposal went through two rounds. The useful finding came from go's review of
+kegg, not ours. We had told kegg to key Reactome rows per database FILE, but aging's proteome XMLs hold no isoform
+entries: every isoform is in an overlay file loaded beside them, and all but five datasets load two to four files.
+Per-file keys would have broken go's D37 isoform inheritance on almost every dataset, and our 003 had patched over it
+with a view rule. Our 004 withdrew that rule and keyed by the target set, as GoEngine already does; 178 datasets use
+23 sets. The coverage measurement we offered kegg (74.5/64.6/56.1% of 1% groups with a pathway) took five seconds on
+the serving catalog. That is the cheap instrument working as intended. Both designs are recorded as D50; building
+them waits on mzLib releases (G111, G112).

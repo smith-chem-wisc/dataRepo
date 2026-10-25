@@ -520,7 +520,52 @@ decisions:
         store.
       - Where a rule cannot be met as written, we say which and why in the PXReprise thread rather than let it lapse.
         The plan, and the rules we would refine, are in design/PUBLIC_DATA.md (G94).
+  - id: D49
+    date: 2026-10-25
+    text: >-
+      1.4.0 is ON HOLD by the user's word ("you can hold off on 1.4.0 for now", 2026-10-25), although PXReprise 058
+      delivered PXD006815 and PXD022393, the last things its date waited on. Do not propose a date until the user lifts
+      the hold. The branch `feat/1.4.0-ingest` (0c1f8d0) stays pushed and unmerged.
+  - id: D50
+    date: 2026-10-25
+    text: >-
+      Reference annotation is stored once per TARGET SET, never per deposit (PXR-R29; the user: "i'd rather not have lots
+      of duplicate info", and for kegg "a small footprint and a high impact"). The key is go's `annotation_db_sha256`
+      (GoEngine.AnnotationDbSha256: one file -> its sha256; several -> the hash of `annotation-databases/1\n` plus the
+      sorted sha256s), matched to a bundle by set equality as GoArtefactMatches does. 178 datasets use 23 target sets
+      over 30 files. GO (go 027, our 028, mzLib#1497): (a) accession terms per target set and go.obo, DIRECT terms only,
+      all three aspects; ancestors once per go.obo; (b) term categories per (go.obo, map); (c) one row per member
+      ACCESSION per deposit (never group membership: the bundle's protein_groups.protein_accessions has it). Pathways
+      (kegg 002-006): engines `kegg.reactome_membership` (per target set: T1 reactome_membership + T4 kegg_gene_links)
+      and `kegg.reactome_release` (per Reactome release: pathways, hierarchy, closure); no KEGG pathway membership
+      (no licence). Our engines store Parquet + run.json only and prepend `definition_id` and the set key to each row;
+      mzLib writes headed TSVs that the engine reads back as acceptance and never stores. Views are ours (equality
+      joins only); definitions and fixtures are go's and kegg's.
 gaps:
+  - >-
+    G110 NEW 2026-10-25: drop the TSV copy from GoEngine (the `files` argument of WriteArtefact,
+    DataRepo.Runner/GoEngine.cs:362) in the next release; until then each new go.annotate_groups run stores a ~128 MB
+    go_annotation.tsv that nothing reads (the 20 D39 re-searches will add ~2.5 GB). The 269 old ones (34.2 GB) were
+    deleted 2026-10-25 by the user; list and hashes in results/go_tsv_cleanup_2026-10-25/deleted.tsv; a scratch build
+    afterwards equalled the serving catalog's GO tables row for row (PXReprise 060).
+  - >-
+    G111 NEW 2026-10-25: GO per target set (D50). go's mzLib#1497 is open (head a83d1c63); the definition text is in
+    go's design/DEFINITIONS.md ("Computing DEF-GROUP-GO-ANNOTATION v1 rows from the stored tables"), the view fixture
+    in E:/CodeReview/go/data/fixtures/go-view-v1-a83d1c63/ (165 expected rows; go 029, 030). (c) now has a fifth
+    column, sequence_accession, which the strict reader requires. Build the engine, the views and the fixture test
+    when #1497 is in an mzLib release (go will post). Runner change: catalog format + RUNNER_VERSION bump, no re-ingest,
+    GO re-runs once per target set. Also: go's 029 says one corner changes rows that the deposits they checked do not
+    reach; read it before building.
+  - >-
+    G112 NEW 2026-10-25: kegg's pathway engines (D50) when kegg's mzLib PR-3 is released. Columns as kegg 005 v2 with
+    our 006: T1 `organism` (NCBITaxon CURIE string, not int), optionally `sequence_accession` for `sequence_key`; T5
+    names to match go's closure. Views protein_reactome, protein_reactome_area, reactome_equivalence; checks: drift
+    (not_in_release per target set), coverage, one Reactome release per catalog. Coverage measured on 5c0c60396486635d:
+    74.5/64.6/56.1% of 1% groups have a pathway (human/mouse/rat), results/kegg_coverage_2026-10-25/.
+  - >-
+    G113 NEW 2026-10-25: 1.4.0's predicted bundle ids (results/reingest_140_2026-10-20 compare_deposits.tsv) are stale
+    for the 20 deposits PXReprise re-searches from 2026-10-22 (PXReprise 058; about 61 more later). Re-derive before
+    any release check of "downloaded binary reproduces predicted ids".
   - >-
     G109 NEW 2026-10-21 (PXReprise 057, no ask): returning a deposit to an EARLIER search's bundle needs `ingest
     --overwrite`, because `build --latest` serves the newest written bundle (Catalog.cs SelectBundles) and re-ingesting
