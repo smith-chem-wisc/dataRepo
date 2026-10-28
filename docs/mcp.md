@@ -290,8 +290,9 @@ Streamable HTTP at `/mcp`, so many agents can use one server copy at once. It ta
 - Each MCP session gets its own record file, so copies behind a load balancer never coordinate.
 - `GET /healthz` names the catalog being served.
 - The web framework lives only in this program. The `datarepo` CLI does not carry it.
-- Not yet done before a public endpoint: checking the `Origin` header, keys for higher limits, and copying the
-  record to write-once storage.
+- A request whose `Origin` header is not named in `--allowed-origins` is refused with 403, as the MCP spec
+  requires. An agent sends no `Origin`.
+- Not yet done before a public endpoint: keys for higher limits, and copying the record to write-once storage.
 
 None of this changes a server started without these options. The tool list is the same, and every answer
 matches the Python server's byte for byte.
