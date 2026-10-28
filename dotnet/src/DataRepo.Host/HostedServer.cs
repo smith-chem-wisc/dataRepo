@@ -22,7 +22,8 @@ public sealed record HostSettings(
     bool ShowPrior = false,
     int PermitPerMinute = 120,
     string Urls = "http://127.0.0.1:0",
-    string Name = "datarepo");
+    string Name = "datarepo",
+    IReadOnlyList<string>? AllowedOrigins = null);
 
 /// <summary>The hosted MCP server (design/AI_CONTRIBUTIONS.md S12; PXReprise's hosting plan, part B): the same three
 /// tools, record and inbox as <c>datarepo mcp</c>, over Streamable HTTP, for many agents at once.</summary>
@@ -73,6 +74,21 @@ public static class HostedServer
         });
 
         var app = builder.Build();
+        // The MCP spec (transports, Security Warning): a server MUST validate the Origin header on every connection, or a
+        // web page can reach it through the visitor's browser (DNS rebinding). An agent sends no Origin; a browser always
+        // does, and only the origins the operator names (the site, say) are served.
+        var allowed = new HashSet<string>((settings.AllowedOrigins ?? []).Select(o => o.TrimEnd('/')), StringComparer.OrdinalIgnoreCase);
+        app.Use(async (context, next) =>
+        {
+            var origin = context.Request.Headers.Origin.ToString();
+            if (origin.Length > 0 && !allowed.Contains(origin.TrimEnd('/')))
+            {
+                context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                await context.Response.WriteAsync($"origin {origin} is not served here").ConfigureAwait(false);
+                return;
+            }
+            await next(context).ConfigureAwait(false);
+        });
         app.UseRateLimiter();
         app.MapGet("/healthz", () => Results.Json(new Dictionary<string, object?>
         {

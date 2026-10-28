@@ -9,7 +9,7 @@ using DataRepo.Host;
 //                 [--urls http://0.0.0.0:8080] [--rate 120]
 CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
 const string Usage =
-    "usage: datarepo-host --catalog CATALOG [--sessions SESSIONS] [--contributions INBOX] [--show-prior] [--urls URLS] [--rate N]";
+    "usage: datarepo-host --catalog CATALOG [--sessions SESSIONS] [--contributions INBOX] [--show-prior] [--urls URLS] [--rate N] [--allowed-origins A,B]";
 
 if (args.Contains("-h") || args.Contains("--help"))
 {
@@ -21,6 +21,7 @@ if (args.Contains("-h") || args.Contains("--help"))
         + "  --show-prior             show earlier work in every sql answer\n"
         + "  --urls URLS              where to listen (default http://0.0.0.0:8080)\n"
         + "  --rate N                 requests per minute per client address (default 120)\n"
+        + "  --allowed-origins A,B    web origins a browser may call from (an agent sends none); others get 403\n"
         + "  GET /healthz             names the catalog served, for a load balancer");
     return 0;
 }
@@ -44,7 +45,8 @@ try
         Contributions: Value("--contributions"),
         ShowPrior: args.Contains("--show-prior"),
         PermitPerMinute: int.TryParse(Value("--rate"), NumberStyles.None, CultureInfo.InvariantCulture, out var rate) ? rate : 120,
-        Urls: Value("--urls") ?? "http://0.0.0.0:8080");
+        Urls: Value("--urls") ?? "http://0.0.0.0:8080",
+        AllowedOrigins: Value("--allowed-origins")?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
     await using var app = HostedServer.Build(settings);
     await app.RunAsync();
     return 0;

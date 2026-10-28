@@ -123,6 +123,29 @@ public class HostTests
         await app.StopAsync();
     }
 
+    /// <summary>The MCP spec: a server MUST validate the Origin header of every HTTP connection (DNS rebinding). An agent
+    /// sends none; a web page's browser always does, and only the origins the operator names are served.</summary>
+    [Test]
+    public async Task AWebPageFromAnOriginNotNamedIsRefused()
+    {
+        await using var app = HostedServer.Build(new HostSettings(Folder, AllowedOrigins: ["https://catalog.example.org"]));
+        await app.StartAsync();
+        using var http = new HttpClient();
+        async Task<HttpStatusCode> Post(string? origin)
+        {
+            using var request = new HttpRequestMessage(HttpMethod.Post, HostedServer.Address(app) + "/mcp")
+            {
+                Content = new StringContent("{}", Encoding.UTF8, "application/json"),
+            };
+            if (origin is not null) request.Headers.Add("Origin", origin);
+            return (await http.SendAsync(request)).StatusCode;
+        }
+        Assert.That(await Post("https://evil.example.com"), Is.EqualTo(HttpStatusCode.Forbidden));
+        Assert.That(await Post("https://catalog.example.org"), Is.Not.EqualTo(HttpStatusCode.Forbidden));
+        Assert.That(await Post(null), Is.Not.EqualTo(HttpStatusCode.Forbidden), "an agent sends no Origin");
+        await app.StopAsync();
+    }
+
     [Test]
     public void AOneFileCatalogMustNameWhereTheRecordIsKept()
     {
