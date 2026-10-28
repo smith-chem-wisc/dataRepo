@@ -14,6 +14,7 @@ New here? Start with [getting-started.md](getting-started.md), which runs the ma
 | [`inspect`](#datarepo-inspect) | summarise a written bundle |
 | [`study`](#datarepo-study) | write a study layer's delivered rows as a study bundle |
 | [`run`](#datarepo-run) | run a released engine on stored data (the instance operator's step) |
+| [`contribute`](#datarepo-contribute) | save a result computed from a catalog back into the store (an AI model's or a person's), or list them |
 | [`publish`](#datarepo-publish) | build the catalog from every ingested dataset, then write the static site |
 | [`build`](#datarepo-build) | load bundles into one DuckDB catalog |
 | [`site`](#datarepo-site) | write the public static site for one catalog |
@@ -146,6 +147,26 @@ options:
 ```
 
 A development build (version `0.0.0-dev`, or no recorded commit) is refused: see [operating.md](operating.md#1-install-one-released-version).
+
+### `datarepo contribute`
+
+Save a result computed from a catalog back into the store (an AI model's or a person's), or list them.
+
+```text
+usage: datarepo contribute [-h] --store STORE [--catalog CATALOG] [--json] action file
+
+save a result computed from a catalog back into the store (an AI model's or a person's), or list them
+
+positional arguments:
+  action                 save: save the contribution in FILE; list: list the store's contributions
+  file                   the contribution, as JSON (save only)
+
+options:
+  -h, --help             show this help message and exit
+  --store STORE          the instance's bundle store (required)
+  --catalog CATALOG      the catalog folder (or one catalog file) that holds the catalog the contribution cites (save only)
+  --json                 print one JSON object on stdout
+```
 
 ## Build and publish: bundles become a catalog and a site
 

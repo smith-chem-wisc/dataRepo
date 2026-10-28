@@ -915,7 +915,7 @@ public static partial class CatalogBuilder
         string? packageVersion = null,
         Manifest? manifest = null) =>
         CatalogIdOf(bundles, studyBundles, artefacts, packageVersion, Annotations(bundles, manifest), RunExclusions(bundles, manifest),
-            Restrictions(bundles, manifest), Census(manifest));
+            Restrictions(bundles, manifest), Census(manifest), contributions: ContributionsFor(bundles));
 
     /// <summary>Each bundle's dataset restrictions from <paramref name="manifest"/> (DATAREPO-74), in dataset then use
     /// order. A dataset the manifest does not list, or lists without restrictions, has none.</summary>
@@ -974,7 +974,8 @@ public static partial class CatalogBuilder
         IReadOnlyList<DatasetRestriction> restrictions,
         CandidateCensus? census,
         string? dataRoot = null,
-        string? derivedRoot = null)
+        string? derivedRoot = null,
+        IReadOnlyList<ContributionRef>? contributions = null)
     {
         var text = new StringBuilder();
         text.Append($"datarepo/{packageVersion ?? PackageVersion}\ncatalog/{CatalogVersion}\nschema/{SchemaContract.Version}\n");
@@ -1017,6 +1018,9 @@ public static partial class CatalogBuilder
         // manifest naming no census keeps the id it had.
         if (AnnotationsActive && census is not null)
             text.Append($"candidates/{census.Sha256}\n");
+        // And the contributions saved back into the store (design/AI_CONTRIBUTIONS.md A10), on the same rule: no line
+        // without one, so a store holding none keeps every catalog id it had.
+        if (ContributionLine(contributions ?? []) is { } line) text.Append(line);
         return Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(text.ToString())))[..16];
     }
 
@@ -1429,8 +1433,21 @@ public static partial class CatalogBuilder
         var census = Census(manifest);
         var dataRoot = views ? DataRoot(bundles, study, engines) : null;
         var derivedRoot = views ? DerivedRootOf(System.IO.Path.GetFullPath(@out)) : null;
-        var cid = CatalogIdOf(bundles, study, engines, null, annotations, exclusions, restrictions, census, dataRoot, derivedRoot);
+        // Every contribution in the store, always (A9), and never fewer than an earlier release in this folder carried (A13).
+        var contributions = ContributionsFor(bundles);
+        if (views) CheckReleasedContributionsKept(System.IO.Path.GetFullPath(@out), contributions);
+        var cited = CitedCatalogs(contributions);
+        var cid = CatalogIdOf(bundles, study, engines, null, annotations, exclusions, restrictions, census, dataRoot, derivedRoot, contributions);
+        // Not in the release id: that names the measured data, so "computed on the same data" stays an equality (A10).
         var rid = ReleaseId(bundles, study, engines);
+        if (contributions.Count > 0 && notes is not null && notes.ContainsKey("release"))
+        {
+            // A release records exactly which contributions it carries, so every later build can be held to them (A13).
+            var withContributions = new Dictionary<string, object?>(StringComparer.Ordinal);
+            foreach (var (k, v) in notes) withContributions[k] = v;
+            withContributions["contributions"] = contributions.Select(c => (object?)c.Id).ToList();
+            notes = withContributions;
+        }
         if (census is not null)
         {
             // Where the census came from, beside the manifest the CLI records: the path a reader can open and the
@@ -1460,7 +1477,7 @@ public static partial class CatalogBuilder
             return new CatalogResult
             {
                 Path = shown, CatalogId = cid, ReleaseId = rid, Layout = layout, Pointer = current,
-                Pruned = views && keep is not null ? Prune(folder!, keep.Value, full) : [],
+                Pruned = views && keep is not null ? Prune(folder!, keep.Value, full, cited) : [],
                 Datasets = datasets, Bundles = bundles, StudyBundles = study, Artefacts = engines, Skipped = true,
                 StagedRemoved = stagedRemoved, StagedKept = stagedKept,
             };
@@ -1472,6 +1489,7 @@ public static partial class CatalogBuilder
 
         Dictionary<string, long> rowCounts;
         Dictionary<string, long> studyCounts;
+        var contributionCounts = new Dictionary<string, long>(StringComparer.Ordinal);
         List<CatalogCheck> checks;
         int indexes;
         var timings = new List<KeyValuePair<string, TimeSpan>>();
@@ -1502,6 +1520,8 @@ public static partial class CatalogBuilder
                 }
                 if (census is not null) rowCounts[CandidateCensus.Table] = LoadCandidates(con, census, bundles);
                 Lap("manifest");
+                if (contributions.Count > 0) contributionCounts = CreateContributionTables(con, contributions, bundles);
+                Lap("contributions");
                 checks = [
                     .. CheckRowCounts(con, bundles),
                     .. views ? [IntegrityCheckedAtIngest()] : CheckIntegrity(con),
@@ -1535,7 +1555,7 @@ public static partial class CatalogBuilder
                 indexes = BuildIndexes(con);
                 Lap("indexes");
                 WriteCatalogTables(con, bundles, rowCounts, checks, cid, instance, notes, study, studyCounts, engines, census is not null,
-                    rid, layout, dataRoot, derivedRoot);
+                    rid, layout, dataRoot, derivedRoot, contributionCounts);
             }
             Lap("catalog tables");
             // aging 107: a file shorter than its own header says is never moved into place.
@@ -1584,7 +1604,7 @@ public static partial class CatalogBuilder
         return new CatalogResult
         {
             Path = shown, CatalogId = cid, ReleaseId = rid, Layout = layout, Pointer = pointer,
-            Pruned = views && keep is not null ? Prune(folder!, keep.Value, full) : [],
+            Pruned = views && keep is not null ? Prune(folder!, keep.Value, full, cited) : [],
             Datasets = datasets, Bundles = bundles, StudyBundles = study,
             Artefacts = engines, RowCounts = counts, Checks = checks, Indexes = indexes,
             StagedRemoved = stagedRemoved, StagedKept = stagedKept, Timings = timings,
@@ -1660,12 +1680,12 @@ public static partial class CatalogBuilder
         return Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(text.ToString())))[..16];
     }
 
-    /// <summary>Deletes the folder's catalog files beyond the newest <paramref name="keep"/>, never the current one and
-    /// never one built for a release (<c>--release</c>).</summary>
+    /// <summary>Deletes the folder's catalog files beyond the newest <paramref name="keep"/>, never the current one,
+    /// never one built for a release (<c>--release</c>), and never one a contribution was computed from (A14).</summary>
     /// <remarks>Deleting a file a DuckDB reader holds is allowed (it keeps its copy); a file something else holds is
     /// skipped and tried again next time.</remarks>
     /// <returns>The files deleted.</returns>
-    private static List<string> Prune(string folder, int keep, string current)
+    private static List<string> Prune(string folder, int keep, string current, IReadOnlySet<string> cited)
     {
         var files = Directory.EnumerateFiles(folder, "catalog-*.duckdb")
             .Select(f => new FileInfo(f))
@@ -1676,6 +1696,7 @@ public static partial class CatalogBuilder
         {
             if (string.Equals(file.FullName, System.IO.Path.GetFullPath(current), StringComparison.OrdinalIgnoreCase)) continue;
             if (ReleaseOf(file.FullName) is not null) continue;
+            if (cited.Any(id => string.Equals(file.Name, CatalogPointer.FileOf(id), StringComparison.OrdinalIgnoreCase))) continue;
             if (TryDeleteDatabase(file.FullName)) pruned.Add(BundleWriter.PathText(file.FullName));
         }
         return pruned;
@@ -2528,7 +2549,8 @@ public static partial class CatalogBuilder
         string? releaseId = null,
         CatalogLayout layout = CatalogLayout.File,
         string? dataRoot = null,
-        string? derivedRoot = null)
+        string? derivedRoot = null,
+        IReadOnlyDictionary<string, long>? contributionCounts = null)
     {
         // Python 0.32.0's catalog_meta had ten columns; the release id, layout and data root follow them (D48 step 1), then
         // where a folder catalog's per-deposit derived rows are (step 2b).
@@ -2652,6 +2674,9 @@ public static partial class CatalogBuilder
         foreach (var (layer, tables) in SchemaContract.StudyLayers)
             foreach (var spec in tables)
                 Exec(con, "INSERT INTO catalog_tables VALUES (?, ?, ?)", spec.Name, studyCounts.GetValueOrDefault(spec.Name, 0), $"study:{layer}");
+        // Only when the store holds a contribution (A9), so a catalog without one lists exactly the tables it did.
+        foreach (var (name, rows) in (contributionCounts ?? new Dictionary<string, long>()).OrderBy(kv => kv.Key, StringComparer.Ordinal))
+            Exec(con, "INSERT INTO catalog_tables VALUES (?, ?, ?)", name, rows, "contribution");
 
         Exec(con,
             "CREATE TABLE catalog_checks (name VARCHAR, kind VARCHAR, ok BOOLEAN, "

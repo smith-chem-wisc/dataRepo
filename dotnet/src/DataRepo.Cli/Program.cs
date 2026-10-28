@@ -34,7 +34,7 @@ namespace DataRepo.Cli
     {
         private const string Prog = "datarepo";
 
-        private static readonly string[] Commands = ["ingest", "study", "manifest", "inspect", "build", "catalog", "query", "site", "publish", "run", "mcp", "doctor"];
+        private static readonly string[] Commands = ["ingest", "study", "manifest", "inspect", "build", "catalog", "query", "site", "publish", "run", "contribute", "mcp", "doctor"];
         private static readonly string[] Pending = [];
 
         /// <summary>Each command's one line, as <c>datarepo -h</c> lists it and as its own <c>-h</c> prints it
@@ -51,6 +51,7 @@ namespace DataRepo.Cli
             ["site"] = DataRepo.Site.SiteCommand.Summary,
             ["publish"] = "build the catalog from every ingested dataset, then write the static site",
             ["run"] = "run a released engine on stored data (the instance operator's step)",
+            ["contribute"] = ContributeCommand.Summary,
             ["mcp"] = DataRepo.Mcp.McpCommand.Summary,
             ["doctor"] = "report this build's version, schema and components, and any registered MCP servers",
         };
@@ -110,6 +111,7 @@ namespace DataRepo.Cli
                     "query" => CatalogCommands.Query(rest),
                     "publish" => CatalogCommands.Publish(rest),
                     "run" => RunCommand.Run(rest),
+                    "contribute" => ContributeCommand.Run(rest),
                     "mcp" => DataRepo.Mcp.McpCommand.Run(rest, Console.Out, Console.Error),
                     "site" => DataRepo.Site.SiteCommand.Run(rest, Console.Out, Console.Error),
                     "doctor" => Doctor(rest),
