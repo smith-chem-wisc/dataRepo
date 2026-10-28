@@ -215,6 +215,71 @@ public class ContributionMcpTests
         Assert.That(Directory.Exists(Path.Combine(Store, Contributions.Dir)), Is.False);
     }
 
+    // --- S9: the next researcher or model finds earlier work -------------------------------------------
+
+    /// <summary>One session that queried protein_groups and saved a result from it, accepted and built into a catalog.</summary>
+    private string EarlierWork()
+    {
+        var (server, log) = Serve();
+        string id;
+        using (server)
+        using (log)
+        {
+            var seq = Structured(Mcp.Mcp.CallTool(server, "datarepo_sql", Args(new { query = "SELECT count(*) AS n FROM protein_groups" }), log))
+                .GetProperty("session_call").GetProperty("seq").GetInt64();
+            id = Structured(Mcp.Mcp.CallTool(server, Mcp.Mcp.SaveTool, Args(new { contribution = Result(), cites = new[] { seq } }), log, Inbox))
+                .GetProperty("contribution_id").GetString()!;
+        }
+        Contributions.Accept(Inbox, id, Store, Folder);
+        Build();
+        return id;
+    }
+
+    [Test]
+    public void TheRecordNotesWhichTablesEachQueryTouched()
+    {
+        var (server, log) = Serve();
+        using (server)
+        using (log)
+            Mcp.Mcp.CallTool(server, "datarepo_sql", Args(new { query = "SELECT count(*) AS n FROM protein_groups" }), log);
+        var call = Sessions.Read(Store).Single().Entries.Single(e => (string?)e["type"] == "call");
+        Assert.That(((List<object?>)call["tables_touched"]!).Cast<string>(), Does.Contain("protein_groups"));
+    }
+
+    [Test]
+    public void DescribeTellsTheNextModelThatEarlierWorkExists()
+    {
+        using (var before = new CatalogServer(Folder))
+        {
+            var overview = before.Describe();
+            Assert.That(overview.ContainsKey("contributions") || overview.ContainsKey("public_sessions"), Is.False,
+                "a catalog without them describes itself exactly as before");
+        }
+        EarlierWork();
+        using var after = new CatalogServer(Folder);
+        var described = after.Describe();
+        var contributions = (Dictionary<string, object?>)described["contributions"]!;
+        Assert.That(contributions["active"], Is.EqualTo(1L));
+        Assert.That(((Dictionary<string, object?>)described["public_sessions"]!)["calls"], Is.EqualTo(2L));
+    }
+
+    [Test]
+    public void AUserWhoAsksIsShownEarlierWorkOnTheSameTables()
+    {
+        var id = EarlierWork();
+        using var server = new CatalogServer(Folder);
+        var plain = server.Sql("SELECT count(*) AS n FROM protein_groups");
+        Assert.That(plain.ContainsKey("prior_work"), Is.False, "shown only to a user who opted in");
+        server.ShowPrior = true;
+        var shown = server.Sql("SELECT count(*) AS n FROM protein_groups");
+        var prior = (Dictionary<string, object?>)shown["prior_work"]!;
+        Assert.That(prior["calls"], Is.EqualTo(1L));
+        Assert.That(((List<object?>)prior["contributions"]!).Cast<Dictionary<string, object?>>().Select(c => c["contribution_id"]),
+            Is.EqualTo(new[] { id }));
+        var elsewhere = server.Sql("SELECT count(*) AS n FROM catalog_meta");
+        Assert.That(elsewhere.ContainsKey("prior_work"), Is.False, "no earlier work touched that table");
+    }
+
     [Test]
     public void RejectingKeepsTheRequestAndSaysWhy()
     {

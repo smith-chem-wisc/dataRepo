@@ -101,6 +101,38 @@ public sealed record CatalogIdentity(
 /// </remarks>
 public sealed partial class CatalogServer : IDisposable
 {
+    /// <summary>The user's choice to be shown earlier work (design/AI_CONTRIBUTIONS.md A18, <c>mcp --show-prior</c>):
+    /// each SQL answer then names the earlier public queries that read the same tables, and the accepted results built
+    /// from them. Off by default, so an answer is what it always was.</summary>
+    public bool ShowPrior { get; set; }
+
+    /// <summary>Earlier work on the tables a query read, or null when there is none or the catalog holds no public record.</summary>
+    private Dictionary<string, object?>? PriorWork(List<Dictionary<string, object?>>? touched)
+    {
+        var tables = TablesInCatalog();
+        if (touched is null || touched.Count == 0 || !tables.ContainsKey("session_calls")) return null;
+        var names = touched.Select(t => PyValues.Str(t.GetValueOrDefault("table"))).Distinct(StringComparer.Ordinal).ToList();
+        var inList = string.Join(", ", names.Select(n => "'" + n.Replace("'", "''", StringComparison.Ordinal) + "'"));
+        const string Reads = "EXISTS (SELECT 1 FROM unnest(from_json(s.tables_touched, '[\"VARCHAR\"]')) AS t(x) WHERE x IN ({0}))";
+        var reads = string.Format(System.Globalization.CultureInfo.InvariantCulture, Reads, inList);
+        var counts = Box.Dicts($"SELECT count(*) AS calls, count(DISTINCT s.session_id) AS sessions FROM session_calls s WHERE s.outcome = 'ok' AND {reads}")[0];
+        var contributions = !tables.ContainsKey("contribution_queries") ? [] : Box.Dicts(
+            "SELECT DISTINCT c.contribution_id, c.kind, c.title, c.model_id, c.status FROM contribution_queries q "
+            + "JOIN session_calls s ON s.session_id = q.session_id AND s.seq = q.seq "
+            + $"JOIN contributions c ON c.contribution_id = q.contribution_id WHERE q.observed AND {reads} ORDER BY c.contribution_id LIMIT 20");
+        if (counts.GetValueOrDefault("calls") is long and 0 && contributions.Count == 0) return null;
+        return new Dictionary<string, object?>(StringComparer.Ordinal)
+        {
+            ["tables"] = names.Cast<object?>().ToList(),
+            ["calls"] = counts.GetValueOrDefault("calls"),
+            ["sessions"] = counts.GetValueOrDefault("sessions"),
+            ["contributions"] = contributions.Select(r => (object?)r).ToList(),
+            ["means"] = "Earlier public queries read these tables, and the results listed were built from some of them. "
+                + "Look before redoing the work: session_calls holds the queries, contributions_current the results "
+                + "still standing (a contribution is a claim made from the data, not a measurement).",
+        };
+    }
+
     /// <summary>Hits per search kind before it says there are more, and the most a caller may ask for.</summary>
     public const int SearchLimit = 25;
 
@@ -415,6 +447,33 @@ public sealed partial class CatalogServer : IDisposable
             + "thing does not exist -- a producer may simply not have delivered it yet. Say so "
             + "rather than answering from the empty table.";
         output["open_findings"] = findings;
+        // Earlier work, so the next model builds on it instead of redoing it (A9, A18). Only when the catalog holds
+        // any, so a catalog without contributions or a public record describes itself exactly as before.
+        if (tables.ContainsKey("contributions"))
+        {
+            var status = Box.Dicts("SELECT status, count(*) AS n FROM contributions WHERE kind <> 'retraction' GROUP BY status")
+                .ToDictionary(r => PyValues.Str(r["status"]), r => r["n"], StringComparer.Ordinal);
+            output["contributions"] = new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["active"] = status.GetValueOrDefault("active") ?? 0L,
+                ["superseded"] = status.GetValueOrDefault("superseded") ?? 0L,
+                ["retracted"] = status.GetValueOrDefault("retracted") ?? 0L,
+                ["means"] = "Results that AI models or people computed from this data and saved back, each with the model "
+                    + "(as stated), the queries and the exact data behind it. Read contributions_current before computing "
+                    + "something: build on a standing result rather than redoing it. They are claims, not measurements.",
+            };
+        }
+        if (tables.ContainsKey("sessions"))
+        {
+            var counts = Box.Dicts("SELECT (SELECT count(*) FROM sessions) AS sessions, (SELECT count(*) FROM session_calls) AS calls")[0];
+            output["public_sessions"] = new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["sessions"] = counts["sessions"],
+                ["calls"] = counts["calls"],
+                ["means"] = "The public record of every call made to this repository's servers (sessions, session_calls): "
+                    + "which questions were asked of which data. Your own calls are recorded too.",
+            };
+        }
         // The rules an agent in aging's evaluation reached only by querying, or not at all (aging 070, pep 002).
         output["read_first"] = ReadFirst.ToList();
         output["next"] = new List<string>

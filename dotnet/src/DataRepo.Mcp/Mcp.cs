@@ -162,9 +162,9 @@ public static class Mcp
     /// <exception cref="CatalogException">There is nowhere to keep the record: a one-file catalog names no store.</exception>
     /// <param name="contributions">The inbox saved results go to (A15); null serves no save tool.</param>
     public static async Task ServeAsync(string catalog, string name = "datarepo", TextWriter? stderr = null, CancellationToken cancellation = default,
-        string? sessions = null, string? contributions = null)
+        string? sessions = null, string? contributions = null, bool showPrior = false)
     {
-        using var server = new CatalogServer(catalog);
+        using var server = new CatalogServer(catalog) { ShowPrior = showPrior };
         var root = sessions ?? DefaultSessionRoot(server)
             ?? throw new CatalogException(
                 $"{catalog} is one catalog file and names no store, so there is nowhere to keep the public record of this "
@@ -361,7 +361,10 @@ public static class Mcp
         var entry = log.Record(toolName, plain, server.Identity.CatalogId, outcome,
             outcome == "error" ? result!["error"] as string : null,
             result?.GetValueOrDefault("row_count") as long?, result?.GetValueOrDefault("truncated") as bool?,
-            Sessions.Sha(text), rowsSha);
+            Sessions.Sha(text), rowsSha,
+            result?.GetValueOrDefault("tables_touched") is IEnumerable<Dictionary<string, object?>> touched
+                ? touched.Select(t => PyValues.Str(t.GetValueOrDefault("table"))).Distinct(StringComparer.Ordinal).ToList()
+                : null);
         if (result is null) return answer;
         result["session_call"] = new Dictionary<string, object?>(StringComparer.Ordinal)
         {

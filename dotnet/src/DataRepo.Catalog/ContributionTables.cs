@@ -116,7 +116,8 @@ public static partial class CatalogBuilder
         Exec(con, @"
         CREATE TABLE session_calls (
             session_id VARCHAR, seq BIGINT, utc VARCHAR, tool VARCHAR, arguments JSON, catalog_id VARCHAR, outcome VARCHAR,
-            error VARCHAR, row_count BIGINT, truncated BOOLEAN, answer_sha256 VARCHAR, rows_sha256 VARCHAR, entry_sha256 VARCHAR
+            error VARCHAR, row_count BIGINT, truncated BOOLEAN, answer_sha256 VARCHAR, rows_sha256 VARCHAR, entry_sha256 VARCHAR,
+            tables_touched JSON
         )");
         long calls = 0;
         using (var sessionRows = con.CreateAppender("sessions"))
@@ -145,6 +146,7 @@ public static partial class CatalogBuilder
                         .AppendValue(e.GetValueOrDefault("error") as string).AppendValue(e.GetValueOrDefault("row_count") as long?)
                         .AppendValue(e.GetValueOrDefault("truncated") as bool?).AppendValue(e.GetValueOrDefault("answer_sha256") as string)
                         .AppendValue(e.GetValueOrDefault("rows_sha256") as string).AppendValue(e.GetValueOrDefault("entry_sha256") as string)
+                        .AppendValue(e.GetValueOrDefault("tables_touched") is { } touched ? PyFormat.Json(touched, ensureAscii: true) : null)
                         .EndRow();
                     calls++;
                 }

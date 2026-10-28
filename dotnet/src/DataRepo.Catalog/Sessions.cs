@@ -54,7 +54,8 @@ public static class Sessions
             + "verify). Every session is public (`visibility`).",
         ["session_calls"] = "Every call of every recorded session, in order: the tool, its arguments, the catalog it ran on, "
             + "the outcome (ok, error, or invalid arguments), and hashes of the answer (`answer_sha256`) and of its rows "
-            + "regardless of order (`rows_sha256`). A contribution's query marked `observed` is one of these.",
+            + "regardless of order (`rows_sha256`), and the catalog tables a query read (`tables_touched`, a JSON list). A "
+            + "contribution's query marked `observed` is one of these.",
     };
 
     /// <summary>The hash of a SQL answer's rows, whatever their order: the columns, then each row's JSON, sorted.</summary>
@@ -209,7 +210,7 @@ public sealed class SessionLog : IDisposable
     /// <param name="outcome"><c>ok</c>, <c>error</c> (the tool answered with an error payload) or <c>invalid</c> (the
     /// call never reached a tool: unknown tool, or arguments that do not fit).</param>
     public SessionEntry Record(string tool, IReadOnlyDictionary<string, object?> arguments, object? catalogId, string outcome,
-        string? error, long? rowCount, bool? truncated, string answerSha256, string? rowsSha256)
+        string? error, long? rowCount, bool? truncated, string answerSha256, string? rowsSha256, IReadOnlyList<string>? tablesTouched = null)
     {
         lock (_lock)
         {
@@ -228,6 +229,9 @@ public sealed class SessionLog : IDisposable
             if (rowCount is not null) entry["row_count"] = rowCount;
             if (truncated is not null) entry["truncated"] = truncated;
             if (rowsSha256 is not null) entry["rows_sha256"] = rowsSha256;
+            // Which catalog tables the query read (the server's own reading of the statement): how a later user who
+            // asks is shown earlier work on the same tables.
+            if (tablesTouched is not null) entry["tables_touched"] = tablesTouched.Order(StringComparer.Ordinal).Cast<object?>().ToList();
             var sha = Write(entry);
             _calls[(long)entry["seq"]!] = entry;
             return new SessionEntry(SessionId, (long)entry["seq"]!, sha);

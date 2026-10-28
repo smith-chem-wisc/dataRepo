@@ -18,7 +18,8 @@ public static class McpCommand
     public const string Usage =
         "usage: datarepo mcp [-h] [--catalog CATALOG] [--install] [--list] [--check]\n" +
         "                    [--name NAME] [--config CONFIG] [--force]\n" +
-        "                    [--sessions SESSIONS] [--contributions CONTRIBUTIONS]";
+        "                    [--sessions SESSIONS] [--contributions CONTRIBUTIONS]\n" +
+        "                    [--show-prior]";
 
     /// <summary>The command's one line, as <c>datarepo -h</c> lists it.</summary>
     public const string Summary = "serve one catalog to an agent over stdio (MCP)";
@@ -43,7 +44,10 @@ public static class McpCommand
         "  --contributions CONTRIBUTIONS\n" +
         "                     an inbox folder: also serve datarepo_save_result, which\n" +
         "                     puts a result there for the operator to accept\n" +
-        "                     (datarepo contribute accept); off without it";
+        "                     (datarepo contribute accept); off without it\n" +
+        "  --show-prior       show earlier work: each SQL answer names the earlier\n" +
+        "                     public queries on the same tables and the results\n" +
+        "                     built from them (the user's choice; off by default)";
 
     /// <summary>Every option; true when it takes a value.</summary>
     private static readonly IReadOnlyDictionary<string, bool> Options = new Dictionary<string, bool>
@@ -57,6 +61,7 @@ public static class McpCommand
         ["--force"] = false,
         ["--sessions"] = true,
         ["--contributions"] = true,
+        ["--show-prior"] = false,
     };
 
     /// <summary>Run the command; returns the process exit code (0 done, 1 refused, 2 usage). Serving blocks until the
@@ -163,7 +168,7 @@ public static class McpCommand
         }
 
         Mcp.ServeAsync(catalog, name, stderr, sessions: values.GetValueOrDefault("--sessions"),
-            contributions: values.GetValueOrDefault("--contributions")).GetAwaiter().GetResult();
+            contributions: values.GetValueOrDefault("--contributions"), showPrior: flags.Contains("--show-prior")).GetAwaiter().GetResult();
         return 0;
     }
 

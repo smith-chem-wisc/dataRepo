@@ -428,6 +428,7 @@ public sealed partial class CatalogServer
                 + $"by the {result.TruncatedBy} cap. This is NOT the whole answer: aggregate in SQL "
                 + "(count, group by) rather than counting the rows you can see.";
         }
+        if (ShowPrior && PriorWork(touched) is { } prior) output["prior_work"] = prior;
         return output;
     }
 

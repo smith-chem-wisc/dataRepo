@@ -305,6 +305,7 @@ Serve one catalog to an agent over stdio (MCP).
 usage: datarepo mcp [-h] [--catalog CATALOG] [--install] [--list] [--check]
                     [--name NAME] [--config CONFIG] [--force]
                     [--sessions SESSIONS] [--contributions CONTRIBUTIONS]
+                    [--show-prior]
 
 serve one catalog to an agent over stdio (MCP)
 
@@ -326,4 +327,7 @@ options:
                      an inbox folder: also serve datarepo_save_result, which
                      puts a result there for the operator to accept
                      (datarepo contribute accept); off without it
+  --show-prior       show earlier work: each SQL answer names the earlier
+                     public queries on the same tables and the results
+                     built from them (the user's choice; off by default)
 ```

@@ -254,6 +254,38 @@ connection, and DuckDB refuses a second connection to an open file with a differ
 `datarepo query` cannot open a catalog a server in the **same process** already holds. The server
 is its own process, so this costs nothing in practice.
 
+## The public record, saved results, and earlier work
+
+Not yet released; branch `feat/ai-contributions` (design/AI_CONTRIBUTIONS.md, A9-A18).
+
+**Every call is recorded, publicly, by the server.** The server, not the agent, writes each call to an
+add-only record beside the bundles (`<store>/_sessions/<date>/<session>.jsonl`). The record holds the
+tool, its arguments, the catalog, the outcome, the tables the query read, and hashes of the answer and of
+its rows. Every client is told when it connects (MCP `instructions`). The record holds no prompt, no text
+from the model, and no person. Each answer names its place in the record (`session_call`). Each line
+carries the hash of the line before it, so an edited line shows. The next catalog build loads every record
+into `sessions` and `session_calls`. A release lists the sessions it carries, and a later build refuses to
+lose one.
+- `--sessions <folder>` says where the record is kept. A catalog folder defaults to its store's
+  `_sessions`. A one-file catalog has no store, so it must name a folder.
+
+**Saving a result is opt-in: `--contributions <inbox>`.** The server then also lists `datarepo_save_result`.
+- The agent cites the `datarepo_sql` calls that produced its result by `session_call.seq`.
+- The server copies those calls from its record as observed queries. An agent cannot state a query
+  observed, and it cannot name its own client.
+- The result's basis must be the catalog being served and bundles that catalog holds.
+- The result waits in the inbox. `datarepo contribute inbox|accept|reject` is the operator's step.
+  `accept` checks every observed query against the record on disk again before it writes the result into the
+  store. Every later catalog then carries it (`contributions`, `contributions_current`).
+
+**Earlier work is shown to a user who asks: `--show-prior`.** Each `sql` answer then gains `prior_work`.
+This lists the earlier public queries that read the same tables, and the accepted results built from them.
+It is off by default. `describe()` reports how many saved results and public sessions a catalog holds,
+whenever it holds any.
+
+None of this changes a server started without these options. The tool list is the same, and every answer
+matches the Python server's byte for byte.
+
 ## The bar: zero silently-wrong answers
 
 Not a percentage. `design/SCHEMA_COVERAGE.md` says 94 of aging's 168 benchmark questions wait on a
