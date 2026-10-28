@@ -153,18 +153,20 @@ A development build (version `0.0.0-dev`, or no recorded commit) is refused: see
 Save a result computed from a catalog back into the store (an AI model's or a person's), or list them.
 
 ```text
-usage: datarepo contribute [-h] --store STORE [--catalog CATALOG] [--json] action file
+usage: datarepo contribute [-h] --store STORE [--catalog CATALOG] [--inbox INBOX] [--reason REASON] [--json] action file
 
 save a result computed from a catalog back into the store (an AI model's or a person's), or list them
 
 positional arguments:
-  action                 save: save the contribution in FILE; list: list the store's contributions
-  file                   the contribution, as JSON (save only)
+  action                 save: save the contribution in FILE; list: the store's contributions; inbox: the results the MCP server's save tool is holding; accept ID / reject ID: take one into the store, after checking it, or set it aside
+  file                   the contribution, as JSON (save), or a pending result's id (accept, reject)
 
 options:
   -h, --help             show this help message and exit
   --store STORE          the instance's bundle store (required)
-  --catalog CATALOG      the catalog folder (or one catalog file) that holds the catalog the contribution cites (save only)
+  --catalog CATALOG      the catalog folder (or one catalog file) that holds the catalog the contribution cites (save, accept)
+  --inbox INBOX          the inbox the MCP server was started with (mcp --contributions) (inbox, accept, reject)
+  --reason REASON        why a pending result is rejected (reject)
   --json                 print one JSON object on stdout
 ```
 
@@ -302,7 +304,7 @@ Serve one catalog to an agent over stdio (MCP).
 ```text
 usage: datarepo mcp [-h] [--catalog CATALOG] [--install] [--list] [--check]
                     [--name NAME] [--config CONFIG] [--force]
-                    [--sessions SESSIONS]
+                    [--sessions SESSIONS] [--contributions CONTRIBUTIONS]
 
 serve one catalog to an agent over stdio (MCP)
 
@@ -320,4 +322,8 @@ options:
                      where the PUBLIC record of every call is kept; default
                      the _sessions folder of the store a catalog folder
                      reads (a one-file catalog must name one)
+  --contributions CONTRIBUTIONS
+                     an inbox folder: also serve datarepo_save_result, which
+                     puts a result there for the operator to accept
+                     (datarepo contribute accept); off without it
 ```

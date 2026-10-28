@@ -74,8 +74,8 @@ DECISION points.
 | S4 | Catalog build: tables, catalog id line only when there are contributions, release id unchanged | done |
 | S5 | Carry-forward across releases: re-searched deposit, release guard (A13), prune protection (A14) | done |
 | S6 | Retraction and supersession, `contributions_current` | done |
-| S7 | Session log kept by the server itself (A18): add-only, hash-chained, private by default, opt-in to see shared sessions; observed vs stated | next (redesigned by A18) |
-| S8 | MCP save tool under an opt-in flag, inbox, `contribute accept` | next |
+| S7 | Session record kept by the server itself (A18): add-only, hash-chained, public, told to every client; `sessions`, `session_calls` in every later catalog | done 2026-10-28 (`SessionRecordTests`, 3056f10) |
+| S8 | `datarepo_save_result`, served only with `mcp --contributions <inbox>`; cited queries copied from the record as observed; `contribute inbox|accept|reject`, accept re-checks every observed query against the record on disk | done 2026-10-28 (`ContributionMcpTests`) |
 | S9 | Discovery through `describe`/`search`/`sql` | next |
 | S10 | CLI `datarepo contribute save|list|show|retract|verify` | `save` and `list` done (a retraction is saved as a contribution); `show`, `verify` later |
 | S11 | `contribute verify`: re-run recorded queries on the frozen basis catalog | after S7 |

@@ -190,7 +190,7 @@ public static partial class CatalogBuilder
         Exec(con, "CREATE TABLE contribution_builds_on (contribution_id VARCHAR, builds_on_id VARCHAR)");
         Exec(con, "CREATE TABLE contribution_items (contribution_id VARCHAR, ordinal BIGINT, subject_type VARCHAR, subject_id VARCHAR, value DOUBLE, rank BIGINT, label VARCHAR, attributes JSON)");
         Exec(con, "CREATE TABLE contribution_edges (contribution_id VARCHAR, ordinal BIGINT, source_type VARCHAR, source_id VARCHAR, target_type VARCHAR, target_id VARCHAR, weight DOUBLE, label VARCHAR)");
-        Exec(con, "CREATE TABLE contribution_queries (contribution_id VARCHAR, ordinal BIGINT, sql VARCHAR, observed BOOLEAN, catalog_id VARCHAR, result_sha256 VARCHAR, row_count BIGINT, truncated BOOLEAN)");
+        Exec(con, "CREATE TABLE contribution_queries (contribution_id VARCHAR, ordinal BIGINT, sql VARCHAR, observed BOOLEAN, catalog_id VARCHAR, result_sha256 VARCHAR, row_count BIGINT, truncated BOOLEAN, session_id VARCHAR, seq BIGINT)");
 
         static object? Get(IReadOnlyDictionary<string, object?>? map, string key) => map is not null && map.TryGetValue(key, out var v) ? v : null;
         static IReadOnlyDictionary<string, object?>? Sub(IReadOnlyDictionary<string, object?> map, string key) =>
@@ -267,6 +267,7 @@ public static partial class CatalogBuilder
                         .AppendValue((string?)Get(query, "sql")).AppendValue(Get(query, "observed") as bool?)
                         .AppendValue((string?)Get(query, "catalog_id")).AppendValue((string?)Get(query, "result_sha256"))
                         .AppendValue(Get(query, "row_count") as long?).AppendValue(Get(query, "truncated") as bool?)
+                        .AppendValue((string?)Get(query, "session_id")).AppendValue(Get(query, "seq") as long?)
                         .EndRow();
                     queries++;
                 }

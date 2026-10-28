@@ -18,7 +18,7 @@ public static class McpCommand
     public const string Usage =
         "usage: datarepo mcp [-h] [--catalog CATALOG] [--install] [--list] [--check]\n" +
         "                    [--name NAME] [--config CONFIG] [--force]\n" +
-        "                    [--sessions SESSIONS]";
+        "                    [--sessions SESSIONS] [--contributions CONTRIBUTIONS]";
 
     /// <summary>The command's one line, as <c>datarepo -h</c> lists it.</summary>
     public const string Summary = "serve one catalog to an agent over stdio (MCP)";
@@ -39,7 +39,11 @@ public static class McpCommand
         "  --sessions SESSIONS\n" +
         "                     where the PUBLIC record of every call is kept; default\n" +
         "                     the _sessions folder of the store a catalog folder\n" +
-        "                     reads (a one-file catalog must name one)";
+        "                     reads (a one-file catalog must name one)\n" +
+        "  --contributions CONTRIBUTIONS\n" +
+        "                     an inbox folder: also serve datarepo_save_result, which\n" +
+        "                     puts a result there for the operator to accept\n" +
+        "                     (datarepo contribute accept); off without it";
 
     /// <summary>Every option; true when it takes a value.</summary>
     private static readonly IReadOnlyDictionary<string, bool> Options = new Dictionary<string, bool>
@@ -52,6 +56,7 @@ public static class McpCommand
         ["--config"] = true,
         ["--force"] = false,
         ["--sessions"] = true,
+        ["--contributions"] = true,
     };
 
     /// <summary>Run the command; returns the process exit code (0 done, 1 refused, 2 usage). Serving blocks until the
@@ -157,7 +162,8 @@ public static class McpCommand
             return 0;
         }
 
-        Mcp.ServeAsync(catalog, name, stderr, sessions: values.GetValueOrDefault("--sessions")).GetAwaiter().GetResult();
+        Mcp.ServeAsync(catalog, name, stderr, sessions: values.GetValueOrDefault("--sessions"),
+            contributions: values.GetValueOrDefault("--contributions")).GetAwaiter().GetResult();
         return 0;
     }
 

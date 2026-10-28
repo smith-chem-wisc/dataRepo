@@ -109,7 +109,9 @@ public static class Contributions
         ["contribution_items"] = "The rows of a list result (sites, proteins, a table), in the submitter's order.",
         ["contribution_edges"] = "The edges of a relation graph (for example, how cell types relate).",
         ["contribution_queries"] = "The SQL each contribution recorded. `observed` is true only for a query the MCP server "
-            + "itself ran and hashed (`result_sha256`, on `catalog_id`); a stated query is what the submitter says it ran.",
+            + "itself ran and hashed (`result_sha256`, on `catalog_id`), checked against the public session record "
+            + "(`session_id`, `seq`, the row of `session_calls` that ran it) when the contribution was accepted; a stated "
+            + "query is what the submitter says it ran.",
         ["contributions_current"] = "Contributions that are neither retracted nor superseded, and are not themselves retractions.",
     };
 
@@ -300,7 +302,7 @@ public static class Contributions
 
     private static Dictionary<string, object?> Query(object? value, string at)
     {
-        var f = Fields(value, at, ["sql", "observed"], ["catalog_id", "result_sha256", "row_count", "truncated"]);
+        var f = Fields(value, at, ["sql", "observed"], ["catalog_id", "result_sha256", "row_count", "truncated", "session_id", "seq"]);
         var q = new Dictionary<string, object?>(StringComparer.Ordinal)
         {
             ["sql"] = Text(f["sql"], $"{at}.sql", max: MaxSqlChars),
@@ -315,8 +317,17 @@ public static class Contributions
             q["row_count"] = count;
         }
         if (f.TryGetValue("truncated", out var t)) q["truncated"] = Bool(t, $"{at}.truncated");
-        if ((bool)q["observed"]! && (!q.ContainsKey("catalog_id") || !q.ContainsKey("result_sha256")))
-            throw new ContributionException($"{at} is marked observed, so it carries the catalog_id it ran on and its result_sha256");
+        if (f.TryGetValue("session_id", out var s)) q["session_id"] = Id(s, $"{at}.session_id");
+        if (f.TryGetValue("seq", out var n))
+        {
+            var seq = Integer(n, $"{at}.seq");
+            if (seq < 1) throw new ContributionException($"{at}.seq is a call's place in its session, from 1");
+            q["seq"] = seq;
+        }
+        if ((bool)q["observed"]! && !new[] { "catalog_id", "result_sha256", "session_id", "seq" }.All(q.ContainsKey))
+            throw new ContributionException(
+                $"{at} is marked observed, so it carries the catalog_id it ran on, its result_sha256, and the session_id and seq "
+                + "of the call in the public session record that ran it");
         return q;
     }
 
@@ -458,6 +469,7 @@ public static class Contributions
 
         var basis = (Dictionary<string, object?>)normalised["basis"]!;
         CheckBasis(catalog, (string)basis["catalog_id"]!, (List<object?>)basis["bundles"]!);
+        if (allowObserved) CheckObserved(store, ((List<object?>)method["queries"]!).Cast<Dictionary<string, object?>>());
         var saved = Discover(store).ToDictionary(c => c.Id, StringComparer.Ordinal);
         foreach (var on in basis.TryGetValue("contributions", out var ids) ? ((List<object?>)ids!).Cast<string>() : [])
             if (!saved.ContainsKey(on)) throw new ContributionException($"basis.contributions names {on}, which this store does not hold");
@@ -493,6 +505,107 @@ public static class Contributions
             throw;
         }
         return new ContributionSaved(id, sha, BundleWriter.PathText(final), false);
+    }
+
+    /// <summary>Every query marked observed is a successful <c>datarepo_sql</c> call in the store's public session record,
+    /// with the same SQL, catalog and rows hash, in a session whose hash chain is intact (A16).</summary>
+    private static void CheckObserved(string store, IEnumerable<Dictionary<string, object?>> queries)
+    {
+        var observed = queries.Where(q => (bool)q["observed"]!).ToList();
+        if (observed.Count == 0) return;
+        var sessions = Sessions.Read(store).ToDictionary(s => s.SessionId, StringComparer.Ordinal);
+        foreach (var q in observed)
+        {
+            var where = $"query seq {q["seq"]} of session {q["session_id"]}";
+            if (!sessions.TryGetValue((string)q["session_id"]!, out var session))
+                throw new ContributionException($"{where} is not in the public session record of {BundleWriter.PathText(store)}");
+            if (!session.ChainOk)
+                throw new ContributionException($"{where}: that session's public session record does not verify (its hash chain breaks at {session.BrokenAtSeq})");
+            var call = session.Entries.FirstOrDefault(e => e.GetValueOrDefault("type") as string == "call" && e.GetValueOrDefault("seq") as long? == (long)q["seq"]!);
+            var arguments = call?.GetValueOrDefault("arguments") as IReadOnlyDictionary<string, object?>;
+            if (call is null || call.GetValueOrDefault("tool") as string != "datarepo_sql" || call.GetValueOrDefault("outcome") as string != "ok"
+                || arguments?.GetValueOrDefault("query") as string != (string)q["sql"]!
+                || call.GetValueOrDefault("catalog_id") as string != (string)q["catalog_id"]!
+                || call.GetValueOrDefault("rows_sha256") as string != (string)q["result_sha256"]!)
+                throw new ContributionException(
+                    $"{where} does not match the public session record: an observed query must be the SQL the server ran, on that "
+                    + "catalog, with that answer");
+        }
+    }
+
+    // --- the inbox: requests from the MCP server, accepted or rejected by the operator (A15) --------------------------
+
+    /// <summary>One request waiting in an inbox.</summary>
+    public sealed record PendingContribution(string Id, string Sha256, string Path, IReadOnlyDictionary<string, object?> Submission, string? SessionId);
+
+    /// <summary>Puts a normalised submission in <paramref name="inbox"/>: a request, not a contribution, until accepted.</summary>
+    public static PendingContribution Submit(string inbox, IReadOnlyDictionary<string, object?> normalised, string? sessionId)
+    {
+        var sha = Sha256Of(normalised);
+        Directory.CreateDirectory(inbox);
+        var path = System.IO.Path.Combine(inbox, $"{sha[..16]}.json");
+        var request = new SortedDictionary<string, object?>(StringComparer.Ordinal)
+        {
+            ["submission"] = normalised,
+            ["contribution_sha256"] = sha,
+            ["received_utc"] = DateTime.UtcNow.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'", CultureInfo.InvariantCulture),
+            ["session_id"] = sessionId,
+            ["status"] = "pending_review",
+        };
+        if (!File.Exists(path))
+            File.WriteAllText(path, PyFormat.JsonIndented(SortKeys(request), 1) + "\n", new UTF8Encoding(false));
+        return new PendingContribution(sha[..16], sha, BundleWriter.PathText(path), normalised, sessionId);
+    }
+
+    /// <summary>The requests waiting in <paramref name="inbox"/>, by id.</summary>
+    public static List<PendingContribution> Pending(string inbox)
+    {
+        if (!Directory.Exists(inbox)) return [];
+        return Directory.EnumerateFiles(inbox, "*.json")
+            .Select(file =>
+            {
+                var request = Parse(File.ReadAllText(file, Encoding.UTF8));
+                var submission = request.GetValueOrDefault("submission") as IReadOnlyDictionary<string, object?>
+                    ?? throw new ContributionException($"{BundleWriter.PathText(file)} holds no submission");
+                var id = System.IO.Path.GetFileNameWithoutExtension(file);
+                return new PendingContribution(id, request.GetValueOrDefault("contribution_sha256") as string ?? "", BundleWriter.PathText(file),
+                    submission, request.GetValueOrDefault("session_id") as string);
+            })
+            .OrderBy(p => p.Id, StringComparer.Ordinal)
+            .ToList();
+    }
+
+    /// <summary>The operator accepts a request: it is checked again in full, including every observed query against the
+    /// public session record on disk, and saved into the store; the request moves to <c>accepted/</c>.</summary>
+    /// <exception cref="ContributionException">No such request, or it does not check out; nothing is written.</exception>
+    public static ContributionSaved Accept(string inbox, string id, string store, string catalog)
+    {
+        var request = Pending(inbox).FirstOrDefault(p => p.Id == id)
+            ?? throw new ContributionException($"{BundleWriter.PathText(inbox)} holds no pending request {id}");
+        var saved = Save(store, catalog, request.Submission, allowObserved: true);
+        Shelve(inbox, request, "accepted", null);
+        return saved;
+    }
+
+    /// <summary>The operator rejects a request: it moves to <c>rejected/</c> with the reason beside it. Nothing is deleted.</summary>
+    public static void Reject(string inbox, string id, string reason)
+    {
+        var request = Pending(inbox).FirstOrDefault(p => p.Id == id)
+            ?? throw new ContributionException($"{BundleWriter.PathText(inbox)} holds no pending request {id}");
+        if (string.IsNullOrWhiteSpace(reason)) throw new ContributionException("a rejection gives its reason");
+        Shelve(inbox, request, "rejected", reason);
+    }
+
+    private static void Shelve(string inbox, PendingContribution request, string folder, string? reason)
+    {
+        var to = System.IO.Path.Combine(inbox, folder);
+        Directory.CreateDirectory(to);
+        var target = System.IO.Path.Combine(to, $"{request.Id}.json");
+        if (File.Exists(target)) File.Delete(System.IO.Path.Combine(inbox, $"{request.Id}.json"));
+        else File.Move(System.IO.Path.Combine(inbox, $"{request.Id}.json"), target);
+        if (reason is not null)
+            File.WriteAllText(System.IO.Path.Combine(to, $"{request.Id}.reason.txt"),
+                $"{DateTime.UtcNow.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'", CultureInfo.InvariantCulture)}\t{reason}\n", new UTF8Encoding(false));
     }
 
     /// <summary>The cited catalog exists and holds every bundle the contribution names (A4).</summary>

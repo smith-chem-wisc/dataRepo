@@ -135,11 +135,21 @@ public sealed class SessionLog : IDisposable
 {
     private readonly object _lock = new();
     private readonly FileStream _stream;
+    private readonly Dictionary<long, IReadOnlyDictionary<string, object?>> _calls = [];
     private string _prev;
     private long _seq;
     private bool _client;
 
     public string SessionId { get; }
+
+    /// <summary>The client application as it reported itself, or null before it did.</summary>
+    public (string Name, string? Version)? Client { get; private set; }
+
+    /// <summary>A call this session recorded, as written, or null: what the save tool copies when a call is cited.</summary>
+    public IReadOnlyDictionary<string, object?>? Call(long seq)
+    {
+        lock (_lock) return _calls.GetValueOrDefault(seq);
+    }
 
     public string Path { get; }
 
@@ -182,6 +192,7 @@ public sealed class SessionLog : IDisposable
         {
             if (_client || name is null) return;
             _client = true;
+            Client = (name, version);
             Write(new Dictionary<string, object?>(StringComparer.Ordinal)
             {
                 ["type"] = "client",
@@ -218,6 +229,7 @@ public sealed class SessionLog : IDisposable
             if (truncated is not null) entry["truncated"] = truncated;
             if (rowsSha256 is not null) entry["rows_sha256"] = rowsSha256;
             var sha = Write(entry);
+            _calls[(long)entry["seq"]!] = entry;
             return new SessionEntry(SessionId, (long)entry["seq"]!, sha);
         }
     }
