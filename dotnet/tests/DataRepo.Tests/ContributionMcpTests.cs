@@ -280,6 +280,65 @@ public class ContributionMcpTests
         Assert.That(elsewhere.ContainsKey("prior_work"), Is.False, "no earlier work touched that table");
     }
 
+    // --- S11: a saved result's queries re-run on the frozen catalog they were computed from --------------
+
+    /// <summary>A result whose one query names the catalog it ran on, so its answer differs on any other catalog.</summary>
+    private string ResultOnA()
+    {
+        var (server, log) = Serve();
+        string id;
+        using (server)
+        using (log)
+        {
+            var seq = Structured(Mcp.Mcp.CallTool(server, "datarepo_sql", Args(new { query = "SELECT catalog_id FROM catalog_meta" }), log))
+                .GetProperty("session_call").GetProperty("seq").GetInt64();
+            id = Structured(Mcp.Mcp.CallTool(server, Mcp.Mcp.SaveTool, Args(new { contribution = Result(), cites = new[] { seq } }), log, Inbox))
+                .GetProperty("contribution_id").GetString()!;
+        }
+        Contributions.Accept(Inbox, id, Store, Folder);
+        return id;
+    }
+
+    [Test]
+    public void ASavedResultsQueriesReproduceOnTheCatalogItWasComputedFromNotTheLatest()
+    {
+        var id = ResultOnA();
+        var b = Build();
+        Assert.That(b.CatalogId, Is.Not.EqualTo(_a.CatalogId), "the latest catalog is another one, and answers that query differently");
+        var report = ContributionVerifier.Verify(Store, Folder, id);
+        Assert.Multiple(() =>
+        {
+            Assert.That(report["catalog_id"], Is.EqualTo(_a.CatalogId));
+            Assert.That(report["reproduced"], Is.True);
+            var query = ((List<object?>)report["queries"]!).Cast<Dictionary<string, object?>>().Single();
+            Assert.That(query["outcome"], Is.EqualTo("reproduced"));
+            Assert.That(query["rows_sha256"], Is.EqualTo(query["recorded_rows_sha256"]));
+        });
+    }
+
+    [Test]
+    public void AMissingCatalogIsReportedNeverRunOnTheLatest()
+    {
+        var id = ResultOnA();
+        Build();
+        File.Delete(Path.Combine(Folder, CatalogPointer.FileOf(_a.CatalogId)));
+        Assert.That(() => ContributionVerifier.Verify(Store, Folder, id),
+            Throws.TypeOf<ContributionException>().With.Message.Contains(_a.CatalogId).And.Message.Contains("not"));
+    }
+
+    [Test]
+    public void AStatedQueryRunsButCannotBeCheckedAndAJudgementSaysItCannotBeRerun()
+    {
+        var submission = Submission(_a.CatalogId, "PXD999999", _bundle);
+        submission["reproducibility"] = "judgement";
+        var saved = Contributions.Save(Store, Folder, submission);
+        var report = ContributionVerifier.Verify(Store, Folder, saved.Id);
+        var query = ((List<object?>)report["queries"]!).Cast<Dictionary<string, object?>>().Single();
+        Assert.That(query["outcome"], Is.EqualTo("ran_no_recorded_hash"));
+        Assert.That(report["reproduced"], Is.False, "nothing recorded to compare against is not a reproduction");
+        Assert.That((string)report["judgement"]!, Does.Contain("not re-runnable"));
+    }
+
     [Test]
     public void RejectingKeepsTheRequestAndSaysWhy()
     {

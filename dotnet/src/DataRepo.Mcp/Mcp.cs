@@ -355,9 +355,7 @@ public static class Mcp
             .ToDictionary(kv => kv.Key, kv => Contributions.FromJson(kv.Value), StringComparer.Ordinal);
         var text = answer.Content.OfType<TextContentBlock>().FirstOrDefault()?.Text ?? "";
         var outcome = result is null ? "invalid" : result.ContainsKey("error") && result.ContainsKey("hint") ? "error" : "ok";
-        string? rowsSha = null;
-        if (outcome == "ok" && result!.GetValueOrDefault("columns") is IEnumerable<string> columns && result.GetValueOrDefault("rows") is IEnumerable<object?> rows)
-            rowsSha = Sessions.RowsSha256(columns, rows.Select(r => PydanticJson.Serialize(r, indent: null, nanAsNull: true)));
+        var rowsSha = outcome == "ok" ? RowsHash(result!) : null;
         var entry = log.Record(toolName, plain, server.Identity.CatalogId, outcome,
             outcome == "error" ? result!["error"] as string : null,
             result?.GetValueOrDefault("row_count") as long?, result?.GetValueOrDefault("truncated") as bool?,
@@ -381,6 +379,14 @@ public static class Mcp
             IsError = false,
         };
     }
+
+    /// <summary>The hash of a <c>sql</c> answer's rows whatever their order, each row as the agent read it; null for an
+    /// answer with no rows. The record and <see cref="ContributionVerifier"/> both use it, so a re-run compares like
+    /// with like.</summary>
+    public static string? RowsHash(IReadOnlyDictionary<string, object?> result) =>
+        result.GetValueOrDefault("columns") is IEnumerable<string> columns && result.GetValueOrDefault("rows") is IEnumerable<object?> rows
+            ? Sessions.RowsSha256(columns, rows.Select(r => PydanticJson.Serialize(r, indent: null, nanAsNull: true)))
+            : null;
 
     /// <summary>The answer, and the tool's result when a tool ran (null when the call never reached one).</summary>
     private static CallToolResult Answer(CatalogServer server, string toolName, IDictionary<string, JsonElement>? arguments,

@@ -77,8 +77,8 @@ DECISION points.
 | S7 | Session record kept by the server itself (A18): add-only, hash-chained, public, told to every client; `sessions`, `session_calls` in every later catalog | done 2026-10-28 (`SessionRecordTests`, 3056f10) |
 | S8 | `datarepo_save_result`, served only with `mcp --contributions <inbox>`; cited queries copied from the record as observed; `contribute inbox|accept|reject`, accept re-checks every observed query against the record on disk | done 2026-10-28 (`ContributionMcpTests`) |
 | S9 | Discovery: `describe()` reports saved results and public sessions when a catalog has them; `mcp --show-prior` (the user's opt-in) adds `prior_work` to each `sql` answer (earlier public queries on the same tables, and the accepted results built from them); the record notes each query's `tables_touched` | done 2026-10-28 (`ContributionMcpTests`) |
-| S10 | CLI `datarepo contribute save|list|show|retract|verify` | `save` and `list` done (a retraction is saved as a contribution); `show`, `verify` later |
-| S11 | `contribute verify`: re-run recorded queries on the frozen basis catalog | after S7 |
+| S10 | CLI `datarepo contribute save|list|show|retract|verify` | `save`, `list`, `inbox`, `accept`, `reject`, `verify` done (a retraction is saved as a contribution); `show` later |
+| S11 | `contribute verify`: re-run a result's queries on the frozen catalog it was computed from, through the server's own sandbox and row hash; a missing catalog is reported, never replaced by the latest; a judgement says it is not re-runnable | done 2026-10-28 (`ContributionMcpTests`, `ContributionVerifier`) |
 
 ## Open for the user
 
