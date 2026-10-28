@@ -135,6 +135,9 @@ public static class Contributions
         }
     }
 
+    /// <summary>One JSON value as plain values, integers kept as longs (the session record's arguments use it too).</summary>
+    public static object? FromJson(JsonElement e) => Plain(e, "");
+
     private static object? Plain(JsonElement e, string path) => e.ValueKind switch
     {
         JsonValueKind.Object => PlainObject(e, path),

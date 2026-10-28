@@ -915,7 +915,7 @@ public static partial class CatalogBuilder
         string? packageVersion = null,
         Manifest? manifest = null) =>
         CatalogIdOf(bundles, studyBundles, artefacts, packageVersion, Annotations(bundles, manifest), RunExclusions(bundles, manifest),
-            Restrictions(bundles, manifest), Census(manifest), contributions: ContributionsFor(bundles));
+            Restrictions(bundles, manifest), Census(manifest), contributions: ContributionsFor(bundles), sessions: SessionsFor(bundles));
 
     /// <summary>Each bundle's dataset restrictions from <paramref name="manifest"/> (DATAREPO-74), in dataset then use
     /// order. A dataset the manifest does not list, or lists without restrictions, has none.</summary>
@@ -975,7 +975,8 @@ public static partial class CatalogBuilder
         CandidateCensus? census,
         string? dataRoot = null,
         string? derivedRoot = null,
-        IReadOnlyList<ContributionRef>? contributions = null)
+        IReadOnlyList<ContributionRef>? contributions = null,
+        IReadOnlyList<SessionRef>? sessions = null)
     {
         var text = new StringBuilder();
         text.Append($"datarepo/{packageVersion ?? PackageVersion}\ncatalog/{CatalogVersion}\nschema/{SchemaContract.Version}\n");
@@ -1021,6 +1022,8 @@ public static partial class CatalogBuilder
         // And the contributions saved back into the store (design/AI_CONTRIBUTIONS.md A10), on the same rule: no line
         // without one, so a store holding none keeps every catalog id it had.
         if (ContributionLine(contributions ?? []) is { } line) text.Append(line);
+        // And the public session record (A18): a catalog that shows other questions asked is a different catalog.
+        if (SessionLine(sessions ?? []) is { } sessionLine) text.Append(sessionLine);
         return Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(text.ToString())))[..16];
     }
 
@@ -1435,17 +1438,21 @@ public static partial class CatalogBuilder
         var derivedRoot = views ? DerivedRootOf(System.IO.Path.GetFullPath(@out)) : null;
         // Every contribution in the store, always (A9), and never fewer than an earlier release in this folder carried (A13).
         var contributions = ContributionsFor(bundles);
-        if (views) CheckReleasedContributionsKept(System.IO.Path.GetFullPath(@out), contributions);
+        // And every public session record the MCP server kept (A18), on the same terms.
+        var sessions = SessionsFor(bundles);
+        if (views) CheckReleasedContributionsKept(System.IO.Path.GetFullPath(@out), contributions, sessions);
         var cited = CitedCatalogs(contributions);
-        var cid = CatalogIdOf(bundles, study, engines, null, annotations, exclusions, restrictions, census, dataRoot, derivedRoot, contributions);
+        var cid = CatalogIdOf(bundles, study, engines, null, annotations, exclusions, restrictions, census, dataRoot, derivedRoot, contributions, sessions);
         // Not in the release id: that names the measured data, so "computed on the same data" stays an equality (A10).
         var rid = ReleaseId(bundles, study, engines);
-        if (contributions.Count > 0 && notes is not null && notes.ContainsKey("release"))
+        if ((contributions.Count > 0 || sessions.Count > 0) && notes is not null && notes.ContainsKey("release"))
         {
-            // A release records exactly which contributions it carries, so every later build can be held to them (A13).
+            // A release records exactly which contributions and sessions it carries, so every later build can be held
+            // to them (A13).
             var withContributions = new Dictionary<string, object?>(StringComparer.Ordinal);
             foreach (var (k, v) in notes) withContributions[k] = v;
-            withContributions["contributions"] = contributions.Select(c => (object?)c.Id).ToList();
+            if (contributions.Count > 0) withContributions["contributions"] = contributions.Select(c => (object?)c.Id).ToList();
+            if (sessions.Count > 0) withContributions["sessions"] = sessions.Select(s => (object?)s.SessionId).ToList();
             notes = withContributions;
         }
         if (census is not null)
@@ -1521,6 +1528,7 @@ public static partial class CatalogBuilder
                 if (census is not null) rowCounts[CandidateCensus.Table] = LoadCandidates(con, census, bundles);
                 Lap("manifest");
                 if (contributions.Count > 0) contributionCounts = CreateContributionTables(con, contributions, bundles);
+                if (sessions.Count > 0) foreach (var (k, v) in CreateSessionTables(con, sessions)) contributionCounts[k] = v;
                 Lap("contributions");
                 checks = [
                     .. CheckRowCounts(con, bundles),
@@ -2676,7 +2684,7 @@ public static partial class CatalogBuilder
                 Exec(con, "INSERT INTO catalog_tables VALUES (?, ?, ?)", spec.Name, studyCounts.GetValueOrDefault(spec.Name, 0), $"study:{layer}");
         // Only when the store holds a contribution (A9), so a catalog without one lists exactly the tables it did.
         foreach (var (name, rows) in (contributionCounts ?? new Dictionary<string, long>()).OrderBy(kv => kv.Key, StringComparer.Ordinal))
-            Exec(con, "INSERT INTO catalog_tables VALUES (?, ?, ?)", name, rows, "contribution");
+            Exec(con, "INSERT INTO catalog_tables VALUES (?, ?, ?)", name, rows, Sessions.Tables.Contains(name) ? "session" : "contribution");
 
         Exec(con,
             "CREATE TABLE catalog_checks (name VARCHAR, kind VARCHAR, ok BOOLEAN, "

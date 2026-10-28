@@ -17,7 +17,8 @@ public static class McpCommand
 {
     public const string Usage =
         "usage: datarepo mcp [-h] [--catalog CATALOG] [--install] [--list] [--check]\n" +
-        "                    [--name NAME] [--config CONFIG] [--force]";
+        "                    [--name NAME] [--config CONFIG] [--force]\n" +
+        "                    [--sessions SESSIONS]";
 
     /// <summary>The command's one line, as <c>datarepo -h</c> lists it.</summary>
     public const string Summary = "serve one catalog to an agent over stdio (MCP)";
@@ -34,7 +35,11 @@ public static class McpCommand
         "  --name NAME        server name, for registering several catalogs\n" +
         "  --config CONFIG    MCP config to write; default is the Claude Code user\n" +
         "                     config\n" +
-        "  --force            repoint an entry of that name at this catalog";
+        "  --force            repoint an entry of that name at this catalog\n" +
+        "  --sessions SESSIONS\n" +
+        "                     where the PUBLIC record of every call is kept; default\n" +
+        "                     the _sessions folder of the store a catalog folder\n" +
+        "                     reads (a one-file catalog must name one)";
 
     /// <summary>Every option; true when it takes a value.</summary>
     private static readonly IReadOnlyDictionary<string, bool> Options = new Dictionary<string, bool>
@@ -46,6 +51,7 @@ public static class McpCommand
         ["--name"] = true,
         ["--config"] = true,
         ["--force"] = false,
+        ["--sessions"] = true,
     };
 
     /// <summary>Run the command; returns the process exit code (0 done, 1 refused, 2 usage). Serving blocks until the
@@ -151,7 +157,7 @@ public static class McpCommand
             return 0;
         }
 
-        Mcp.ServeAsync(catalog, name, stderr).GetAwaiter().GetResult();
+        Mcp.ServeAsync(catalog, name, stderr, sessions: values.GetValueOrDefault("--sessions")).GetAwaiter().GetResult();
         return 0;
     }
 

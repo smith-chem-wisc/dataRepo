@@ -35,45 +35,122 @@ public static partial class CatalogBuilder
     /// carried is no longer in the store. A release is frozen once published; this is what keeps that true of its
     /// contributions in every release after it.</summary>
     /// <exception cref="CatalogException">One is missing.</exception>
-    private static void CheckReleasedContributionsKept(string folder, IReadOnlyList<ContributionRef> contributions)
+    private static void CheckReleasedContributionsKept(string folder, IReadOnlyList<ContributionRef> contributions, IReadOnlyList<SessionRef> sessions)
     {
         if (!Directory.Exists(folder)) return;
         var have = contributions.Select(c => c.Id).ToHashSet(StringComparer.Ordinal);
+        var haveSessions = sessions.Select(s => s.SessionId).ToHashSet(StringComparer.Ordinal);
         var lost = new List<string>();
+        var lostSessions = new List<string>();
         foreach (var file in Directory.EnumerateFiles(folder, "catalog-*.duckdb").Order(StringComparer.Ordinal))
         {
-            var (release, carried) = ReleasedContributions(file);
+            var (release, carried, carriedSessions) = ReleasedContributions(file);
             if (release is null) continue;
             lost.AddRange(carried.Where(id => !have.Contains(id)).Select(id => $"{id} (release {release}, {System.IO.Path.GetFileName(file)})"));
+            lostSessions.AddRange(carriedSessions.Where(id => !haveSessions.Contains(id)).Select(id => $"{id} (release {release}, {System.IO.Path.GetFileName(file)})"));
         }
         if (lost.Count > 0)
             throw new CatalogException(
                 "the store no longer holds contribution(s) an earlier release carried, so nothing was built: "
                 + string.Join(", ", lost) + ". A released contribution is carried into every later catalog; restore its "
                 + $"folder under {Contributions.Dir}/ (it is retracted by a new contribution, never deleted).");
+        if (lostSessions.Count > 0)
+            throw new CatalogException(
+                "the store no longer holds session record(s) an earlier release carried, so nothing was built: "
+                + string.Join(", ", lostSessions) + $". The public session record is carried into every later catalog; restore the file under {Sessions.Dir}/.");
     }
 
-    /// <summary>The release a catalog file was built for and the contribution ids it recorded.</summary>
-    private static (string? Release, List<string> Contributions) ReleasedContributions(string path)
+    /// <summary>The release a catalog file was built for, and the contribution and session ids it recorded.</summary>
+    private static (string? Release, List<string> Contributions, List<string> Sessions) ReleasedContributions(string path)
     {
+        static List<string> Ids(System.Text.Json.JsonElement root, string key) =>
+            root.TryGetProperty(key, out var list) && list.ValueKind == System.Text.Json.JsonValueKind.Array
+                ? list.EnumerateArray().Where(e => e.ValueKind == System.Text.Json.JsonValueKind.String).Select(e => e.GetString()!).ToList()
+                : [];
         try
         {
             using var con = Open(path, readOnly: true);
-            if (Query(con, "SELECT notes FROM catalog_meta").SingleOrDefault()?[0] is not string notes) return (null, []);
+            if (Query(con, "SELECT notes FROM catalog_meta").SingleOrDefault()?[0] is not string notes) return (null, [], []);
             using var doc = System.Text.Json.JsonDocument.Parse(notes);
             var root = doc.RootElement;
             if (root.ValueKind != System.Text.Json.JsonValueKind.Object
                 || !root.TryGetProperty("release", out var release) || release.ValueKind != System.Text.Json.JsonValueKind.String)
-                return (null, []);
-            var ids = root.TryGetProperty("contributions", out var list) && list.ValueKind == System.Text.Json.JsonValueKind.Array
-                ? list.EnumerateArray().Where(e => e.ValueKind == System.Text.Json.JsonValueKind.String).Select(e => e.GetString()!).ToList()
-                : [];
-            return (release.GetString(), ids);
+                return (null, [], []);
+            return (release.GetString(), Ids(root, "contributions"), Ids(root, "sessions"));
         }
         catch (Exception e) when (e is DuckDBException or IOException or System.Text.Json.JsonException)
         {
-            return (null, []);
+            return (null, [], []);
         }
+    }
+
+    /// <summary>Every public session record in the stores <paramref name="bundles"/> come from (A18), always.</summary>
+    public static List<SessionRef> SessionsFor(IReadOnlyList<BundleRef> bundles)
+    {
+        if (SchemaContract.IsPython0320) return [];
+        return bundles
+            .Select(b => System.IO.Path.GetDirectoryName(System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(b.Path))!)!)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .SelectMany(Sessions.Read)
+            .ToList();
+    }
+
+    /// <summary>The catalog id's line for the session records, or null when there are none (the census rule).</summary>
+    private static string? SessionLine(IReadOnlyList<SessionRef> sessions)
+    {
+        if (sessions.Count == 0) return null;
+        var text = string.Concat(sessions.Select(s => $"{s.SessionId}\t{s.Entries.Count}\t{s.Entries[^1].GetValueOrDefault("entry_sha256")}\n")
+            .Order(StringComparer.Ordinal));
+        return $"sessions/{Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(text)))[..16]}\n";
+    }
+
+    /// <summary>The session tables (A18), with how many rows each holds. Only called when there is at least one record.</summary>
+    private static Dictionary<string, long> CreateSessionTables(DuckDBConnection con, IReadOnlyList<SessionRef> sessions)
+    {
+        Exec(con, @"
+        CREATE TABLE sessions (
+            session_id VARCHAR, started_utc VARCHAR, datarepo_version VARCHAR, catalog_id VARCHAR, visibility VARCHAR,
+            client_name VARCHAR, client_version VARCHAR, n_calls BIGINT, chain_ok BOOLEAN, broken_at_seq BIGINT,
+            incomplete BOOLEAN, path VARCHAR
+        )");
+        Exec(con, @"
+        CREATE TABLE session_calls (
+            session_id VARCHAR, seq BIGINT, utc VARCHAR, tool VARCHAR, arguments JSON, catalog_id VARCHAR, outcome VARCHAR,
+            error VARCHAR, row_count BIGINT, truncated BOOLEAN, answer_sha256 VARCHAR, rows_sha256 VARCHAR, entry_sha256 VARCHAR
+        )");
+        long calls = 0;
+        using (var sessionRows = con.CreateAppender("sessions"))
+        using (var callRows = con.CreateAppender("session_calls"))
+        {
+            foreach (var s in sessions)
+            {
+                var header = s.Entries[0];
+                var client = s.Entries.FirstOrDefault(e => e.GetValueOrDefault("type") as string == "client");
+                var own = s.Entries.Where(e => e.GetValueOrDefault("type") as string == "call").ToList();
+                sessionRows.CreateRow()
+                    .AppendValue(s.SessionId).AppendValue(header.GetValueOrDefault("started_utc") as string)
+                    .AppendValue(header.GetValueOrDefault("datarepo_version") as string).AppendValue(header.GetValueOrDefault("catalog_id") as string)
+                    .AppendValue(header.GetValueOrDefault("visibility") as string)
+                    .AppendValue(client?.GetValueOrDefault("name") as string).AppendValue(client?.GetValueOrDefault("version") as string)
+                    .AppendValue((long?)own.Count).AppendValue((bool?)s.ChainOk).AppendValue(s.BrokenAtSeq).AppendValue((bool?)s.Incomplete)
+                    .AppendValue(AsPosix(s.Path))
+                    .EndRow();
+                foreach (var e in own)
+                {
+                    callRows.CreateRow()
+                        .AppendValue(s.SessionId).AppendValue(e.GetValueOrDefault("seq") as long?).AppendValue(e.GetValueOrDefault("utc") as string)
+                        .AppendValue(e.GetValueOrDefault("tool") as string)
+                        .AppendValue(PyFormat.Json(e.GetValueOrDefault("arguments"), sortKeys: true, ensureAscii: true))
+                        .AppendValue(e.GetValueOrDefault("catalog_id") as string).AppendValue(e.GetValueOrDefault("outcome") as string)
+                        .AppendValue(e.GetValueOrDefault("error") as string).AppendValue(e.GetValueOrDefault("row_count") as long?)
+                        .AppendValue(e.GetValueOrDefault("truncated") as bool?).AppendValue(e.GetValueOrDefault("answer_sha256") as string)
+                        .AppendValue(e.GetValueOrDefault("rows_sha256") as string).AppendValue(e.GetValueOrDefault("entry_sha256") as string)
+                        .EndRow();
+                    calls++;
+                }
+            }
+        }
+        return new Dictionary<string, long>(StringComparer.Ordinal) { ["sessions"] = sessions.Count, ["session_calls"] = calls };
     }
 
     /// <summary>The catalog ids contributions were computed from: <c>--keep</c> never prunes those files (A14).</summary>
