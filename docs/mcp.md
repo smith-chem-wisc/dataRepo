@@ -283,6 +283,16 @@ This lists the earlier public queries that read the same tables, and the accepte
 It is off by default. `describe()` reports how many saved results and public sessions a catalog holds,
 whenever it holds any.
 
+**Hosted: `datarepo-host`.** A separate program (`src/DataRepo.Host`) serves the same tools, record and inbox over
+Streamable HTTP at `/mcp`, so many agents can use one server copy at once. It takes the same options as
+`datarepo mcp`: `--catalog`, `--sessions`, `--contributions` and `--show-prior`. It also takes `--urls` and
+`--rate`, a limit of requests per minute per client address; a client over the limit gets HTTP 429.
+- Each MCP session gets its own record file, so copies behind a load balancer never coordinate.
+- `GET /healthz` names the catalog being served.
+- The web framework lives only in this program. The `datarepo` CLI does not carry it.
+- Not yet done before a public endpoint: checking the `Origin` header, keys for higher limits, and copying the
+  record to write-once storage.
+
 None of this changes a server started without these options. The tool list is the same, and every answer
 matches the Python server's byte for byte.
 

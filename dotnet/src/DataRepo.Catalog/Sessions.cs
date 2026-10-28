@@ -131,11 +131,12 @@ public static class Sessions
 /// <summary>The writing side of one session's record: opened when the server starts serving, one line per call.</summary>
 /// <remarks>Thread-safe: the server answers one call at a time already, and the lock keeps the chain whole if that ever
 /// changes. A line is written and flushed before the answer goes back, so an answer never names an entry that is not
-/// on disk.</remarks>
+/// on disk. The file is opened, appended to and closed for each line, so a hosted server carrying thousands of
+/// sessions holds no file open between calls.</remarks>
 public sealed class SessionLog : IDisposable
 {
     private readonly object _lock = new();
-    private readonly FileStream _stream;
+    private readonly string _file;
     private readonly Dictionary<long, IReadOnlyDictionary<string, object?>> _calls = [];
     private string _prev;
     private long _seq;
@@ -154,11 +155,11 @@ public sealed class SessionLog : IDisposable
 
     public string Path { get; }
 
-    private SessionLog(string sessionId, string path, FileStream stream, string prev)
+    private SessionLog(string sessionId, string file, string prev)
     {
         SessionId = sessionId;
-        Path = path;
-        _stream = stream;
+        Path = BundleWriter.PathText(file);
+        _file = file;
         _prev = prev;
     }
 
@@ -171,8 +172,8 @@ public sealed class SessionLog : IDisposable
         var folder = System.IO.Path.Combine(root, now.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
         Directory.CreateDirectory(folder);
         var path = System.IO.Path.Combine(folder, $"{id}.jsonl");
-        var stream = new FileStream(path, FileMode.CreateNew, FileAccess.Write, FileShare.Read | FileShare.Delete);
-        var log = new SessionLog(id, BundleWriter.PathText(path), stream, "");
+        new FileStream(path, FileMode.CreateNew, FileAccess.Write).Dispose();  // a fresh id names a fresh file, or this throws
+        var log = new SessionLog(id, path, "");
         log.Write(new Dictionary<string, object?>(StringComparer.Ordinal)
         {
             ["type"] = "session",
@@ -247,12 +248,18 @@ public sealed class SessionLog : IDisposable
         var sha = Sessions.Sha(Sessions.Canonical(entry));
         entry["entry_sha256"] = sha;
         var bytes = Encoding.UTF8.GetBytes(PyFormat.Json(entry, sortKeys: true, ensureAscii: true) + "\n");
-        _stream.Write(bytes);
-        _stream.Flush(flushToDisk: true);
+        using (var stream = new FileStream(_file, FileMode.Append, FileAccess.Write, FileShare.Read | FileShare.Delete))
+        {
+            stream.Write(bytes);
+            stream.Flush(flushToDisk: true);
+        }
         _prev = sha;
         _seq = (long)entry["seq"]!;
         return sha;
     }
 
-    public void Dispose() => _stream.Dispose();
+    /// <summary>Nothing to release: no file is held between lines. Kept so a session reads as a resource in a <c>using</c>.</summary>
+    public void Dispose()
+    {
+    }
 }

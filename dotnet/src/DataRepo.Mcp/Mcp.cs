@@ -205,8 +205,19 @@ public static class Mcp
     /// session record, because a result cites its queries from it.</param>
     public static McpServerOptions ServerOptions(CatalogServer server, string name = "datarepo", SessionLog? log = null, string? inbox = null)
     {
-        if (inbox is not null && log is null)
-            throw new ArgumentException("a server that accepts results keeps a session record: results cite their queries from it", nameof(log));
+        var options = new McpServerOptions();
+        Configure(options, server, name, log is null ? null : _ => log, inbox);
+        return options;
+    }
+
+    /// <summary>Fills <paramref name="options"/> for one open catalog: the stdio server's own options, and a hosted
+    /// server's (<c>DataRepo.Host</c>), which carries many sessions and gives each its own record.</summary>
+    /// <param name="logFor">The public session record of the session a call came from, or null to keep none. A hosted
+    /// server opens one per MCP session (<c>Mcp-Session-Id</c>).</param>
+    public static void Configure(McpServerOptions options, CatalogServer server, string name, Func<McpServer, SessionLog>? logFor, string? inbox)
+    {
+        if (inbox is not null && logFor is null)
+            throw new ArgumentException("a server that accepts results keeps a session record: results cite their queries from it", nameof(logFor));
         var gate = new SemaphoreSlim(1, 1);  // the catalog connection serves one call at a time
         var tools = ToolSpecs.Concat(inbox is null ? [] : [SaveToolSpec]).Select(spec => new Tool
         {
@@ -216,30 +227,27 @@ public static class Mcp
             InputSchema = JsonDocument.Parse(spec.InputSchema).RootElement.Clone(),
             OutputSchema = JsonDocument.Parse(spec.OutputSchema).RootElement.Clone(),
         }).ToList();
-        var options = new McpServerOptions
+        options.ServerInfo = new Implementation { Name = name, Version = CatalogBuilder.PackageVersion };
+        options.ServerInstructions = logFor is null ? null : Sessions.Notice;
+        options.Capabilities = new ServerCapabilities { Tools = new ToolsCapability() };
+        options.Handlers = new McpServerHandlers
         {
-            ServerInfo = new Implementation { Name = name, Version = CatalogBuilder.PackageVersion },
-            ServerInstructions = log is null ? null : Sessions.Notice,
-            Capabilities = new ServerCapabilities { Tools = new ToolsCapability() },
-            Handlers = new McpServerHandlers
+            ListToolsHandler = (_, _) => ValueTask.FromResult(new ListToolsResult { Tools = tools }),
+            CallToolHandler = async (request, ct) =>
             {
-                ListToolsHandler = (_, _) => ValueTask.FromResult(new ListToolsResult { Tools = tools }),
-                CallToolHandler = async (request, ct) =>
+                await gate.WaitAsync(ct).ConfigureAwait(false);
+                try
                 {
-                    await gate.WaitAsync(ct).ConfigureAwait(false);
-                    try
-                    {
-                        log?.SetClient(request.Server.ClientInfo?.Name, request.Server.ClientInfo?.Version);
-                        return CallTool(server, request.Params?.Name ?? "", request.Params?.Arguments, log, inbox);
-                    }
-                    finally
-                    {
-                        gate.Release();
-                    }
-                },
+                    var log = logFor?.Invoke(request.Server);
+                    log?.SetClient(request.Server.ClientInfo?.Name, request.Server.ClientInfo?.Version);
+                    return CallTool(server, request.Params?.Name ?? "", request.Params?.Arguments, log, inbox);
+                }
+                finally
+                {
+                    gate.Release();
+                }
             },
         };
-        return options;
     }
 
     /// <summary>One <c>tools/call</c>: validate the arguments as the Python SDK's argument model does, call the tool,

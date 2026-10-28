@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>datarepo-host</AssemblyName>
+    <RootNamespace>DataRepo.Host</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DataRepo.Mcp\DataRepo.Mcp.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The official C# MCP SDK's ASP.NET Core transport (Streamable HTTP), the same release as the core package. It lives
+         here, not in DataRepo.Mcp or the CLI, so the datarepo command line carries no web framework. -->
+    <PackageReference Include="ModelContextProtocol.AspNetCore" Version="2.2.0" />
+  </ItemGroup>
+
+</Project>
