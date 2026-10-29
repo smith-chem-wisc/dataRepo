@@ -58,8 +58,9 @@ jobs:
       # `.[readers]` pulls pyMzLib from PyPI, where it is the `mzlib` distribution. Its wheels are
       # per-platform and carry the mzLib bridge, so the end-to-end ingest tests run here rather
       # than skipping, and nothing has to set PYMZLIB_BRIDGE. `.[mcp]` pulls the MCP SDK, so
-      # `datarepo mcp` is exercised here rather than only by hand.
-      - run: pip install -e .[readers,mcp] -r requirements-dev.txt
+      # `datarepo mcp` is exercised here rather than only by hand. DuckDB 2.0 refuses a second statement on a
+      # connection with an unfinished result, which the frozen 0.32.0 does throughout; it was written for 1.x.
+      - run: pip install -e .[readers,mcp] -r requirements-dev.txt "duckdb>=1.1,<2"
 
       - name: Generated Arrow schemas are up to date
         run: python tools/build_tables.py --check
