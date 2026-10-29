@@ -27,9 +27,17 @@ public sealed class BundleWriter(string store, string datasetId, string? ingestP
     /// writes.</b> The C# line starts apart from the Python one (which ended at 0.22.0) so a C# bundle id
     /// can never collide with a Python one; the operator re-ingests once at the switch (D41). cs-1.0.0 is the
     /// first released C# ingest path: G76 (D40), G81, D37 and covered_zero, on schema 0.0.14. cs-1.1.0: G83's
-    /// fixes to the behaviours 0.32.0 had, and G87's run start time and instrument, on schema 0.0.15.
+    /// fixes to the behaviours 0.32.0 had, and G87's run start time and instrument, on schema 0.0.15. cs-1.2.0
+    /// (1.4.0, one re-ingest): G106, a source name whose SDRF rows disagree on a sample-level cell gets no value there
+    /// and an <c>sdrf_conflicting_rows</c> finding; PXR-R12, a UniProt XML in any namespace, and an empty database
+    /// refused; G101, sites and occupancy placed only against the copy of an accession the search's TCAmbiguity kept;
+    /// G26, modification accessions and masses from mzLib's own loaders, by the exact token; G107 and PXR-R22, the
+    /// SDRF read is the manifest's operator_sdrf, else the sha256-checked SDRF the search's design came from; schema
+    /// 0.0.16: assay kinds, sequence_window, and PXR-R23's pooled assays for a design sample of several files;
+    /// DATAREPO-84, a target entry of another source than UniProt says so in source_db; DATAREPO-D7, a
+    /// localization-ambiguous peptide row is left out with a finding, never stored under its first full sequence.
     /// </remarks>
-    public const string IngesterVersion = "cs-1.1.0";
+    public const string IngesterVersion = "cs-1.2.0";
 
     /// <summary>QPX release the column names are written against (D4). Provisional (G13).</summary>
     public const string QpxVersion = "unpinned";
@@ -173,7 +181,7 @@ public sealed class BundleWriter(string store, string datasetId, string? ingestP
 
         Directory.CreateDirectory(Path.Combine(output, SourcesDir));
         var rowCounts = new OrderedDictionary<string, object?>(StringComparer.Ordinal);
-        foreach (var spec in Tables.Core)
+        foreach (var spec in SchemaContract.CoreTables)
         {
             if (!_tables.TryGetValue(spec.Name, out var rows) || rows.Count == 0) continue;
             var batch = ArrowTables.FromRows(spec.Name, SchemaContract.Columns(spec), rows);

@@ -23,10 +23,59 @@ public sealed class ProteinSequences
     /// target only, {true, false} both (human keratins, albumin). See <see cref="DatabaseStatus"/>.</summary>
     public Dictionary<string, HashSet<bool>> ContaminantFrom { get; } = new(StringComparer.Ordinal);
 
-    public void Add(string accession, string sequence)
+    /// <summary>Accession -> sequence -> which kinds of database carried that sequence (true: a contaminant panel).</summary>
+    private readonly Dictionary<string, Dictionary<string, HashSet<bool>>> _kindsOfSequence = new(StringComparer.Ordinal);
+
+    /// <summary>Accessions with several sequences, of which the search held one this reader cannot name (G101).</summary>
+    /// <remarks>They have no sequence after <see cref="KeepSearched"/>, so no site is placed against either.</remarks>
+    public SortedSet<string> Ambiguous { get; } = new(StringComparer.Ordinal);
+
+    /// <summary>Accessions with several sequences that <see cref="KeepSearched"/> narrowed to the one the search held,
+    /// and the kind of database it came from (<c>target</c> or <c>contaminant</c>).</summary>
+    public SortedDictionary<string, string> Resolved { get; } = new(StringComparer.Ordinal);
+
+    public void Add(string accession, string sequence, bool? contaminant = null)
     {
         if (!ByAccession.TryGetValue(accession, out var known)) ByAccession[accession] = known = [];
         if (!known.Contains(sequence)) known.Add(sequence);
+        if (contaminant is not bool kind) return;
+        if (!_kindsOfSequence.TryGetValue(accession, out var bySequence)) _kindsOfSequence[accession] = bySequence = new(StringComparer.Ordinal);
+        if (!bySequence.TryGetValue(sequence, out var kinds)) bySequence[sequence] = kinds = [];
+        kinds.Add(kind);
+    }
+
+    /// <summary>Narrows each accession with several sequences to the one the search held (G101).</summary>
+    /// <remarks>
+    /// MetaMorpheus keeps ONE protein per accession (<c>MetaMorpheusTask.SanitizeBioPolymerDatabase</c>):
+    /// <c>RemoveContaminant</c> drops the contaminant panel's copy, <c>RemoveTarget</c> the target's, and
+    /// <c>RenameProtein</c> keeps both under new accessions (<c>_D1</c>, <c>_D2</c>), which the results then name. Its
+    /// contaminant panel carries older versions of two human keratins (O76011 at 436 residues against the proteome's
+    /// 394, P19013 at 534 against 520), and placing a site against both wrote every modification on them twice, 42 or
+    /// 14 residues apart. Where the setting names the copy, only its sequence is kept. Otherwise (no setting read,
+    /// <c>RenameProtein</c>, or two sequences from databases of one kind, where MetaMorpheus keeps the copy with the
+    /// most annotated modifications) the accession gets no sequence and is listed in <see cref="Ambiguous"/>.
+    /// </remarks>
+    /// <param name="tcAmbiguity">The search's <c>TCAmbiguity</c> (<see cref="SearchParams.TcAmbiguity"/>), or null.</param>
+    public void KeepSearched(string? tcAmbiguity)
+    {
+        bool? keepContaminant = tcAmbiguity switch { "RemoveContaminant" => false, "RemoveTarget" => true, _ => null };
+        foreach (var (accession, known) in ByAccession)
+        {
+            if (known.Count < 2) continue;
+            var kept = known;
+            if (keepContaminant is bool kind && DatabaseStatus(accession) == "both" && _kindsOfSequence.TryGetValue(accession, out var bySequence))
+                kept = known.Where(s => bySequence.TryGetValue(s, out var kinds) && kinds.Contains(kind)).ToList();
+            if (kept.Count == 1)
+            {
+                Resolved[accession] = keepContaminant == true ? "contaminant" : "target";
+                known.RemoveAll(s => s != kept[0]);
+            }
+            else
+            {
+                Ambiguous.Add(accession);
+                known.Clear();
+            }
+        }
     }
 
     private static readonly IReadOnlyList<string> None = [];
@@ -44,6 +93,38 @@ public sealed class ProteinSequences
 
     /// <summary>How many accessions carry a sequence (Python's <c>len()</c>).</summary>
     public int Count => ByAccession.Count;
+
+    /// <summary>The UniProt XML <c>dataset</c> values that are UniProt's own.</summary>
+    public static readonly IReadOnlySet<string> UniprotDatasets = new HashSet<string>(StringComparer.Ordinal) { "Swiss-Prot", "TrEMBL" };
+
+    private readonly Dictionary<string, SortedSet<string>> _datasets = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, SortedSet<string>> _taxa = new(StringComparer.Ordinal);
+
+    /// <summary>Records one target entry's <c>dataset</c> attribute and taxon (DATAREPO-84).</summary>
+    public void NoteEntry(string accession, string? dataset, string? taxon)
+    {
+        if (dataset is { Length: > 0 })
+        {
+            if (!_datasets.TryGetValue(accession, out var known)) _datasets[accession] = known = new(StringComparer.Ordinal);
+            known.Add(dataset);
+        }
+        if (taxon is { Length: > 0 })
+        {
+            if (!_taxa.TryGetValue(accession, out var known)) _taxa[accession] = known = new(StringComparer.Ordinal);
+            known.Add(taxon);
+        }
+    }
+
+    /// <summary>The source a target accession's own database entries name, when it is not UniProt: the entry's
+    /// <c>dataset</c> attribute lower-cased (<c>ensembl</c> for aging's Ensembl-only isoforms, DATAREPO-84), with the
+    /// entry's own NCBI taxon. Null for a UniProt entry (<c>Swiss-Prot</c>, <c>TrEMBL</c>), an accession no target
+    /// XML carried, or entries that disagree.</summary>
+    public (string Source, string? Taxon)? OtherSource(string accession)
+    {
+        if (!_datasets.TryGetValue(accession, out var datasets) || datasets.Count != 1 || UniprotDatasets.Contains(datasets.Min!)) return null;
+        var taxon = _taxa.TryGetValue(accession, out var taxa) && taxa.Count == 1 ? $"NCBITaxon:{taxa.Min}" : null;
+        return (datasets.Min!.ToLowerInvariant(), taxon);
+    }
 }
 
 /// <summary>The search's protein database -> one sequence per accession, for placing sites (DATAREPO-32).</summary>
@@ -99,22 +180,33 @@ public static class ProteinDb
     /// <remarks>The first <c>&lt;accession&gt;</c> is the one mzLib's loader keys a protein on. Only the entry's
     /// direct <c>&lt;sequence&gt;</c> child is read; isoform sequences named inside comments are not entries.
     /// Text is an element's leading text only, as lxml's <c>.text</c>: it stops at the first child element,
-    /// comment or processing instruction.</remarks>
-    internal static IEnumerable<(string Accession, string Sequence)> IterUniprotXml(string path, IngestRules rules = IngestRules.Current)
+    /// comment or processing instruction.
+    /// <para>Under <see cref="IngestRules.Current"/> an element is matched on its local name in any namespace, as
+    /// mzLib's loader matches it (<c>xml.Name == "entry"</c>), so the search read it. UniProt's own files declare
+    /// <c>https://uniprot.org/uniprot</c> and mzLib's <c>ProteinDbWriter</c> can write <c>undefined</c>. Python
+    /// 0.32.0 read only <c>http://uniprot.org/uniprot</c>, and anything else read as an empty database
+    /// (PXR-R12).</para></remarks>
+    /// <param name="onEntry">Given, it also receives each entry's <c>dataset</c> attribute (<c>Swiss-Prot</c>,
+    /// <c>TrEMBL</c>, or another source's name, such as aging's <c>Ensembl</c>; DATAREPO-84) and its organism's NCBI
+    /// taxon id, as <c>(accession, dataset, taxon)</c>.</param>
+    internal static IEnumerable<(string Accession, string Sequence)> IterUniprotXml(string path, IngestRules rules = IngestRules.Current,
+        Action<string, string?, string?>? onEntry = null)
     {
         var settings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Ignore, IgnoreWhitespace = false };
         using var reader = XmlReader.Create(path, settings);
+        bool Uniprot() => rules == IngestRules.Current || reader.NamespaceURI == UniprotNs;
         while (reader.Read())
         {
-            if (reader.NodeType != XmlNodeType.Element || reader.LocalName != "entry" || reader.NamespaceURI != UniprotNs)
+            if (reader.NodeType != XmlNodeType.Element || reader.LocalName != "entry" || !Uniprot())
                 continue;
             if (reader.IsEmptyElement) continue;
             var depth = reader.Depth;
-            string? accession = null, sequence = null;
+            var dataset = onEntry is null ? null : reader.GetAttribute("dataset");
+            string? accession = null, sequence = null, taxon = null;
             bool sawAccession = false, sawSequence = false;
             while (reader.Read() && !(reader.NodeType == XmlNodeType.EndElement && reader.Depth == depth))
             {
-                if (reader.NodeType != XmlNodeType.Element || reader.Depth != depth + 1 || reader.NamespaceURI != UniprotNs)
+                if (reader.NodeType != XmlNodeType.Element || reader.Depth != depth + 1 || !Uniprot())
                     continue;
                 if (reader.LocalName == "accession" && !sawAccession)
                 {
@@ -126,10 +218,28 @@ public static class ProteinDb
                     sawSequence = true;
                     sequence = LeadingText(reader);
                 }
+                else if (onEntry is not null && reader.LocalName == "organism" && taxon is null && !reader.IsEmptyElement)
+                    taxon = OrganismTaxon(reader);
             }
             if (!string.IsNullOrEmpty(accession) && !string.IsNullOrEmpty(sequence))
+            {
+                onEntry?.Invoke(Strip(accession), dataset, taxon);
                 yield return (Strip(accession), AsSearched(string.Concat(SplitWhitespace(sequence)), rules));
+            }
         }
+    }
+
+    /// <summary>The <c>NCBI Taxonomy</c> id of the <c>&lt;organism&gt;</c> element the reader is on, or null; leaves the
+    /// reader on that element's end.</summary>
+    private static string? OrganismTaxon(XmlReader reader)
+    {
+        string? taxon = null;
+        using var organism = reader.ReadSubtree();
+        while (organism.Read())
+            if (taxon is null && organism.NodeType == XmlNodeType.Element && organism.LocalName == "dbReference"
+                && organism.GetAttribute("type") == "NCBI Taxonomy")
+                taxon = organism.GetAttribute("id");
+        return taxon;
     }
 
     /// <summary>A database sequence as the search saw it.</summary>
@@ -219,7 +329,10 @@ public static class ProteinDb
 
     /// <summary>Add every entry of one UniProt XML or FASTA file.</summary>
     /// <returns>How many entries were read.</returns>
-    /// <exception cref="IngestException">Neither <c>.xml</c> nor <c>.fasta</c>/<c>.fa</c>.</exception>
+    /// <exception cref="IngestException">Neither <c>.xml</c> nor <c>.fasta</c>/<c>.fa</c>; or, under
+    /// <see cref="IngestRules.Current"/>, a file with no entries. The search found proteins in it, so an empty read is
+    /// this reader failing, and it would place no site with no word said (PXR-R12). Python 0.32.0 read it as
+    /// empty.</exception>
     public static int ReadDatabase(string path, ProteinSequences into, IngestRules rules = IngestRules.Current)
     {
         var name = PathName(path).ToLowerInvariant();
@@ -233,14 +346,21 @@ public static class ProteinDb
             // rather than silently place nothing.
             throw new IngestException($"cannot read protein database {PathStr(path)}: only .xml and .fasta are supported");
         var contaminant = IsContaminantDatabase(path);
+        if (name.EndsWith(".xml", StringComparison.Ordinal) && rules == IngestRules.Current && !contaminant)
+            entries = IterUniprotXml(path, rules, into.NoteEntry);
         var count = 0;
         foreach (var (accession, sequence) in entries)
         {
-            into.Add(accession, sequence);
+            into.Add(accession, sequence, contaminant);
             if (!into.ContaminantFrom.TryGetValue(accession, out var kinds)) into.ContaminantFrom[accession] = kinds = [];
             kinds.Add(contaminant);
             count++;
         }
+        if (count == 0 && rules == IngestRules.Current)
+            throw new IngestException(
+                $"protein database {PathStr(path)} read as having no entries, though the search used it. A UniProt XML "
+                + "needs <entry> elements holding an <accession> and a <sequence>, and a FASTA needs '>' headers with "
+                + "sequence lines. Sites cannot be placed against an empty read, so the ingest stops here.");
         return count;
     }
 

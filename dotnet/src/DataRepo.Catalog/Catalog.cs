@@ -104,7 +104,8 @@ public sealed record DatasetAnnotation(
     string? Notes,
     IReadOnlyList<string>? Flags,
     string? ProvenanceSchema,
-    string? Sdrf)
+    string? Sdrf,
+    string? OperatorSdrf)
 {
     /// <summary>The fields as one line of JSON, keys sorted: what the catalog id hashes. Not the manifest's path,
     /// which moves when the file does while the content stays.</summary>
@@ -117,6 +118,7 @@ public sealed record DatasetAnnotation(
         ["flags"] = Flags?.Cast<object?>().ToList(),
         ["provenance_schema"] = ProvenanceSchema,
         ["sdrf"] = Sdrf,
+        ["operator_sdrf"] = OperatorSdrf,
     }, sortKeys: true, ensureAscii: true);
 }
 
@@ -242,8 +244,12 @@ public static partial class CatalogBuilder
     /// <see cref="SchemaContract.Python0320"/> scope it stays "8", and go and the annotations are left
     /// out, so a parity build is still what Python 0.32.0 built. Same principle as
     /// <c>manifest.CONTENT_FIELDS</c> one level down -- an id moves when its own content moves, and not
-    /// otherwise.</remarks>
-    public static string CatalogVersion => SchemaContract.IsPython0320 ? "8" : "13";
+    /// otherwise. "14" (1.4.0) reads schema 0.0.16 bundles (<c>assay_runs</c>, pooled assays; <c>n_quant_values</c>
+    /// counts every value, <c>dataset_annotations.operator_sdrf</c>) and loads the ptmQtl engines' artefacts into
+    /// <c>ptm_pairs</c> and <c>trait_effects</c>, with a catalog column <c>artefact_id</c> on both and NULL
+    /// <c>dataset_id</c> / <c>bundle_id</c> on pooled rows (<c>CatalogPtmQtl.cs</c>). The engines were built as "11"
+    /// on their own branch and never released under it.</remarks>
+    public static string CatalogVersion => SchemaContract.IsPython0320 ? "8" : "14";
 
     /// <summary>Bundle tables a catalog does not hold. PSMs are archived per deposit, never in a catalog (PXReprise's
     /// public-data contract, rule 3; D48 step 2): they are 82% of a store's bytes, and nothing served from a catalog
@@ -268,7 +274,7 @@ public static partial class CatalogBuilder
     /// <summary>The <see cref="DatasetEntry.NonContentFields"/> that <c>dataset_annotations</c> carries, in column
     /// order. Every non-content field but <c>raw</c> (the source row, the container of these) is here, and a test
     /// fails on one that is in neither, so adding a manifest field means deciding whether a reader sees it.</summary>
-    public static readonly IReadOnlyList<string> AnnotationFields = ["status", "reason", "notes", "flags", "provenance_schema", "sdrf"];
+    public static readonly IReadOnlyList<string> AnnotationFields = ["status", "reason", "notes", "flags", "provenance_schema", "sdrf", "operator_sdrf"];
 
     /// <summary>The derived table of runs the build's manifest excludes from analysis (G85).</summary>
     public const string RunExclusionsTable = "run_exclusions";
@@ -460,6 +466,9 @@ public static partial class CatalogBuilder
                     + "(`bundle.json`'s `psms` count).",
                 ["n_protein_groups_1pct"] = "Protein groups at 1% group-level FDR, contaminants included.",
                 ["n_ptm_sites"] = "Rows in `ptm_sites`, at any ambiguity level, contaminants included.",
+                ["n_quant_values"] = "Rows in `quant_values` for this dataset: per-run values and, from 1.4.0, design "
+                    + "samples' pooled values (`assays.assay_kind`), every definition together. A size, not a measure: "
+                    + "never compare it across definitions.",
                 ["n_open_findings"] = "Findings at severity warning or error. Read them before quoting "
                     + "any number from this row.",
                 ["restrictions"] = "The uses the producer says this whole dataset is UNFIT for, e.g. "
@@ -591,6 +600,11 @@ public static partial class CatalogBuilder
                     + "schema from provenance.json itself; this is the declaration.",
                 ["sdrf"] = "The SDRF the producer declared. The ingest finds and hashes the SDRF under the "
                     + "run folder; this is the declaration.",
+                ["operator_sdrf"] = "The SDRF the instance owner curated for this search (G107), as the path the build's "
+                    + "manifest names. When named, the ingest read it in place of any other SDRF: its characteristics, never "
+                    + "its factor values. Its bytes are a source of the bundle and in the bundle id; this path is not. NULL "
+                    + "when the entry names none; the search's own recorded SDRF was then read (sha256-checked) or, for "
+                    + "pxreprise_default, the deposit's metadata/ SDRF.",
             }),
         [RestrictionsTable] = new(
             "One row per (dataset, use) the producer says the WHOLE dataset is unfit for (the manifest's "
@@ -615,7 +629,9 @@ public static partial class CatalogBuilder
             + "and the `_1pct` views included; nothing here filters them. So ANY analysis across runs or samples "
             + "(abundance, age effects, per-run statistics) must leave these runs out itself, with an anti-join: "
             + "`... WHERE run_id NOT IN (SELECT run_id FROM run_exclusions)` on `runs`, or through "
-            + "`assays.run_id` for quantities. Identification counts the producer reports are of the whole search "
+            + "`assays.run_id` for quantities. A design sample's pooled value (`assays.assay_kind = 'design_sample'`) "
+            + "has no run_id; it includes every file `assay_runs` lists, so if any of them is excluded, leave the "
+            + "pooled value out too: it cannot be taken apart. Identification counts the producer reports are of the whole search "
             + "and include them. Taken from the manifest `datarepo build` was given, not from the bundle, so a "
             + "changed exclusion reaches the catalog at the next build without a re-ingest, and moves the "
             + "catalog id. No row for a dataset means its manifest entry excludes no run (or the dataset has no "
@@ -959,9 +975,10 @@ public static partial class CatalogBuilder
         bundles.OrderBy(r => r.DatasetId, SourcesPy.CodePointOrder).Select(r =>
         {
             if (manifest is null || !manifest.Datasets.TryGetValue(r.DatasetId, out var e))
-                return new DatasetAnnotation(r.DatasetId, r.BundleId, false, null, null, null, null, null, null);
+                return new DatasetAnnotation(r.DatasetId, r.BundleId, false, null, null, null, null, null, null, null);
             return new DatasetAnnotation(r.DatasetId, r.BundleId, true, e.Status, DatasetEntry.Text(e.Reason),
-                DatasetEntry.Text(e.Notes), e.Flags.ToList(), DatasetEntry.Text(e.ProvenanceSchema), DatasetEntry.Text(e.Sdrf));
+                DatasetEntry.Text(e.Notes), e.Flags.ToList(), DatasetEntry.Text(e.ProvenanceSchema), DatasetEntry.Text(e.Sdrf),
+                e.OperatorSdrf);
         }).ToList();
 
     private static string CatalogIdOf(
@@ -1102,6 +1119,7 @@ public static partial class CatalogBuilder
         {
             SelectGoArtefacts(store, bundles, chosen, checks);
             SelectOrthology(store, chosen, checks);
+            SelectPtmQtl(store, bundles, chosen, checks);
         }
         return (chosen, checks);
     }
@@ -1492,6 +1510,7 @@ public static partial class CatalogBuilder
                 studyCounts = CreateStudyTables(con, study);
                 foreach (var (k, v) in CreateEngineTables(con, engines, views)) rowCounts[k] = v;
                 foreach (var (k, v) in LoadGoRows(con, bundles, engines, views)) rowCounts[k] = v;
+                foreach (var (k, v) in LoadPtmQtlRows(con, bundles, engines, views)) rowCounts[k] = v;
                 BuildEngineDerived(con, bundles);
                 Lap("study and engines");
                 if (AnnotationsActive)
@@ -1510,9 +1529,10 @@ public static partial class CatalogBuilder
                 Lap("checks: bundles");
                 checks.AddRange(CheckStudy(con, study));
                 Lap("checks: study");
-                checks.AddRange(CheckEngines(con, engines.Where(r => r.Engine != Runner.GoEngine).ToList()));
+                checks.AddRange(CheckEngines(con, engines.Where(r => r.Engine != Runner.GoEngine && !PtmQtlTables.ContainsKey(r.Engine)).ToList()));
                 checks.AddRange(CheckGo(con, bundles, engines));
                 checks.AddRange(CheckOrthology(con, engines));
+                checks.AddRange(CheckPtmQtl(con, engines));
                 Lap("checks: engines");
                 checks = [
                     .. checks,
@@ -1712,12 +1732,13 @@ public static partial class CatalogBuilder
         Exec(con, $@"
         CREATE TABLE ""{AnnotationsTable}"" (
             dataset_id VARCHAR, bundle_id VARCHAR, in_manifest BOOLEAN, status VARCHAR, reason VARCHAR,
-            notes VARCHAR, flags VARCHAR[], provenance_schema VARCHAR, sdrf VARCHAR
+            notes VARCHAR, flags VARCHAR[], provenance_schema VARCHAR, sdrf VARCHAR, operator_sdrf VARCHAR
         )
         ");
         foreach (var a in annotations)
-            Exec(con, $"INSERT INTO \"{AnnotationsTable}\" VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                a.DatasetId, a.BundleId, a.InManifest, a.Status, a.Reason, a.Notes, a.Flags?.ToList(), a.ProvenanceSchema, a.Sdrf);
+            Exec(con, $"INSERT INTO \"{AnnotationsTable}\" VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                a.DatasetId, a.BundleId, a.InManifest, a.Status, a.Reason, a.Notes, a.Flags?.ToList(), a.ProvenanceSchema, a.Sdrf,
+                a.OperatorSdrf);
     }
 
     /// <summary><c>run_exclusions</c>: one row per run the build's manifest excludes from analysis (G85). Written
@@ -2032,16 +2053,16 @@ public static partial class CatalogBuilder
     /// <summary>Every schema table as the union of the bundles that hold it: a copy, or with <paramref name="views"/> a
     /// view over the bundles' Parquet (D48 step 1).</summary>
     /// <remarks>In a views catalog <c>samples</c> is still copied (a few thousand rows): its <c>&lt;column&gt;_name</c>
-    /// columns are added by ALTER and UPDATE (G74), which a view cannot take. go's tables come from go's artefacts
-    /// (<see cref="LoadGoRows"/>), so here they are left for that.</remarks>
+    /// columns are added by ALTER and UPDATE (G74), which a view cannot take. go's and ptmQtl's tables come from their
+    /// artefacts (<see cref="LoadGoRows"/>, <see cref="LoadPtmQtlRows"/>), so here they are left for that.</remarks>
     private static Dictionary<string, long> LoadTables(DuckDBConnection con, IReadOnlyList<BundleRef> bundles, bool views = false)
     {
         var rowCounts = new Dictionary<string, long>(StringComparer.Ordinal);
-        foreach (var spec in Tables.Core)
+        foreach (var spec in SchemaContract.CoreTables)
         {
             var table = spec.Name;
             if (Runner.EngineTables.ContainsKey(table)) continue;  // never in a bundle; filled from artefacts
-            if (views && GoActive && Runner.GoTables.Contains(table)) continue;
+            if (views && GoActive && (Runner.GoTables.Contains(table) || PtmQtlTables.Values.Contains(table))) continue;
             if (LeftInBundles.Contains(table)) continue;
             var asView = views && table != "samples";
             var parts = new List<string>();
@@ -2194,10 +2215,7 @@ public static partial class CatalogBuilder
                 ? "(SELECT count(*) FROM psms p WHERE p.dataset_id = d.dataset_id)"
                 : $"(SELECT c.n_psms_all FROM {psmCounts} c WHERE c.dataset_id = d.dataset_id)")} AS n_psms_all,
             (SELECT count(*) FROM ptm_sites ps WHERE ps.dataset_id = d.dataset_id) AS n_ptm_sites,
-            (SELECT count(*) FROM quant_values q
-               JOIN assays a ON a.assay_id = q.assay_id
-               JOIN runs r ON r.run_id = a.run_id
-              WHERE r.dataset_id = d.dataset_id) AS n_quant_values,
+            (SELECT count(*) FROM quant_values q WHERE q.dataset_id = d.dataset_id) AS n_quant_values,
             (SELECT count(*) FROM findings f
               WHERE f.dataset_id = d.dataset_id AND f.severity IN ('warning', 'error')) AS n_open_findings
         FROM datasets d
@@ -2400,7 +2418,7 @@ public static partial class CatalogBuilder
     {
         var checks = new List<CatalogCheck>();
         // A table left in the bundles was checked by its ingest and is not here to re-check.
-        foreach (var (table, column) in Integrity.Identifiers.Where(i => !LeftInBundles.Contains(i.Table)))
+        foreach (var (table, column) in Integrity.Identifiers.Where(i => !LeftInBundles.Contains(i.Table) && SchemaContract.TableInForce(i.Table)))
         {
             var (duplicates, example) = CountAndExample(con,
                 $"SELECT count(*), min(k) FROM (SELECT \"{column}\" AS k FROM \"{table}\" "
@@ -2409,8 +2427,10 @@ public static partial class CatalogBuilder
                 duplicates == 0 ? null : $"e.g. {PyStr(example)}"));
         }
 
+        // A table added after the schema in force (a parity catalog's) is not in the catalog to check.
         foreach (var (table, column, target, targetColumn) in Integrity.References
-                     .Where(r => !LeftInBundles.Contains(r.Table) && !LeftInBundles.Contains(r.Target)))
+                     .Where(r => !LeftInBundles.Contains(r.Table) && !LeftInBundles.Contains(r.Target)
+                                 && SchemaContract.TableInForce(r.Table) && SchemaContract.TableInForce(r.Target)))
         {
             var isList = column.EndsWith("[]", StringComparison.Ordinal);
             var name = isList ? column[..^2] : column;
@@ -2631,11 +2651,12 @@ public static partial class CatalogBuilder
         }
 
         Exec(con, "CREATE TABLE catalog_tables (table_name VARCHAR, rows BIGINT, kind VARCHAR)");
-        foreach (var spec in Tables.Core.Where(t => !LeftInBundles.Contains(t.Name)))
+        foreach (var spec in SchemaContract.CoreTables.Where(t => !LeftInBundles.Contains(t.Name)))
         {
             var name = spec.Name;
             var kind = Runner.EngineTables.TryGetValue(name, out var engine) ? $"engine:{engine}"
                 : GoActive && Runner.GoTables.Contains(name) ? $"engine:{Runner.GoEngine}"
+                : GoActive && PtmQtlTables.Values.Contains(name) ? "engine:ptmqtl"
                 // The census is the manifest's, not a bundle's. Only when one was loaded: without it the table is
                 // the empty core table it always was.
                 : censusLoaded && name == CandidateCensus.Table ? "manifest"

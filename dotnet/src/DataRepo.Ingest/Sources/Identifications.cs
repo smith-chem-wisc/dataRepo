@@ -222,18 +222,23 @@ public static class Identifications
 
     /// <summary>Where an accession came from. Decoy entries are kept, since PSM rows point at them and FDR
     /// cannot be recomputed without them, but they are not UniProt entries.</summary>
-    private static string SourceDb(string accession, bool contaminant)
+    /// <param name="otherSource">Under <see cref="IngestRules.Current"/>, the source and taxon a target accession's own
+    /// database entry names when it is not UniProt (<see cref="ProteinSequences.OtherSource"/>); null otherwise.</param>
+    private static string SourceDb(string accession, bool contaminant, (string Source, string? Taxon)? otherSource = null)
     {
         if (accession.ToUpperInvariant().StartsWith(DecoyPrefix, StringComparison.Ordinal)) return "decoy";
-        return contaminant ? "contaminants" : "uniprot";
+        // A target entry from another source says so (aging's Ensembl-only isoforms, DATAREPO-84): "uniprot" would be
+        // false there. Every entry of every database searched to date is Swiss-Prot or TrEMBL (measured 2026-10-20).
+        return contaminant ? "contaminants" : otherSource?.Source ?? "uniprot";
     }
 
     /// <summary>The NCBITaxon term for one database entry, or null where we do not have one.</summary>
     /// <remarks>The dataset's organism is evidence about the searched proteome and nothing else: a contaminant
     /// is bovine, porcine or bacterial by design, and a reversed decoy is no organism's protein. No
-    /// name-to-taxon mapping happens here (D1, G36).</remarks>
-    private static string? EntryTaxon(string sourceDb, string? datasetOrganism) =>
-        sourceDb == "uniprot" ? datasetOrganism : null;
+    /// name-to-taxon mapping happens here (D1, G36). A target entry of another source takes the taxon its own entry
+    /// names, which is all that is known of it.</remarks>
+    private static string? EntryTaxon(string sourceDb, string? datasetOrganism, (string Source, string? Taxon)? otherSource = null) =>
+        sourceDb == "uniprot" ? datasetOrganism : otherSource is { } other && sourceDb == other.Source ? other.Taxon : null;
 
     private static string Canonical(string acc) => acc.Contains('-') ? acc.Split('-')[0] : acc;
 
@@ -247,9 +252,12 @@ public static class Identifications
     /// <para><b>The row's own organism wins over the dataset's.</b> All 339 contaminants once read
     /// <c>NCBITaxon:9606</c>, bovine albumin included.</para>
     /// </remarks>
+    /// <param name="otherSource">Under <see cref="IngestRules.Current"/>: a target accession's non-UniProt source and
+    /// taxon, from its own database entry (DATAREPO-84); null, or returning null, for UniProt's.</param>
     public static List<Row> ProteinRows(
         IEnumerable<IReadOnlyDictionary<string, List<object?>>> columnsList, string datasetId, string? organism,
-        Func<string, bool?>? contaminantOf = null, Dictionary<string, long>? unresolved = null)
+        Func<string, bool?>? contaminantOf = null, Dictionary<string, long>? unresolved = null,
+        Func<string, (string Source, string? Taxon)?>? otherSource = null)
     {
         var output = new Dictionary<string, Row>(StringComparer.Ordinal);
         foreach (var columns in columnsList)
@@ -292,13 +300,14 @@ public static class Identifications
                     var gene = geneParts[j] ?? "";
                     var primary = gene.Split(',')[0].Replace("primary:", "").Trim();
                     var organismName = (organismParts[j] ?? "").Trim();
-                    var sourceDb = SourceDb(acc, contaminant);
+                    var other = otherSource?.Invoke(acc);
+                    var sourceDb = SourceDb(acc, contaminant, other);
                     output[acc] = new Row
                     {
                         ["protein_accession"] = acc,
                         ["canonical_accession"] = Canonical(acc),
                         ["gene"] = primary.Length == 0 ? null : primary,
-                        ["organism"] = EntryTaxon(sourceDb, organism),
+                        ["organism"] = EntryTaxon(sourceDb, organism, other),
                         // A reversed decoy is no organism's protein, so it carries no species name either (G44).
                         ["organism_name"] = sourceDb == "decoy" ? null : organismName.Length == 0 ? null : organismName,
                         ["length"] = null,
@@ -314,7 +323,8 @@ public static class Identifications
 
     /// <summary>Adds any accession that appears only in the protein-group table, so a group's
     /// <c>protein_accessions</c> never point at nothing.</summary>
-    public static List<Row> AddGroupProteins(List<Row> proteins, IEnumerable<IReadOnlyDictionary<string, object?>> proteinGroups, string? organism)
+    public static List<Row> AddGroupProteins(List<Row> proteins, IEnumerable<IReadOnlyDictionary<string, object?>> proteinGroups, string? organism,
+        Func<string, (string Source, string? Taxon)?>? otherSource = null)
     {
         var known = proteins.Select(r => (string)r["protein_accession"]!).ToHashSet(StringComparer.Ordinal);
         foreach (var group in proteinGroups)
@@ -328,7 +338,8 @@ public static class Identifications
             {
                 var acc = accessions[j];
                 if (!known.Add(acc)) continue;
-                var sourceDb = SourceDb(acc, contaminant);
+                var other = otherSource?.Invoke(acc);
+                var sourceDb = SourceDb(acc, contaminant, other);
                 proteins.Add(new Row
                 {
                     ["protein_accession"] = acc,
@@ -336,7 +347,7 @@ public static class Identifications
                     ["gene"] = genes[j],
                     // The group table carries no per-accession species name: the taxon where it is safe, and a
                     // null organism_name, never a species guessed from the group's other members.
-                    ["organism"] = EntryTaxon(sourceDb, organism),
+                    ["organism"] = EntryTaxon(sourceDb, organism, other),
                     ["organism_name"] = null,
                     ["length"] = null,
                     ["source_db"] = sourceDb,
@@ -534,6 +545,38 @@ public static class Identifications
         return counts;
     }
 
+    /// <summary>The site's 15-residue window (ptmQtl DATAREPO-P30): the residue at <paramref name="position"/> and 7 on
+    /// each side, <c>_</c> past either end, from <paramref name="sequence"/>; null when the position is outside it.</summary>
+    public static string? SequenceWindow(string sequence, long position)
+    {
+        if (position < 1 || position > sequence.Length) return null;
+        var window = new char[15];
+        for (int i = 0; i < 15; i++)
+        {
+            var at = position - 8 + i;  // 0-based index into the sequence
+            window[i] = at >= 0 && at < sequence.Length ? sequence[(int)at] : '_';
+        }
+        return new string(window);
+    }
+
+    /// <summary>Writes each site's <c>sequence_window</c> (schema 0.0.16, DATAREPO-P30) from the accession's one searched
+    /// sequence; NULL when the databases give it none, or several (G101 left an ambiguous accession with none).</summary>
+    /// <remarks>A protein N-terminal site takes the window of residue 1 (ptmQtl S5, D35), whichever residue it is keyed
+    /// on: residue 2 when the initiator Met was removed, as for 377 of PXD022196's 494. MetaMorpheus pools the Met-kept
+    /// and Met-removed forms in one cell (<c>pos0</c>), and pooling keys the site with no position
+    /// (<c>@protein_n_term</c>), so a window centred on the keyed residue would keep one protein's N-terminus apart
+    /// between two searches that keyed it on different residues. Our ptmQtl 040 assumed every such site was keyed on
+    /// residue 1.</remarks>
+    public static void AddSequenceWindows(IEnumerable<Row> sites, ProteinSequences sequences)
+    {
+        foreach (var site in sites)
+        {
+            var candidates = sequences.Get((string)site["protein_accession"]!);
+            var position = site.GetValueOrDefault("site_type") as string == "protein_n_term" ? 1L : (long)site["position"]!;
+            site["sequence_window"] = candidates.Count == 1 ? SequenceWindow(candidates[0], position) : null;
+        }
+    }
+
     /// <summary><c>(accession, 1-based peptide start, residue before it, protein length)</c> for every place a PSM's
     /// peptide sits; the length is null when no sequence was available.</summary>
     /// <remarks><b>The spans cell is never paired with the accession cell.</b> MetaMorpheus de-duplicates it and lists a
@@ -551,7 +594,8 @@ public static class Identifications
             var candidates = sequences.Get(acc);
             if (candidates.Count == 0)
             {
-                missed[acc] = "no_sequence";
+                // Several sequences, and which one the search held is not known (G101): no site, counted apart.
+                missed[acc] = sequences.Ambiguous.Contains(acc) ? "ambiguous_sequence" : "no_sequence";
                 continue;
             }
             var found = false;

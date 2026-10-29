@@ -11,7 +11,14 @@ run the ingest itself (it needs pyMzLib's mzLib bridge), which is exactly why th
 matters: it is the ingester's own output, held to the published schema.
 
     python tools/build_example_bundle.py            # regenerate (needs pyMzLib)
+    python tools/build_example_bundle.py --bundle <dir>   # export a bundle already written, e.g. by the C# ingest
     linkml-validate -s schema/datarepo.yaml -C Bundle examples/ingested_bundle.yaml
+
+The Python ingester is frozen at 0.32.0 (D41) and writes schema 0.0.13, so from schema 0.0.16 the file is the C#
+`datarepo ingest` of the same fixture, exported with `--bundle`:
+
+    datarepo ingest tests/data/manifest.yaml PXD999999 --store <tmp> --mm-settings tests/data/work_root/mm_settings/1.1.11
+    python tools/build_example_bundle.py --bundle <tmp>/PXD999999/<bundle id>
 
 `tests/test_examples.py` regenerates and compares whenever pyMzLib is available, so the file cannot
 drift away from the code unnoticed.
@@ -47,8 +54,6 @@ def export(limit: int = LIMIT) -> dict:
     import shutil
     import tempfile
 
-    import pyarrow.parquet as pq
-
     from datarepo.ingest import ingest_dataset
     from datarepo.manifest import load_manifest
 
@@ -62,20 +67,27 @@ def export(limit: int = LIMIT) -> dict:
             store=store,
             mm_settings=data / "work_root" / "mm_settings" / "1.1.11",
         )
-        bundle: dict = {}
-        for path in sorted(result.bundle_path.glob("*.parquet")):
-            rows = pq.read_table(path).to_pylist()[:limit]
-            for row in rows:
-                for key, value in list(row.items()):
-                    if value is None:
-                        del row[key]
-                    elif hasattr(value, "isoformat"):
-                        row[key] = value.isoformat()
-            if rows:
-                bundle[path.stem] = rows
-        return bundle
+        return read_bundle(result.bundle_path, limit)
     finally:
         shutil.rmtree(store, ignore_errors=True)
+
+
+def read_bundle(bundle_path: Path, limit: int = LIMIT) -> dict:
+    """The first rows of each table of a written bundle, as a Bundle mapping."""
+    import pyarrow.parquet as pq
+
+    bundle: dict = {}
+    for path in sorted(bundle_path.glob("*.parquet")):
+        rows = pq.read_table(path).to_pylist()[:limit]
+        for row in rows:
+            for key, value in list(row.items()):
+                if value is None:
+                    del row[key]
+                elif hasattr(value, "isoformat"):
+                    row[key] = value.isoformat()
+        if rows:
+            bundle[path.stem] = rows
+    return bundle
 
 
 def render(bundle: dict) -> str:
@@ -83,7 +95,12 @@ def render(bundle: dict) -> str:
 
 
 def main() -> int:
-    text = render(export())
+    import argparse
+
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--bundle", type=Path, help="export this written bundle instead of ingesting the fixture")
+    args = parser.parse_args()
+    text = render(read_bundle(args.bundle) if args.bundle else export())
     TARGET.write_text(text, encoding="utf-8")
     print(f"wrote {TARGET.relative_to(ROOT)} ({sum(len(v) for v in yaml.safe_load(text).values())} rows)")
     return 0

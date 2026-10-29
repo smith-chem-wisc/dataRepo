@@ -114,10 +114,17 @@ public static class Quant
     /// <summary>Melts <c>AllQuantifiedPeptides.tsv</c> into QuantValue rows for peptidoforms.</summary>
     /// <param name="toProforma">The dataset's ProForma cache, so feature ids match the Peptidoform table;
     /// returns the peptidoform's ProForma, or null/empty when it has none.</param>
+    /// <param name="ambiguous">Under <see cref="IngestRules.Current"/>, the rows left out because their <c>Sequence</c>
+    /// names several full sequences, by that cell, with their number of values.</param>
+    /// <remarks>A <c>|</c>-joined <c>Sequence</c> is a peptide whose modification site MetaMorpheus did not settle
+    /// (MetaMorpheus #2917; QuantProject's naming ruling, their 055). 0.32.0 stored it under its first full sequence,
+    /// which places the value on a site the search never decided. Under <see cref="IngestRules.Current"/> it is left out
+    /// and counted instead (QuantProject DATAREPO-D7). No search ingested to date writes one: 0 of 5,605,461 peptide rows
+    /// in aging's 172 searches (2026-10-20).</remarks>
     public static List<Row> PeptideQuantRows(
         string path, string datasetId, RunNameMap runNames, Func<string, string?> toProforma,
         Dictionary<(string Run, string Sequence), (double? PipQValue, bool? MbrKept)>? peakQualityIndex = null,
-        ReaderLog? log = null, IngestRules rules = IngestRules.Current)
+        ReaderLog? log = null, IngestRules rules = IngestRules.Current, Dictionary<string, long>? ambiguous = null)
     {
         var (header, rows) = Readers.ReadTsv(path, log, NoReader, rules);
         var intensityCols = WideColumns(header, "Intensity");
@@ -129,6 +136,12 @@ public static class Quant
         {
             var sequence = Cell(row, "Sequence");
             if (sequence.Length == 0) sequence = Cell(row, "Base Sequence");
+            if (rules == IngestRules.Current && sequence.Contains('|'))
+            {
+                if (ambiguous is not null)
+                    ambiguous[sequence] = ambiguous.GetValueOrDefault(sequence) + intensityCols.Count(c => Intensity(Cell(row, c.Column)) is not null);
+                continue;
+            }
             var first = sequence.Split('|', 2)[0].Trim();
             var proforma = toProforma(first);
             if (string.IsNullOrEmpty(proforma)) continue;
@@ -170,10 +183,13 @@ public static class Quant
     /// one goes is <see cref="SampleColumns"/>'s decision (PXR-R9).</remarks>
     /// <returns>The groups, their quantities (intensity and spectral count as separate rows told apart by
     /// definition), the producer-style group count at 1% FDR, for reconciling, and how the columns were placed.</returns>
+    /// <param name="sampleOfRun">Each searched run's SDRF sample, so a design sample of several files that is one SDRF
+    /// sample's files is stored against its pooled assay (PXR-R23); null leaves such values out.</param>
     /// <exception cref="IngestException">A column holding a value can be placed on no run (see
     /// <see cref="SampleColumns.ForTable"/>).</exception>
     public static (List<Row> Groups, List<Row> Quants, long ProducerCount, SampleColumns Columns) ProteinGroupRows(
-        string path, string datasetId, RunNameMap runNames, ReaderLog? log = null, IngestRules rules = IngestRules.Current)
+        string path, string datasetId, RunNameMap runNames, ReaderLog? log = null, IngestRules rules = IngestRules.Current,
+        IReadOnlyDictionary<string, string>? sampleOfRun = null)
     {
         var (header, rows) = Readers.ReadTsv(path, log, NoReader, rules);
         var intensityCols = WideColumns(header, "Intensity");
@@ -190,7 +206,7 @@ public static class Quant
             foreach (var (reported, column) in countCols)
                 if (Number(Cell(row, column)) is not null) holding.Add(reported);
         }
-        var placement = SampleColumns.ForTable(path, datasetId, holding, runNames, log, rules);
+        var placement = SampleColumns.ForTable(path, datasetId, holding, runNames, log, rules, sampleOfRun);
 
         var groups = new List<Row>();
         var quants = new List<Row>();
@@ -229,14 +245,19 @@ public static class Quant
                 {
                     var value = parse(Cell(row, column));
                     if (value is null) continue;
-                    string run;
+                    string assayId;
                     if (!placement.BySample)
                     {
-                        run = runNames.Resolve(reported) ?? reported;
+                        assayId = $"{datasetId}:{runNames.Resolve(reported) ?? reported}:label_free";
                     }
-                    else if (placement.SampleOf(reported)?.Run is { } sampleRun)
+                    else if (placement.SampleOf(reported) is { Run: { } sampleRun })
                     {
-                        run = sampleRun;
+                        assayId = $"{datasetId}:{sampleRun}:label_free";
+                    }
+                    else if (placement.SampleOf(reported) is { PooledAssay: { } pooled })
+                    {
+                        // A sample of several files, one SDRF sample's: its value, against its pooled assay (PXR-R23).
+                        assayId = pooled;
                     }
                     else
                     {
@@ -245,7 +266,7 @@ public static class Quant
                     }
                     quants.Add(new Row
                     {
-                        ["assay_id"] = $"{datasetId}:{run}:label_free",
+                        ["assay_id"] = assayId,
                         ["feature_type"] = "protein_group",
                         ["feature_id"] = groupId,
                         ["value"] = value,

@@ -1,0 +1,172 @@
+accession	old_bundle	new_bundle	tables_that_differ	sources_changed	findings_gone	findings_new
+PXD002467	2f7bed1517d4ccda	48508b7393e3ae36	assay_runs None->96; assays 96->144; definitions 14->17; findings 10->7; ptm_stoichiometry None->11204; quant_values 1136314->1848395; sample_characteristics 315->96; samples 96->48	sdrf	sample_quant_not_stored sdrf_partial sdrf_uncoded unresolved_modifications	sdrf_skeleton
+PXD027754	dbe36eb8496736c2	ee7fd17c904c7868	findings 7->6		unresolved_modifications	
+PXD018545	a2365327acde66df	a68620f1dcff66c8	findings 7->6		unresolved_modifications	
+PXD037230	ed300837466fa6a5	e0f58944531b149f	findings 7->6		unresolved_modifications	
+PXD038718	e62e834075279229		not re-ingested			
+PXD061654	0362068bba03cdca	e99c7aaf0983a621	findings 9->7; ptm_sites 49696->49918; ptm_stoichiometry 157947->160161	protein_database:MetaMorpheusContaminants_NoUPS.xml	contaminant_label_unresolved unresolved_modifications	
+PXD012307	f602ae2e38c90064	63a2859fd47fa0e9	sample_characteristics 8->7		unresolved_modifications	sdrf_conflicting_rows
+PXD043001	4a374a1ef7b5271a	583f589cee2a0ce8	findings 7->6		unresolved_modifications	
+PXD022227	1b99ed64e61ac1a9	afc62147d98af269	findings 8->7		unresolved_modifications	
+PXD004916	ad4780f86eccd4b6	b5833488132e93c5	findings 8->7		unresolved_modifications	
+PXD024216	354dc570027d7c88	19c14539953e4e77	findings 7->6		unresolved_modifications	
+PXD057407	38da6b0b18a7a2bf	920efa52d6850a0e	findings 8->7		unresolved_modifications	
+PXD057502	89c86e6df5cea4e5	7f2a7f357e3b8713	findings 8->7		unresolved_modifications	
+PXD008934	d1e3ad801dad7879	1a400620c1bb4e90	findings 6->5; ptm_sites 66233->66232		unresolved_modifications	
+PXD060832	37c3a916110c9831	6cdb400fda01dc1c	findings 8->7		unresolved_modifications	
+PXD035412	cecd3674db8062ec	56abdb887208651b	findings 8->7		unresolved_modifications	
+PXD056276	d00298cda8198f8c	a6da235a1392e6d0	findings 8->7		unresolved_modifications	
+PXD019279	34fb2b92c2b5d4d2	638e9bdfb7324294	findings 8->7; ptm_sites 46225->46224		unresolved_modifications	
+PXD067102	5bf4fe7860664c3f	557d43f225491daa	findings 9->8		unresolved_modifications	
+PXD041376	d73639c166b75b53	e293b4f93002772b	findings 8->7		unresolved_modifications	
+PXD021069	cdd65c0fe9fd2711	639d1ee448bb2910	findings 10->9		unresolved_modifications	
+PXD049957	50573636fb1272a8	f029bca047829450	findings 8->7		unresolved_modifications	
+PXD016430	7d454413d14ac4cc	459b628801e0f192	findings 8->7		unresolved_modifications	
+PXD058971	aadccfd0d87b7e90	f3d04e481348705d	findings 8->7		unresolved_modifications	
+PXD059520	ec726925ed3d94c0	7ace437d35d68e9d	findings 7->6		unresolved_modifications	
+PXD007035	106c4d867fed5cbd	3e55a2425dc36c28	findings 7->6		unresolved_modifications	
+PXD054290	ad56102176e1a503	a05fbea863dba7de	findings 8->7		unresolved_modifications	
+PXD035299	a9f45f7511187e1c	3c5866896b58806c	findings 8->7		unresolved_modifications	
+PXD051715	8afe1d2348cea66f	89bfde1e825f1b85	findings 8->7		unresolved_modifications	
+PXD068498	4f2e0f9af4ea081d	d3ce4e0d4a6f0d5a	findings 9->8		unresolved_modifications	
+PXD038328	46bbcba2b1fa9281	a2f27d063aed8c5a	findings 9->7; ptm_sites 48027->48143; ptm_stoichiometry 159887->161668	protein_database:MetaMorpheusContaminants_NoUPS.xml	contaminant_label_unresolved unresolved_modifications	
+PXD043644	7f19d57dc0b42b3e	74efd58d3f1d36aa	findings 7->6		unresolved_modifications	
+PXD048393	fb094efe60c0955f	81243eb2e491fcc3	findings 7->6		unresolved_modifications	
+PXD030939	6ff3383bde5494a5	dae786777fe1d0dc	findings 9->8; ptm_sites 75253->75247		unresolved_modifications	
+PXD057554	614ec6a0177d7e66	4b4f2a22aaba03b7	findings 9->8		unresolved_modifications	
+PXD028975	e9ce14c57ffa1ef8	1f7f6ce1f06fb634	findings 10->9		unresolved_modifications	
+PXD035149	aa79458303cfa170	a1cfccfaff57461d	findings 8->7		unresolved_modifications	
+PXD018999	f8a395fb70017710	58a74be74f75fab9	findings 9->8		unresolved_modifications	
+PXD008344	298b27254166f2ba	a378e8596ad8918b	findings 9->8; ptm_sites 61865->61855		unresolved_modifications	
+PXD075372	784fb4cc867c4003	23a4b32bd9d8144d	findings 10->9		unresolved_modifications	
+PXD058156	773acb06357985c0	66f2a055be1b74c4	findings 10->9		unresolved_modifications	
+PXD030773	3696df186e18166a	521b78bf8fcbbfc2	findings 8->7; ptm_sites 35385->35306		unresolved_modifications	
+PXD026335	dca10dafe32a2543	24f3d62867f22860	findings 8->7		unresolved_modifications	
+PXD048720	014ceaa4f877f89d	ea1fac3cf3d72f0a	findings 7->6		unresolved_modifications	
+PXD039172	7f7bce3843f62990	9907759b57189b7a	findings 9->8		unresolved_modifications	
+PXD008050	2e25ee47c3fad43c	92b316ca74569432	findings 7->6; ptm_sites 40978->40949		unresolved_modifications	
+PXD071171	6c1768e546b185fe	dfd5f024c31eb888	findings 7->6		unresolved_modifications	
+PXD028157	dbc2e3e5d40aabcd	76713d68856fcd47	findings 7->6		unresolved_modifications	
+PXD024685	e1aa56183404f514	3a0d44815d25b5da	findings 7->6		unresolved_modifications	
+PXD024478	0cf378e05c1e34a0	c8eb441818302381	findings 7->6; ptm_sites 31381->31379		unresolved_modifications	
+PXD028865	3d790e4f632b5dbe	901bafe9fa5d4c55	findings 8->7		unresolved_modifications	
+PXD024633	b0db85fa9ec2d7a9	3f908425aea9a706	findings 7->6		unresolved_modifications	
+PXD007906	10b3cce7a233b322	744052f7dfd46f91	findings 7->6		unresolved_modifications	
+PXD007188	246ecb474121df8b	78b22d5f34b7ae59	findings 8->7; ptm_sites 26662->26660		unresolved_modifications	
+PXD041139	2a8ffea9ccb5902d	fa8eab65748b597d	findings 10->9		unresolved_modifications	
+PXD073999	9b3cccaebe08201c	a632a5c7215cc53a	findings 9->8		unresolved_modifications	
+PXD027734	c18fbac85b755a8f	271bac95a349c352	findings 9->8		unresolved_modifications	
+PXD067622	8882b03489acef94	25fba2d6e865a03e	findings 9->8		unresolved_modifications	
+PXD034465	95838cc872fa53b1	94e5d5caf900551a	findings 8->7		unresolved_modifications	
+PXD018097	015e54d73eea5010	5bd02c8f417f117d	findings 9->8		unresolved_modifications	
+PXD033430	0b66e7ce9b256dee	6903b042e7e4466c	findings 7->6		unresolved_modifications	
+PXD022363	b9e03178aea7b898	9798c839fcd2f786	findings 7->6		unresolved_modifications	
+PXD069093	aa78a8aeea5834e5	3650ed6e8271f2ea	findings 9->8; ptm_sites 15594->15567		unresolved_modifications	
+PXD032044	7eb82a777c547d48	f47e5b3424c1cd7f	findings 11->10		unresolved_modifications	
+PXD057545	9ddf5f2854f77742	7187abc1ec5a09d4	findings 8->7		unresolved_modifications	
+PXD026934	c1faf60f4349986b	55da80cfc3f3c8c7	findings 8->7		unresolved_modifications	
+PXD045821	c5f340a23b0b9cf1	43cc92093e51092c	findings 8->7		unresolved_modifications	
+PXD044773	848376933ebafe78	a2c76dc071de0b33	findings 8->7; ptm_sites 21824->21802		unresolved_modifications	
+PXD014416	2914e7fb795105eb	60f78102d6f4c207	findings 9->8		unresolved_modifications	
+PXD052797	66809aa1cf86884f	e5e77c5ede8f709d	findings 9->8		unresolved_modifications	
+PXD010820	d98e5a35adc04a2c	20a643dfbfe8debf	findings 7->6; ptm_sites 15340->15338		unresolved_modifications	
+PXD057544	2a508208f315135d	00b7d9c490b115d5	findings 7->6		unresolved_modifications	
+PXD053288	c99ad8084322d084	b5bb2187d68925c7	findings 7->6		unresolved_modifications	
+PXD026219	2a62bab46d3392d0	3a567692da5260f1	findings 7->6		unresolved_modifications	
+PXD006898	e57b248d37c18d84	c69fa5f3a2215619	findings 8->7; ptm_sites 30247->30228		unresolved_modifications	
+PXD022678	f6a7e92f5389376d	edfebe1c53ff9dbb	findings 8->7		unresolved_modifications	
+PXD018399	61c6ae94b80e033f	4f0c1091f9a296d0	findings 7->6		unresolved_modifications	
+PXD041660	1590d4fda9626d57	d4c54e0b813669ef	findings 8->7		unresolved_modifications	
+PXD025321	1f7bddc155a46cec	211e7557d9931e8b	findings 8->7		unresolved_modifications	
+PXD031223	f117e6f5943001a6		not re-ingested			
+PXD024803	5a9d5face684b7a3	89074f0df21c3e54	findings 11->10; ptm_sites 19352->19347		unresolved_modifications	
+PXD018969	0194ee14586f4be4	8838787f24245b84	findings 9->8		unresolved_modifications	
+PXD082596	f6bd266262eaf2d2	cb4333005a202eb2	findings 8->7		unresolved_modifications	
+PXD025503	1be309912e374f0c	7ccc5f6c544f0c5a	findings 8->7		unresolved_modifications	
+PXD019849	82ff2304571b372b	e8c60fae5323b4b1	findings 7->6		unresolved_modifications	
+PXD009430	9a006d0c2d64030b	466506bac4c25da8	findings 8->7; ptm_sites 15510->15495		unresolved_modifications	
+PXD007999	fe5f48d7994c5505	e8dba6dcae9affd7	findings 8->7		unresolved_modifications	
+PXD022737	8e6f4d1494ab1968	99346a8ba841ff37	findings 7->6		unresolved_modifications	
+PXD044227	dda4f1f19a4c923b	21ee092d1c3a2f52	findings 8->7		unresolved_modifications	
+PXD027318	2834201a49545363	4b75374ba407531d	findings 10->9; ptm_sites 21714->21704		unresolved_modifications	
+PXD059818	f5e013c3f01d4fe8	7cabc1fa3f59a154	findings 9->8		unresolved_modifications	
+PXD015079	cf89269790afb2e3	e289664346be48c9	findings 9->8		unresolved_modifications	
+PXD015170	571f3dfc29228371	d306867bc9300942	findings 7->6		unresolved_modifications	
+PXD032202	179d5821542aabec	2c73cb35813984d0	findings 8->7; ptm_sites 14099->14088		unresolved_modifications	
+PXD045887	7df939d7da0fcbe1	4114856412d41d9a	findings 8->7; ptm_sites 6128->6098		unresolved_modifications	
+PXD008990	2c130c85c5b13663	058f4416abe7b18b	findings 8->7		unresolved_modifications	
+PXD018655	f84737e8fdb72111	bfb3455df8efbdc8	findings 10->9; ptm_sites 16126->16122		unresolved_modifications	
+PXD058855	586ffe8f11f4530b	319e7d516631aaa0	findings 8->7; ptm_sites 4140->4120		unresolved_modifications	
+PXD015239	09758d1074dfff81	5deec457676bdd22	findings 7->6; ptm_sites 8496->8495		unresolved_modifications	
+PXD025280	917baf10f91d1392	1edd57f0ae888a37	findings 8->7; ptm_sites 7989->7988		unresolved_modifications	
+PXD006216	6e6d65c8d8bcdfa7	e3ecc0faf3370638	findings 9->8		unresolved_modifications	
+PXD017475	0934ae73d6c5d999	65cf99f613971fa0	findings 8->7		unresolved_modifications	
+PXD042301	1e45b54acc25d183	5f597a86ee32db50	findings 7->6		unresolved_modifications	
+PXD057409	5250d37848444d1e	f35d2fec442832bc	findings 8->7		unresolved_modifications	
+PXD049018	bf0739fc2730b844	4c2cc81dedf8cb90	findings 9->8		unresolved_modifications	
+PXD032240	461b662fc943a789	31d992a47bbbadf8	findings 8->7		unresolved_modifications	
+PXD052631	244bfd5057c0a913	f2e398f48a25d809	findings 9->8		unresolved_modifications	
+PXD050351	85cbd372f78bec87	812989fb3cda7658	findings 9->8		unresolved_modifications	
+PXD013240	dcdeba23f05d3270	ecc90d8c9e409db7	findings 7->6		unresolved_modifications	
+PXD032040	e9864df4991e091f	26eb9f8405c30684	findings 9->8; ptm_sites 9610->9607		unresolved_modifications	
+PXD012213	5d7e70f329029334	c43d19b1b11dd220	findings 6->5		unresolved_modifications	
+PXD060982	3e1bb3e454638e47	b0b18a0da54e0d80	findings 7->6		unresolved_modifications	
+PXD022180	adc1c484fcda9f2f	af56ee3d57d4ccb5	findings 9->8; ptm_sites 9387->9342		unresolved_modifications	
+PXD032046	6484716f09113df9	5fb41ec9cb4d6dad	ptm_sites 5918->5912			
+PXD028852	c0d76807d54f4654	b51628711c3ef1b9	findings 9->8		unresolved_modifications	
+PXD030776	de4a69ac3df66943	ae9c602a56e7caae	findings 8->7; ptm_sites 7601->7590		unresolved_modifications	
+PXD021762	7d70d53906e92abb	c0f326d398c75b16	findings 7->6		unresolved_modifications	
+PXD026608	b8cf9a016b629185	d895ac474a7c704e	findings 7->6		unresolved_modifications	
+PXD044453	d197437cbb201386	afd56c163a4092b0	findings 8->7		unresolved_modifications	
+PXD044996	7d81f37d3c824672	438d6b12218fecb1	findings 12->11		unresolved_modifications	
+PXD010115	dc4c876b184b0f97	809aa0abc5835211	findings 10->9; ptm_sites 7593->7585		unresolved_modifications	
+PXD027971	4465fddc5825dbd7	551535c718e006bd	findings 9->8		unresolved_modifications	
+PXD011740	fc49ca1c4a3f078c	b7dbca088aa5c165	findings 8->7; sample_characteristics None->24	sdrf	no_sdrf unresolved_modifications	sdrf_skeleton
+PXD077298	a7bef21810c45a47	2fb592796908e7e6	findings 10->9		unresolved_modifications	
+PXD015729	d1e090013a1eb5ac	ccb5c2bd011b5dab	findings 10->9		unresolved_modifications	
+PXD022196	0177382882a9e5e8	487e71045925c9d9	assay_runs None->32; assays 32->36; definitions 14->17; findings 10->8; ptm_stoichiometry None->8369; quant_values 128969->164892; sample_characteristics None->8; samples 32->4	sdrf	no_sdrf sample_quant_not_stored unresolved_modifications	sdrf_skeleton
+PXD032757	ee8dabbad9fc2ff8	a0b99fd306651503	findings 8->7		unresolved_modifications	
+PXD029116	410b974c66b252da	22467bc36e803a31	same rows			
+PXD023381	11129d03ec321ba4	7a9a6613ea9c6433	findings 10->9; ptm_sites 4884->4882		unresolved_modifications	
+PXD013640	16419aa5ad1a954c	cd0f558f98a8321e	findings 8->7		unresolved_modifications	
+PXD022128	2e34a38ed5a3a308	f79e56ec3856704c	findings 8->7		unresolved_modifications	
+PXD007049	ee88888973cc5a17	cfe59305da5a5ecd	findings 9->8; ptm_sites 1830->1827		unresolved_modifications	
+PXD010091	ed3e2de3811bb5d5	65996d8f5af10059	findings 6->5		unresolved_modifications	
+PXD052189	209251bf4b2ad89e	974220d08d365f18	findings 9->8		unresolved_modifications	
+PXD043779	adb2de470c40706c	331930f1e0d94c83	findings 7->6		unresolved_modifications	
+PXD011314	8902d394c8a2848e	a2db785219e99f9a	same rows			
+PXD036557	746125af2e2bd8f0	0955c951b61e80ba	same rows			
+PXD014274	ddeab371b369bbdb	554d3bb13e935f75	findings 14->13		unresolved_modifications	
+PXD017058	14c4dc150223282a	188c2bbb166b0b87	findings 8->7		unresolved_modifications	
+PXD073846	b70ed0b8bf7328e6	43970ec449e3ca45	findings 8->7		unresolved_modifications	
+PXD018315	fbff2935604e3728	4e3e088202b5c3b0	findings 7->6		unresolved_modifications	
+PXD035171	c4612b7710816556	e77ba08e961451ba	same rows			
+PXD014097	b17486bf16af09b4	f8df8f0e3f1c6cca	findings 7->6		unresolved_modifications	
+PXD005014	43103c95bebbf8d1	feae8f8e5414e206	findings 5->4		unresolved_modifications	
+PXD058248	9b702b8b6cdb70f4	0d7759b6e42795cd	assay_runs None->38; assays 38->57; definitions 14->17; findings 7->5; ptm_stoichiometry None->4653; quant_values 18646->42510; sample_characteristics None->76; samples 38->19	sdrf	no_sdrf sample_quant_not_stored unresolved_modifications	sdrf_skeleton
+PXD058611	9c025f585f172b2f	7afca9a77f663576	findings 7->6		unresolved_modifications	
+PXD057499	2ed4f4859ee465af	39886c12675d36ea	findings 7->6		unresolved_modifications	
+PXD056458	9d018d43fd5a920c	671c8bddecceb3fc	assay_runs None->38; assays 38->57; definitions 14->17; findings 7->5; ptm_stoichiometry None->3738; quant_values 26060->56963; sample_characteristics None->76; samples 38->19	sdrf	no_sdrf sample_quant_not_stored unresolved_modifications	sdrf_skeleton
+PXD001054	3b677c1a7e86ab40	7a615ebd719a76ff	findings 5->4		unresolved_modifications	
+PXD009212	7764d2bbe868461d	f70e9d7850ed82d6	findings 9->8		unresolved_modifications	
+PXD064236	277d82cc7108c6b9	ac86bf1d4e4c12bd	findings 9->8		unresolved_modifications	
+PXD031782	653619156bfc1247		not re-ingested			
+PXD043964	5644df931cdf07e0	1e745f852086b5a3	same rows			
+PXD017944	aa79b46d95afeda1	ad8c2580a1fa4c6c	findings 7->6		unresolved_modifications	
+PXD035107	4ea35d9002c0115d	fc6caaac363d3a10	findings 7->6		unresolved_modifications	
+PXD058082	3b292839ac60c3d2	7bae2533b1705414	same rows			
+PXD051203	ebc5deea167b5208	d4f30604e10ff8a1	assay_runs None->38; assays 39->58; findings 10->8; ptm_stoichiometry 290->6201; quant_values 38368->72170; sample_characteristics None->80; samples 39->20	sdrf	no_sdrf sample_quant_not_stored unresolved_modifications	sdrf_skeleton
+PXD012753	fa595a43ee728304	afb1069bbc0dbc11	findings 9->8		unresolved_modifications	
+PXD055228	a3f75c164539059e	2d81ffbb155046e8	same rows			
+PXD047292	747d990ac5cae6c9	233f8e542c1ba555	assay_runs None->36; assays 36->54; definitions 14->17; findings 8->6; ptm_stoichiometry None->4768; quant_values 18121->30420; sample_characteristics None->72; samples 36->18	sdrf	no_sdrf sample_quant_not_stored unresolved_modifications	sdrf_skeleton
+PXD047289	4a1da26d64f5e6ce	ee6cfbd52cb09a8d	assay_runs None->22; assays 22->33; definitions 14->17; findings 9->7; ptm_stoichiometry None->3861; quant_values 37445->62983; sample_characteristics None->44; samples 22->11	sdrf	no_sdrf sample_quant_not_stored unresolved_modifications	sdrf_skeleton
+PXD058253	266d9593bb3e52aa	83444514f6dc87b0	findings 8->7		unresolved_modifications	
+PXD047293	0c95f288f3abd413	bcd862892400a6d0	assay_runs None->32; assays 34->50; findings 13->11; ptm_stoichiometry 550->4402; quant_values 32814->52620; sample_characteristics None->72; samples 34->18	sdrf	no_sdrf sample_quant_not_stored unresolved_modifications	sdrf_skeleton
+PXD012754	eff05a7486afcee0	786c13de48c5573c	findings 9->8		unresolved_modifications	
+PXD035446	5c5f8f73a717d7c4	e8a72e9af7f7dca6	findings 8->7		unresolved_modifications	
+PXD057490	0c395d112fd7236c	5fce5c0a8ef888bc	same rows			
+PXD051644	a6df9d90b78f3cf7	9efdf90d01505e5f	assay_runs None->22; assays 23->34; findings 11->9; ptm_stoichiometry 146->3683; quant_values 25878->39965; sample_characteristics None->48; samples 23->12	sdrf	no_sdrf sample_quant_not_stored unresolved_modifications	sdrf_skeleton
+PXD058775	ef86a0f83b59b75d	7ec1b06a15add8da	findings 7->6		unresolved_modifications	
+PXD056433	938f1dbcc3ad9dbd	5268370033a0d386	findings 9->8		unresolved_modifications	
+PXD047288	b5403ce801f272ec	bfbcd286d8033e4d	findings 8->7		unresolved_modifications	
+PXD034432	a1db78bc68e86608	6b421f2ec9ada9bb	findings 10->9		unresolved_modifications	

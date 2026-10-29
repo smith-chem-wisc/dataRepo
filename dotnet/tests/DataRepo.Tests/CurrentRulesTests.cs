@@ -173,6 +173,11 @@ public class CurrentRulesTests
             "comment[label]", "comment[instrument]", "comment[fraction identifier]", "comment[technical replicate]",
             "comment[data file]",
         ];
+        return WriteSdrfWith(header, rows);
+    }
+
+    private static string WriteSdrfWith(string[] header, params string[][] rows)
+    {
         var dir = Path.Combine(Path.GetTempPath(), "datarepo-g83-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(dir);
         var path = Path.Combine(dir, "t.sdrf.tsv");
@@ -229,6 +234,104 @@ public class CurrentRulesTests
     {
         var path = WriteSdrf(["s1", "homo sapiens", cell, "a1", "label free sample", "NT=Q Exactive", cell, cell, "run1.raw"]);
         Assert.That(Sdrf.Parse(path, "PXD1", rules: IngestRules.Current).RunFacts["run1"]["fraction"], Is.EqualTo(value));
+    }
+
+    // ---------------------------------------------------------------- G106: one source name, rows that disagree
+
+    private static readonly string[] SampleHeader =
+    [
+        "source name", "characteristics[organism]", "characteristics[age]", "characteristics[individual]",
+        "comment[age source]", "comment[characteristics source]", "comment[fraction identifier]",
+        "comment[fraction identifier source]", "comment[data file]",
+    ];
+
+    private static string? Characteristic(SdrfTable table, string sampleId, string name) =>
+        (string?)table.Characteristics.SingleOrDefault(c => (string)c["sample_id"]! == sampleId && (string)c["name"]! == name)?["value"];
+
+    /// <summary>PXD012307's shape: two animals, 24 and 3 months old, written as one source name over 4 files.</summary>
+    [Test]
+    public void ACellTheRowsDisagreeOnHasNoValue()
+    {
+        var path = WriteSdrfWith(SampleHeader,
+            ["Sample 1", "mus musculus", "24M", "old_14", "", "", "1", "deposited", "a.raw"],
+            ["Sample 1", "mus musculus", "24M", "old_14", "", "", "2", "deposited", "b.raw"],
+            ["Sample 1", "mus musculus", "3M", "young_11", "", "", "1", "drafted", "c.raw"],
+            ["Sample 1", "mus musculus", "3M", "young_11", "", "", "2", "drafted", "d.raw"]);
+        var current = Sdrf.Parse(path, "PXD1", rules: IngestRules.Current);
+        var python = Sdrf.Parse(path, "PXD1", rules: IngestRules.Python0320);
+        var sample = current.Samples.Single();
+        Assert.Multiple(() =>
+        {
+            Assert.That(Characteristic(current, "PXD1:Sample 1", "characteristics[age]"), Is.Null, "no row's age is the sample's");
+            Assert.That(Characteristic(current, "PXD1:Sample 1", "characteristics[individual]"), Is.Null);
+            Assert.That(sample["individual_id"], Is.Null, "the typed column read from the cell is NULL too");
+            Assert.That(Characteristic(current, "PXD1:Sample 1", "characteristics[organism]"), Is.EqualTo("mus musculus"), "agreeing rows keep it");
+            Assert.That(sample["organism"], Is.EqualTo("NCBITaxon:10090"));
+            Assert.That(current.Conflicts.Select(c => c.Column),
+                Is.EqualTo(new[] { "characteristics[age]", "characteristics[individual]" }),
+                "a fraction is the file's, so rows differing there are no conflict");
+            var age = current.Conflicts[0];
+            Assert.That(age.SampleId, Is.EqualTo("PXD1:Sample 1"));
+            Assert.That(age.Values.Select(v => v.Value), Is.EqualTo(new[] { "24M", "3M" }));
+            Assert.That(age.Values.Select(v => string.Join(",", v.Runs)), Is.EqualTo(new[] { "a,b", "c,d" }), "each value names its rows' runs");
+            Assert.That(current.Assays, Has.Count.EqualTo(4), "every file is still an assay of the sample");
+            Assert.That(Characteristic(python, "PXD1:Sample 1", "characteristics[age]"), Is.EqualTo("24M"), "0.32.0: the first row won");
+            Assert.That(python.Conflicts, Is.Empty);
+        });
+    }
+
+    /// <summary>An empty cell says nothing, so it neither agrees nor disagrees; a reserved word is a value.</summary>
+    [TestCase("24M", "", "24M", false)]
+    [TestCase("", "3M", "3M", false)]             // 0.32.0 read the first row only, and so lost it
+    [TestCase("24M", "not available", null, true)]
+    [TestCase("24M", " 24M ", "24M", false)]      // the same value, padded
+    public void OnlyWrittenCellsDisagree(string first, string second, string? value, bool conflict)
+    {
+        var path = WriteSdrfWith(SampleHeader,
+            ["s1", "homo sapiens", first, "", "", "", "1", "", "a.raw"],
+            ["s1", "homo sapiens", second, "", "", "", "2", "", "b.raw"]);
+        var current = Sdrf.Parse(path, "PXD1", rules: IngestRules.Current);
+        Assert.Multiple(() =>
+        {
+            Assert.That(Characteristic(current, "PXD1:s1", "characteristics[age]"), Is.EqualTo(value));
+            Assert.That(current.Conflicts.Count > 0, Is.EqualTo(conflict));
+        });
+    }
+
+    /// <summary>A characteristic's own source the rows disagree on is NULL: it is not absent, so the row default
+    /// (<c>comment[characteristics source]</c>) must not stand in for it (G75).</summary>
+    [Test]
+    public void ASourceTheRowsDisagreeOnIsNotTheRowDefault()
+    {
+        var path = WriteSdrfWith(SampleHeader,
+            ["s1", "homo sapiens", "24M", "", "publication", "deposited", "1", "", "a.raw"],
+            ["s1", "homo sapiens", "24M", "", "pride project record", "deposited", "2", "", "b.raw"]);
+        var current = Sdrf.Parse(path, "PXD1", rules: IngestRules.Current);
+        var age = current.Characteristics.Single(c => (string)c["name"]! == "characteristics[age]");
+        var organism = current.Characteristics.Single(c => (string)c["name"]! == "characteristics[organism]");
+        Assert.Multiple(() =>
+        {
+            Assert.That(age["value"], Is.EqualTo("24M"), "the value agrees");
+            Assert.That(age["source"], Is.Null);
+            Assert.That(organism["source"], Is.EqualTo("deposited"), "an agreed row default still applies");
+            Assert.That(current.Conflicts.Single().Column, Is.EqualTo("comment[age source]"));
+        });
+    }
+
+    /// <summary>An organism the rows disagree on falls back to the manifest's, as an organism with no term does:
+    /// <c>samples.organism</c> is required.</summary>
+    [Test]
+    public void AnOrganismTheRowsDisagreeOnIsTheManifests()
+    {
+        var path = WriteSdrfWith(SampleHeader,
+            ["s1", "homo sapiens", "", "", "", "", "1", "", "a.raw"],
+            ["s1", "mus musculus", "", "", "", "", "2", "", "b.raw"]);
+        var current = Sdrf.Parse(path, "PXD1", "NCBITaxon:10116", rules: IngestRules.Current);
+        Assert.Multiple(() =>
+        {
+            Assert.That(current.Samples.Single()["organism"], Is.EqualTo("NCBITaxon:10116"));
+            Assert.That(Characteristic(current, "PXD1:s1", "characteristics[organism]"), Is.Null);
+        });
     }
 
     // ---------------------------------------------------------------- helpers for file-backed items
@@ -311,6 +414,137 @@ public class CurrentRulesTests
         {
             Assert.That(current, Is.EqualTo(new[] { "P1", "P2" }));
             Assert.That(python, Is.EqualTo(new[] { "P2" }), "0.32.0 read the BOM as a character and lost P1");
+        });
+    }
+
+    // ---------------------------------------------------------------- DATAREPO-84: entries of another source
+
+    /// <summary>One Swiss-Prot entry and one of aging's Ensembl-only isoforms, in aging's own format (their 116).</summary>
+    private const string EnsemblDb = """
+        <?xml version="1.0" encoding="UTF-8"?>
+        <uniprot xmlns="http://uniprot.org/uniprot">
+        <entry dataset="Swiss-Prot"><accession>Q8R429</accession><name>AT2A1_MOUSE</name>
+          <gene><name type="primary">Atp2a1</name></gene>
+          <organism><name type="scientific">Mus musculus</name><dbReference type="NCBI Taxonomy" id="10090"/></organism>
+          <sequence length="6">MEAAHS</sequence></entry>
+        <entry dataset="Ensembl" created="2026-10-20" modified="2026-10-20" version="1">
+          <accession>ENSMUSP00000292642</accession><name>ENSMUSP00000292642_MOUSE</name>
+          <protein><recommendedName><fullName>Ensembl-only form of Atp2a1 (not a UniProt entry)</fullName></recommendedName></protein>
+          <gene><name type="primary">Atp2a1</name></gene>
+          <organism><name type="scientific">Mus musculus</name><dbReference type="NCBI Taxonomy" id="10090"/></organism>
+          <comment type="miscellaneous"><text>Not a UniProt entry.</text></comment>
+          <dbReference type="Ensembl" id="ENSMUST00000000001.1"><property type="protein sequence ID" value="ENSMUSP00000292642.1"/></dbReference>
+          <sequence length="7">MEAAHSK</sequence></entry>
+        </uniprot>
+        """;
+
+    /// <summary>A target entry of another source is read with its accession, sequence, source and its own taxon; a
+    /// UniProt entry names no other source; 0.32.0's reading is unchanged.</summary>
+    [Test]
+    public void AnEnsemblEntryIsReadWithItsSourceAndTaxon()
+    {
+        var path = TempFile("aging_isoforms_mouse.xml", EnsemblDb);
+        var sequences = new ProteinSequences();
+        Assert.That(ProteinDb.ReadDatabase(path, sequences), Is.EqualTo(2));
+        Assert.Multiple(() =>
+        {
+            Assert.That(sequences.Get("ENSMUSP00000292642"), Is.EqualTo(new[] { "MEAAHSK" }));
+            Assert.That(sequences.OtherSource("ENSMUSP00000292642"), Is.EqualTo(("ensembl", (string?)"NCBITaxon:10090")));
+            Assert.That(sequences.OtherSource("Q8R429"), Is.Null, "a Swiss-Prot entry is UniProt's");
+            Assert.That(ProteinDb.IterUniprotXml(path, IngestRules.Python0320).ToList(),
+                Is.EqualTo(new[] { ("Q8R429", "MEAAHS"), ("ENSMUSP00000292642", "MEAAHSK") }));
+        });
+        var contaminants = new ProteinSequences();
+        ProteinDb.ReadDatabase(TempFile("my_contaminants.xml", EnsemblDb), contaminants);
+        Assert.That(contaminants.OtherSource("ENSMUSP00000292642"), Is.Null, "a contaminant panel names no target source");
+    }
+
+    /// <summary>The protein row says the source the entry names, takes the entry's own taxon, and is its own
+    /// canonical; a UniProt accession beside it keeps its row.</summary>
+    [Test]
+    public void AnEnsemblProteinRowSaysEnsembl()
+    {
+        var sequences = new ProteinSequences();
+        ProteinDb.ReadDatabase(TempFile("aging_isoforms_mouse.xml", EnsemblDb), sequences);
+        var columns = new Dictionary<string, List<object?>>
+        {
+            ["accession"] = ["Q8R429|ENSMUSP00000292642"],
+            ["gene_name"] = ["primary:Atp2a1"],
+            ["organism_name"] = ["Mus musculus"],
+            ["decoy_contam_target"] = ["T"],
+        };
+        var rows = Identifications.ProteinRows([columns], "PXD1", "NCBITaxon:10090", otherSource: sequences.OtherSource)
+            .ToDictionary(r => (string)r["protein_accession"]!);
+        Assert.Multiple(() =>
+        {
+            var e = rows["ENSMUSP00000292642"];
+            Assert.That((e["source_db"], e["canonical_accession"], e["organism"], e["organism_name"], e["gene"]),
+                Is.EqualTo(("ensembl", "ENSMUSP00000292642", "NCBITaxon:10090", "Mus musculus", "Atp2a1")));
+            var u = rows["Q8R429"];
+            Assert.That((u["source_db"], u["canonical_accession"], u["organism"]), Is.EqualTo(("uniprot", "Q8R429", "NCBITaxon:10090")));
+            var without = Identifications.ProteinRows([columns], "PXD1", "NCBITaxon:10090").Single(r => (string)r["protein_accession"]! == "ENSMUSP00000292642");
+            Assert.That(without["source_db"], Is.EqualTo("uniprot"), "0.32.0's rows: every target read uniprot");
+        });
+    }
+
+    // ---------------------------------------------------------------- DATAREPO-D7: localization-ambiguous peptide rows
+
+    /// <summary>A <c>|</c>-joined peptide row (MetaMorpheus #2917) is left out and counted, never stored under its first
+    /// full sequence's site; 0.32.0's rows keep the first.</summary>
+    [Test]
+    public void ALocalizationAmbiguousPeptideRowIsLeftOutNotStoredAsItsFirstSite()
+    {
+        var path = TempFile("AllQuantifiedPeptides.tsv",
+            "Sequence\tBase Sequence\tIntensity_run1\tIntensity_run2\tDetection Type_run1\tDetection Type_run2\n"
+            + "PEPS[Common Biological:Phosphorylation on S]TIDE\tPEPSTIDE\t100\t200\tMSMS\tMSMS\n"
+            + "PEPS[Common Biological:Phosphorylation on S]TIDEK|PEPST[Common Biological:Phosphorylation on T]IDEK\tPEPSTIDEK\t300\t\tMSMS\t\n");
+        string? Proforma(string s) => s.Replace("[Common Biological:Phosphorylation on S]", "[UNIMOD:21]").Replace("[Common Biological:Phosphorylation on T]", "[UNIMOD:21]");
+        var runs = new RunNameMap(["run1", "run2"]);
+        var ambiguous = new Dictionary<string, long>(StringComparer.Ordinal);
+        var rows = Quant.PeptideQuantRows(path, "PXD1", runs, Proforma, ambiguous: ambiguous);
+        var python = Quant.PeptideQuantRows(path, "PXD1", runs, Proforma, rules: IngestRules.Python0320);
+        Assert.Multiple(() =>
+        {
+            Assert.That(rows.Select(r => (string)r["feature_id"]!).Distinct(), Is.EqualTo(new[] { "PXD1:PEPS[UNIMOD:21]TIDE" }));
+            Assert.That(ambiguous.Single().Value, Is.EqualTo(1), "one value left out");
+            Assert.That(python.Count(r => (string)r["feature_id"]! == "PXD1:PEPS[UNIMOD:21]TIDEK"), Is.EqualTo(1), "0.32.0 keyed it on the first");
+        });
+    }
+
+    // ---------------------------------------------------------------- PXR-R12: UniProt namespaces, empty reads
+
+    /// <summary>Every namespace a UniProt XML the search read can carry: UniProt's http and https, the
+    /// <c>undefined</c> mzLib's writer can emit, none, and a prefixed form.</summary>
+    [TestCase("<uniprot xmlns=\"http://uniprot.org/uniprot\"><entry><accession>P1</accession><sequence>MKA</sequence></entry></uniprot>", true)]
+    [TestCase("<uniprot xmlns=\"https://uniprot.org/uniprot\"><entry><accession>P1</accession><sequence>MKA</sequence></entry></uniprot>", false)]
+    [TestCase("<uniprot xmlns=\"undefined\"><entry><accession>P1</accession><sequence>MKA</sequence></entry></uniprot>", false)]
+    [TestCase("<uniprot><entry><accession>P1</accession><sequence>MKA</sequence></entry></uniprot>", false)]
+    [TestCase("<u:uniprot xmlns:u=\"https://uniprot.org/uniprot\"><u:entry><u:accession>P1</u:accession><u:sequence>MKA</u:sequence></u:entry></u:uniprot>", false)]
+    public void AUniprotXmlIsReadInAnyNamespace(string body, bool pythonRead)
+    {
+        var path = TempFile("db.xml", "<?xml version=\"1.0\"?>" + body);
+        var current = ProteinDb.IterUniprotXml(path, IngestRules.Current).ToList();
+        var python = ProteinDb.IterUniprotXml(path, IngestRules.Python0320).ToList();
+        Assert.Multiple(() =>
+        {
+            Assert.That(current, Is.EqualTo(new[] { ("P1", "MKA") }));
+            Assert.That(python.Count, Is.EqualTo(pythonRead ? 1 : 0), "0.32.0 read http:// only");
+        });
+    }
+
+    /// <summary>A database the search used that reads as empty is refused, whatever made it empty.</summary>
+    [TestCase("db.xml", "<?xml version=\"1.0\"?><uniprot xmlns=\"http://uniprot.org/uniprot\"></uniprot>")]
+    [TestCase("db.xml", "<?xml version=\"1.0\"?><uniprot xmlns=\"http://uniprot.org/uniprot\"><entry><accession>P1</accession></entry></uniprot>")]
+    [TestCase("db.fasta", "")]
+    [TestCase("db.fasta", "MKA\n")]  // sequence with no header
+    public void ADatabaseThatReadsEmptyIsRefused(string name, string text)
+    {
+        var path = TempFile(name, text);
+        Assert.Multiple(() =>
+        {
+            Assert.That(() => ProteinDb.ReadDatabase(path, new ProteinSequences(), IngestRules.Current),
+                Throws.TypeOf<DataRepo.Bundle.IngestException>().With.Message.Contains("no entries"));
+            Assert.That(ProteinDb.ReadDatabase(path, new ProteinSequences(), IngestRules.Python0320), Is.Zero, "0.32.0 read it as empty");
         });
     }
 
@@ -407,8 +641,8 @@ public class CurrentRulesTests
     {
         var path = Task("Task1SearchTask.toml",
             "TaskType = \"Search\"\n[CommonParameters]\nListOfModsVariable = \"Common Variable\tOxidation on M\t\tCommon Biological\tHydroxylation\t\tX\tA on B on C\"\n");
-        var current = SearchParams.ModificationRows([path], "PXD1", _ => null, IngestRules.Current).ToDictionary(r => (string)r["name"]!, r => r["residues"]);
-        var python = SearchParams.ModificationRows([path], "PXD1", _ => null, IngestRules.Python0320).ToDictionary(r => (string)r["name"]!, r => r["residues"]);
+        var current = SearchParams.ModificationRows([path], "PXD1", (_, _) => null, IngestRules.Current).ToDictionary(r => (string)r["name"]!, r => r["residues"]);
+        var python = SearchParams.ModificationRows([path], "PXD1", (_, _) => null, IngestRules.Python0320).ToDictionary(r => (string)r["name"]!, r => r["residues"]);
         Assert.Multiple(() =>
         {
             Assert.That(current["Hydroxylation"], Is.EqualTo("unspecified"));
@@ -533,5 +767,293 @@ public class CurrentRulesTests
                 Assert.That(entries[1].Unimod, Is.Null);
             });
         }
+    }
+
+    // ---------------------------------------------------------------- G101: one accession, two sequences
+
+    // The proteome's keratin and the contaminant panel's older version of it, as O76011 and P19013 are: PEPCIDEK at 5
+    // in the first (its C is residue 8) and at 9 in the second (residue 12).
+    private const string KeratinTarget = "MAAAPEPCIDEKGGG";
+    private const string KeratinPanel = "MAAAQQQQPEPCIDEKGGG";
+
+    /// <summary>K1 from a proteome and from a second database (by default the contaminant panel), and P2, which
+    /// carries the same peptide at 2 (its C is residue 5), from the proteome only.</summary>
+    private static ProteinSequences Keratin(string panel = KeratinPanel, string panelFile = "contaminants.fasta")
+    {
+        var sequences = new ProteinSequences();
+        ProteinDb.ReadDatabase(TempFile("proteome.fasta", ">sp|K1|K1_HUMAN one\n" + KeratinTarget + "\n>sp|P2|P2_HUMAN two\nMPEPCIDEKW\n"), sequences);
+        ProteinDb.ReadDatabase(TempFile(panelFile, ">sp|K1|K1_HUMAN one\n" + panel + "\n"), sequences);
+        return sequences;
+    }
+
+    private static List<DataRepo.Bundle.Row> KeratinSites(ProteinSequences sequences, string accession, string range, OrderedDictionary<string, long>? unplaced = null)
+    {
+        var columns = new Dictionary<string, List<object?>>
+        {
+            ["full_sequence"] = ["PEPC[Common Fixed:Carbamidomethyl on C]IDEK"],
+            ["accession"] = [accession],
+            ["start_and_end_residues_in_parent_sequence"] = [range],
+            ["q_value"] = [0.001],
+            ["decoy_contam_target"] = ["T"],
+        };
+        return Identifications.PtmSiteRows(columns, "PXD1", new ProformaCache(new ModRegistry(), IngestRules.Current), sequences, unplaced);
+    }
+
+    private static IEnumerable<string> Positions(List<DataRepo.Bundle.Row> sites) =>
+        sites.Select(s => $"{s["protein_accession"]}:{s["position"]}");
+
+    [TestCase("RemoveContaminant", KeratinTarget, "target")]
+    [TestCase("RemoveTarget", KeratinPanel, "contaminant")]
+    public void TheCopyTheSearchKeptIsTheOneSitesArePlacedOn(string tc, string kept, string kind)
+    {
+        var sequences = Keratin();
+        Assert.That(Positions(KeratinSites(sequences, "K1", "[5 to 12]")), Is.EquivalentTo(new[] { "K1:8", "K1:12" }),
+            "before the choice, one PSM gave two sites 4 residues apart: the defect");
+        sequences.KeepSearched(tc);
+        Assert.Multiple(() =>
+        {
+            Assert.That(sequences.Get("K1"), Is.EqualTo(new[] { kept }));
+            Assert.That(sequences.Resolved["K1"], Is.EqualTo(kind));
+            Assert.That(sequences.Ambiguous, Is.Empty);
+            Assert.That(Positions(KeratinSites(sequences, "K1", "[5 to 12]")), Is.EqualTo(new[] { kind == "target" ? "K1:8" : "K1:12" }));
+            Assert.That(sequences.DatabaseStatus("K1"), Is.EqualTo("both"), "the contaminant label is still the setting's to decide");
+        });
+    }
+
+    /// <summary>Where the search held one copy and nothing says which, no site is placed against either.</summary>
+    [TestCase(null)]
+    [TestCase("RenameProtein")]
+    public void AnUnnamedCopyPlacesNoSite(string? tc)
+    {
+        var sequences = Keratin();
+        sequences.KeepSearched(tc);
+        var unplaced = new OrderedDictionary<string, long>(StringComparer.Ordinal);
+        Assert.Multiple(() =>
+        {
+            Assert.That(sequences.Get("K1"), Is.Empty);
+            Assert.That(sequences.Ambiguous, Is.EqualTo(new[] { "K1" }));
+            Assert.That(Positions(KeratinSites(sequences, "K1|P2", "[5 to 12]|[2 to 9]", unplaced)), Is.EqualTo(new[] { "P2:5" }),
+                "the other protein of the PSM keeps its site");
+            Assert.That(unplaced["ambiguous_sequence"], Is.EqualTo(1));
+            Assert.That(Positions(KeratinSites(sequences, "K1", "[5 to 12]")), Is.EqualTo(new[] { "K1:8" }),
+                "a PSM on K1 alone falls back to the producer's own span, which is the copy it matched");
+        });
+    }
+
+    [Test]
+    public void TwoCopiesFromDatabasesOfOneKindAreAmbiguous()
+    {
+        // MetaMorpheus keeps the copy with the most annotated modifications, which a sequence read cannot see.
+        var sequences = Keratin(panelFile: "isoforms.fasta");
+        sequences.KeepSearched("RemoveContaminant");
+        Assert.Multiple(() =>
+        {
+            Assert.That(sequences.Ambiguous, Is.EqualTo(new[] { "K1" }));
+            Assert.That(sequences.Resolved, Is.Empty);
+        });
+    }
+
+    // ---------------------------------------------------------------- schema 0.0.16: sequence_window (P30), split keys (G95)
+
+    [TestCase(10, "LAAEGSDCIMLK___")]   // residues 3-17: 7 before the C, the C, 4 after, 3 past the end
+    [TestCase(1, "_______MKLAAEGS")]    // the first residue, as a protein N-terminal site takes it
+    [TestCase(14, "GSDCIMLK_______")]   // the last residue, as a protein C-terminal site takes it
+    public void ASiteWindowIsFifteenResiduesWithUnderscoresPastTheEnds(long position, string window)
+    {
+        var got = Identifications.SequenceWindow("MKLAAEGSDCIMLK", position);
+        Assert.Multiple(() =>
+        {
+            Assert.That(got, Is.EqualTo(window));
+            Assert.That(got![7], Is.EqualTo("MKLAAEGSDCIMLK"[(int)position - 1]), "the site's residue is the centre");
+        });
+    }
+
+    [TestCase(0)]
+    [TestCase(15)]
+    public void APositionOutsideTheSequenceHasNoWindow(long position) =>
+        Assert.That(Identifications.SequenceWindow("MKLAAEGSDCIMLK", position), Is.Null);
+
+    [Test]
+    public void AnAccessionWithoutOneSequenceHasNoWindow()
+    {
+        var sequences = Keratin();
+        sequences.KeepSearched(null);  // K1 ambiguous: no sequence
+        var sites = new List<DataRepo.Bundle.Row>
+        {
+            new() { ["protein_accession"] = "K1", ["position"] = 8L },
+            new() { ["protein_accession"] = "P2", ["position"] = 5L },
+            new() { ["protein_accession"] = "NONE", ["position"] = 1L },
+        };
+        Identifications.AddSequenceWindows(sites, sequences);
+        Assert.That(sites.Select(s => s["sequence_window"]), Is.EqualTo(new object?[] { null, "___MPEPCIDEKW__", null }));
+    }
+
+    /// <summary>ptmQtl S5 (D35): a protein N-terminal site takes residue 1's window, also when it is keyed on residue 2
+    /// after the initiator Met was removed; any other site keyed on residue 2 takes residue 2's.</summary>
+    [Test]
+    public void AProteinNTerminalSiteTakesResidueOnesWindow()
+    {
+        var sequences = Keratin();
+        sequences.KeepSearched(null);
+        var sites = new List<DataRepo.Bundle.Row>
+        {
+            new() { ["protein_accession"] = "P2", ["position"] = 2L, ["site_type"] = "protein_n_term" },
+            new() { ["protein_accession"] = "P2", ["position"] = 1L, ["site_type"] = "protein_n_term" },
+            new() { ["protein_accession"] = "P2", ["position"] = 2L, ["site_type"] = "residue" },
+        };
+        Identifications.AddSequenceWindows(sites, sequences);
+        Assert.That(sites.Select(s => s["sequence_window"]), Is.EqualTo(new object?[] { "_______MPEPCIDE", "_______MPEPCIDE", "______MPEPCIDEK" }));
+    }
+
+    /// <summary>A split deposit's search is its own dataset, and its spectra are still the deposit's (G95).</summary>
+    [TestCase("PXD073999", "PXD073999")]
+    [TestCase("PXD073999-g2", "PXD073999")]
+    [TestCase("MSV000012345-part_b", "MSV000012345")]
+    public void AUsiNamesTheDepositsAccession(string datasetId, string accession) =>
+        Assert.That(Usi.Mint(datasetId, "run1", 7, "PEPTIDE", 2), Is.EqualTo($"mzspec:{accession}:run1:scan:7:PEPTIDE/2"));
+
+    // ---------------------------------------------------------------- G26: modifications from mzLib's own loaders
+
+    /// <summary>A MetaMorpheus install holding only <c>Mods/</c> files, written in MetaMorpheus's own format.</summary>
+    private static string ModsInstall(params (string File, string Text)[] files)
+    {
+        var dir = Path.Combine(Path.GetTempPath(), "datarepo-g26-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(Path.Combine(dir, "Mods"));
+        foreach (var (file, text) in files)
+            File.WriteAllText(Path.Combine(dir, "Mods", file), text, new System.Text.UTF8Encoding(false));
+        return dir;
+    }
+
+    private static string ModBlock(string id, string target, string type, string formula, int? unimod) =>
+        $"ID   {id}\nTG   {target}\nPP   Anywhere.\nMT   {type}\nCF   {formula}\n" + (unimod is null ? "" : $"DR   Unimod; {unimod}.\n") + "//\n";
+
+    [Test]
+    public void AModificationResolvesByItsExactToken()
+    {
+        var install = ModsInstall(("Mods.txt", ModBlock("Carbamidomethyl", "C", "Common Fixed", "C2H3N1O1", 4)
+            + ModBlock("Hydroxybutyrylation", "K", "Common Biological", "C4H6O2", null)));
+        var registry = ModRegistry.FromMzLib(install);
+        var fixedC = registry.Lookup("Carbamidomethyl on C", "C", IngestRules.Current, "Common Fixed");
+        var noAccession = registry.Lookup("Hydroxybutyrylation on K", "K", IngestRules.Current, "Common Biological");
+        Assert.Multiple(() =>
+        {
+            Assert.That(fixedC?.UnimodCurie, Is.EqualTo("UNIMOD:4"));
+            Assert.That(fixedC!.MonoisotopicMass, Is.EqualTo(57.021464).Within(1e-6), "the mass mzLib computes from the formula");
+            Assert.That(noAccession?.UnimodCurie, Is.Null);
+            Assert.That(noAccession!.MonoisotopicMass, Is.EqualTo(86.036779).Within(1e-6), "the file reader had no mass for it");
+            Assert.That(registry.Lookup("Carbamidomethyl on C", "C", IngestRules.Current, "Common Variable"), Is.Null, "another category is another token");
+            Assert.That(registry.Lookup("Carbamidomethyl on C", "C", IngestRules.Current), Is.Null, "no category, no token");
+            Assert.That(registry.Lookup("Carbamidomethyl", "C", IngestRules.Current, "Common Fixed"), Is.Null, "nothing is guessed from a stem");
+            Assert.That(registry.Loader, Does.StartWith("mzLib "));
+        });
+    }
+
+    /// <summary>MetaMorpheus keeps the first modification loaded under an <c>IdWithMotif</c>, whatever its category.</summary>
+    [Test]
+    public void TheFirstFileToLoadAnIdWins()
+    {
+        var install = ModsInstall(
+            ("b.txt", ModBlock("Thing", "K", "Second", "C2H2O1", 2)),
+            ("a.txt", ModBlock("Thing", "K", "First", "C2H2O1", 1)));
+        var registry = ModRegistry.FromMzLib(install);
+        Assert.Multiple(() =>
+        {
+            Assert.That(registry.Lookup("Thing on K", "K", IngestRules.Current, "First")?.UnimodCurie, Is.EqualTo("UNIMOD:1"));
+            Assert.That(registry.Lookup("Thing on K", "K", IngestRules.Current, "Second"), Is.Null, "MetaMorpheus skipped it, so no search wrote it");
+            Assert.That(registry.Count, Is.EqualTo(1));
+        });
+    }
+
+    /// <summary>An install with a <c>ptmlist.txt</c> of two charged UniProt entries and the PSI-MOD terms naming their
+    /// charges, in the real files' grammar; optionally its own mzLib assembly.</summary>
+    private static string ChargedInstall(bool withOwnMzLib)
+    {
+        var dir = Path.Combine(Path.GetTempPath(), "datarepo-g26c-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(Path.Combine(dir, "Data"));
+        string Term(string id, string charge) =>
+            $"<term><id>{id}</id><name>{id}</name><xref_analog><acc></acc><dbname>FormalCharge</dbname><name>{charge}</name></xref_analog></term>";
+        File.WriteAllText(Path.Combine(dir, "Data", "PSI-MOD.obo.xml"),
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><obo>" + Term("MOD:90001", "1-") + Term("MOD:90002", "1+") + "</obo>");
+        string Entry(string id, string formula, string mass, string psimod, string extra = "") =>
+            $"ID   {id}\nAC   PTM-9{psimod[^1]}\nFT   MOD_RES\nTG   Lysine.\nPA   Amino acid side chain.\nPP   Anywhere.\n"
+            + $"CF   {formula}\nMM   {mass}\nDR   PSI-MOD; {psimod}.\n{extra}//\n";
+        File.WriteAllText(Path.Combine(dir, "Data", "ptmlist.txt"),
+            Entry("Minus thing", "C2 H1 O2", "57.000000", "MOD:90001")
+            + Entry("Plus thing", "C3 H7", "43.054227", "MOD:90002", "DR   Unimod; 37.\n"));
+        if (withOwnMzLib)
+            File.Copy(typeof(UsefulProteomicsDatabases.Loaders).Assembly.Location, Path.Combine(dir, "UsefulProteomicsDatabases.dll"));
+        return dir;
+    }
+
+    /// <summary>A charge mzLib's sign fix (#1299) did not change is applied as the search applied it; a negative one
+    /// is applied only for an install whose own mzLib read its sign, and otherwise the mass is withheld.</summary>
+    [TestCase(true)]
+    [TestCase(false)]
+    public void AChargedMassIsTheOneTheSearchUsed(bool withOwnMzLib)
+    {
+        const double proton = 1.007276466812;
+        var registry = ModRegistry.FromMzLib(ChargedInstall(withOwnMzLib));
+        var plus = registry.Lookup("Plus thing on K", "K", IngestRules.Current, "UniProt");
+        var minus = registry.Lookup("Minus thing on K", "K", IngestRules.Current, "UniProt");
+        Assert.Multiple(() =>
+        {
+            Assert.That(plus!.MonoisotopicMass, Is.EqualTo(43.054227 - proton).Within(1e-6), "+1: one proton off UniProt's cation mass");
+            Assert.That(plus.UnimodCurie, Is.EqualTo("UNIMOD:37"));
+            Assert.That(minus, Is.Not.Null, "the token still resolves");
+            if (withOwnMzLib)
+            {
+                Assert.That(minus!.MonoisotopicMass, Is.EqualTo(57.000000 + proton).Within(1e-6), "-1, read with its sign");
+                Assert.That(registry.MassesWithheld, Is.Empty);
+            }
+            else
+            {
+                Assert.That(minus!.MonoisotopicMass, Is.Null, "an install whose mzLib may have read -1 as +1 searched another mass");
+                Assert.That(registry.MassesWithheld.Keys, Is.EqualTo(new[] { "UniProt:Minus thing on K" }));
+                Assert.That(registry.MassesWithheld.Values.Single(), Does.Contain("MOD:90001").And.Contain("#1299"));
+            }
+        });
+    }
+
+    [Test]
+    public void AMissingInstallGivesAnEmptyRegistry() =>
+        Assert.That(ModRegistry.FromMzLib(Path.Combine(Path.GetTempPath(), "no-such-install-" + Guid.NewGuid().ToString("N"))).Count, Is.Zero);
+
+    /// <summary>What G26 changes on aging's real install, measured over every token in its store (2026-10-19).</summary>
+    [Test, Category("RealData")]
+    public void TheRealInstallResolvesWhatTheFileReaderCouldNot()
+    {
+        const string install = @"F:\aging_data\mm_settings\1.1.12";
+        if (!Directory.Exists(install)) Assert.Ignore($"{install} is not on this machine");
+        var mzlib = ModRegistry.FromMzLib(install);
+        var files = ModRegistry.FromMetaMorpheus(install);
+        ModEntry? Mz(string category, string name) => mzlib.Lookup(name, null, IngestRules.Current, category);
+        Assert.Multiple(() =>
+        {
+            Assert.That(Mz("Unimod", "Nethylmaleimide on C")?.UnimodCurie, Is.EqualTo("UNIMOD:108"), "unimod.xml, which the file reader never read");
+            Assert.That(files.Lookup("Nethylmaleimide on C", "C", IngestRules.Current), Is.Null);
+            Assert.That(Mz("UniProt", "N6,N6,N6-trimethyllysine on K")!.MonoisotopicMass, Is.EqualTo(42.046951).Within(1e-6), "formal charge removed");
+            Assert.That(files.Lookup("N6,N6,N6-trimethyllysine on K", "K", IngestRules.Current)!.MonoisotopicMass, Is.EqualTo(43.054227).Within(1e-6), "UniProt's MM, a proton heavier");
+            Assert.That(Mz("Common Biological", "Hydroxybutyrylation on K")!.MonoisotopicMass, Is.EqualTo(86.036779).Within(1e-6));
+            Assert.That(Mz("Common Fixed", "Carbamidomethyl on C")?.UnimodCurie, Is.EqualTo("UNIMOD:4"));
+            Assert.That(Mz("Trypsin Digested", "GG (Ubiquitination Site) on K")?.UnimodCurie, Is.EqualTo("UNIMOD:121"));
+            Assert.That(mzlib.MassesWithheld, Is.Empty, "1.1.12 ships mzLib 1.0.594, which reads a charge's sign");
+            const string older = @"F:\aging_data\mm_settings\1.1.11";
+            if (Directory.Exists(older))
+                Assert.That(ModRegistry.FromMzLib(older).MassesWithheld, Is.Empty,
+                    "1.1.11 ships mzLib 1.0.591, from before #1299, and none of its charged entries is negative");
+        });
+    }
+
+    [Test]
+    public void AnIdenticalCopyIsNoChoice()
+    {
+        var sequences = Keratin(panel: KeratinTarget);
+        sequences.KeepSearched(null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(sequences.Get("K1"), Is.EqualTo(new[] { KeratinTarget }));
+            Assert.That(sequences.Resolved, Is.Empty);
+            Assert.That(sequences.Ambiguous, Is.Empty);
+        });
     }
 }
