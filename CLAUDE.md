@@ -24,6 +24,10 @@ This folder is a `/project`-managed research project. **You are de facto working
       24220 draining. Nine deposits lacked output: eight are repointed to their `<acc>.superseded-<stamp>` search for the
       gap (their ids hash that path, since `run` is a content field), and PXD031782 goes to hold. Check (d) = PXD055228,
       PXD058082, PXD057490, PXD036557. PXReprise reports the gap's end with aging's first 1.4.0 publish id.
+      2026-10-29: the drain stalled 7 h on PXD045861's last raw (Aspera has no stall timeout: theirs). A 1.4.0 build
+      takes aging's 1.3.6-written study delivery `b695cad9f89914b7` (layer 0.6.0 in both; tested, 114 checks), but
+      every study row's sample and run must be in the catalog, and held PXD031782 has rows in all four tables. Aging is
+      asked to drop them from its delivery TSVs and re-run `datarepo study` with 1.4.0 before check (c).
     - **1.4.1:** ptmQtl D60 (S2c gates) and D70/P36 (key sites by `sequence_window`, S5 where NULL); unique-peptide
       labels by MetaMorpheus release (AGING-R1) before the first 1.1.13 bundle is served; G110.
     - Still unanswered: PXReprise 062-064 (R30-R39), ptmQtl P34/P35/D61, QuantProject 058-062, kegg 007 (KEGG-D6),
