@@ -20,6 +20,10 @@ This folder is a `/project`-managed research project. **You are de facto working
     - **Next:** PXReprise's watcher runs the whole-store re-ingest in its swap gap (STOP, drain v0.4.32, re-ingest with
       1.4.0, check, start v0.4.33 + aging's publish on 1.4.0). PXD031782 and PXD058775 have no `04_search`: they must be
       resolved first or the 1.4.0 build refuses the mix. Keep PXReprise told until their swap is done (the user).
+      **Watcher LAUNCHED 2026-10-29 02:11 UTC** (pid 19740, `F:\aging_batch\swap-314f6ae\swap.log`): STOP up, driver
+      24220 draining. Nine deposits lacked output: eight are repointed to their `<acc>.superseded-<stamp>` search for the
+      gap (their ids hash that path, since `run` is a content field), and PXD031782 goes to hold. Check (d) = PXD055228,
+      PXD058082, PXD057490, PXD036557. PXReprise reports the gap's end with aging's first 1.4.0 publish id.
     - **1.4.1:** ptmQtl D60 (S2c gates) and D70/P36 (key sites by `sequence_window`, S5 where NULL); unique-peptide
       labels by MetaMorpheus release (AGING-R1) before the first 1.1.13 bundle is served; G110.
     - Still unanswered: PXReprise 062-064 (R30-R39), ptmQtl P34/P35/D61, QuantProject 058-062, kegg 007 (KEGG-D6),
