@@ -28,6 +28,10 @@ This folder is a `/project`-managed research project. **You are de facto working
       takes aging's 1.3.6-written study delivery `b695cad9f89914b7` (layer 0.6.0 in both; tested, 114 checks), but
       every study row's sample and run must be in the catalog, and held PXD031782 has rows in all four tables. Aging is
       asked to drop them from its delivery TSVs and re-run `datarepo study` with 1.4.0 before check (c).
+      PXD031223, PXD038718, PXD041766, PXD048877 (mouse) searched an overlay since replaced (`db\aging_isoforms_mouse.xml`
+      01e972 -> 4d3ac6; old copy in `db\isoform_db_versions\`): PXReprise swaps 01e972 back, ingests them, and runs
+      aging's `genes` (logs) and go.annotate_groups for the four before restoring, since a 1.4.0 engine run re-reads
+      each database at its recorded path (a logs refusal fails aging's whole publish). Re-search or stable paths: aging.
     - **1.4.1:** ptmQtl D60 (S2c gates) and D70/P36 (key sites by `sequence_window`, S5 where NULL); unique-peptide
       labels by MetaMorpheus release (AGING-R1) before the first 1.1.13 bundle is served; G110.
     - Still unanswered: PXReprise 062-064 (R30-R39), ptmQtl P34/P35/D61, QuantProject 058-062, kegg 007 (KEGG-D6),
