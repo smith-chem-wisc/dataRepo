@@ -10,9 +10,20 @@ This folder is a `/project`-managed research project. **You are de facto working
   end of 2026-10-25; we wait on ptmQtl's DATAREPO-P33, pep, pyMzLib, and on mzLib releases from go (#1497) and kegg.
   Since 2026-10-20 one session, datarepo-9b, holds both the threads
   and the 1.4.0 branch (the user: "do what you think is best", after datarepo-39 ended). Then, in order:
-  - **2026-10-25 (supersedes item 0's "Next"):**
-    - **1.4.0 is ON HOLD by the user** (D49): do not propose a date until they lift it. PXReprise 058 delivered both
-      deposits it waited on. The predicted ids are stale for 20 re-searched deposits (G113).
+  - **2026-10-28: datarepo 1.4.0 is RELEASED** (the user: "release 1.4.0 now", lifting D49). Tag `v1.4.0` on
+    `30842db` (merge `88f26b0` + a CI pin `duckdb<2` for the frozen Python, red since 10-25 on DuckDB 2.0.0), published
+    2026-10-29 01:21 UTC. win-x64 zip sha256 `d5a5f8af1e05e0a3c99a24c43ad4923e8d86dd4a8097871aa6b60f40e93c830a`.
+    Tutorial: bundle `004f8de1881cec43`, catalog `75b1bc1b6f742853`. The downloaded binary reproduced PXReprise's
+    1.1.13 arm c (`19a65be587c8518b`) and four unchanged deposits' predicted ids; PXD012754/PXD034432 differ (re-searched,
+    G113). Told: PXReprise 067 (+ session messages to pxreprise-74), aging 121 (DATAREPO-85 answered), ptmQtl 059
+    (P36 answered: per accession; 1.4.1 keys by window), QuantProject 063.
+    - **Next:** PXReprise's watcher runs the whole-store re-ingest in its swap gap (STOP, drain v0.4.32, re-ingest with
+      1.4.0, check, start v0.4.33 + aging's publish on 1.4.0). PXD031782 and PXD058775 have no `04_search`: they must be
+      resolved first or the 1.4.0 build refuses the mix. Keep PXReprise told until their swap is done (the user).
+    - **1.4.1:** ptmQtl D60 (S2c gates) and D70/P36 (key sites by `sequence_window`, S5 where NULL); unique-peptide
+      labels by MetaMorpheus release (AGING-R1) before the first 1.1.13 bundle is served; G110.
+    - Still unanswered: PXReprise 062-064 (R30-R39), ptmQtl P34/P35/D61, QuantProject 058-062, kegg 007 (KEGG-D6),
+      sdrf 031-033.
     - **The next change on master is G110:** stop GoEngine copying `go_annotation.tsv` into artefacts
       (`DataRepo.Runner/GoEngine.cs:362`, test `GoEngineTests.cs:122`). Ask the user which release carries it. The 269
       old copies (34.2 GB) are deleted (PXR-R29, PXReprise 060).

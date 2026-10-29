@@ -526,6 +526,7 @@ decisions:
       1.4.0 is ON HOLD by the user's word ("you can hold off on 1.4.0 for now", 2026-10-25), although PXReprise 058
       delivered PXD006815 and PXD022393, the last things its date waited on. Do not propose a date until the user lifts
       the hold. The branch `feat/1.4.0-ingest` (0c1f8d0) stays pushed and unmerged.
+      LIFTED 2026-10-28 (the user: "release 1.4.0 now"): released as v1.4.0 on 30842db, published 2026-10-29 01:21 UTC.
   - id: D50
     date: 2026-10-25
     text: >-
