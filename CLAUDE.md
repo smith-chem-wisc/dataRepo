@@ -6,8 +6,9 @@ This folder is a `/project`-managed research project. **You are de facto working
 
 - **Phase:** INCEPTION
 - **Goal:** An AI-ready, API-accessible repository for the search + quant results of the many PRIDE datasets the `aging` pipeline reanalyzes. Humans can use it, but AI agents are the main users. The question it serves is how organelle proteomes change with age.
-- **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`). Nothing was owed to any peer at the
-  end of 2026-10-25; we wait on ptmQtl's DATAREPO-P33, pep, pyMzLib, and on mzLib releases from go (#1497) and kegg.
+- **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`) and read PXReprise 068 (the 1.4.0
+  swap's outcome) if it has landed. We also wait on ptmQtl's DATAREPO-P33, pep, pyMzLib, and on mzLib releases from go
+  (#1497) and kegg.
   Since 2026-10-20 one session, datarepo-9b, holds both the threads
   and the 1.4.0 branch (the user: "do what you think is best", after datarepo-39 ended). Then, in order:
   - **2026-10-28: datarepo 1.4.0 is RELEASED** (the user: "release 1.4.0 now", lifting D49). Tag `v1.4.0` on
@@ -23,7 +24,9 @@ This folder is a `/project`-managed research project. **You are de facto working
       **Watcher LAUNCHED 2026-10-29 02:11 UTC** (pid 19740, `F:\aging_batch\swap-314f6ae\swap.log`): STOP up, driver
       24220 draining. Nine deposits lacked output: eight are repointed to their `<acc>.superseded-<stamp>` search for the
       gap (their ids hash that path, since `run` is a content field), and PXD031782 goes to hold. Check (d) = PXD055228,
-      PXD058082, PXD057490, PXD036557. PXReprise reports the gap's end with aging's first 1.4.0 publish id.
+      PXD058082, PXD057490, PXD036557. **PXReprise posts the gap's end with aging's first 1.4.0 publish id (or the
+      failure envelopes) as thread 068** (asked at the 2026-10-29 close): record it here and in state.yaml's D49, then
+      retire `code/_wt_140_ingest` (merged as `88f26b0`).
       2026-10-29: the drain stalled 7 h on PXD045861's last raw (Aspera has no stall timeout: theirs). A 1.4.0 build
       takes aging's 1.3.6-written study delivery `b695cad9f89914b7` (layer 0.6.0 in both; tested, 114 checks), but
       every study row's sample and run must be in the catalog, and held PXD031782 has rows in all four tables. Aging is

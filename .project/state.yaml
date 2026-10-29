@@ -544,6 +544,19 @@ decisions:
       joins only); definitions and fixtures are go's and kegg's.
 gaps:
   - >-
+    G114 NEW 2026-10-29: a study delivery's rows must all name a sample and run in the catalog, so holding one dataset
+    out of a build (PXD031782 on hold in the 1.4.0 swap) refuses the build until aging edits its curation files and
+    re-runs `datarepo study` (tested on the 1.4.0 binary: "aging.sample_ages.sample_id -> samples.sample_id: N vs 0").
+    Decide whether a build should instead leave out, with a check line, study rows for datasets it does not load.
+    Default: keep refusing (a silent drop could hide a mistyped id). Raise with aging if a hold recurs.
+  - >-
+    G115 NEW 2026-10-29: aging replaced `F:\aging_data\db\aging_isoforms_mouse.xml` (01e972 -> 4d3ac6, 10-19/20) under
+    four searches (PXD031223, PXD038718, PXD041766, PXD048877). Ingest, go.annotate_groups and logs.resolve_genes all
+    read a searched database at its RECORDED path and refuse a sha256 mismatch, and an artefact id hashes the schema,
+    so every schema bump re-reads it. PXReprise swapped 01e972 back for the 1.4.0 ingest and engine runs. Lasting cure
+    is aging's: re-search the four, or keep each overlay version at a path that never changes. No lookup-by-sha flag
+    exists (default: none; the path is the provenance's).
+  - >-
     G110 NEW 2026-10-25: drop the TSV copy from GoEngine (the `files` argument of WriteArtefact,
     DataRepo.Runner/GoEngine.cs:362) in the next release; until then each new go.annotate_groups run stores a ~128 MB
     go_annotation.tsv that nothing reads (the 20 D39 re-searches will add ~2.5 GB). The 269 old ones (34.2 GB) were
@@ -1732,6 +1745,12 @@ repos:  # PR D and PR E worktrees retired 2026-09-24: both merged, in mzLib 1.0.
     # Held by datarepo-9b (which since 2026-10-20 also holds the threads). The scratch re-ingest binary was built
     # from 54453e1; the pushed tip 0c1f8d0 adds DATAREPO-84, DATAREPO-D7 and ptmQtl's S2c v3 and S2e.
     pinned: 0c1f8d0aeb281dde98a8668088892874febd4001
+  - name: dataRepo
+    worktree: code/_wt_ai_contrib
+    branch: feat/ai-contributions
+    base_clone: "E:/CodeReview/dataRepo (origin = smith-chem-wisc/dataRepo)"
+    # Built by PXReprise on our repo for our review (PXReprise 064, PXR-R37..R39; unanswered). Not merged.
+    pinned: 1db8a53584a361346930af98bd473f338319ef85
   - name: mzLib
     worktree: code/_wt_mzlib_sumo
     branch: fix/sumo-remnant-target-lysine

@@ -2155,3 +2155,27 @@ with a view rule. Our 004 withdrew that rule and keyed by the target set, as GoE
 23 sets. The coverage measurement we offered kegg (74.5/64.6/56.1% of 1% groups with a pathway) took five seconds on
 the serving catalog. That is the cheap instrument working as intended. Both designs are recorded as D50; building
 them waits on mzLib releases (G111, G112).
+
+## 2026-10-28/29 (datarepo-9b): datarepo 1.4.0 released; PXReprise's swap gap begins, three snags answered
+
+The user said "release 1.4.0 now", lifting D49. MetaMorpheus 1.1.13 had shipped that day, and its `|`-joined peptide
+rows are refused by 1.3.6, so PXReprise could deliver nothing new until 1.4.0. The branch merged as `88f26b0`. The
+tutorial was rerun, and its test's hardcoded "57 checks" became 60, since the branch added three catalog checks. CI's
+ingester job had been red since 10-25 on DuckDB 2.0.0, which refuses a second statement on a connection with an
+unfinished result, as the frozen Python does throughout; it is pinned below 2 in CI only (`30842db`). The downloaded
+binary reproduced PXReprise's independent 1.1.13 arm c (`19a65be587c8518b`) and four unchanged deposits' predicted
+ids. PXD012754 and PXD034432 differed because they were re-searched after the prediction (G113). The user published at
+01:21 UTC. Threads went to PXReprise (067), aging (121), ptmQtl (059, P36 answered) and QuantProject (063).
+
+The user asked that PXReprise be kept told until the store is switched, so most of the rest was session messages.
+Their watcher started at 02:11 UTC and then sat for seven hours: the old driver was draining on PXD045861's last raw,
+whose Aspera transfer hung with no stall timeout (theirs; fixed in their next build). Two questions from them each
+became a finding when tested rather than answered from memory. First, a 1.4.0 build does take aging's 1.3.6-written
+study delivery (the layer version, 0.6.0, is what is compared). But every study row must name a sample and run in the
+catalog, and PXD031782, held because its search output is gone, has rows in all four tables. So their check, and aging's
+first publish after it, would have refused. Aging drops those rows and re-runs `datarepo study` first (G114). Second,
+four mouse deposits had searched an isoform overlay that aging replaced on 10-19/20. Swapping the old file back fixes
+the ingest. But go.annotate_groups and logs.resolve_genes also re-read each database at its recorded path, and because
+an artefact id hashes the schema, every 1.4.0 engine run is new. With the current file back, a logs refusal would have
+failed aging's whole publish. Both engine runs now sit inside PXReprise's swap-back window (G115). At close the
+re-ingest was running. PXReprise will post the gap's end and aging's first 1.4.0 publish id as thread 068.

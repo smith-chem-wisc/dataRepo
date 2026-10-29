@@ -2,14 +2,14 @@
 
 <!-- BEGIN GENERATED -- render_resume.py owns this block; edit state.yaml, not here -->
 
-**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-10-25
+**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-10-29
 
 | | |
 |---|---|
-| Commits | 702 |
+| Commits | 760 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
 | Locked decisions | 50 |
-| Open gaps | 109 |
+| Open gaps | 111 |
 | Gate items skipped | 5 |
 
 **Worktrees** -- details in `code/PINNED.md`
@@ -18,6 +18,7 @@
 |---|---|---|---|---|
 | `code/_wt_ptmqtl` | feat/ptmqtl-engine | `ec584c73` | `ec584c73` | at pin |
 | `code/_wt_140_ingest` | feat/1.4.0-ingest | `0c1f8d0a` | `0c1f8d0a` | at pin |
+| `code/_wt_ai_contrib` | feat/ai-contributions | `1db8a535` | `1db8a535` | at pin |
 | `code/_wt_mzlib_sumo` | fix/sumo-remnant-target-lysine | `6974a4d4` | `6974a4d4` | at pin |
 
 > **1 document(s) in `design/` not referenced above** -- `NOTE_FROM_USER_2026-10-21_github-actions-minutes.md`. Add a line for each, or say why not.
