@@ -546,6 +546,15 @@ decisions:
       (no licence). Our engines store Parquet + run.json only and prepend `definition_id` and the set key to each row;
       mzLib writes headed TSVs that the engine reads back as acceptance and never stores. Views are ours (equality
       joins only); definitions and fixtures are go's and kegg's.
+  - id: D51
+    date: 2026-10-29
+    text: >-
+      The user, 2026-10-29: start datarepo 1.4.1 now, carrying the unique-peptide label by MetaMorpheus release (AGING-R1;
+      overdue, PXD045861 is a served 1.1.13 bundle), DATAREPO-87 (count ET/T|ET targets via mzLib's
+      DecoyContaminantTargetLabel), G110, and ptmQtl D60 + D70/P36. DATAREPO-86: option (a), each count check records its
+      explained bound and ok means "inside the bound" (derive at build where the bundle holds the inputs). PXR-R40 (query
+      code as an mzLib project + NuGet package, for bridge): accepted, start after 1.4.1. PXR-R41 (fixture release):
+      accepted, cut from 1.4.1 (agent's call). Told aging 123, PXReprise 071. Release only on the user's word.
 gaps:
   - >-
     G114 NEW 2026-10-29: a study delivery's rows must all name a sample and run in the catalog, so holding one dataset
