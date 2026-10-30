@@ -31,8 +31,12 @@ This folder is a `/project`-managed research project. **You are de facto working
       **DONE on the branch (2026-10-30, all pushed, catalog format 15, no re-ingest):** DATAREPO-86/87 build-side
       reconciliation `8132d22` (aging's store: 0 of 179 flagged; PXD027971 = a group MetaMorpheus 1.1.11 wrote twice);
       `dataset_overview.unique_peptides_scope` `4a72ae9` (10+167 `database`, 2 `protein_group`); G110 `6e37b14`
-      (RunnerVersion stays 1). Tests: all but the tutorial (rerun at release). **Left for 1.4.1:** ptmQtl D60 and
-      D70/P36 (read ptmQtl 054-058 first); then tell aging (86 a/c, 87, label) and PXReprise.
+      (RunnerVersion stays 1); ptmQtl D70 merge + D60 S2c gate `9f5ce40` (S5 as ptmQtl's runner does it, not our
+      window key: the definition is theirs); ingest fix `e41c4af`: task files of a moved `.superseded-*` search are
+      found by sha256 (11 served bundles had none: no declared mods, no TC rule; only they move, PXD017944's id holds).
+      **1.4.1 is COMPLETE on the branch; release waits on the user's word.** Then: rerun the tutorial, merge, CI,
+      binaries, check ids (G113), tell aging (86 a/c, 87, label, the 11), PXReprise (re-ingest the 11 after the pin
+      swap; no other re-ingest), ptmQtl (P36/D70 done as S5, D60, P34: bundles keep every task file).
     - **TMT ingest STARTED 2026-10-30** (the user; G105): own branch, release after 1.4.1. Told PXReprise 073 (PXR-R42)
       and QuantProject 067 (DATAREPO-D8 yes; asks D9-D11). Example: `F:\pxreprise_trial_tmt\runs\PXD034564\e2e-default`
       (PXReprise keeps it until we say). Scratch run dir with junctions in the session scratchpad.
