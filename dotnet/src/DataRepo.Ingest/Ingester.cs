@@ -127,7 +127,14 @@ public static class Ingester
 
     /// <summary>The MetaMorpheus task <c>.toml</c> files the run actually executed (its provenance inputs), never
     /// the shipped templates for tasks that did not run.</summary>
-    private static List<string> TaskFiles(string workRoot, IReadOnlyDictionary<string, object?> searchProvenance)
+    /// <remarks>A search folder can move after it ran: PXReprise keeps a replaced search as
+    /// <c>&lt;accession&gt;.superseded-&lt;stamp&gt;</c>, and its provenance still names the old path. When
+    /// <paramref name="searchDir"/> is given, a task file missing at its recorded path is looked for under the entry's own
+    /// search folder (<c>tasks/&lt;name&gt;</c>) and taken only when its sha256 is the recorded one. Before 1.4.1 it was
+    /// skipped silently, so eleven of aging's bundles kept no task file and declared no modification. One still not found
+    /// goes to <paramref name="missing"/>.</remarks>
+    private static List<string> TaskFiles(string workRoot, IReadOnlyDictionary<string, object?> searchProvenance,
+        string? searchDir = null, List<string>? missing = null)
     {
         var output = new List<string>();
         foreach (var e in List(Get(searchProvenance, "inputs")))
@@ -136,7 +143,16 @@ public static class Ingester
             if (path.ToLowerInvariant().EndsWith("task.toml", StringComparison.Ordinal))
             {
                 var candidate = Join(workRoot, path);
-                if (File.Exists(candidate)) output.Add(candidate);
+                if (File.Exists(candidate))
+                {
+                    output.Add(candidate);
+                    continue;
+                }
+                if (searchDir is null) continue;
+                var moved = Join(Join(searchDir, "tasks"), Path.GetFileName(path.Replace('\\', '/')));
+                var recorded = Get(Map(e), "sha256") is { } sha ? PyFormat.Str(sha) : null;
+                if (recorded is not null && File.Exists(moved) && BundleWriter.Sha256File(moved) == recorded) output.Add(moved);
+                else missing?.Add(path);
             }
         }
         return output;
@@ -458,7 +474,13 @@ public static class Ingester
         }
         // How the search resolved an accession in both a target and a contaminant database: it decides that protein's
         // contaminant label below and, under Current, which of its sequences sites and occupancy are placed against.
-        var tc = SearchParams.TcAmbiguity(TaskFiles(manifest.WorkRoot, searchProvenance), rules);
+        // The task files the search ran, found where its provenance says or, under Current, in the entry's own search
+        // folder by sha256 when the folder has moved since (1.4.1).
+        var missingTasks = new List<string>();
+        var taskFiles = rules == IngestRules.Current
+            ? TaskFiles(manifest.WorkRoot, searchProvenance, searchDir, missingTasks)
+            : TaskFiles(manifest.WorkRoot, searchProvenance);
+        var tc = SearchParams.TcAmbiguity(taskFiles, rules);
         if (rules == IngestRules.Current) sequences.KeepSearched(tc);
         var unplaced = new OrderedDictionary<string, long>(StringComparer.Ordinal);
         var ptmSites = Identifications.PtmSiteRows(psmColumns, datasetId, proforma, sequences, unplaced);
@@ -531,7 +553,13 @@ public static class Ingester
         }
 
         // --- search parameters and reported totals --------------------------------------------------------
-        var taskFiles = TaskFiles(manifest.WorkRoot, searchProvenance);
+        if (missingTasks.Count > 0)
+            findings.Add(Finding(datasetId, "task_files_missing", "warning",
+                $"{missingTasks.Count} MetaMorpheus task file(s) the search's provenance names were not found, at the recorded "
+                + "path or with the recorded sha256 under this entry's search folder: "
+                + string.Join(", ", missingTasks.Select(t => $"`{Path.GetFileName(t.Replace('\\', '/'))}`")) + ". "
+                + "`search_modifications_declared` has no rows from them, and settings read from them (the target/contaminant "
+                + "rule, protease and search mode) are unknown here, not defaults."));
         foreach (var path in taskFiles)
             writer.AddSource(path, $"task:{Path.GetFileNameWithoutExtension(path)}", Path.GetFileName(path));
         var searchModifications = SearchParams.ModificationRows(taskFiles, datasetId,
