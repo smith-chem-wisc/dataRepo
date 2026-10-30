@@ -275,6 +275,15 @@ public class McpParityTests
             ("source_db", "uniprot, or the custom database that supplied it"),
             // These texts hold escaped quotes (`\"label_free\"`), so the mask runs to the string's real end.
         }.Select(d => (new Regex(Regex.Escape(d.Item2) + @"(?:[^""\\]|\\.)*", RegexOptions.CultureInvariant), $"<{d.Item1}: rewritten in schema 0.0.16>")),
+        // 1.4.1 (AGING-R1): what unique and shared mean depends on the MetaMorpheus release. Descriptions only; the new
+        // text contains the old, so it is masked first.
+        .. new[]
+        {
+            ("unique_peptides", "Number of peptides unique to this group, as the producing search counted them"),
+            ("unique_peptides", "Number of peptides unique to this group."),
+            ("shared_peptides", "Number of peptides shared with other groups, as the producing search counted them"),
+            ("shared_peptides", "Number of peptides shared with other groups."),
+        }.Select(d => (new Regex(Regex.Escape(d.Item2) + "[^\"]*", RegexOptions.CultureInvariant), $"<{d.Item1}: rewritten for AGING-R1>")),
         // 1.4.0 gives dataset_overview.n_quant_values a description it never had (pooled values count too), so the
         // Python answer has nothing to mask it to: it is removed, from the column line and from the detailed answer.
         (new Regex(@" -- Rows in `quant_values` for this dataset: (?:(?! \[\d)[^""\\]|\\.)*", RegexOptions.CultureInvariant), ""),

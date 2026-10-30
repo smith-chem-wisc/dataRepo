@@ -338,8 +338,8 @@ QPX view: `pg` (table-level; column mapping not yet verified).
 | `target_decoy` | [TargetDecoy](#targetdecoy) |  | Target, decoy or contaminant, as the producer classified the group. |
 | `q_value` | `float` |  | Protein-group q-value. (range 0..1) |
 | `sequence_coverage` | `float` |  | Fraction of the sequence covered (0-1). (range 0..1) |
-| `unique_peptides` | `integer` |  | Number of peptides unique to this group. |
-| `shared_peptides` | `integer` |  | Number of peptides shared with other groups. |
+| `unique_peptides` | `integer` |  | Number of peptides unique to this group, as the producing search counted them. What unique means depends on the MetaMorpheus release: a peptide no other protein in the searched databases has, before 1.1.13; a peptide no other protein GROUP has, from 1.1.13 (QuantProject DEF-PROT-UNIQUE). The catalog's `dataset_overview.unique_peptides_scope` says which for each dataset; never compare or pool the two. |
+| `shared_peptides` | `integer` |  | Number of peptides shared with other groups, as the producing search counted them; its scope changes with the MetaMorpheus release exactly as `unique_peptides`' does (`dataset_overview.unique_peptides_scope`). |
 
 ## Protein
 
