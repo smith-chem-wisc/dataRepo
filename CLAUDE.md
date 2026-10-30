@@ -28,6 +28,11 @@ This folder is a `/project`-managed research project. **You are de facto working
       `design/RELEASE_1.4.1.md`. Open question for the user: reconciliation recount at build (no re-ingest) or at
       ingest (cs-1.2.1, a second whole-store re-ingest). **The user chose (A), build-side** (2026-10-30); measured in
       `results/reconciliation_bound_2026-10-30/` on the branch: 140/140 PSM and 20/20 peptide gaps inside the bound.
+      **DONE on the branch (2026-10-30, all pushed, catalog format 15, no re-ingest):** DATAREPO-86/87 build-side
+      reconciliation `8132d22` (aging's store: 0 of 179 flagged; PXD027971 = a group MetaMorpheus 1.1.11 wrote twice);
+      `dataset_overview.unique_peptides_scope` `4a72ae9` (10+167 `database`, 2 `protein_group`); G110 `6e37b14`
+      (RunnerVersion stays 1). Tests: all but the tutorial (rerun at release). **Left for 1.4.1:** ptmQtl D60 and
+      D70/P36 (read ptmQtl 054-058 first); then tell aging (86 a/c, 87, label) and PXReprise.
     - **TMT ingest STARTED 2026-10-30** (the user; G105): own branch, release after 1.4.1. Told PXReprise 073 (PXR-R42)
       and QuantProject 067 (DATAREPO-D8 yes; asks D9-D11). Example: `F:\pxreprise_trial_tmt\runs\PXD034564\e2e-default`
       (PXReprise keeps it until we say). Scratch run dir with junctions in the session scratchpad.
