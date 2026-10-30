@@ -274,6 +274,10 @@ public class SdrfChoiceTests
         var siteRows = ArrowTables.ReadParquet(sitesPath).Rows;
         foreach (var s in siteRows) s["best_ambiguity_level"] = "1";
         ArrowTables.WriteParquet(ArrowTables.FromRows("ptm_sites", siteRows.Cast<IReadOnlyDictionary<string, object?>>().ToList()), sitesPath);
+        // The fixture's task file names no digestion; ptmQtl D60 refuses a search whose protease is unknown, so this
+        // copy gets a real search task's DigestionParams lines.
+        File.AppendAllText(Path.Combine(result.BundlePath, "sources", "3_SearchTask.toml"),
+            "\n[CommonParameters.DigestionParams]\nSearchModeType = \"Full\"\nProtease = \"trypsin\"\n");
         var (dataset, counts) = DataRepo.Runner.PtmQtlBundle.Read(DataRepo.Catalog.BundleRef.Load(result.BundlePath), enriched: false);
         var sample = $"{Accession}:donor";
         var eligible = Rows(result, "ptm_stoichiometry").Count(o => (string)o["assay_id"]! == Pooled);

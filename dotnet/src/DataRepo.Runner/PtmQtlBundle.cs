@@ -358,7 +358,21 @@ public static class PtmQtlBundle
         foreach (var type in runTypes.Values.Distinct()) counts[$"S3b runs: {type}"] = runTypes.Values.Count(v => v == type);
 
         // S2c and S2d: sites left out of every occupancy-based result.
-        var excluded = new List<ExcludedSite>(PtmQtlRules.BlockedSites(observations));
+        // D60: S2c is defined only for a K/R-cutting protease in a fully specific search, read from the bundle's own copy
+        // of every task file the search ran (in task order); elsewhere the deposit is refused, never guessed.
+        // MetaMorpheus numbers the tasks it ran (`1_CalibrationTask.toml`, ..., `3_SearchTask.toml`); an unnumbered task
+        // file is not one of this run's, so it never stands in for the search task.
+        var taskTomls = Directory.Exists(Path.Combine(bundle.Path, "sources"))
+            ? Directory.EnumerateFiles(Path.Combine(bundle.Path, "sources"), "*Task.toml")
+                .Select(f => (File: f, Order: int.TryParse(Path.GetFileName(f).Split('_')[0], out var n) ? n : (int?)null))
+                .Where(t => t.Order is not null).OrderBy(t => t.Order)
+                .Select(t => File.ReadAllText(t.File)).ToList()
+            : [];
+        var engineVersion = Query(con, $"SELECT search_engine_version FROM {Table(bundle, "datasets")}").Select(r => r[0] as string).FirstOrDefault();
+        var s2c = PtmQtlRules.Gate(taskTomls, engineVersion);
+        if (s2c.Refusal is not null)
+            throw new RunnerException($"{where} is refused by ptmQtl S2c (D60): {s2c.Refusal}. Nothing is written for it.");
+        var excluded = new List<ExcludedSite>(PtmQtlRules.BlockedSites(observations, s2c));
         var screened = new List<object?>();
         List<PeptidoformObservation>? physical = null;
         var targetSites = Query(con, $"SELECT DISTINCT protein_accession, position, residue, site_type FROM {sites} WHERE target_decoy = 'target'")
@@ -444,7 +458,12 @@ public static class PtmQtlBundle
         {
             ["capture_class"] = deposit.CaptureClass,
             ["cysteine_class"] = deposit.CysteineClass,
-            ["s2c_applies"] = PtmQtlRules.ModificationAwareDigestionFrom is null,
+            ["s2c_applies"] = !s2c.Lifted,
+            ["s2c_gate"] = new Dictionary<string, object?>
+            {
+                ["protease"] = s2c.Protease, ["search_mode"] = s2c.SearchMode, ["cut_residues"] = s2c.CutResidues,
+                ["lifted"] = s2c.Lifted, ["task_files"] = (long)taskTomls.Count,
+            },
             ["s2d_b_flagged"] = screened,
             ["s2e_applies"] = s2eApplies,
         };

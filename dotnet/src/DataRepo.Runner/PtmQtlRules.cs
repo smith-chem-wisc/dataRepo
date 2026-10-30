@@ -168,15 +168,53 @@ public static class PtmQtlRules
         return n[^1] == 'K' && AcylAmidesMzLibMisses.IsMatch(PtmQtlCore.IdWithMotif(n)) ? BlockingByPtmQtl : null;
     });
 
-    /// <summary>The first MetaMorpheus release that digests aware of a modification (the mzLib #1119 family), or null
-    /// while none does: every release to 1.1.12 lacks it, so S2c applies to every search (ptmQtl CLEAVAGERULES-P2).</summary>
-    public static readonly Version? ModificationAwareDigestionFrom = null;
+    /// <summary>The first MetaMorpheus release whose digestion respects a blocking modification when asked
+    /// (<c>RespectCleavageBlockingModifications</c>; mzLib 1.0.595, MetaMorpheus 1.1.13): ptmQtl D60's lift.</summary>
+    public static readonly Version ModificationAwareDigestionFrom = new(1, 1, 13);
+
+    /// <summary>D60: the proteases S2c is defined for, and the residues each cuts after. A blocking modification counts
+    /// only on a residue its protease cuts after.</summary>
+    public static readonly IReadOnlyDictionary<string, string> S2cProteases = new Dictionary<string, string>(StringComparer.Ordinal)
+    {
+        ["trypsin"] = "KR", ["trypsin|P"] = "KR", ["StcE-trypsin"] = "KR", ["Lys-C|P"] = "K", ["Arg-C"] = "R",
+    };
+
+    /// <summary>What S2c does for one search (ptmQtl D60, DEFINITIONS S2c).</summary>
+    /// <param name="Refusal">Set when S2c is not defined for the search: the deposit is refused, never guessed.</param>
+    /// <param name="Lifted">True when the search respected blocking modifications in every task: only the acyl amides
+    /// mzLib's list misses still apply, until mzLib lists them.</param>
+    /// <param name="CutResidues">The residues the search's protease cuts after.</param>
+    public sealed record S2cGate(string? Protease, string? SearchMode, string? Refusal, bool Lifted, string CutResidues);
+
+    private static readonly Regex TomlProtease = new("""^\s*Protease\s*=\s*"([^"]*)" """.TrimEnd(), RegexOptions.Multiline | RegexOptions.CultureInvariant);
+    private static readonly Regex TomlSearchMode = new("""^\s*SearchModeType\s*=\s*"([^"]*)" """.TrimEnd(), RegexOptions.Multiline | RegexOptions.CultureInvariant);
+    private static readonly Regex TomlRespects = new(@"^\s*RespectCleavageBlockingModifications\s*=\s*(true|false)", RegexOptions.Multiline | RegexOptions.CultureInvariant);
+
+    /// <summary>D60's gate, from the search's task files (every task MetaMorpheus ran, in order; the search task last)
+    /// and its MetaMorpheus release.</summary>
+    /// <remarks>The protease and search mode are the search task's. The lift needs the flag set in EVERY task and a
+    /// release from <see cref="ModificationAwareDigestionFrom"/>; a task without the flag has not respected anything.</remarks>
+    public static S2cGate Gate(IReadOnlyList<string> taskTomls, string? metamorpheusVersion)
+    {
+        if (taskTomls.Count == 0)
+            return new S2cGate(null, null, "the bundle keeps none of the search's task files, so its protease and search mode are unknown", false, "");
+        var search = taskTomls[^1];
+        var protease = TomlProtease.Match(search) is { Success: true } p ? p.Groups[1].Value : null;
+        var mode = TomlSearchMode.Match(search) is { Success: true } m ? m.Groups[1].Value : null;
+        if (protease is null || !S2cProteases.TryGetValue(protease, out var cuts))
+            return new S2cGate(protease, mode, $"S2c is defined only for a protease that cuts after K or R; the search used '{protease ?? "none named"}'", false, "");
+        if (mode != "Full")
+            return new S2cGate(protease, mode, $"S2c is defined only for a fully specific search; the search mode is '{mode ?? "not named"}'", false, cuts);
+        var release = Version.TryParse(metamorpheusVersion, out var v) ? v : null;
+        var everyTask = taskTomls.All(t => TomlRespects.Match(t) is { Success: true } r && r.Groups[1].Value == "true");
+        return new S2cGate(protease, mode, null, release is not null && release >= ModificationAwareDigestionFrom && everyTask, cuts);
+    }
 
     /// <summary>S2c: every site of a blocking modification that some S7 observation carries on its last residue.</summary>
     /// <remarks>Any such observation leaves the site out, mixed evidence too (the user's choice (a)). A protein's own
     /// C-terminus is not told apart. The modification must sit on the residue its IdWithMotif names. Observations are
     /// read with no run filter: every observation is evidence.</remarks>
-    public static List<ExcludedSite> BlockedSites(IEnumerable<PeptidoformObservation> observations)
+    public static List<ExcludedSite> BlockedSites(IEnumerable<PeptidoformObservation> observations, S2cGate? gate = null)
     {
         // A site's source is mzLib's when any of its names is on mzLib's list.
         var found = new SortedDictionary<(string, int, char, string), string>();
@@ -188,6 +226,8 @@ public static class PtmQtlRules
                 if (m.Position != bases.Length || m.Residue is not char residue) continue;
                 var idm = PtmQtlCore.IdWithMotif(m.Name);
                 if (idm[^1] != residue || BlockingSource(m.Name) is not { } source) continue;
+                // D60: only on a residue the protease cuts after; once lifted, only the acyl amides mzLib's list misses.
+                if (gate is not null && (!gate.CutResidues.Contains(residue) || (gate.Lifted && source == BlockingByMzLib))) continue;
                 var key = (o.ProteinAccession, o.StartResidue + m.Position - 1, residue, idm);
                 if (!found.TryGetValue(key, out var known) || known != BlockingByMzLib) found[key] = source;
             }
