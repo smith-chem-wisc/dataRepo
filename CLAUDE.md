@@ -22,8 +22,11 @@ This folder is a `/project`-managed research project. **You are de facto working
       re-ingested on 1.4.0, check (d)'s four predicted ids reproduced. aging serves `latest.json` ->
       `d6a40f203c73306d` (18:27 UTC; 069 named `d1cfad344706ec7d`, after a first build lacked orthology because a
       schema bump needs `logs.register_orthology` again). The four mouse deposits needed overlay 01e972 back (G115);
-      PXD031782 is held (G114). `code/_wt_140_ingest` is removed; branch `feat/1.4.0-ingest` kept. The 19 GB of scratch
-      bundles (`results/reingest_140_2026-10-20`) can now go: the user deletes them.
+      PXD031782 is held (G114). `code/_wt_140_ingest` is removed; branch `feat/1.4.0-ingest` kept. (The 19 GB of scratch
+      bundles were already cleared by 10-27; `results/reingest_140_2026-10-20` keeps 153 KB of tables.)
+    - **1.4.1 STARTED 2026-10-29 (D51):** branch `feat/1.4.1`, worktree `code/_wt_141`, plan
+      `design/RELEASE_1.4.1.md`. Open question for the user: reconciliation recount at build (no re-ingest) or at
+      ingest (cs-1.2.1, a second whole-store re-ingest).
     - **PXD045861 (MetaMorpheus 1.1.13) is SERVED** in `d6a40f203c73306d`, so its `unique_peptides` are group-level
       beside 177 database-level deposits, before the label our 121 promised. Readers can split on
       `datasets.search_engine_version` meanwhile.
