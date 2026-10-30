@@ -527,6 +527,10 @@ decisions:
       delivered PXD006815 and PXD022393, the last things its date waited on. Do not propose a date until the user lifts
       the hold. The branch `feat/1.4.0-ingest` (0c1f8d0) stays pushed and unmerged.
       LIFTED 2026-10-28 (the user: "release 1.4.0 now"): released as v1.4.0 on 30842db, published 2026-10-29 01:21 UTC.
+      SWAP DONE 2026-10-29 (PXReprise 068/069): gap 09:06-13:53 UTC, all 178 include deposits re-ingested (cs-1.2.0,
+      schema 0.0.16), check (d)'s four predicted ids reproduced. aging's first 1.4.0 catalog 6069a2d5872ff49f (15:19)
+      lacked orthology (snapshot registered under 0.0.15: a schema bump needs logs.register_orthology again), so
+      d1cfad344706ec7d (15:32); latest.json reads d6a40f203c73306d (18:27). Worktree code/_wt_140_ingest removed.
   - id: D50
     date: 2026-10-25
     text: >-

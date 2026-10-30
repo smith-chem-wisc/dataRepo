@@ -6,8 +6,8 @@ This folder is a `/project`-managed research project. **You are de facto working
 
 - **Phase:** INCEPTION
 - **Goal:** An AI-ready, API-accessible repository for the search + quant results of the many PRIDE datasets the `aging` pipeline reanalyzes. Humans can use it, but AI agents are the main users. The question it serves is how organelle proteomes change with age.
-- **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`) and read PXReprise 068 (the 1.4.0
-  swap's outcome) if it has landed. We also wait on ptmQtl's DATAREPO-P33, pep, pyMzLib, and on mzLib releases from go
+- **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`). 1.4.0 is released and serving; the
+  next release is 1.4.1. We also wait on ptmQtl's DATAREPO-P33, pep, pyMzLib, and on mzLib releases from go
   (#1497) and kegg.
   Since 2026-10-20 one session, datarepo-9b, holds both the threads
   and the 1.4.0 branch (the user: "do what you think is best", after datarepo-39 ended). Then, in order:
@@ -18,23 +18,18 @@ This folder is a `/project`-managed research project. **You are de facto working
     1.1.13 arm c (`19a65be587c8518b`) and four unchanged deposits' predicted ids; PXD012754/PXD034432 differ (re-searched,
     G113). Told: PXReprise 067 (+ session messages to pxreprise-74), aging 121 (DATAREPO-85 answered), ptmQtl 059
     (P36 answered: per accession; 1.4.1 keys by window), QuantProject 063.
-    - **Next:** PXReprise's watcher runs the whole-store re-ingest in its swap gap (STOP, drain v0.4.32, re-ingest with
-      1.4.0, check, start v0.4.33 + aging's publish on 1.4.0). PXD031782 and PXD058775 have no `04_search`: they must be
-      resolved first or the 1.4.0 build refuses the mix. Keep PXReprise told until their swap is done (the user).
-      **Watcher LAUNCHED 2026-10-29 02:11 UTC** (pid 19740, `F:\aging_batch\swap-314f6ae\swap.log`): STOP up, driver
-      24220 draining. Nine deposits lacked output: eight are repointed to their `<acc>.superseded-<stamp>` search for the
-      gap (their ids hash that path, since `run` is a content field), and PXD031782 goes to hold. Check (d) = PXD055228,
-      PXD058082, PXD057490, PXD036557. **PXReprise posts the gap's end with aging's first 1.4.0 publish id (or the
-      failure envelopes) as thread 068** (asked at the 2026-10-29 close): record it here and in state.yaml's D49, then
-      retire `code/_wt_140_ingest` (merged as `88f26b0`).
-      2026-10-29: the drain stalled 7 h on PXD045861's last raw (Aspera has no stall timeout: theirs). A 1.4.0 build
-      takes aging's 1.3.6-written study delivery `b695cad9f89914b7` (layer 0.6.0 in both; tested, 114 checks), but
-      every study row's sample and run must be in the catalog, and held PXD031782 has rows in all four tables. Aging is
-      asked to drop them from its delivery TSVs and re-run `datarepo study` with 1.4.0 before check (c).
-      PXD031223, PXD038718, PXD041766, PXD048877 (mouse) searched an overlay since replaced (`db\aging_isoforms_mouse.xml`
-      01e972 -> 4d3ac6; old copy in `db\isoform_db_versions\`): PXReprise swaps 01e972 back, ingests them, and runs
-      aging's `genes` (logs) and go.annotate_groups for the four before restoring, since a 1.4.0 engine run re-reads
-      each database at its recorded path (a logs refusal fails aging's whole publish). Re-search or stable paths: aging.
+    - **The swap is DONE** (PXReprise 068/069, 2026-10-29): gap 09:06-13:53 UTC, all 178 `include` deposits
+      re-ingested on 1.4.0, check (d)'s four predicted ids reproduced. aging serves `latest.json` ->
+      `d6a40f203c73306d` (18:27 UTC; 069 named `d1cfad344706ec7d`, after a first build lacked orthology because a
+      schema bump needs `logs.register_orthology` again). The four mouse deposits needed overlay 01e972 back (G115);
+      PXD031782 is held (G114). `code/_wt_140_ingest` is removed; branch `feat/1.4.0-ingest` kept. The 19 GB of scratch
+      bundles (`results/reingest_140_2026-10-20`) can now go: the user deletes them.
+    - **PXD045861 (MetaMorpheus 1.1.13) is SERVED** in `d6a40f203c73306d`, so its `unique_peptides` are group-level
+      beside 177 database-level deposits, before the label our 121 promised. Readers can split on
+      `datasets.search_engine_version` meanwhile.
+    - **New asks (2026-10-29):** aging 122 DATAREPO-86 (reconciliation flag inside the S36 bound; (c) PXD027971's
+      1,184 vs 1,185 groups) and DATAREPO-87 (`ProducerCounts` tests `== "T"`, drops `ET`); PXReprise 070 PXR-R40
+      (the query code as an mzLib project + NuGet package, for bridge) and PXR-R41 (a small 1.4.0 fixture release).
     - **1.4.1:** ptmQtl D60 (S2c gates) and D70/P36 (key sites by `sequence_window`, S5 where NULL); unique-peptide
       labels by MetaMorpheus release (AGING-R1) before the first 1.1.13 bundle is served; G110.
     - Still unanswered: PXReprise 062-064 (R30-R39), ptmQtl P34/P35/D61, QuantProject 058-062, kegg 007 (KEGG-D6),
