@@ -632,6 +632,14 @@ gaps:
     pxreprise_default (every deposited SDRF refused: no factor value), so PXR-R22 does not change which SDRF it reads.
     No stored design has mzLib #1424's colliding sample texts (94 ExperimentalDesign.tsv checked).
   - >-
+    G105 STARTED 2026-10-30 (the user: "work with pxreprise and quantproject to be able to ingest the tmt quantitative
+    data"; QuantProject 066 DATAREPO-D8 answered yes in our 067; PXReprise 072 PXR-R42 answered in our 073). Release:
+    the one after 1.4.1, own branch. Measured on PXReprise's trial PXD034564 (TMT10, 32 files) with 1.4.0: PSMs equal
+    results.txt, but 0 protein groups (read only from AllQuantifiedProteinGroups.tsv), 32 label_free assays not 320
+    (file, channel), no reporter values, peptidoforms 44,037 vs 43,114. Plan: assays from TmtDesign.txt, DEF-TMT-PEP
+    and DEF-TMT-PROT as quant_values (0 = no row), RAW verbatim in the bundle (D9), groups from AllProteinGroups.tsv,
+    QuantProject 066 rules 1-4, an isobaric-only reader version hashed into isobaric bundles (no label-free re-ingest).
+    Open asks: DATAREPO-D9 (RAW rows), D10 (+923 peptidoforms), D11 (channel names, default TMT126).
     G105 NEW 2026-10-19 (QuantProject 043 DATAREPO-D5; PXReprise 041 "For later: TMT"). Register MetaMorpheus's TMT
     tables (PeptideQuantification.tsv, ProteinGroupQuantification.tsv, RawQuantification.tsv), stored per file and
     channel as written, never summed over a plex's fractions (combining is QuantProject's, STAT1 M11). Answered yes in

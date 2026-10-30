@@ -26,7 +26,11 @@ This folder is a `/project`-managed research project. **You are de facto working
       bundles were already cleared by 10-27; `results/reingest_140_2026-10-20` keeps 153 KB of tables.)
     - **1.4.1 STARTED 2026-10-29 (D51):** branch `feat/1.4.1`, worktree `code/_wt_141`, plan
       `design/RELEASE_1.4.1.md`. Open question for the user: reconciliation recount at build (no re-ingest) or at
-      ingest (cs-1.2.1, a second whole-store re-ingest).
+      ingest (cs-1.2.1, a second whole-store re-ingest). **The user chose (A), build-side** (2026-10-30); measured in
+      `results/reconciliation_bound_2026-10-30/` on the branch: 140/140 PSM and 20/20 peptide gaps inside the bound.
+    - **TMT ingest STARTED 2026-10-30** (the user; G105): own branch, release after 1.4.1. Told PXReprise 073 (PXR-R42)
+      and QuantProject 067 (DATAREPO-D8 yes; asks D9-D11). Example: `F:\pxreprise_trial_tmt\runs\PXD034564\e2e-default`
+      (PXReprise keeps it until we say). Scratch run dir with junctions in the session scratchpad.
     - **PXD045861 (MetaMorpheus 1.1.13) is SERVED** in `d6a40f203c73306d`, so its `unique_peptides` are group-level
       beside 177 database-level deposits, before the label our 121 promised. Readers can split on
       `datasets.search_engine_version` meanwhile.
