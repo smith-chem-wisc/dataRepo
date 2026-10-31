@@ -37,9 +37,14 @@ This folder is a `/project`-managed research project. **You are de facto working
       **1.4.1 is COMPLETE on the branch; release waits on the user's word.** Then: rerun the tutorial, merge, CI,
       binaries, check ids (G113), tell aging (86 a/c, 87, label, the 11), PXReprise (re-ingest the 11 after the pin
       swap; no other re-ingest), ptmQtl (P36/D70 done as S5, D60, P34: bundles keep every task file).
-    - **TMT ingest STARTED 2026-10-30** (the user; G105): own branch, release after 1.4.1. Told PXReprise 073 (PXR-R42)
-      and QuantProject 067 (DATAREPO-D8 yes; asks D9-D11). Example: `F:\pxreprise_trial_tmt\runs\PXD034564\e2e-default`
-      (PXReprise keeps it until we say). Scratch run dir with junctions in the session scratchpad.
+    - **TMT ingest BUILT 2026-10-30** (the user: "tmt first"; G105) on branch `feat/tmt` (worktree `code/_wt_tmt`,
+      from feat/1.4.1), pushed `efff5a4`: assays per (file, channel) from the search's `TmtDesign.txt`, DEF-TMT-PEP/PROT
+      v3.10 placed by column label, groups from `AllProteinGroups.tsv`, RAW copied verbatim, an `isobaric_reader`
+      declaration in isobaric ids only (cs-1.2.0 stays, no label-free id moves). PXD034564 trial: 320 assays, 6,466
+      groups = results.txt, all 902,457 non-zero cells stored (`results/tmt_trial_2026-10-30/` on the branch). Told
+      PXReprise 076 (keep `tmt-dda@2` pending and the trial folders until the release) and QuantProject 070 (asks
+      DATAREPO-D12: +923 peptides vs results.txt, TMT-only; D13: post the #1463 amendment). Release: after 1.4.1, merge
+      feat/1.4.1 then feat/tmt; re-ingest the trial with the released binary before naming the release to PXReprise.
     - **PXD045861 (MetaMorpheus 1.1.13) is SERVED** in `d6a40f203c73306d`, so its `unique_peptides` are group-level
       beside 177 database-level deposits, before the label our 121 promised. Readers can split on
       `datasets.search_engine_version` meanwhile.

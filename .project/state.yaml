@@ -632,6 +632,14 @@ gaps:
     pxreprise_default (every deposited SDRF refused: no factor value), so PXR-R22 does not change which SDRF it reads.
     No stored design has mzLib #1424's colliding sample texts (94 ExperimentalDesign.tsv checked).
   - >-
+    G105 BUILT 2026-10-30 (the user: "tmt first") on feat/tmt efff5a4, before the 1.4.1 release: the plan below as
+    written, plus the SDRF sample per (file, label) with TMT131 = 131N where the plex has no 131C, and refusal of an
+    isobaric search whose entry names no reagent. PXD034564 trial: 320 assays, 6,466 groups = results.txt, 528,137 +
+    374,320 values = the files' non-zero cells. D9 and D11 answered by QuantProject 068 and followed. D10 measured
+    further: our 44,037 is MetaMorpheus's own filter (QValue and QValueNotch, FilteredPsms.cs:192) over AllPeptides; a
+    label-free 1.1.13 deposit agrees exactly, so the gap is TMT-only; asked as DATAREPO-D12 (QuantProject 070), D13
+    asks them to post the #1463 amendment. Told PXReprise 076. A reference channel is a finding, not a column (a column
+    would be a schema bump). Release: merge after 1.4.1; re-ingest the trial with the released binary first.
     G105 STARTED 2026-10-30 (the user: "work with pxreprise and quantproject to be able to ingest the tmt quantitative
     data"; QuantProject 066 DATAREPO-D8 answered yes in our 067; PXReprise 072 PXR-R42 answered in our 073). Release:
     the one after 1.4.1, own branch. Measured on PXReprise's trial PXD034564 (TMT10, 32 files) with 1.4.0: PSMs equal
