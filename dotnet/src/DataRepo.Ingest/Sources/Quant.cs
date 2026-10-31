@@ -178,6 +178,45 @@ public static class Quant
             !Equals(g.GetValueOrDefault("target_decoy"), "decoy")
             && g.GetValueOrDefault("q_value") is double q && q <= 0.01);
 
+    /// <summary>The ProteinGroup row of one protein-group table row whose accessions are <paramref name="accessions"/>.</summary>
+    private static Row GroupRow(Dictionary<string, string> row, List<string> accessions, string datasetId)
+    {
+        var sorted = accessions.Order(StringComparer.Ordinal).ToList();
+        var nPeptides = Int(Cell(row, "Number of Peptides"));
+        var nUnique = Int(Cell(row, "Number of Unique Peptides"));
+        var coverage = Cell(row, "Sequence Coverage Fraction");
+        return new Row
+        {
+            ["protein_group_id"] = $"{datasetId}:{string.Join(";", sorted)}",
+            ["dataset_id"] = datasetId,
+            ["protein_accessions"] = sorted.Cast<object?>().ToList(),
+            ["genes"] = Split(Cell(row, "Gene")),
+            ["target_decoy"] = TargetDecoy(Cell(row, "Protein Decoy/Contaminant/Target")),
+            ["q_value"] = Number(Cell(row, "Protein QValue")),
+            ["sequence_coverage"] = Number(coverage.Split('|')[0]),
+            ["unique_peptides"] = nUnique,
+            ["shared_peptides"] = nPeptides is not null && nUnique is not null ? nPeptides - nUnique : null,
+        };
+    }
+
+    /// <summary>Reads the groups alone of <c>AllProteinGroups.tsv</c>, for a search that writes no
+    /// <c>AllQuantifiedProteinGroups.tsv</c>: an isobaric search, whose values come from its own tables.</summary>
+    /// <remarks>Its <c>Intensity_</c>, <c>SpectralCount_</c> and occupancy columns are per file and channel there; the
+    /// intensities are <c>DEF-TMT-PROT</c>'s values written back (QuantProject DEF-TMT-*), read from
+    /// <c>ProteinGroupQuantification.tsv</c> instead, so none of them is read here.</remarks>
+    /// <returns>The groups and the producer-style group count at 1% FDR, for reconciling.</returns>
+    public static (List<Row> Groups, long ProducerCount) GroupRows(string path, string datasetId, ReaderLog? log = null, IngestRules rules = IngestRules.Current)
+    {
+        var (header, rows) = Readers.ReadTsv(path, log, NoReader, rules);
+        var groups = new List<Row>();
+        foreach (var row in Readers.IterDicts(header, rows))
+        {
+            var accessions = Split(Cell(row, "Protein Accession")).Cast<string>().ToList();
+            if (accessions.Count > 0) groups.Add(GroupRow(row, accessions, datasetId));
+        }
+        return (groups, AcceptedGroupCount(groups));
+    }
+
     /// <summary>Reads <c>AllQuantifiedProteinGroups.tsv</c> into ProteinGroup rows and their QuantValues.</summary>
     /// <remarks>With an experimental design MetaMorpheus labels these columns by sample, not by run; where each
     /// one goes is <see cref="SampleColumns"/>'s decision (PXR-R9).</remarks>
@@ -214,23 +253,9 @@ public static class Quant
         {
             var accessions = Split(Cell(row, "Protein Accession")).Cast<string>().ToList();
             if (accessions.Count == 0) continue;
-            var sorted = accessions.Order(StringComparer.Ordinal).ToList();
-            var groupId = $"{datasetId}:{string.Join(";", sorted)}";
-            var nPeptides = Int(Cell(row, "Number of Peptides"));
-            var nUnique = Int(Cell(row, "Number of Unique Peptides"));
-            var coverage = Cell(row, "Sequence Coverage Fraction");
-            groups.Add(new Row
-            {
-                ["protein_group_id"] = groupId,
-                ["dataset_id"] = datasetId,
-                ["protein_accessions"] = sorted.Cast<object?>().ToList(),
-                ["genes"] = Split(Cell(row, "Gene")),
-                ["target_decoy"] = TargetDecoy(Cell(row, "Protein Decoy/Contaminant/Target")),
-                ["q_value"] = Number(Cell(row, "Protein QValue")),
-                ["sequence_coverage"] = Number(coverage.Split('|')[0]),
-                ["unique_peptides"] = nUnique,
-                ["shared_peptides"] = nPeptides is not null && nUnique is not null ? nPeptides - nUnique : null,
-            });
+            var group = GroupRow(row, accessions, datasetId);
+            var groupId = (string)group["protein_group_id"]!;
+            groups.Add(group);
             // The two columns of a block encode "nothing" differently: an intensity of 0 (or blank) means NOT
             // measured and is no row, but a spectral count of 0 IS a measurement, no qualifying PSM in that
             // sample group (QuantProject:DEF-PROT-SPC, "0 is a real zero here"). Dropping it was a defect

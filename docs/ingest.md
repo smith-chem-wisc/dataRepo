@@ -164,6 +164,7 @@ are part of the bundle id, so renaming the schema gives a new bundle id and noth
 | one `*.sdrf.tsv`, chosen as below | **mzLib** (`SdrfDocument`) | `Sample`, `SampleCharacteristic`, `Assay` |
 | `AllPSMs.psmtsv`, `AllPeptides.psmtsv` | **mzLib** | `Psm`, `Peptidoform`, `Protein`, `PtmSite` |
 | `AllQuantifiedPeptides.tsv`, `AllQuantifiedProteinGroups.tsv`, `AllQuantifiedPeaks.tsv` | dataRepo | `QuantValue`, `ProteinGroup` |
+| an isobaric search's `TmtDesign.txt`, `PeptideQuantification.tsv`, `ProteinGroupQuantification.tsv` and `AllProteinGroups.tsv` | dataRepo | `Assay` per (file, channel), `QuantValue` (`DEF-TMT-PEP`, `DEF-TMT-PROT`), `ProteinGroup`; `RawQuantification.tsv` is copied, never read |
 | `ExperimentalDesign.tsv` beside the protein-group table, only when that table is labelled by sample | dataRepo | which run each protein-group `QuantValue` and `PtmStoichiometry` row belongs to |
 | the executed task `.toml` files | dataRepo | `SearchModification` |
 | `results.txt` | dataRepo | `Metric`, and the numbers the ingest reconciles against |
@@ -252,6 +253,30 @@ technical replicates. The peptide and peak tables stay per file. The ingest make
   table with no design beside it.
 
 Up to 1.3.0 the ingest read every label as a run name, and refused every search that had a design.
+
+**An isobaric (TMT, iTRAQ) search** (G105; QuantProject `DEF-TMT-*`, their 066 and 068). MetaMorpheus 1.1.13 writes
+`PeptideQuantification.tsv`, `ProteinGroupQuantification.tsv` and `RawQuantification.tsv` instead of FlashLFQ's
+tables, one column per file and channel. When the search wrote them:
+
+- **The manifest entry must name the reagent:** `labelling: TMT` (or `iTRAQ`) and `labelling_plex`. Anything else is
+  refused, because the reagent names the channels.
+- **Assays come from the search's own `TmtDesign.txt`**, one per (file, channel): `<run_id>:TMT126`, with `-calib` and
+  `-averaged` stripped from the file to reach the run. Each sits on the SDRF sample whose row names that file and
+  label (PRIDE's `TMT131` is TMT10's `131N` where the plex has no `131C`), or else on the design's own sample, its
+  `Sample Name`. The design is hashed and copied into `sources/`.
+- **A column is placed by its label**, `{sample name}_{file}_{channel}`, on the design row that gives it, never by
+  position. A column that no design row labels refuses the ingest, by name.
+- **A 0 is no value: no row.** Nothing is summed, normalized or combined; a plex's fractions stay separate assays.
+- **Protein groups come from `AllProteinGroups.tsv`** with their q-values and labels, and each `DEF-TMT-PROT` value hangs
+  on one, so `protein_groups_1pct` is the 1% view, as for label-free. The table is stored unfiltered, as written.
+  `AllProteinGroups.tsv`'s own per-channel `Intensity_` columns are the same numbers and are not read again.
+- **`PeptideQuantification.tsv` is filtered at PSM level, not peptide level** (QuantProject 068): its rows are the full
+  sequences of 1% PSMs, so some are peptides above 1% at peptide level. Join to `peptidoforms_1pct` for a 1% view.
+- **`RawQuantification.tsv` is copied verbatim** into `sources/` and gives no rows (QuantProject 068, DATAREPO-D9).
+- **Occupancy is not read** (`occupancy_not_ingested`): MetaMorpheus's TMT count cell is per file, repeated on every
+  channel.
+- The isobaric reader's version is declared into each isobaric bundle's id (`isobaric_reader`), so a change to it moves
+  isobaric bundles alone. `bundle.json`'s `isobaric` block counts what each table gave and left out.
 
 ## What it writes
 
@@ -549,6 +574,13 @@ It exits 1 on any failure. Against aging's 0.9.0 bundles it fails (PXD036557: 29
 | `unplaced_ptm_sites` | warning | Some (PSM, protein) pairs got no `ptm_sites` row because the stored peptide is not in that protein's sequence (typically a level 4/5 PSM whose protein carries a different candidate peptide), the protein has no sequence in the searched databases, or a database was missing. Counts are in `bundle.json` under `protein_databases`. |
 | `collapsed_duplicate_rows` | info | The producer wrote a row more than once, identical in every column; the copies were dropped. |
 | `metric_conflict` | warning | One metric reached the bundle from two sources under one definition, and they disagree. |
+| `isobaric_channels_not_in_sdrf` | warning | Channels of the search's `TmtDesign.txt` that no SDRF row names by file and label; their assays sit on the design's own sample. |
+| `isobaric_files_uncalibrated` | info | Files an isobaric search read as acquired, not calibrated (no `-calib` in their searched name). |
+| `isobaric_reference_channels` | info | Channels whose design `Sample Type` is not `study sample`: their values measure that reference. |
+| `isobaric_plex_exceeded` | warning | A file of the design has more channels than the manifest's `labelling_plex`. |
+| `isobaric_unlabelled_peptides` | warning | Rows of `PeptideQuantification.tsv` with no multiplex label, stored as written: co-isolated interference (QuantProject 066, rule 4). |
+| `isobaric_rows_ambiguous_*`, `isobaric_rows_repeated_*`, `isobaric_rows_unplaced_*`, `isobaric_columns_missing_*` | warning | Rows of an isobaric table (`_peptides`, `_protein_groups`) not stored: a `|`-joined key, a key on several rows, a key naming no feature of the bundle; or design channels with no column. |
+| `isobaric_values_without_peptidoform_peptides` | info | Peptidoforms with `DEF-TMT-PEP` values and no `peptidoforms` row. |
 | `sample_quant_not_stored` | warning | A protein-group column is a design sample that belongs to no assay: not one run (several files, a file that is not a run, or a run another sample also names), and not one SDRF sample's files, which would have made it a pooled assay. Its protein-group quantities and occupancy are not stored, so a missing value there means "not stored", not "not measured". |
 
 The producer's own flags arrive as findings too, keeping their original text.
