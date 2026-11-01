@@ -34,3 +34,14 @@ the session scratchpad.
 agrees exactly on the label-free 1.1.13 deposit PXD045861 (10,572 and 10,572), so the gap belongs to this TMT search.
 One lead, unverified: targets with `QValue` <= 0.01 **and** `PEP_QValue` <= 0.01 are 43,117, three from `results.txt`.
 The 1.4.1 build leaves the check `unexplained`, as it should.
+
+**Explained (QuantProject 071, 2026-11-01):** a multiplex search's `AllPeptides.psmtsv` carries each peptide's best
+PSM's PSM-level q-values (MetaMorpheus #2941, open), while `results.txt` counts at peptide level. Our 44,037 is the
+right rule on PSM-level values; the `PEP_QValue` lead was a coincidence.
+
+## 1.4.2 on the same trial (2026-11-01)
+
+Bundle `55d39d1895e98784` (was `6953203f8f2e506a`; isobaric reader 2). Against 1.4.1's bundle every table is equal but
+`definitions` (`DEF-TMT-PEP`/`PROT` at v3.19) and `findings` (one new: `isobaric_peptide_q_psm_level`). The scratch
+catalog's `catalog_reconciliation` reads `peptidoforms_target_1pct` 44,037 / 43,114 `explained`, basis #2941, no bound;
+`reconciliation_failed` is empty. Label-free ids unchanged: tutorial `004f8de1881cec43`, PXD017944 `3cd52dd1b39472d8`.
