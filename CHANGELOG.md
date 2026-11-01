@@ -4,6 +4,91 @@ All notable changes to the dataRepo **software and schema**. Data releases are v
 each instance. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions follow
 [Semantic Versioning](https://semver.org/). Until 1.0, minor versions may break the schema.
 
+## [1.4.1] - 2026-11-01
+
+**No whole-store re-ingest.** The ingest path stays `cs-1.2.0` and the schema 0.0.16; the catalog format is 15. Two
+kinds of bundle are new: those written from a search folder moved after it ran (eleven of aging's, under Fixed below),
+and TMT and iTRAQ searches, which ingest as isobaric for the first time. Every other bundle keeps its id. The first
+folder publish recomputes each deposit's derived rows once.
+
+### Added (ingest)
+- **TMT and iTRAQ searches ingest** (G105; QuantProject DATAREPO-D8, `DEF-TMT-*`; PXReprise PXR-R42). For a search that
+  wrote MetaMorpheus 1.1.13's `PeptideQuantification.tsv` / `ProteinGroupQuantification.tsv`:
+  - one assay per (file, channel) of the search's `TmtDesign.txt`, `<run_id>:TMT126`, on the SDRF sample that names that
+    file and label, or else on the design's own sample (PRIDE's `TMT131` is TMT10's `131N`; QuantProject 068, D11);
+  - `quant_values` under `QuantProject:DEF-TMT-PEP` and `DEF-TMT-PROT` (v3.10, copied), each column placed by its
+    `{sample name}_{file}_{channel}` label and never by position, `-calib`/`-averaged` stripped to reach the run, a 0
+    stored as no row;
+  - protein groups from `AllProteinGroups.tsv`, with their q-values, so `protein_groups_1pct` is the 1% view;
+  - `RawQuantification.tsv` copied verbatim into `sources/`, with no rows (DATAREPO-D9);
+  - findings for unlabelled peptides (QuantProject 066 rule 4), files searched uncalibrated, reference channels, and
+    every row left out; `bundle.json` gains an `isobaric` block.
+  - The entry must say `labelling: TMT` (or `iTRAQ`) and `labelling_plex`; otherwise the ingest is refused.
+  - An isobaric bundle declares the isobaric reader's version into its id (`isobaric_reader`), so a later change to it
+    moves isobaric bundles alone.
+  - Measured on PXReprise's trial of PXD034564 (TMT10, 32 files, `tmt-dda@2`): 320 assays, 7,327 groups (6,466 at 1%,
+    equal to `results.txt`), every non-zero cell stored (528,137 peptide and 374,320 protein values; 8,000 cells checked
+    against the file, none differ). Its peptidoform count at 1% is still 923 above `results.txt` (DATAREPO-D10, open).
+
+### Added (build)
+- **`dataset_overview.unique_peptides_scope`** (aging AGING-R1, QuantProject 064): what `protein_groups.unique_peptides`
+  and `shared_peptides` count in that dataset. `database` for a search by MetaMorpheus before 1.1.13 (no other protein
+  in the searched databases has the peptide), `protein_group` from 1.1.13 (no other protein group has it; MetaMorpheus
+  #2899/#2916, QuantProject DEF-PROT-UNIQUE). NULL for another engine or an unreadable version. Derived from
+  `datasets.search_engine_version`, so no re-ingest. The two columns' descriptions say so. **Never compare, pool or
+  threshold the counts across datasets of different scope.** aging's store has served `protein_group` datasets since
+  2026-10-29 (PXD045861 first, then PXD061654), beside `database` ones.
+
+### Fixed (ingest)
+- **A search folder moved after it ran keeps its task files.** The ingest finds the MetaMorpheus task files at the
+  paths the search's provenance recorded. PXReprise keeps a replaced search as `<accession>.superseded-<stamp>`, where
+  those paths no longer exist, and the files were skipped without a word. Eleven of aging's served bundles (re-ingested
+  from such folders in the 1.4.0 swap) kept no task file, so they had no `search_modifications_declared` rows and no
+  target/contaminant rule. Now a missing task file is looked for under the entry's own search folder (`tasks/<name>`)
+  and taken only when its sha256 is the recorded one. One still not found gives a `task_files_missing` finding.
+  - **Only those bundles move.** The found files become hashed sources, so their bundle ids change, and every other
+    bundle's id stays (measured: PXD017944 `3cd52dd1b39472d8` unchanged).
+  - **On PXD032040:** 63 declared modifications where there were none. With the search's target/contaminant rule
+    known, 14 proteins (P01008, keratins) are no longer labelled contaminant, 40 occupancy entries are placed (3 more
+    sites, 20 more occupancy rows), and the `contaminant_label_unresolved` finding goes. The ingest path stays
+    `cs-1.2.0`: rows change only where the hashed inputs do.
+
+### Changed (engines, ptmQtl)
+- **One site under several accessions is one site** (ptmQtl DEFINITIONS S5, their D70; our DATAREPO-P36). Within a
+  deposit, sites with the same modification and identical cells in every run (state, modified and covering intensity,
+  fraction), at least one with a modified intensity, are merged under the ordinal-first key, as ptmQtl's runner does.
+  `run.json` counts them. Both `site_pairs` and `site_traits` read the merged sites. On PXD017944: 465 type A pairs
+  where 496 counted the shared sites apart.
+- **S2c's gate** (ptmQtl D60). S2c is defined only for a protease that cuts after K or R (trypsin, trypsin|P,
+  StcE-trypsin: K and R; Lys-C|P: K; Arg-C: R), on a residue it cuts after, in a fully specific search. Elsewhere the
+  deposit is refused, never guessed. It lifts, leaving only the five acyl amides mzLib's list misses, for MetaMorpheus
+  1.1.13 or later with `RespectCleavageBlockingModifications = true` in every task. All read from the bundle's own task
+  files. `run.json`'s rules record `s2c_gate`. On aging's 179 served bundles: 167 trypsin and fully specific (applies),
+  1 lifted (PXD045861), and 11 with no task file (refused until re-ingested with the fix above).
+
+### Changed (runner)
+- **A `go.annotate_groups` artefact no longer keeps `go_annotation.tsv`** (G110). The engine still writes it through
+  mzLib and reads it back as acceptance; its sha256 stays in `run.json` (`annotation_file_sha256`). Nothing read the
+  copy (~128 MB a run; aging's 269 copies, 34.2 GB, were deleted on 2026-10-25 with every catalog table equal). The rows
+  are unchanged, so `RunnerVersion` stays 1: an existing artefact keeps its id and is not re-run, and a new one is
+  simply smaller.
+
+### Changed (build)
+- **Reconciliation is judged at build** (aging DATAREPO-86, option a). Each check of each bundle is compared with the
+  bound the producer's own file format leaves, computed from the bundle's stored rows. A difference inside the bound
+  is `explained`, not failed. New catalog table `catalog_reconciliation` (observed, expected, the ingest's recorded
+  numbers, the bound, its basis, a status). `catalog_bundles.reconciliation_failed` names only unexplained checks, and
+  the new `reconciliation_explained` names the rest. On aging's store all 140 PSM and 20 peptidoform differences
+  are inside the bound (`results/reconciliation_bound_2026-10-30/`). The peptidoform bound is an estimate, wider than
+  the exact one, because the bundle keeps no peptide file. A protein-group count one short of the producer's, where the
+  ingest dropped an exact duplicate group row, is explained the same way (PXD027971, aging 122 c: MetaMorpheus 1.1.11
+  wrote `A0A0G2JZW2|D4A2S8` twice and counted both; #2923 in 1.1.13 stops it).
+- **The PSM count is recounted from `psms.parquet`**, which reads an entrapment target (`ET`, `T|ET`) as a target
+  (aging DATAREPO-87). The ingest's own count tested the label for equality with `T`; no stored bundle has an
+  entrapment label, and the recount equals the ingest's count on all 179 of aging's bundles.
+- A folder catalog keeps each deposit's reconciliation terms in its derived directory, so the derivation id moves and
+  every deposit's derived rows are computed once more on the first 1.4.1 publish.
+
 ## [1.4.0] - 2026-10-28
 
 **One new ingest path, `cs-1.2.0`, and schema 0.0.16, so an instance re-ingests once; and ptmQtl's engines.** Built

@@ -224,7 +224,34 @@ public static class PtmQtlCore
                 ReportedFraction = state == OccupancyState.Quantified ? c.Fraction : null,
             });
         }
-        return SiteOccupancyCalculator.CombineRuns(cells, dataset.RunToSample).ToList();
+        return SiteOccupancyCalculator.CombineRuns(MergeDuplicateSites(cells, leftOut), dataset.RunToSample).ToList();
+    }
+
+    /// <summary>S5 (ptmQtl D70): one physical site under several accessions is one site within a dataset. MetaMorpheus
+    /// writes a site on a peptide shared by isoforms or paralogs once per accession with identical cells; counted apart,
+    /// it pairs with itself at rho = 1 and each of its pairs is counted once per accession.</summary>
+    /// <remarks>ptmQtl's rule as their runner applies it (<c>tools/PtmQtlRunner/Program.cs</c>, <c>d9a7ee6</c>): sites with
+    /// the same IdWithMotif and identical cells in every run (state, modified and covering intensity, fraction, compared
+    /// as their round-trip text), at least one with a modified intensity, are one site, and the ordinal-first mzLib key
+    /// stands for them. A site with no modified intensity is never merged. Per run, before runs combine into samples.</remarks>
+    public static List<SiteRunOccupancy> MergeDuplicateSites(List<SiteRunOccupancy> cells, Dictionary<string, long> leftOut)
+    {
+        var inv = System.Globalization.CultureInfo.InvariantCulture;
+        string F(double v) => double.IsNaN(v) ? "NaN" : v.ToString("R", inv);
+        var duplicateOf = cells.GroupBy(c => c.Site)
+            .Where(g => g.Any(c => double.IsFinite(c.ModifiedIntensity) && c.ModifiedIntensity > 0))
+            .GroupBy(g => IdWithMotif(g.Key.Modification) + "|" + string.Join(";", g.OrderBy(c => c.Run, StringComparer.Ordinal)
+                .Select(c => $"{c.Run},{c.State},{F(c.ModifiedIntensity)},{F(c.CoveringIntensity)},{c.ReportedFraction?.ToString("R", inv) ?? ""}")))
+            .Where(g => g.Count() > 1)
+            .SelectMany(g =>
+            {
+                var keep = g.Select(s => s.Key).OrderBy(s => s.Key, StringComparer.Ordinal).First();
+                return g.Select(s => s.Key).Where(s => s != keep).Select(s => (Dup: s, Keep: keep));
+            })
+            .ToDictionary(t => t.Dup, t => t.Keep);
+        if (duplicateOf.Count == 0) return cells;
+        leftOut["S5 (D70) sites merged into a site with identical cells under another accession"] = duplicateOf.Count;
+        return cells.Where(c => !duplicateOf.ContainsKey(c.Site)).ToList();
     }
 
     private static PairSite Site(ModificationSite s, ISet<(string, int)> nterms, PtmQtlDataset dataset) =>

@@ -248,8 +248,11 @@ public static partial class CatalogBuilder
     /// counts every value, <c>dataset_annotations.operator_sdrf</c>) and loads the ptmQtl engines' artefacts into
     /// <c>ptm_pairs</c> and <c>trait_effects</c>, with a catalog column <c>artefact_id</c> on both and NULL
     /// <c>dataset_id</c> / <c>bundle_id</c> on pooled rows (<c>CatalogPtmQtl.cs</c>). The engines were built as "11"
-    /// on their own branch and never released under it.</remarks>
-    public static string CatalogVersion => SchemaContract.IsPython0320 ? "8" : "14";
+    /// on their own branch and never released under it. "15" (1.4.1) judges each bundle's reconciliation at build
+    /// against the bound its producer's file format leaves (aging DATAREPO-86, <c>CatalogReconciliation.cs</c>):
+    /// <c>catalog_reconciliation</c>, <c>catalog_bundles.reconciliation_explained</c>, and
+    /// <c>reconciliation_failed</c> naming only unexplained checks.</remarks>
+    public static string CatalogVersion => SchemaContract.IsPython0320 ? "8" : "15";
 
     /// <summary>Bundle tables a catalog does not hold. PSMs are archived per deposit, never in a catalog (PXReprise's
     /// public-data contract, rule 3; D48 step 2): they are 82% of a store's bytes, and nothing served from a catalog
@@ -326,6 +329,7 @@ public static partial class CatalogBuilder
     [
         "catalog_meta",
         "catalog_bundles",
+        ReconciliationTable,
         "catalog_study_bundles",
         "catalog_engine_artefacts",
         "catalog_tables",
@@ -465,6 +469,11 @@ public static partial class CatalogBuilder
                 ["n_psms_all"] = "Every PSM row the dataset's bundle holds, decoys and above-threshold matches included "
                     + "(`bundle.json`'s `psms` count).",
                 ["n_protein_groups_1pct"] = "Protein groups at 1% group-level FDR, contaminants included.",
+                ["unique_peptides_scope"] = "What `protein_groups.unique_peptides` and `shared_peptides` count in this dataset, "
+                    + "decided by the MetaMorpheus release that searched it: `database` before 1.1.13 (a peptide no other "
+                    + "protein in the searched databases has), `protein_group` from 1.1.13 (no other protein GROUP has it; "
+                    + "QuantProject DEF-PROT-UNIQUE). Group-level counts are never lower. Never compare, pool or threshold "
+                    + "the two across datasets of different scope. NULL: another engine, or a version that does not parse.",
                 ["n_ptm_sites"] = "Rows in `ptm_sites`, at any ambiguity level, contaminants included.",
                 ["n_quant_values"] = "Rows in `quant_values` for this dataset: per-run values and, from 1.4.0, design "
                     + "samples' pooled values (`assays.assay_kind`), every definition together. A size, not a measure: "
@@ -1506,7 +1515,7 @@ public static partial class CatalogBuilder
             {
                 rowCounts = LoadTables(con, bundles, views);
                 Lap("tables");
-                var derivedChecks = BuildDerived(con, bundles, Lap, derivedRoot, out derivedComputed, out derivedReused);
+                var derivedChecks = BuildDerived(con, bundles, Lap, derivedRoot, out derivedComputed, out derivedReused, out var reconciliationTerms);
                 studyCounts = CreateStudyTables(con, study);
                 foreach (var (k, v) in CreateEngineTables(con, engines, views)) rowCounts[k] = v;
                 foreach (var (k, v) in LoadGoRows(con, bundles, engines, views)) rowCounts[k] = v;
@@ -1555,7 +1564,7 @@ public static partial class CatalogBuilder
                 indexes = BuildIndexes(con);
                 Lap("indexes");
                 WriteCatalogTables(con, bundles, rowCounts, checks, cid, instance, notes, study, studyCounts, engines, census is not null,
-                    rid, layout, dataRoot, derivedRoot);
+                    rid, layout, dataRoot, derivedRoot, reconciliationTerms);
             }
             Lap("catalog tables");
             // aging 107: a file shorter than its own header says is never moved into place.
@@ -2150,15 +2159,22 @@ public static partial class CatalogBuilder
     /// are the same numbers the bundle reconciled against the producer's <c>results.txt</c>. A catalog whose
     /// front page disagreed with the bundle it was built from would be worse than no front page.</remarks>
     private static List<CatalogCheck> BuildDerived(DuckDBConnection con, IReadOnlyList<BundleRef> bundles, Action<string> lap, string? derivedRoot,
-        out int computed, out int reused)
+        out int computed, out int reused, out Dictionary<string, ReconciliationTerms> terms)
     {
         (computed, reused) = (0, 0);
+        terms = new Dictionary<string, ReconciliationTerms>(StringComparer.Ordinal);
         AddSampleNames(con);
         lap("derived: sample names");
         CreateAcceptedViews(con);
         foreach (var (name, body) in GrainViews)
             Exec(con, $"CREATE VIEW \"{name}\" AS {body}");
-        if (derivedRoot is not null) return BuildDerivedFromDeposits(con, bundles, derivedRoot, lap, out computed, out reused);
+        if (derivedRoot is not null) return BuildDerivedFromDeposits(con, bundles, derivedRoot, lap, out computed, out reused, out terms);
+        // A Python 0.32.0 parity catalog judges reconciliation as 0.32.0 did: by each bundle's recorded `ok`.
+        if (!SchemaContract.IsPython0320)
+        {
+            foreach (var r in bundles) terms[r.BundleId] = ComputeReconciliationTerms(r);
+            lap("derived: reconciliation terms");
+        }
 
         var psmCounts = LeftInBundles.Contains("psms") ? PsmCountsFromBundles(con, bundles) : null;
         Exec(con, $"CREATE TABLE dataset_overview AS {OverviewSelect(psmCounts)}");
@@ -2187,6 +2203,24 @@ public static partial class CatalogBuilder
     // catalog folder over one deposit at a time (DepositDerived). Every join and group is within a dataset, so the rows
     // are the same either way.
 
+    /// <summary>What <c>protein_groups.unique_peptides</c> / <c>shared_peptides</c> count in a dataset, from the release of
+    /// MetaMorpheus that searched it (AGING-R1, QuantProject 064): <c>database</c> before 1.1.13 (a peptide no other protein
+    /// in the searched databases has), <c>protein_group</c> from 1.1.13 (MetaMorpheus #2899/#2916: no other protein GROUP
+    /// has it; DEF-PROT-UNIQUE). NULL for another engine, or a version that is not three dot-separated numbers: unknown,
+    /// never a guess. Compared part by part as integers (a list or text comparison put 1.1.9 after 1.1.13).
+    /// Python 0.32.0's overview had no such column, so a parity build writes none.</summary>
+    internal static string UniquePeptidesScopeColumn => SchemaContract.IsPython0320 ? "" : @"CASE
+                WHEN lower(d.search_engine) <> 'metamorpheus'
+                  OR NOT regexp_full_match(coalesce(d.search_engine_version, ''), '[0-9]+\.[0-9]+\.[0-9]+') THEN NULL
+                WHEN CAST(split_part(d.search_engine_version, '.', 1) AS INTEGER) > 1
+                  OR (CAST(split_part(d.search_engine_version, '.', 1) AS INTEGER) = 1
+                      AND (CAST(split_part(d.search_engine_version, '.', 2) AS INTEGER) > 1
+                           OR (CAST(split_part(d.search_engine_version, '.', 2) AS INTEGER) = 1
+                               AND CAST(split_part(d.search_engine_version, '.', 3) AS INTEGER) >= 13)))
+                    THEN 'protein_group'
+                ELSE 'database' END AS unique_peptides_scope,
+            ";
+
     /// <summary><c>dataset_overview</c>: one row per dataset. <paramref name="psmCounts"/> names the table of each bundle's
     /// own PSM counts when the catalog holds no PSMs (<see cref="PsmCountsFromBundles"/>).</summary>
     private static string OverviewSelect(string? psmCounts) => $@"        SELECT
@@ -2202,7 +2236,7 @@ public static partial class CatalogBuilder
             d.instrument_vendor,
             d.search_engine,
             d.search_engine_version,
-            (SELECT count(*) FROM runs r WHERE r.dataset_id = d.dataset_id) AS n_runs,
+            {UniquePeptidesScopeColumn}            (SELECT count(*) FROM runs r WHERE r.dataset_id = d.dataset_id) AS n_runs,
             (SELECT count(*) FROM samples s WHERE s.dataset_id = d.dataset_id) AS n_samples,
             {(psmCounts is null
                 ? "(SELECT count(*) FROM psms_1pct p WHERE p.dataset_id = d.dataset_id)"
@@ -2548,7 +2582,8 @@ public static partial class CatalogBuilder
         string? releaseId = null,
         CatalogLayout layout = CatalogLayout.File,
         string? dataRoot = null,
-        string? derivedRoot = null)
+        string? derivedRoot = null,
+        IReadOnlyDictionary<string, ReconciliationTerms>? reconciliationTerms = null)
     {
         // Python 0.32.0's catalog_meta had ten columns; the release id, layout and data root follow them (D48 step 1), then
         // where a folder catalog's per-deposit derived rows are (step 2b).
@@ -2577,24 +2612,38 @@ public static partial class CatalogBuilder
         Exec(con, $"INSERT INTO catalog_meta VALUES (?, ?, ?, ?, 'datarepo', {string.Join(", ", values.Skip(4).Select(_ => "?"))})",
             values.ToArray());
 
-        Exec(con, @"
+        var judged = reconciliationTerms is not null && !SchemaContract.IsPython0320;
+        Exec(con, $@"
         CREATE TABLE catalog_bundles (
             dataset_id VARCHAR, bundle_id VARCHAR, path VARCHAR, written_utc VARCHAR,
             schema_version VARCHAR, ingester_version VARCHAR, reconciliation_ok BOOLEAN,
-            reconciliation_failed VARCHAR[]
+            reconciliation_failed VARCHAR[]{(judged ? ", reconciliation_explained VARCHAR[]" : "")}
         )
         ");
+        // From 1.4.1 (DATAREPO-86) a check is judged at build against the bound its producer's file format leaves, and
+        // `reconciliation_failed` names only the unexplained ones; `catalog_reconciliation` holds every check. A Python
+        // 0.32.0 parity catalog keeps 0.32.0's rule: each check's recorded `ok`.
+        var judgedRows = new List<ReconciliationRow>();
         foreach (var r in bundles)
         {
             var failed = new List<string>();
-            if (SourcesPy.Get(r.Manifest, "reconciliation") is List<object?> recon && recon.Count > 0)
+            var explained = new List<string>();
+            if (judged)
+            {
+                var rows = JudgeReconciliation(r, reconciliationTerms!.GetValueOrDefault(r.BundleId));
+                judgedRows.AddRange(rows);
+                failed.AddRange(rows.Where(x => x.Status == "unexplained").Select(x => x.Check));
+                explained.AddRange(rows.Where(x => x.Status == "explained").Select(x => x.Check));
+            }
+            else if (SourcesPy.Get(r.Manifest, "reconciliation") is List<object?> recon && recon.Count > 0)
                 foreach (var c in recon)
                 {
                     var check = c as IReadOnlyDictionary<string, object?> ?? SourcesPy.EmptyDict;
                     if (!SourcesPy.Truthy(SourcesPy.Get(check, "ok"))) failed.Add(SourcesPy.Str(SourcesPy.Get(check, "name")));
                 }
             var ingester = SourcesPy.Get(r.Manifest, "ingester") as IReadOnlyDictionary<string, object?>;
-            Exec(con, "INSERT INTO catalog_bundles VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            var bundleRow = new List<object?>
+            {
                 r.DatasetId,
                 r.BundleId,
                 AsPosix(r.Path),
@@ -2602,8 +2651,12 @@ public static partial class CatalogBuilder
                 r.SchemaVersion,
                 SourcesPy.Str(SourcesPy.Get(ingester is { Count: > 0 } ? ingester : SourcesPy.EmptyDict, "version", "?")),
                 failed.Count == 0,
-                failed);
+                failed,
+            };
+            if (judged) bundleRow.Add(explained);
+            Exec(con, $"INSERT INTO catalog_bundles VALUES ({string.Join(", ", bundleRow.Select(_ => "?"))})", bundleRow.ToArray());
         }
+        if (judged) WriteReconciliationTable(con, judgedRows);
 
         // A separate table from `catalog_bundles`, because the two are separate objects: a search bundle is one
         // dataset's evidence, a study bundle is one layer's model results over however many datasets.
