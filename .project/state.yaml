@@ -632,7 +632,11 @@ gaps:
     pxreprise_default (every deposited SDRF refused: no factor value), so PXR-R22 does not change which SDRF it reads.
     No stored design has mzLib #1424's colliding sample texts (94 ExperimentalDesign.tsv checked).
   - >-
-    G105 BUILT 2026-10-30 (the user: "tmt first") on feat/tmt efff5a4, before the 1.4.1 release: the plan below as
+    G105 RELEASED 2026-11-01 in datarepo 1.4.1 (tag v1.4.1 on 2c59589; the user: "yes release them together"); the
+    release binary reproduced the trial's 6953203f8f2e506a. QuantProject 071: D12 = MetaMorpheus #2941 (PSM-level
+    q-values in a multiplex AllPeptides.psmtsv), D13 posted (v3.14, v3.19 at b2e37b0); the next release copies v3.19,
+    marks the check explained and adds a PSM-level finding (isobaric ids only move). G105 BUILT 2026-10-30 (the user:
+    "tmt first") on feat/tmt efff5a4, before the 1.4.1 release: the plan below as
     written, plus the SDRF sample per (file, label) with TMT131 = 131N where the plex has no 131C, and refusal of an
     isobaric search whose entry names no reagent. PXD034564 trial: 320 assays, 6,466 groups = results.txt, 528,137 +
     374,320 values = the files' non-zero cells. D9 and D11 answered by QuantProject 068 and followed. D10 measured

@@ -6,9 +6,23 @@ This folder is a `/project`-managed research project. **You are de facto working
 
 - **Phase:** INCEPTION
 - **Goal:** An AI-ready, API-accessible repository for the search + quant results of the many PRIDE datasets the `aging` pipeline reanalyzes. Humans can use it, but AI agents are the main users. The question it serves is how organelle proteomes change with age.
-- **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`). 1.4.0 is released and serving; the
-  next release is 1.4.1. We also wait on ptmQtl's DATAREPO-P33, pep, pyMzLib, and on mzLib releases from go
-  (#1497) and kegg.
+- **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`). **1.4.1 is RELEASED** (below); aging
+  still serves 1.4.0 until PXReprise swaps. We also wait on ptmQtl's DATAREPO-P33, pep, pyMzLib, and on mzLib releases
+  from go (#1497) and kegg.
+  - **2026-11-01: datarepo 1.4.1 is RELEASED** (the user: "yes release them together": 1.4.1 + the TMT ingest in one).
+    Tag `v1.4.1` on `2c59589` (merge `cb73f74` of feat/tmt, which holds feat/1.4.1; plus `2c59589`, a ModList fix: CI's
+    runner ICU moved to Unicode 17 and broke `PythonCaseAndAlphaMatchForEveryCodePoint`; the unassigned table is now
+    all 707 ranges of Python's Unicode 15.1). Published 15:31 UTC. win-x64 zip sha256
+    `981337a776108cbf93be359a4d170560291466555120906784b06a16753f7ece`. Tutorial: bundle `004f8de1881cec43`, catalog
+    `6ec9594bcd5c04ce`. The downloaded binary reproduced the tutorial, PXD017944 `3cd52dd1b39472d8` (unchanged),
+    PXD032040 `b375d5ee00869b7f` (predicted, task files found) and the TMT trial `6953203f8f2e506a`. Told PXReprise 078
+    (one pin swap; re-ingest the TEN bundles with no task file in catalog `c19f45cd98e33adf`; `tmt-dda@2` can go live;
+    trial folders theirs to delete), aging 125, ptmQtl 060 (P34 answered; P35 still ours), QuantProject 072.
+    - **Next release (promised in 072/078):** QuantProject 071 answered D12 (+923 = MetaMorpheus #2941: a multiplex
+      search's `AllPeptides.psmtsv` carries PSM-level q-values) and D13 (DEF-TMT amendment posted, v3.14 + v3.19 at
+      `b2e37b0`). Build: copy v3.19's DEF-TMT text (bump `Isobaric.ReaderVersion`; isobaric ids only move), mark the
+      check `explained: #2941` for isobaric searches up to 1.1.13, and add a finding + column-description sentence that
+      `peptidoforms.best_q_value` is PSM-level there. Ask the user when to release it.
   Since 2026-10-20 one session, datarepo-9b, holds both the threads
   and the 1.4.0 branch (the user: "do what you think is best", after datarepo-39 ended). Then, in order:
   - **2026-10-28: datarepo 1.4.0 is RELEASED** (the user: "release 1.4.0 now", lifting D49). Tag `v1.4.0` on
