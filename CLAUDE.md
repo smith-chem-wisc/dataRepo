@@ -22,7 +22,11 @@ This folder is a `/project`-managed research project. **You are de facto working
       search's `AllPeptides.psmtsv` carries PSM-level q-values) and D13 (DEF-TMT amendment posted, v3.14 + v3.19 at
       `b2e37b0`). Build: copy v3.19's DEF-TMT text (bump `Isobaric.ReaderVersion`; isobaric ids only move), mark the
       check `explained: #2941` for isobaric searches up to 1.1.13, and add a finding + column-description sentence that
-      `peptidoforms.best_q_value` is PSM-level there. Ask the user when to release it.
+      `peptidoforms.best_q_value` is PSM-level there. **BUILT 2026-11-01 (the user: "build it") as 1.4.2** on branch
+      `feat/1.4.2` (worktree `code/_wt_142`), pushed `c834cce`: isobaric reader 2, finding
+      `isobaric_peptide_q_psm_level`, build verdict `explained` (no bound, basis #2941). TMT trial
+      `6953203f8f2e506a` -> `55d39d1895e98784` (only definitions + one finding differ); label-free ids unchanged. Not
+      merged, not released: ask the user when (it can wait for PXReprise's 1.4.1 swap; no TMT bundle is served).
   Since 2026-10-20 one session, datarepo-9b, holds both the threads
   and the 1.4.0 branch (the user: "do what you think is best", after datarepo-39 ended). Then, in order:
   - **2026-10-28: datarepo 1.4.0 is RELEASED** (the user: "release 1.4.0 now", lifting D49). Tag `v1.4.0` on
