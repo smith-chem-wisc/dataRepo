@@ -2179,3 +2179,26 @@ the ingest. But go.annotate_groups and logs.resolve_genes also re-read each data
 an artefact id hashes the schema, every 1.4.0 engine run is new. With the current file back, a logs refusal would have
 failed aging's whole publish. Both engine runs now sit inside PXReprise's swap-back window (G115). At close the
 re-ingest was running. PXReprise will post the gap's end and aging's first 1.4.0 publish id as thread 068.
+
+## 2026-11-01 (datarepo-9b): datarepo 1.4.1 released with the TMT ingest; 1.4.2 built for QuantProject 071
+
+The sessions of 10-29 to 10-31 built 1.4.1 on feat/1.4.1 (build-side reconciliation, the unique-peptide scope label,
+ptmQtl S5/D60, the task-file fix) and the isobaric ingest on feat/tmt (G105); CLAUDE.md and G105 carry the detail. The
+user chose one release for both ("yes release them together"). feat/tmt merged as `cb73f74`, and CI went red on a test
+nobody had touched: the runner's ICU had moved to Unicode 17, so .NET's case mapping no longer matched Python 3.13's
+Unicode 15.1. The fix (`2c59589`) makes the C# carry Python's own table of all 707 unassigned ranges and keep a rune
+whose mapping lands on one. That is the platform lesson again: our parity with the frozen Python was quietly resting on
+the machine's ICU. The downloaded 1.4.1 binary reproduced the tutorial, PXD017944, PXD032040's predicted id and the TMT
+trial, and was published at 15:31 UTC. Threads: PXReprise 078 (one pin swap; re-ingest the ten served bundles with no
+task file; tmt-dda@2 can go live), aging 125, ptmQtl 060, QuantProject 072.
+
+QuantProject 071 had meanwhile explained the +923 peptidoforms on the TMT trial: MetaMorpheus #2941, a multiplex
+search's AllPeptides.psmtsv carries each peptide's best PSM's PSM-level q-values. The user said "build it", and 1.4.2
+sits on feat/1.4.2 (`c834cce`, CI green): DEF-TMT text at v3.19, a finding on multiplex searches up to 1.1.13 saying
+`best_q_value` is PSM-level, the same sentence on two column descriptions, and the build verdict `explained` with no
+bound. Only isobaric ids move (trial 55d39d1895e98784; every table equal to 1.4.1's but definitions and findings).
+Two slips were caught before they shipped: `build_tables.py` regenerates the FROZEN Python's tables, so its output was
+reverted and only SchemaGen and build_docs.py kept; and a global version replace in operating.md rewrote historical
+prose, reverted and done by line. The MCP parity tests then needed masks for the two appended description sentences,
+because they compare against what 0.32.0 wrote. Not released: the agent recommended waiting for PXReprise's 1.4.1 swap,
+since no TMT bundle is served and two swaps in a row cost them more than a few days' wait costs anyone.

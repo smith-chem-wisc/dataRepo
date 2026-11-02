@@ -632,6 +632,13 @@ gaps:
     pxreprise_default (every deposited SDRF refused: no factor value), so PXR-R22 does not change which SDRF it reads.
     No stored design has mzLib #1424's colliding sample texts (94 ExperimentalDesign.tsv checked).
   - >-
+    G105 1.4.2 BUILT 2026-11-01 (the user: "build it") on feat/1.4.2 c834cce (worktree code/_wt_142, pushed, CI green,
+    602 tests): Isobaric.ReaderVersion 2, DEF-TMT-PEP/PROT at QuantProject's v3.19 (b2e37b0), finding
+    isobaric_peptide_q_psm_level for multiplex searches up to MetaMorpheus 1.1.13, peptidoforms.best_q_value and
+    best_q_value_notch descriptions say so, CatalogReconciliation marks peptidoforms_target_1pct `explained` (no bound,
+    basis #2941; works on 1.4.1-ingested isobaric bundles too). Trial 6953203f8f2e506a -> 55d39d1895e98784 (only
+    definitions + one finding differ); label-free ids unchanged. NOT merged or released: the agent recommended waiting
+    for PXReprise's 1.4.1 swap; release only on the user's word, then tell PXReprise, QuantProject (D12/D13 done), aging.
     G105 RELEASED 2026-11-01 in datarepo 1.4.1 (tag v1.4.1 on 2c59589; the user: "yes release them together"); the
     release binary reproduced the trial's 6953203f8f2e506a. QuantProject 071: D12 = MetaMorpheus #2941 (PSM-level
     q-values in a multiplex AllPeptides.psmtsv), D13 posted (v3.14, v3.19 at b2e37b0); the next release copies v3.19,
@@ -1778,6 +1785,24 @@ repos:  # PR D and PR E worktrees retired 2026-09-24: both merged, in mzLib 1.0.
     # Held by datarepo-9b (which since 2026-10-20 also holds the threads). The scratch re-ingest binary was built
     # from 54453e1; the pushed tip 0c1f8d0 adds DATAREPO-84, DATAREPO-D7 and ptmQtl's S2c v3 and S2e.
     pinned: 0c1f8d0aeb281dde98a8668088892874febd4001
+  - name: dataRepo
+    worktree: code/_wt_141
+    branch: feat/1.4.1
+    base_clone: "E:/CodeReview/dataRepo (origin = smith-chem-wisc/dataRepo)"
+    # Merged (via feat/tmt, cb73f74) and released as 1.4.1 on 2026-11-01; can be retired.
+    pinned: e41c4af
+  - name: dataRepo
+    worktree: code/_wt_tmt
+    branch: feat/tmt
+    base_clone: "E:/CodeReview/dataRepo (origin = smith-chem-wisc/dataRepo)"
+    # Merged as cb73f74 and released in 1.4.1 on 2026-11-01; can be retired.
+    pinned: 9e18c4d
+  - name: dataRepo
+    worktree: code/_wt_142
+    branch: feat/1.4.2
+    base_clone: "E:/CodeReview/dataRepo (origin = smith-chem-wisc/dataRepo)"
+    # 1.4.2 (G105 follow-up: DEF-TMT v3.19, #2941 finding and verdict). Pushed, CI green; not merged, not released.
+    pinned: c834cce
   - name: dataRepo
     worktree: code/_wt_ai_contrib
     branch: feat/ai-contributions

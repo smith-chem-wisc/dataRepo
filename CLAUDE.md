@@ -6,8 +6,10 @@ This folder is a `/project`-managed research project. **You are de facto working
 
 - **Phase:** INCEPTION
 - **Goal:** An AI-ready, API-accessible repository for the search + quant results of the many PRIDE datasets the `aging` pipeline reanalyzes. Humans can use it, but AI agents are the main users. The question it serves is how organelle proteomes change with age.
-- **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`). **1.4.1 is RELEASED** (below); aging
-  still serves 1.4.0 until PXReprise swaps. We also wait on ptmQtl's DATAREPO-P33, pep, pyMzLib, and on mzLib releases
+- **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`) and read anything new from PXReprise
+  (their 1.4.1 swap + re-ingest of the ten). **Then ask the user whether to release 1.4.2** (`feat/1.4.2` @ `c834cce`,
+  CI green; the agent's recommendation: after PXReprise's 1.4.1 swap). Release steps are in "Next release" below and the
+  recipe in RESUME. **1.4.1 is RELEASED** (below); aging still serves 1.4.0 until PXReprise swaps. We also wait on ptmQtl's DATAREPO-P33, pep, pyMzLib, and on mzLib releases
   from go (#1497) and kegg.
   - **2026-11-01: datarepo 1.4.1 is RELEASED** (the user: "yes release them together": 1.4.1 + the TMT ingest in one).
     Tag `v1.4.1` on `2c59589` (merge `cb73f74` of feat/tmt, which holds feat/1.4.1; plus `2c59589`, a ModList fix: CI's
@@ -290,7 +292,16 @@ This folder is a `/project`-managed research project. **You are de facto working
   entirely a `build` change, and hashing `__version__` would have re-identified every stored bundle
   for byte-identical rows. The catalog's equivalent is `catalog.CATALOG_VERSION`, which `catalog_id`
   carries along with `__version__` and every study layer's version.
-- **Schema edits need TWO regenerations:** `python tools/build_docs.py` **and** `python tools/build_tables.py`
+- **Since the C# port, a schema edit regenerates `SchemaDocs.g.cs` (SchemaGen) and `docs/schema/` (`tools/build_docs.py`)
+  ONLY.** `tools/build_tables.py` rewrites the FROZEN Python's `_tables.py`/`_schema_docs.py` at the new schema version:
+  revert its output (1.4.2). A changed column description also fails `McpParityTests` (they compare against 0.32.0's
+  answers): add a regex mask for the new text only, never loosen the comparison.
+- **The C#'s Python parity can rest on the machine's ICU.** CI's runner moved to Unicode 17 and broke the case-mapping
+  test (1.4.1); `ModList.cs` now carries Python 3.13's own unassigned-range table. Suspect the platform first when a
+  parity test goes red on code nobody touched.
+- **Never global-replace a version number in docs.** `operating.md` keeps historical prose ("1.3.5 added ..."); a
+  sed over it rewrote history (1.4.1). Edit the lines that describe the current install.
+- **Old (Python-era) note: schema edits need TWO regenerations:** `python tools/build_docs.py` **and** `python tools/build_tables.py`
   (the ingester's Arrow schemas), or CI fails on drift. If the change affects what the ingester writes,
   also `python tools/build_example_bundle.py`. Lint with `--config .linkmllint.yaml`: enum values like
   DDA and TMT are kept on purpose. LinkML isn't installed globally; use `pip install -r requirements-dev.txt`

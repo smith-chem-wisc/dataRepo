@@ -2,13 +2,13 @@
 
 <!-- BEGIN GENERATED -- render_resume.py owns this block; edit state.yaml, not here -->
 
-**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-10-29
+**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-11-02
 
 | | |
 |---|---|
-| Commits | 760 |
+| Commits | 806 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
-| Locked decisions | 50 |
+| Locked decisions | 51 |
 | Open gaps | 111 |
 | Gate items skipped | 5 |
 
@@ -17,11 +17,14 @@
 | Worktree | Branch | HEAD | Pin | Status |
 |---|---|---|---|---|
 | `code/_wt_ptmqtl` | feat/ptmqtl-engine | `ec584c73` | `ec584c73` | at pin |
-| `code/_wt_140_ingest` | feat/1.4.0-ingest | `0c1f8d0a` | `0c1f8d0a` | at pin |
+| `code/_wt_140_ingest` | -- | -- | `0c1f8d0a` | **missing on disk** |
+| `code/_wt_141` | feat/1.4.1 | `e41c4af8` | `e41c4af` | at pin |
+| `code/_wt_tmt` | feat/tmt | `9e18c4dc` | `9e18c4d` | at pin |
+| `code/_wt_142` | feat/1.4.2 | `c834cce5` | `c834cce` | at pin |
 | `code/_wt_ai_contrib` | feat/ai-contributions | `1db8a535` | `1db8a535` | at pin |
 | `code/_wt_mzlib_sumo` | fix/sumo-remnant-target-lysine | `6974a4d4` | `6974a4d4` | at pin |
 
-> **1 document(s) in `design/` not referenced above** -- `NOTE_FROM_USER_2026-10-21_github-actions-minutes.md`. Add a line for each, or say why not.
+> **1 document(s) in `design/` not referenced above** -- `RELEASE_1.4.1.md`. Add a line for each, or say why not.
 
 <!-- END GENERATED -->
 
@@ -33,7 +36,31 @@ reanalyses. The results cover search, quant, provenance, design and organelle an
 use it, but AI agents are the main users. The question it serves is how organelle proteomes change
 with age.
 
-## Latest (2026-10-25): GO's 34 GB of copies deleted; GO and pathways designed per target set; 1.4.0 on hold
+## Latest (2026-11-01): 1.4.1 released with the TMT ingest; 1.4.2 built, waiting on the user's word
+
+- **datarepo 1.4.1 is RELEASED** (tag `v1.4.1` on `2c59589`, 15:31 UTC). It carries 1.4.1's build-side
+  reconciliation, the unique-peptide scope label, ptmQtl S5/D60, the task-file fix and G110, plus the isobaric (TMT)
+  ingest (G105). Tutorial catalog `6ec9594bcd5c04ce`. Threads: PXReprise 078, aging 125, ptmQtl 060, QuantProject 072.
+- **aging still serves 1.4.0** until PXReprise swaps their pin and re-ingests the ten served bundles that lack task
+  files (named in CLAUDE.md and PXReprise 078).
+- **1.4.2 is BUILT, not released:** branch `feat/1.4.2` @ `c834cce` (worktree `code/_wt_142`), CI green, 602 tests.
+  It answers QuantProject 071: DEF-TMT text at v3.19, the PSM-level finding for MetaMorpheus #2941, and the verdict
+  `explained` for the +923 peptidoform gap. Only isobaric ids move (trial `55d39d1895e98784`); measurements are in
+  `results/tmt_trial_2026-10-30/README.md` on the branch.
+- **Pick up at:** run `threads.py inbox`, read PXReprise's news about their 1.4.1 swap, then ask the user whether to
+  release 1.4.2. The agent recommends releasing after the swap. To release:
+  1. Merge `feat/1.4.2`.
+  2. Rerun the tutorial at 1.4.2.
+  3. Wait for CI and dotnet-binaries to go green.
+  4. Tag `v1.4.2`.
+  5. Check that the downloaded binary reproduces the tutorial ids, PXD017944 `3cd52dd1b39472d8` and the trial
+     `55d39d1895e98784`.
+  6. Run `gh release edit v1.4.2 --draft=false --latest`.
+  7. Tell PXReprise, QuantProject (D12/D13 done) and aging.
+- `design/NOTE_FROM_USER_2026-10-21_github-actions-minutes.md` is the user's note on GitHub Actions minutes. dataRepo is
+  public under smith-chem-wisc, so its CI is free and nothing needs doing.
+
+## Earlier (2026-10-25): GO's 34 GB of copies deleted; GO and pathways designed per target set; 1.4.0 on hold
 
 - **1.4.0 is ON HOLD** by the user's word (D49), although PXReprise 058 delivered PXD006815 and PXD022393. Don't
   propose a date until the user lifts it. The predicted ids are stale for the 20 deposits PXReprise re-searches from
