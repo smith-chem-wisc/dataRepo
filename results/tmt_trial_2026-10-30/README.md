@@ -45,3 +45,22 @@ Bundle `55d39d1895e98784` (was `6953203f8f2e506a`; isobaric reader 2). Against 1
 `definitions` (`DEF-TMT-PEP`/`PROT` at v3.19) and `findings` (one new: `isobaric_peptide_q_psm_level`). The scratch
 catalog's `catalog_reconciliation` reads `peptidoforms_target_1pct` 44,037 / 43,114 `explained`, basis #2941, no bound;
 `reconciliation_failed` is empty. Label-free ids unchanged: tutorial `004f8de1881cec43`, PXD017944 `3cd52dd1b39472d8`.
+
+## 1.4.2 as released: DEF-TMT-* at v3.22, isobaric reader 3 (2026-11-03)
+
+QuantProject 073 retracted v3.14's per-file claim (v3.22: only the combined `AllPeptides.psmtsv` is PSM-level), so the
+texts and the finding were corrected and the reader went to 3 (2 was pushed, never released). The trial folder
+`F:\pxreprise_trial_tmt` is gone, so this was measured on the three isobaric deposits aging serves since PXReprise 080,
+re-ingested by a 1.4.2-stamped build into a scratch store from aging's own search folders (read only), and compared
+table by table with PXReprise's 1.4.1 bundles (bundle_id ignored):
+
+| deposit | 1.4.1 (served) | 1.4.2 | differs |
+|---|---|---|---|
+| PXD034564 | `b0cab7e13c179b64` | `ff841cc55ccccb31` | `definitions` 2 rows (DEF-TMT-PEP/PROT), `findings` +1 |
+| PXD043296 | `85d48996d238fe25` | `eb5e98c7e6ccd75c` | the same |
+| PXD051031 | `8804bb3780600f01` | `fccf50e5513f38f7` | the same |
+
+Every other table is equal in rows and content, and the only differing source is the `isobaric_reader` declaration.
+The new finding is `isobaric_peptide_q_psm_level` in each. The ingest's `peptidoforms_target_1pct` gaps (44,059 vs
+43,102; 60,606 vs 59,884; 5,812 vs 4,900) are the PSM-level file against `results.txt`'s peptide-level count (#2941).
+Label-free ids unchanged: the tutorial's `004f8de1881cec43` (catalog `17a70f4c8baf3c04` on 1.4.2).
