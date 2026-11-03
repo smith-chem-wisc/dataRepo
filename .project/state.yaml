@@ -1801,8 +1801,9 @@ repos:  # PR D and PR E worktrees retired 2026-09-24: both merged, in mzLib 1.0.
     worktree: code/_wt_142
     branch: feat/1.4.2
     base_clone: "E:/CodeReview/dataRepo (origin = smith-chem-wisc/dataRepo)"
-    # 1.4.2 (G105 follow-up: DEF-TMT v3.19, #2941 finding and verdict). Pushed, CI green; not merged, not released.
-    pinned: c834cce
+    # 1.4.2 (DEF-TMT v3.22, #2941 finding and verdict, matched_ion descriptions). Merged as 1248c17 and released
+    # 2026-11-03 (tag v1.4.2); can be retired.
+    pinned: 3447228
   - name: dataRepo
     worktree: code/_wt_ai_contrib
     branch: feat/ai-contributions

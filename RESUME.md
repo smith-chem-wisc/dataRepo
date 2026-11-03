@@ -2,11 +2,11 @@
 
 <!-- BEGIN GENERATED -- render_resume.py owns this block; edit state.yaml, not here -->
 
-**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-11-02
+**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-11-03
 
 | | |
 |---|---|
-| Commits | 806 |
+| Commits | 823 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
 | Locked decisions | 51 |
 | Open gaps | 111 |
@@ -20,7 +20,7 @@
 | `code/_wt_140_ingest` | -- | -- | `0c1f8d0a` | **missing on disk** |
 | `code/_wt_141` | feat/1.4.1 | `e41c4af8` | `e41c4af` | at pin |
 | `code/_wt_tmt` | feat/tmt | `9e18c4dc` | `9e18c4d` | at pin |
-| `code/_wt_142` | feat/1.4.2 | `c834cce5` | `c834cce` | at pin |
+| `code/_wt_142` | feat/1.4.2 | `3447228b` | `3447228` | at pin |
 | `code/_wt_ai_contrib` | feat/ai-contributions | `1db8a535` | `1db8a535` | at pin |
 | `code/_wt_mzlib_sumo` | fix/sumo-remnant-target-lysine | `6974a4d4` | `6974a4d4` | at pin |
 
@@ -36,7 +36,24 @@ reanalyses. The results cover search, quant, provenance, design and organelle an
 use it, but AI agents are the main users. The question it serves is how organelle proteomes change
 with age.
 
-## Latest (2026-11-01): 1.4.1 released with the TMT ingest; 1.4.2 built, waiting on the user's word
+## Latest (2026-11-03): 1.4.2 released; fragment ions and DATAREPO-88 next
+
+- **datarepo 1.4.2 is RELEASED** (tag `v1.4.2` on `1248c17`, 21:53 UTC; the user: "Fix to v3.22, then release").
+  QuantProject 073 retracted the v3.14 sentence the branch had copied, so 1.4.2 stores `DEF-TMT-*` at v3.22 (isobaric
+  reader 3), and `psms.matched_ion_*` now say they are not filled. Only isobaric bundles move; measured on aging's
+  three TMT deposits (every table equal but two definitions and one finding). The downloaded binary reproduced the
+  tutorial (catalog `17a70f4c8baf3c04`), PXD017944 and PXD051031. Threads: PXReprise 083, QuantProject 074, aging 127.
+- **PXReprise swapped to 1.4.1** on 2026-11-02 (their 079); its first three TMT bundles are served (080).
+- **Pick up at:** run `threads.py inbox` and read PXReprise's reply to 083 (the 1.4.2 swap, the three re-ingests,
+  PXR-R45). Then put two designs to the user before building either:
+  1. **PXR-R44, fragment ions.** The user chose the rows: the best PSM per peptidoform. The proposed form is the six
+     `Matched Ion *` columns, verbatim. Cost: about 5-27 MB per deposit (PXD082596). The build refuses mixed schemas,
+     so a bundle without ions must still build. CLAUDE.md has the numbers.
+  2. **aging's DATAREPO-88** (126): channel designs, `quant_scale`, `age_effect_meta` v1.3, and the 125 guidance
+     reworded. Acknowledged only.
+- Not read yet: go 031 (mzLib 1.0.597 carries #1497, which unblocks G111), kegg 008, pep 007-008.
+
+## Earlier (2026-11-01): 1.4.1 released with the TMT ingest; 1.4.2 built, waiting on the user's word
 
 - **datarepo 1.4.1 is RELEASED** (tag `v1.4.1` on `2c59589`, 15:31 UTC). It carries 1.4.1's build-side
   reconciliation, the unique-peptide scope label, ptmQtl S5/D60, the task-file fix and G110, plus the isobaric (TMT)

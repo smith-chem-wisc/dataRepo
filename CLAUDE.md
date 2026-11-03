@@ -7,10 +7,30 @@ This folder is a `/project`-managed research project. **You are de facto working
 - **Phase:** INCEPTION
 - **Goal:** An AI-ready, API-accessible repository for the search + quant results of the many PRIDE datasets the `aging` pipeline reanalyzes. Humans can use it, but AI agents are the main users. The question it serves is how organelle proteomes change with age.
 - **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`) and read anything new from PXReprise
-  (their 1.4.1 swap + re-ingest of the ten). **Then ask the user whether to release 1.4.2** (`feat/1.4.2` @ `c834cce`,
-  CI green; the agent's recommendation: after PXReprise's 1.4.1 swap). Release steps are in "Next release" below and the
-  recipe in RESUME. **1.4.1 is RELEASED** (below); aging still serves 1.4.0 until PXReprise swaps. We also wait on ptmQtl's DATAREPO-P33, pep, pyMzLib, and on mzLib releases
-  from go (#1497) and kegg.
+  (their 1.4.2 swap, the three TMT re-ingests, PXR-R45). **Then the fragment-ion design (PXR-R44)** and **aging's
+  DATAREPO-88**, each a proposal to the user before any build. We also wait on ptmQtl's DATAREPO-P33, pep, pyMzLib.
+  Unread and not yet read this session: go 031 (mzLib 1.0.597 releases #1497: G111 GO per target set is unblocked),
+  kegg 008, pep 007-008.
+  - **2026-11-03: datarepo 1.4.2 is RELEASED** (the user: "Fix to v3.22, then release"). Tag `v1.4.2` on `1248c17`
+    (merge of feat/1.4.2: `c834cce` + `3447228`), published 21:53 UTC. win-x64 zip sha256
+    `2610d3bfd3b7d8dda2b147e8c19b8b5e17e08ff35517a70f704fe754ccf9127c`. Tutorial catalog `17a70f4c8baf3c04`. Carries
+    QuantProject 073's v3.22 `DEF-TMT-*` (isobaric reader 3; 2 never released) and the `psms.matched_ion_*` descriptions
+    (NOT FILLED). The downloaded binary reproduced the tutorial, PXD017944 `3cd52dd1b39472d8` and PXD051031's 1.4.2 id.
+    Predicted 1.4.2 ids: PXD034564 `ff841cc55ccccb31`, PXD043296 `eb5e98c7e6ccd75c`, PXD051031 `fccf50e5513f38f7`.
+    Told PXReprise 083 (swap; re-ingest the three; PXR-R43 answered: read the filter line and both count-line forms,
+    `not_compared` under a filter we do not recount; PXR-R44 in part; asks PXR-R45: which deposits still hold
+    `AllPeptides.psmtsv`), QuantProject 074, aging 127 (DATAREPO-88 acknowledged only).
+    - **CI flake, new:** `FolderCatalogTests.EachDepositIsDerivedOnceAndReused` failed once on Linux CI with DuckDB
+      "Invalid Error: don't know what type:" (run 41719081161, `1248c17`); the identical code was green on the branch
+      and on rerun. macOS arm64 runners were short twice (job not acquired); a rerun built it.
+    - **PXR-R44 (fragment ions), the user chose the rows: the best PSM per peptidoform** (AllPeptides.psmtsv rows).
+      Proposed form: the six `Matched Ion *` columns verbatim. PXD082596: 5.3 MB zstd for 1% targets, 26.9 MB for every
+      row, against an 83 MB bundle. Constraint: a new table is a schema bump and the build refuses mixed schemas, so a
+      deposit whose `AllPeptides.psmtsv` is gone could not re-ingest; design it so a bundle without ions still builds.
+      The current columns are `psms.matched_ion_series` (VARCHAR) and `matched_ion_count`, null everywhere
+      (`Identifications.cs:215`).
+    - **PXR-R43 promised:** before the first profile naming a MetaMorpheus #2909 filter, read `Identification filter
+      for ...` lines and `<`/`<=` count lines; compare only under the q-value rule.
   - **2026-11-01: datarepo 1.4.1 is RELEASED** (the user: "yes release them together": 1.4.1 + the TMT ingest in one).
     Tag `v1.4.1` on `2c59589` (merge `cb73f74` of feat/tmt, which holds feat/1.4.1; plus `2c59589`, a ModList fix: CI's
     runner ICU moved to Unicode 17 and broke `PythonCaseAndAlphaMatchForEveryCodePoint`; the unassigned table is now
@@ -27,8 +47,8 @@ This folder is a `/project`-managed research project. **You are de facto working
       `peptidoforms.best_q_value` is PSM-level there. **BUILT 2026-11-01 (the user: "build it") as 1.4.2** on branch
       `feat/1.4.2` (worktree `code/_wt_142`), pushed `c834cce`: isobaric reader 2, finding
       `isobaric_peptide_q_psm_level`, build verdict `explained` (no bound, basis #2941). TMT trial
-      `6953203f8f2e506a` -> `55d39d1895e98784` (only definitions + one finding differ); label-free ids unchanged. Not
-      merged, not released: ask the user when (it can wait for PXReprise's 1.4.1 swap; no TMT bundle is served).
+      `6953203f8f2e506a` -> `55d39d1895e98784` (only definitions + one finding differ); label-free ids unchanged.
+      **Superseded: released 2026-11-03 at v3.22 as 1.4.2** (above).
   Since 2026-10-20 one session, datarepo-9b, holds both the threads
   and the 1.4.0 branch (the user: "do what you think is best", after datarepo-39 ended). Then, in order:
   - **2026-10-28: datarepo 1.4.0 is RELEASED** (the user: "release 1.4.0 now", lifting D49). Tag `v1.4.0` on
