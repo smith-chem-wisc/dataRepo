@@ -566,6 +566,22 @@ decisions:
       the user: "Fix to v3.22, then release" 1.4.2 (released, tag v1.4.2 on 1248c17).
 gaps:
   - >-
+    G120 NEW 2026-11-04: ptmQtl DATAREPO-P35, PRIDE deposit records. Our 061 proposed three build-side catalog tables
+    (`deposit_records`, `deposit_contacts`, `deposit_references`, names provisional), keyed by bare accession, read at
+    build from records the operator fetches through mzLib's PrideArchiveClient; no bundle change, no re-ingest; e-mail
+    never stored. ptmQtl 062 accepted the shape as written and asked for a served view of shared raw files, derived at
+    build: one row per run whose sha256 appears in more than one run, with sha256, dataset_id, file_name and whether the
+    other copies are in another accession or the same one (names and columns our call). Not built; no release named.
+    Waits on the user: U20 (an operator fetch command, given U14) and U21 (which release). The lab rule is ptmQtl's and
+    comes to us before use (their G42, D65). The 193 records fetched for the measurement are scratch, not stored.
+  - >-
+    G121 NEW 2026-11-04: duplicate raw files, told aging 128 and PXReprise 085; we changed nothing. PXD006815
+    `_T_Z73a.raw` = `_T_Z74.raw` (sha256 5ebe5998..., bundle 712d0d04e45dc132), so A5's pooled values
+    (`PXD006815:design:A_5`) hold Z74's trypsin run and only a search without the copy fixes them. PXD033430 and
+    PXD057544 share three renamed control runs. aging decides; a re-search request comes from them. PXReprise's duplicate
+    check (between deposits, name + size) cannot see either; our suggestion is theirs to take. Re-check: inbox for an
+    aging or PXReprise reply. Any re-search moves that deposit's bundle id.
+  - >-
     G116 NEW 2026-11-03: PXR-R44 fragment ions (D52). Measured on PXD082596 (223,992 AllPeptides.psmtsv rows, bundle
     83 MB): the six ion columns as zstd Parquet are 5.3 MB for 1% targets, 26.9 MB for every row. The build refuses a
     store that mixes schema versions (Catalog.cs SchemaVersion checks), so a new table means re-ingesting every served

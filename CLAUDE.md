@@ -12,8 +12,17 @@ This folder is a `/project`-managed research project. **You are de facto working
   design for the user (G116, PXR-R44):** two options with a recommendation, schema bump + full re-ingest (PXD031782
   cannot rebuild, its AllPeptides.psmtsv is gone) or an additive table a bundle may lack. PXReprise 084: 194 of 195
   served deposits keep `AllPeptides.psmtsv`, 8 only in `<acc>.superseded-*`. **Then aging's DATAREPO-88 (G117)**, also
-  a proposal before any build. Not read yet: go 031 (mzLib 1.0.597 releases #1497: G111 GO per target set unblocked),
-  kegg 008, pep 007-008. We also wait on ptmQtl's DATAREPO-P33, pyMzLib DATAREPO-70.
+  a proposal before any build. **Put U20 and U21 (G120) to the user alongside the G116 design.** Not read yet: go 031
+  (mzLib 1.0.597 releases #1497: G111 GO per target set unblocked), kegg 008, pep 007-008, QuantProject 075-076 (mzLib
+  #1552, #1553). We also wait on ptmQtl's DATAREPO-P33, pyMzLib DATAREPO-70.
+  - **2026-11-04: ptmQtl's DATAREPO-P35 is designed and accepted, NOT built (G120).** Our 061 proposed three catalog
+    tables read at build from PRIDE records the operator fetches (no bundle change, no re-ingest, no e-mail). Their 062
+    says yes as written and asks for a served view of shared raw files, derived at build. Waits on the user: U20 (may an
+    operator command fetch PRIDE records, given U14) and U21 (which release). 062 asks nothing back. ptmQtl's copy of 061
+    is committed in their repo, unpushed: their repo holds its own unpushed work ahead of it, so that push is theirs.
+    - **Duplicate raw files told (G121), no action on us:** aging 128, PXReprise 085. PXD006815's `_T_Z73a.raw` is
+      `_T_Z74.raw`, so A5's pooled values hold Z74's trypsin run. PXD033430 and PXD057544 share three renamed controls.
+      aging decides, and any re-search request comes from them.
   - **2026-11-03: datarepo 1.4.2 is RELEASED** (the user: "Fix to v3.22, then release"). Tag `v1.4.2` on `1248c17`
     (merge of feat/1.4.2: `c834cce` + `3447228`), published 21:53 UTC. win-x64 zip sha256
     `2610d3bfd3b7d8dda2b147e8c19b8b5e17e08ff35517a70f704fe754ccf9127c`. Tutorial catalog `17a70f4c8baf3c04`. Carries
@@ -690,6 +699,19 @@ This folder is a `/project`-managed research project. **You are de facto working
   "Irreversible Local Destruction"). Hand the user the command. **The `!` prefix runs bash here, not PowerShell**: give
   `find ... -delete` rather than `Get-ChildItem | Remove-Item`. Record what is deleted (path, size, the hash run.json
   keeps) first, and verify with a scratch build after.
+- **A raw file's name is not its identity; `runs.sha256` is.** 193 deposits passed PXReprise's duplicate check (between
+  deposits only, name + size), yet PXD006815 holds one run under two animals' names and two deposits share three renamed
+  runs. `SELECT sha256, list(DISTINCT dataset_id), list(file_name) FROM runs GROUP BY sha256 HAVING count(*) > 1` finds
+  them. With a design, MetaMorpheus has already summed a copy into that sample's pooled values, so dropping the run
+  after the search does not undo it.
+- **PRIDE's contact fields do not identify people** (measured on 193 records, ptmQtl 061). A lab head's contact id is a
+  fresh copy per deposit, no lab head has an ORCID, a submitter account can be a core facility across labs, the named
+  lab head can be the MS collaborator, and `last_name` can read `PhD`. PRIDE also edits its records after deposit, so
+  they stay out of bundles.
+- **`PYTHONIOENCODING` is ignored under `python -I`,** and `-I` is required for scripts reading downloaded data, so a
+  PRIDE name crashes the print on cp1252. Call `sys.stdout.reconfigure(encoding="utf-8")` in the script.
+- **A deposit's search folder is not under one date.** Read `run:` in `F:\aging_data\batch\manifest.yaml`
+  (`run_2026-09-21/<PXD>`). `F:\aging_data\batch\state.json` keys its entries under `datasets`.
 
 **Sibling project: `E:\CodeReview\aging`** (the NCEMS pipeline). aging *produces* results under
 `F:\aging_data\<run>\<PXD>\` with `provenance.json` (schema `aging-provenance/2`). dataRepo *ingests and serves*

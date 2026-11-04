@@ -59,7 +59,7 @@ depends on it is marked as such.
 | ID | Question | Default (work proceeds on it) |
 |---|---|---|
 | U20 | ptmQtl wants each deposit's lab head, submitter and papers from PRIDE. They are kept out of the bundle, because PRIDE edits its record after deposit. Can a datarepo command fetch PRIDE's records (through mzLib's `PrideArchiveClient`) for the operator to run, given U14's rule that the runner never fetches its inputs? | **Yes, as an operator command, not a runner step.** The operator runs it. Each record is stored in the store with its sha256, fetch time and mzLib version, and `build` reads the newest one per accession, so the input is recorded and never invisible. E-mail addresses are never stored. |
-| U21 | Which release carries P35's three catalog tables (`deposit_records`, `deposit_contacts`, `deposit_references`)? They are build-side only: no schema bump, no re-ingest. | The release after ptmQtl answers DATAREPO-P37, and after the fragment-ion design (G116) is settled with you. |
+| U21 | Which release carries P35's three catalog tables (`deposit_records`, `deposit_contacts`, `deposit_references`) and the served view of shared raw files ptmQtl asked for (their 062)? All are build-side only: no schema bump, no re-ingest. | The release after the fragment-ion design (G116) is settled with you. ptmQtl answered DATAREPO-P37 on 2026-11-04 (the shape as written, plus the view) and asks for no date. |
 
 ## Waiting on aging (thread `design/threads/aging/`)
 

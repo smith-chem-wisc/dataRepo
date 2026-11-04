@@ -2237,3 +2237,44 @@ table a bundle may lack, and it goes to the user (G116). aging 126 opened DATARE
 with a method term, which needs channel designs, a `quant_scale` label and a reshaped age_effect_meta. It is
 acknowledged only (G117). Threads out: PXReprise 083, QuantProject 074, aging 127. The user asked for PXReprise's
 messages to be watched all session; a polling monitor did it, and caught 084.
+
+## 2026-11-04: ptmQtl's PRIDE records designed and accepted; the raw-file question found one run under two animals' names
+
+The user asked us to answer ptmQtl, which meant DATAREPO-P35: lab heads, submitters and papers per deposit from PRIDE,
+and whether the catalog knows when two accessions hold the same raw files. Our 060 had promised the columns' shape
+before any build. Rather than design from the field names, we fetched PRIDE's record for all 193 deposits in catalog
+`abfeaa1bf5c73d4d` and tried to fill the columns, and the fields turned out not to mean what their names suggest. A lab
+head's contact id is a fresh copy per deposit and never recurs. No lab head has an ORCID. A submitter account can be a
+core facility across five labs. The named lab head can be the mass-spectrometry collaborator rather than the paper's
+group (PXD006815). `last_name` reads `PhD` on two deposits. So the shape keeps the fields untouched and the lab rule
+stays ptmQtl's.
+
+The obvious home was a new bundle table, and we rejected it for two reasons. PRIDE edits its records after deposit (22
+deposits list no paper today, 31 of 175 papers have PubMed id 0), so a paper added later would move a bundle id while
+every search row stayed the same. And a bundle table is a schema bump, which re-ingests the whole store. Our 061
+therefore proposed three catalog tables read at build from records the operator fetches, keyed by bare accession, with
+e-mail left out on purpose and PRIDE's empty strings stored as NULL. That needs an operator command to fetch from
+PRIDE, which sits close to U14's rule that the runner never fetches its inputs, so it went to OPEN_QUESTIONS as U20 with
+U21 for the release. Nothing was built and no release was named. ptmQtl's copy of 061 is committed in their repo but not
+pushed, because their repo holds its own unpushed work ahead of it, and we left that to them.
+
+The raw-file half was one query over `runs.sha256`, and it found more than was asked. No file name is shared across
+accessions, yet three files are shared by sha256: PXD033430's `Control-1/2/3.raw` are PXD057544's `Con1/2/3_Lum_*.raw`.
+Within one deposit, PXD006815's `_T_Z73a.raw` and `_T_Z74.raw` are the same file. We checked that at source before
+telling anyone: PRIDE's sha1 and size, PXReprise's fetch manifest, acquisition start and MS2 count, the search's
+`ExperimentalDesign.tsv`, and the served assays. The acquisition series settles whose run it is. The T runs start about
+2 h 29 min apart, the file fills Z74's slot and nothing fills Z73's, so Z73's trypsin run was most likely never
+uploaded. It reaches values: MetaMorpheus sums a sample's fractions, so A5's pooled values (`PXD006815:design:A_5`) hold
+Z74's run, and only a search without the copy can fix them. Per-file values can be dropped by run.
+
+The user said to tell the affected projects: aging 128 and PXReprise 085, nothing asked of either. PXReprise's duplicate
+check could not have caught these. It compares a deposit against other deposits, never within one, and matches by name
+and size while these files were renamed. We sent a suggestion, theirs to take, and said plainly that we found no record
+of the PXD057544 overlap in `F:\aging_data\batch\state.json`. aging decides what to do with both deposits, and any
+re-search request comes from them (G121).
+
+ptmQtl 062 arrived the same day: the shape is accepted as written, and their user ruled for a served view of shared raw
+files instead of the query alone, because pooling treats deposits as independent and is rebuilt at every publish, so the
+check must run without anyone remembering it. That closes the wait U21's default named; U20 and U21 still need the user.
+Left untouched on purpose: the fragment-ion design (G116), DATAREPO-88 (G117), and the unread go, kegg, pep and
+QuantProject threads. No code changed this session.

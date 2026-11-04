@@ -2,14 +2,14 @@
 
 <!-- BEGIN GENERATED -- render_resume.py owns this block; edit state.yaml, not here -->
 
-**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-11-03
+**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-11-04
 
 | | |
 |---|---|
-| Commits | 825 |
+| Commits | 833 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
 | Locked decisions | 52 |
-| Open gaps | 115 |
+| Open gaps | 117 |
 | Gate items skipped | 5 |
 
 **Worktrees** -- details in `code/PINNED.md`
@@ -34,7 +34,33 @@ reanalyses. The results cover search, quant, provenance, design and organelle an
 use it, but AI agents are the main users. The question it serves is how organelle proteomes change
 with age.
 
-## Latest (2026-11-03): 1.4.2 released; fragment ions and DATAREPO-88 next
+## Latest (2026-11-04): ptmQtl's PRIDE records accepted, not built; duplicate raw files told
+
+No code changed and nothing was released.
+
+- **DATAREPO-P35: designed and accepted, NOT built (G120).** Our ptmQtl 061 proposed three catalog tables read at build
+  from PRIDE records the operator fetches: `deposit_records`, `deposit_contacts`, `deposit_references`. There is no
+  bundle change and no re-ingest, and e-mail is never stored. Measured on all 193 deposits in catalog
+  `abfeaa1bf5c73d4d`. ptmQtl 062 says yes as written and asks for a served view of shared raw files, derived at build.
+- **Duplicate raw files told (G121):** aging 128 and PXReprise 085, nothing asked.
+  - PXD006815's `_T_Z73a.raw` is `_T_Z74.raw`, so A5's pooled values hold Z74's trypsin run. Only a search without the
+    copy fixes them.
+  - PXD033430 and PXD057544 share three renamed control runs.
+  - aging decides, and any re-search request comes from them. PXReprise's duplicate check cannot see either case; our
+    suggestion is theirs to take.
+- **In flight (re-check with `threads.py inbox`):**
+  - replies from aging or PXReprise to 128 and 085;
+  - PXReprise's report of the 1.4.2 swap;
+  - ptmQtl's copy of 061 is committed in their repo but unpushed (`git -C E:\CodeReview\ptmQtl status -sb`). Their repo
+    holds its own unpushed work, so that push is theirs.
+- **Pick up at:** run `threads.py inbox` and read PXReprise's report of the 1.4.2 swap. Expected ids are PXD034564
+  `ff841cc55ccccb31`, PXD043296 `eb5e98c7e6ccd75c` and PXD051031 `fccf50e5513f38f7`. Then write the fragment-ion design
+  for the user (G116, PXR-R44): two options with a recommendation. Put U20 and U21 from `design/OPEN_QUESTIONS.md` to
+  the user at the same time. Then aging's DATAREPO-88 (G117), also a proposal before any build.
+- Not read yet: go 031, kegg 008, pep 007-008, QuantProject 075-076 (mzLib #1552, #1553). ptmQtl 062 is read. The
+  inbox's unread flags stay on because `--mark-read` marks everything at once.
+
+## Earlier (2026-11-03): 1.4.2 released; fragment ions and DATAREPO-88 next
 
 - **datarepo 1.4.2 is RELEASED** (tag `v1.4.2` on `1248c17`, 21:53 UTC; the user: "Fix to v3.22, then release").
   QuantProject 073 retracted the v3.14 sentence the branch had copied, so 1.4.2 stores `DEF-TMT-*` at v3.22 (isobaric
@@ -44,9 +70,9 @@ with age.
 - **PXReprise swapped to 1.4.1** on 2026-11-02 (their 079); its first three TMT bundles are served (080).
 - **PXReprise 084 (PXR-R45 answered):** 194 of 195 served deposits keep their `AllPeptides.psmtsv`, 8 of them only in a
   `<acc>.superseded-*` folder; PXD031782's is gone (on hold). They keep every one, and take 1.4.2 at their next swap.
-- **Pick up at:** run `threads.py inbox` and read PXReprise's report of the 1.4.2 swap. Expected ids are PXD034564
-  `ff841cc55ccccb31`, PXD043296 `eb5e98c7e6ccd75c` and PXD051031 `fccf50e5513f38f7`. Then put two designs to the
-  user before building either:
+- **Pick up at (superseded 2026-11-04 by the section above; both items are still open):** run `threads.py inbox` and
+  read PXReprise's report of the 1.4.2 swap. Expected ids are PXD034564 `ff841cc55ccccb31`, PXD043296
+  `eb5e98c7e6ccd75c` and PXD051031 `fccf50e5513f38f7`. Then put two designs to the user before building either:
   1. **PXR-R44, fragment ions.** The user chose the rows: the best PSM per peptidoform. The proposed form is the six
      `Matched Ion *` columns, verbatim. Cost: about 5-27 MB per deposit (PXD082596). The build refuses mixed schemas,
      so a bundle without ions must still build. CLAUDE.md has the numbers.
