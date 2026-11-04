@@ -54,6 +54,13 @@ depends on it is marked as such.
 | U18 | Does the frozen Python 0.32.0 get fixes for defects that block the operator during the port? | **ANSWERED 2026-10-04 (the user): yes.** Minimal ones, each also written into the port. |
 | U19 | When a search's design puts several files (fractions, technical replicates) into one sample, MetaMorpheus writes ONE protein-group intensity, spectral count and occupancy for that sample. Should the repository store those sample-level values? That needs a new place in the schema (a full re-ingest for aging) and QuantProject's definition of what the number means. (G92, PXReprise PXR-R9) | **Not stored, with a `sample_quant_not_stored` warning naming each sample** (1.3.1). They are never split onto runs. Peptide quantities stay per file and are stored. Revisit once we know how many aging deposits have such samples. |
 
+### PRIDE deposit records (ptmQtl DATAREPO-P35; our ptmQtl 061), 2026-11-04
+
+| ID | Question | Default (work proceeds on it) |
+|---|---|---|
+| U20 | ptmQtl wants each deposit's lab head, submitter and papers from PRIDE. They are kept out of the bundle, because PRIDE edits its record after deposit. Can a datarepo command fetch PRIDE's records (through mzLib's `PrideArchiveClient`) for the operator to run, given U14's rule that the runner never fetches its inputs? | **Yes, as an operator command, not a runner step.** The operator runs it. Each record is stored in the store with its sha256, fetch time and mzLib version, and `build` reads the newest one per accession, so the input is recorded and never invisible. E-mail addresses are never stored. |
+| U21 | Which release carries P35's three catalog tables (`deposit_records`, `deposit_contacts`, `deposit_references`)? They are build-side only: no schema bump, no re-ingest. | The release after ptmQtl answers DATAREPO-P37, and after the fragment-ion design (G116) is settled with you. |
+
 ## Waiting on aging (thread `design/threads/aging/`)
 
 | ID | Question | Status |
