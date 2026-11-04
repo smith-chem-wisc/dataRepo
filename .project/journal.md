@@ -2202,3 +2202,38 @@ reverted and only SchemaGen and build_docs.py kept; and a global version replace
 prose, reverted and done by line. The MCP parity tests then needed masks for the two appended description sentences,
 because they compare against what 0.32.0 wrote. Not released: the agent recommended waiting for PXReprise's 1.4.1 swap,
 since no TMT bundle is served and two swaps in a row cost them more than a few days' wait costs anyone.
+
+## 2026-11-03: datarepo 1.4.2 released at QuantProject's v3.22; PXReprise on 1.4.1 with the first TMT bundles; fragment ions chosen
+
+The session opened on four PXReprise messages. They had swapped to 1.4.1 on 11-02 and re-ingested the ten bundles
+without task files, and our predicted id for PXD032040 held. PXD082596 had been on our list by mistake: its bundle
+always kept its task files, so the re-ingest was a no-op, and we never found why the selection named it. The first
+three TMT deposits were served on 1.4.1 after PXReprise built the reagent and plex keys their 074 had promised. They
+asked whether `labelling_plex` should count channels used (no: the kit's plex, an upper bound). They also flagged a
+722-peptidoform gap on PXD043296, which is exactly MetaMorpheus #2941, already explained by 1.4.2's build. Then two
+asks arrived. R43 covers results.txt lines under a named identification filter (#2909): we will read both forms and the
+filter line, and not compare under a filter we do not recount. R44 reported that the matched-ion columns are empty in
+all 513 bundles. That one was ours: the columns were declared and never filled, and their description claimed a
+verbatim fragment list.
+
+QuantProject 073, the same day, retracted the v3.14 sentence the unreleased 1.4.2 branch had copied word for word. The
+per-file `_Peptides.psmtsv` tables are peptide-level after all; only the combined file is PSM-level. Had 1.4.2 shipped
+a day earlier it would have stored a retracted claim, both in the definition text and in our finding's wording. The
+user chose to fix to v3.22 and release. The isobaric reader went from 2 to 3 even though 2 never shipped: it was
+pushed, and two texts must never share an id. The same release corrected the two matched-ion descriptions to say "not
+filled". That needed exact-text masks in the MCP parity tests, which compare against what Python 0.32.0 wrote.
+
+The trial folder was gone, so the measurement used aging's three served TMT deposits, re-ingested into a scratch store
+and diffed table by table against PXReprise's 1.4.1 bundles. Only the two definition rows and one finding differ, and
+the only differing source is the reader declaration. The release had two GitHub problems that were not ours: one DuckDB
+"don't know what type" failure in a derived-build test, green on rerun with identical code (G119), and no macOS arm64
+runners twice. The downloaded binary reproduced the tutorial, PXD017944 and PXD051031 before publishing at 21:53 UTC.
+
+For R44 the user picked the rows: the best PSM per peptidoform. On PXD082596 the six ion columns cost 5.3 MB (1%
+targets) to 26.9 MB (every row) against an 83 MB bundle, against PXReprise's 600 GB estimate for every PSM as text.
+PXReprise 084 then counted the sources: 194 of 195 served deposits keep their AllPeptides.psmtsv, and only PXD031782's
+is gone, already held. So a schema bump with a full re-ingest is workable. The open choice is that, or an additive
+table a bundle may lack, and it goes to the user (G116). aging 126 opened DATAREPO-88: pool label-free and TMT effects
+with a method term, which needs channel designs, a `quant_scale` label and a reshaped age_effect_meta. It is
+acknowledged only (G117). Threads out: PXReprise 083, QuantProject 074, aging 127. The user asked for PXReprise's
+messages to be watched all session; a polling monitor did it, and caught 084.

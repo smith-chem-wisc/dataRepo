@@ -555,7 +555,40 @@ decisions:
       explained bound and ok means "inside the bound" (derive at build where the bundle holds the inputs). PXR-R40 (query
       code as an mzLib project + NuGet package, for bridge): accepted, start after 1.4.1. PXR-R41 (fixture release):
       accepted, cut from 1.4.1 (agent's call). Told aging 123, PXReprise 071. Release only on the user's word.
+  - id: D52
+    date: 2026-11-03
+    text: >-
+      The user, 2026-11-03 (PXR-R44, PXReprise 082): the store will carry matched fragment ions for the BEST PSM PER
+      PEPTIDOFORM (the rows MetaMorpheus keeps in AllPeptides.psmtsv), not every PSM (~600 GB of text) and not every 1%
+      PSM. Agent's proposed form, not yet decided: the six `Matched Ion *` columns verbatim (series, m/z, Da and ppm
+      error, intensities, counts), since PXReprise's y1/y2 test needed the ppm errors. Placement (new table = schema bump
+      and full re-ingest, or an additive table a bundle may lack) goes to the user before any build (G116). Same day,
+      the user: "Fix to v3.22, then release" 1.4.2 (released, tag v1.4.2 on 1248c17).
 gaps:
+  - >-
+    G116 NEW 2026-11-03: PXR-R44 fragment ions (D52). Measured on PXD082596 (223,992 AllPeptides.psmtsv rows, bundle
+    83 MB): the six ion columns as zstd Parquet are 5.3 MB for 1% targets, 26.9 MB for every row. The build refuses a
+    store that mixes schema versions (Catalog.cs SchemaVersion checks), so a new table means re-ingesting every served
+    deposit. PXReprise 084 (PXR-R45): 194 of 195 served deposits keep their AllPeptides.psmtsv (8 only in
+    `<acc>.superseded-*` folders under run_2026-09-21, a re-ingest must point there); PXD031782's is gone (on hold,
+    aging A148). PXReprise keeps every one and will not delete without asking us. Decide with the user: schema bump
+    (PXD031782 cannot rebuild) vs an additive table that a bundle may lack; then send PXReprise the shape.
+  - >-
+    G117 NEW 2026-11-03: aging 126 DATAREPO-88 (label-free + TMT effects pooled with a method term, their D150,
+    DEF-AGE-EFFECT-META v1.3): (a) channel design in the catalog (one sample per real sample across a plex's fractions,
+    plex id, channel role, fractions), (b) per-dataset `quant_scale` (label_free_apex / reporter_ms2 / reporter_ms3),
+    (c) age_effect_meta reshaped (method_scope key, method-term table), (d) the 125 guidance reworded. Acknowledged
+    only (our 127). Known: our reader gives one sample_id per distinct TmtDesign `Sample Name` (Isobaric.cs:161-173);
+    PXReprise's default design names every file x channel a sample and every file its own Plex, hence PXD043296's 216.
+  - >-
+    G118 NEW 2026-11-03: PXR-R43 promised (our 083): before the first PXReprise profile naming a MetaMorpheus #2909
+    filter, the results.txt reader reads each `Identification filter for ...` line and takes count lines with `<` or
+    `<=` and any value text (level and per file); a count under a filter other than the q-value rule we recount by is
+    stored and its check reads `not_compared`, the filter named. PXReprise tells us the MetaMorpheus release.
+  - >-
+    G119 NEW 2026-11-03: CI flake. FolderCatalogTests.EachDepositIsDerivedOnceAndReused failed once on Linux CI with
+    DuckDB "Invalid Error: don't know what type:" from CatalogBuilder.Exec in BuildDerivedFromDeposits (run
+    41719081161 on 1248c17); identical code was green on feat/1.4.2 and on rerun. Investigate if it recurs.
   - >-
     G114 NEW 2026-10-29: a study delivery's rows must all name a sample and run in the catalog, so holding one dataset
     out of a build (PXD031782 on hold in the 1.4.0 swap) refuses the build until aging edits its curation files and
@@ -632,7 +665,11 @@ gaps:
     pxreprise_default (every deposited SDRF refused: no factor value), so PXR-R22 does not change which SDRF it reads.
     No stored design has mzLib #1424's colliding sample texts (94 ExperimentalDesign.tsv checked).
   - >-
-    G105 1.4.2 BUILT 2026-11-01 (the user: "build it") on feat/1.4.2 c834cce (worktree code/_wt_142, pushed, CI green,
+    G105 1.4.2 RELEASED 2026-11-03 (the user: "Fix to v3.22, then release"; tag v1.4.2 on 1248c17, 21:53 UTC):
+    QuantProject 073 retracted v3.14's per-file sentence, so DEF-TMT-* went to v3.22 and Isobaric.ReaderVersion to 3.
+    Measured on aging's three TMT deposits: only definitions (2) and findings (+1) differ; expected ids PXD034564
+    ff841cc55ccccb31, PXD043296 eb5e98c7e6ccd75c, PXD051031 fccf50e5513f38f7. PXReprise re-ingests them at their next
+    pin swap (084). G105 1.4.2 BUILT 2026-11-01 (the user: "build it") on feat/1.4.2 c834cce (worktree code/_wt_142, pushed, CI green,
     602 tests): Isobaric.ReaderVersion 2, DEF-TMT-PEP/PROT at QuantProject's v3.19 (b2e37b0), finding
     isobaric_peptide_q_psm_level for multiplex searches up to MetaMorpheus 1.1.13, peptidoforms.best_q_value and
     best_q_value_notch descriptions say so, CatalogReconciliation marks peptidoforms_target_1pct `explained` (no bound,

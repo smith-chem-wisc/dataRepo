@@ -6,11 +6,14 @@ This folder is a `/project`-managed research project. **You are de facto working
 
 - **Phase:** INCEPTION
 - **Goal:** An AI-ready, API-accessible repository for the search + quant results of the many PRIDE datasets the `aging` pipeline reanalyzes. Humans can use it, but AI agents are the main users. The question it serves is how organelle proteomes change with age.
-- **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`) and read anything new from PXReprise
-  (their 1.4.2 swap, the three TMT re-ingests, PXR-R45). **Then the fragment-ion design (PXR-R44)** and **aging's
-  DATAREPO-88**, each a proposal to the user before any build. We also wait on ptmQtl's DATAREPO-P33, pep, pyMzLib.
-  Unread and not yet read this session: go 031 (mzLib 1.0.597 releases #1497: G111 GO per target set is unblocked),
-  kegg 008, pep 007-008.
+- **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`) and read anything new from PXReprise:
+  their 1.4.2 pin swap and the three TMT re-ingests, which should give PXD034564 `ff841cc55ccccb31`, PXD043296
+  `eb5e98c7e6ccd75c`, PXD051031 `fccf50e5513f38f7` (they promised to report in 084). **Then write the fragment-ion
+  design for the user (G116, PXR-R44):** two options with a recommendation, schema bump + full re-ingest (PXD031782
+  cannot rebuild, its AllPeptides.psmtsv is gone) or an additive table a bundle may lack. PXReprise 084: 194 of 195
+  served deposits keep `AllPeptides.psmtsv`, 8 only in `<acc>.superseded-*`. **Then aging's DATAREPO-88 (G117)**, also
+  a proposal before any build. Not read yet: go 031 (mzLib 1.0.597 releases #1497: G111 GO per target set unblocked),
+  kegg 008, pep 007-008. We also wait on ptmQtl's DATAREPO-P33, pyMzLib DATAREPO-70.
   - **2026-11-03: datarepo 1.4.2 is RELEASED** (the user: "Fix to v3.22, then release"). Tag `v1.4.2` on `1248c17`
     (merge of feat/1.4.2: `c834cce` + `3447228`), published 21:53 UTC. win-x64 zip sha256
     `2610d3bfd3b7d8dda2b147e8c19b8b5e17e08ff35517a70f704fe754ccf9127c`. Tutorial catalog `17a70f4c8baf3c04`. Carries
@@ -319,6 +322,16 @@ This folder is a `/project`-managed research project. **You are de facto working
 - **The C#'s Python parity can rest on the machine's ICU.** CI's runner moved to Unicode 17 and broke the case-mapping
   test (1.4.1); `ModList.cs` now carries Python 3.13's own unassigned-range table. Suspect the platform first when a
   parity test goes red on code nobody touched.
+- **A copied definition can be retracted between copying and releasing.** QuantProject 073 retracted the v3.14 sentence
+  feat/1.4.2 had copied word for word, one day before release; our own finding repeated the claim. Before shipping a
+  copied text, read the owner's newest DATA-DEFINITIONS version and their newest thread. A reader/ingest version that
+  was PUSHED but never released is still bumped when its content changes (isobaric reader 2 -> 3).
+- **GitHub's macOS arm64 runners can be unavailable** ("The job was not acquired by Runner of type hosted"): the job
+  reads `cancelled` with no steps, and `draft-release` is skipped until all four platforms build. `gh run rerun <id>
+  --failed` until it builds; meanwhile `gh run download <id> -n datarepo-win-x64` gives the zip the draft will carry
+  (same sha256), so the id check need not wait.
+- **A peer commits its mirror of a message into OUR repo and does not push it** (PXReprise 082, 084). The survey then
+  shows master ahead of origin; push it with our next commit.
 - **Never global-replace a version number in docs.** `operating.md` keeps historical prose ("1.3.5 added ..."); a
   sed over it rewrote history (1.4.1). Edit the lines that describe the current install.
 - **Old (Python-era) note: schema edits need TWO regenerations:** `python tools/build_docs.py` **and** `python tools/build_tables.py`

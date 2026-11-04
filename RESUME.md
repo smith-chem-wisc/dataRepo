@@ -6,10 +6,10 @@
 
 | | |
 |---|---|
-| Commits | 823 |
+| Commits | 825 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
-| Locked decisions | 51 |
-| Open gaps | 111 |
+| Locked decisions | 52 |
+| Open gaps | 115 |
 | Gate items skipped | 5 |
 
 **Worktrees** -- details in `code/PINNED.md`
@@ -23,8 +23,6 @@
 | `code/_wt_142` | feat/1.4.2 | `3447228b` | `3447228` | at pin |
 | `code/_wt_ai_contrib` | feat/ai-contributions | `1db8a535` | `1db8a535` | at pin |
 | `code/_wt_mzlib_sumo` | fix/sumo-remnant-target-lysine | `6974a4d4` | `6974a4d4` | at pin |
-
-> **1 document(s) in `design/` not referenced above** -- `RELEASE_1.4.1.md`. Add a line for each, or say why not.
 
 <!-- END GENERATED -->
 
@@ -44,14 +42,19 @@ with age.
   three TMT deposits (every table equal but two definitions and one finding). The downloaded binary reproduced the
   tutorial (catalog `17a70f4c8baf3c04`), PXD017944 and PXD051031. Threads: PXReprise 083, QuantProject 074, aging 127.
 - **PXReprise swapped to 1.4.1** on 2026-11-02 (their 079); its first three TMT bundles are served (080).
-- **Pick up at:** run `threads.py inbox` and read PXReprise's reply to 083 (the 1.4.2 swap, the three re-ingests,
-  PXR-R45). Then put two designs to the user before building either:
+- **PXReprise 084 (PXR-R45 answered):** 194 of 195 served deposits keep their `AllPeptides.psmtsv`, 8 of them only in a
+  `<acc>.superseded-*` folder; PXD031782's is gone (on hold). They keep every one, and take 1.4.2 at their next swap.
+- **Pick up at:** run `threads.py inbox` and read PXReprise's report of the 1.4.2 swap. Expected ids are PXD034564
+  `ff841cc55ccccb31`, PXD043296 `eb5e98c7e6ccd75c` and PXD051031 `fccf50e5513f38f7`. Then put two designs to the
+  user before building either:
   1. **PXR-R44, fragment ions.** The user chose the rows: the best PSM per peptidoform. The proposed form is the six
      `Matched Ion *` columns, verbatim. Cost: about 5-27 MB per deposit (PXD082596). The build refuses mixed schemas,
      so a bundle without ions must still build. CLAUDE.md has the numbers.
   2. **aging's DATAREPO-88** (126): channel designs, `quant_scale`, `age_effect_meta` v1.3, and the 125 guidance
      reworded. Acknowledged only.
 - Not read yet: go 031 (mzLib 1.0.597 carries #1497, which unblocks G111), kegg 008, pep 007-008.
+- `design/RELEASE_1.4.1.md` is 1.4.1's plan (D51), released 2026-11-01. It is kept as the record of that release's
+  scope.
 
 ## Earlier (2026-11-01): 1.4.1 released with the TMT ingest; 1.4.2 built, waiting on the user's word
 
