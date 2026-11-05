@@ -6,15 +6,23 @@ This folder is a `/project`-managed research project. **You are de facto working
 
 - **Phase:** INCEPTION
 - **Goal:** An AI-ready, API-accessible repository for the search + quant results of the many PRIDE datasets the `aging` pipeline reanalyzes. Humans can use it, but AI agents are the main users. The question it serves is how organelle proteomes change with age.
-- **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`) and read anything new from PXReprise:
-  their 1.4.2 pin swap and the three TMT re-ingests, which should give PXD034564 `ff841cc55ccccb31`, PXD043296
-  `eb5e98c7e6ccd75c`, PXD051031 `fccf50e5513f38f7` (they promised to report in 084). **Then write the fragment-ion
-  design for the user (G116, PXR-R44):** two options with a recommendation, schema bump + full re-ingest (PXD031782
-  cannot rebuild, its AllPeptides.psmtsv is gone) or an additive table a bundle may lack. PXReprise 084: 194 of 195
-  served deposits keep `AllPeptides.psmtsv`, 8 only in `<acc>.superseded-*`. **Then aging's DATAREPO-88 (G117)**, also
-  a proposal before any build. **Put U20 and U21 (G120) to the user alongside the G116 design.** Not read yet: go 031
-  (mzLib 1.0.597 releases #1497: G111 GO per target set unblocked), kegg 008, pep 007-008, QuantProject 075-076 (mzLib
-  #1552, #1553). We also wait on ptmQtl's DATAREPO-P33, pyMzLib DATAREPO-70.
+- **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`) and read PXReprise's answer to our 089:
+  PXR-R49 (the 1.5.0 window), PXR-R50 (record MS2 or MS3), and PXD025315's delivery on 1.4.3 (expect
+  `3d76e6ec83ecc5a1`). **Then 1.5.0 (G123; D53, D54; plan `design/RELEASE_1.5.0.md`):** decided by the user, not built,
+  and **nothing is built until PXReprise answers on the window**. Still owed: PXReprise R30-R39, kegg's KEGG-D6. We also
+  wait on ptmQtl's DATAREPO-P33, pyMzLib DATAREPO-70.
+  - **2026-11-05: datarepo 1.4.3 is RELEASED** (the user: "release the reader fix"). Tag `v1.4.3` on `1190f85`, published
+    17:37 UTC. win-x64 zip sha256 `6a4ea62f9b40e5ac0e0ed2e01be186c13615cff1668ee6999bbf1bd48ed99a22`. Tutorial catalog
+    `6622391f2ebec9fe`. `TsvReader` reads a table of any size, one row at a time (PXR-R48). No row and no id moves. The
+    downloaded binary reproduced the tutorial, PXD017944 `3cd52dd1b39472d8` and PXD025315 `3d76e6ec83ecc5a1`. Told
+    PXReprise 089, aging 129 (their copy is committed, unpushed: their repo holds its own work ahead of it), ptmQtl 063,
+    go 032 (GO-D13: none). The worktree `code/_wt_143` can go once PXD025315 is delivered.
+    - **The user decided 1.5.0 the same day:** fragment ions in every bundle (schema 0.0.17, one whole-store re-ingest,
+      against the agent's recommendation of a companion store), at 1% PEP q-value with the q-value notch fallback for a
+      search with no PEP; an operator command may fetch PRIDE records; P35 ships in 1.5.0. `deposit_facts` and PRIDE
+      records are companions beside the bundle. DATAREPO-88 is proposed in aging 129.
+    - **1.4.2 swap done** (PXReprise 088): live 14:54 UTC 11-05, all three predicted TMT ids matched; PXD027548 is
+      `a0f8c8a9c9c2deef`.
   - **2026-11-04: ptmQtl's DATAREPO-P35 is designed and accepted, NOT built (G120).** Our 061 proposed three catalog
     tables read at build from PRIDE records the operator fetches (no bundle change, no re-ingest, no e-mail). Their 062
     says yes as written and asks for a served view of shared raw files, derived at build. Waits on the user: U20 (may an
@@ -710,6 +718,17 @@ This folder is a `/project`-managed research project. **You are de facto working
   they stay out of bundles.
 - **`PYTHONIOENCODING` is ignored under `python -I`,** and `-I` is required for scripts reading downloaded data, so a
   PRIDE name crashes the print on cp1252. Call `sys.stdout.reconfigure(encoding="utf-8")` in the script.
+- **A bundle in the store is not a bundle in the catalog.** PXReprise 084 counted PXD031782 as served by reading the store,
+  and we repeated it to the user as a cost of a schema bump. Its only bundle is schema 0.0.15, so 1.4.0 had already excluded it.
+  Ask `catalog_bundles`, not the folder.
+- **A search that trained no PEP still has numbers in `PEP_QValue`.** PXD058775's `PEP` column holds one value, and 229 target
+  rows read `PEP_QValue` at or below 1%. Whether PEP trained is decided per search, from results.txt's PEP block (pep 007), never
+  from the row.
+- **A bundle id proves nothing about a reader change.** It hashes inputs, never code, so the same id comes back from different
+  rows. Compare the tables' bytes with the served bundle. For a reader, keep the old one in the test as the oracle.
+- **The Write tool can turn `\u` escapes into raw characters.** A raw U+2028 in a C# string broke the build (2026-11-05). Grep a
+  new test file for non-ASCII bytes before building.
+- **`RunNameMap.Resolve` has a side effect:** it counts every unmatched name. Cache only names that matched.
 - **A deposit's search folder is not under one date.** Read `run:` in `F:\aging_data\batch\manifest.yaml`
   (`run_2026-09-21/<PXD>`). `F:\aging_data\batch\state.json` keys its entries under `datasets`.
 
