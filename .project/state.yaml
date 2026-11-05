@@ -564,7 +564,31 @@ decisions:
       error, intensities, counts), since PXReprise's y1/y2 test needed the ppm errors. Placement (new table = schema bump
       and full re-ingest, or an additive table a bundle may lack) goes to the user before any build (G116). Same day,
       the user: "Fix to v3.22, then release" 1.4.2 (released, tag v1.4.2 on 1248c17).
+  - id: D53
+    date: 2026-11-05
+    text: >-
+      The user, 2026-11-05 (U22, U23): "fragment ions in every bundle"; "1% pep q-value"; "use the fallback for files with
+      no pep". So a new bundle table at schema 0.0.17 and one whole-store re-ingest, against the agent's recommendation of a
+      companion store; rows at PEP q-value <= 0.01, or QValue Notch <= 0.01 for a search whose results.txt has no PEP block
+      (pep 007's test, decided per search: PXD058775 trained no PEP yet its PEP_QValue column holds numbers). Plan:
+      design/RELEASE_1.5.0.md. Same message: "release the reader fix" (1.4.3).
+  - id: D54
+    date: 2026-11-05
+    text: >-
+      The user, 2026-11-05 (U20, U21): "operator may fetch pride"; "1.5 is fine". An operator command stores PRIDE records in
+      the store with sha256, fetch time and mzLib version, never e-mail; U14 stays true of the runner. ptmQtl's three tables
+      and the shared-raw-files view ship in 1.5.0.
 gaps:
+  - >-
+    G122 NEW 2026-11-05: PXR-R48 (PXReprise 087). PXD025315's 1.49 GB AllQuantifiedPeaks.tsv cannot be ingested: ReadTsv
+    decoded the whole file into one string, past .NET's longest. TsvReader reads one row at a time; ReadTsv wraps it;
+    PeakQuality holds no table. Branch feat/1.4.3 `33250a8`, merged to master `1190f85`; released as 1.4.3 on the user's
+    word. PXD025315 ingests as `3d76e6ec83ecc5a1` (scratch). Close when PXReprise delivers it.
+  - >-
+    G123 NEW 2026-11-05: 1.5.0 (D53, D54; design/RELEASE_1.5.0.md), not built: `peptidoform_ions` in every bundle (schema
+    0.0.17, cs-1.3.0, one whole-store re-ingest), `deposit_facts` (PXR-R46, R47) and PRIDE records as companions,
+    DATAREPO-88. Send the shape to PXReprise and aging first and agree the window; nothing is built until PXReprise answers.
+    To settle in the build: drop psms.matched_ion_*, add peptidoforms.best_pep_q_value, and what else rides on the re-ingest.
   - >-
     G120 NEW 2026-11-04: ptmQtl DATAREPO-P35, PRIDE deposit records. Our 061 proposed three build-side catalog tables
     (`deposit_records`, `deposit_contacts`, `deposit_references`, names provisional), keyed by bare accession, read at

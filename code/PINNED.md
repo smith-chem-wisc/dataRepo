@@ -40,3 +40,6 @@ after the PRs shipped in **mzLib 1.0.592** / pyMzLib 0.2.0. The branches remain 
 **`fix/sumo-remnant-target-lysine` is PR #1432**: `ready for review`, `ready-for-agent`, six referees, on board #16 as
 In review. When it merges, move the board item to Shipped and remove the worktree. The MetaMorpheus follow-up (two
 MetaDraw settings XMLs still name `... on D`) waits on an mzLib release that carries it.
+
+**`feat/1.4.3` (worktree `code/_wt_143`, off `master` `6109d8d`, 2026-11-05): PXR-R48, the streaming TSV reader.** Merged to
+master `1190f85`, released as 1.4.3 on the user's word. The worktree can be removed once PXReprise has delivered PXD025315.

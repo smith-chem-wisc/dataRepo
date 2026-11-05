@@ -58,8 +58,15 @@ depends on it is marked as such.
 
 | ID | Question | Default (work proceeds on it) |
 |---|---|---|
-| U20 | ptmQtl wants each deposit's lab head, submitter and papers from PRIDE. They are kept out of the bundle, because PRIDE edits its record after deposit. Can a datarepo command fetch PRIDE's records (through mzLib's `PrideArchiveClient`) for the operator to run, given U14's rule that the runner never fetches its inputs? | **Yes, as an operator command, not a runner step.** The operator runs it. Each record is stored in the store with its sha256, fetch time and mzLib version, and `build` reads the newest one per accession, so the input is recorded and never invisible. E-mail addresses are never stored. |
-| U21 | Which release carries P35's three catalog tables (`deposit_records`, `deposit_contacts`, `deposit_references`) and the served view of shared raw files ptmQtl asked for (their 062)? All are build-side only: no schema bump, no re-ingest. | The release after the fragment-ion design (G116) is settled with you. ptmQtl answered DATAREPO-P37 on 2026-11-04 (the shape as written, plus the view) and asks for no date. |
+| U20 | ptmQtl wants each deposit's lab head, submitter and papers from PRIDE. They are kept out of the bundle, because PRIDE edits its record after deposit. Can a datarepo command fetch PRIDE's records (through mzLib's `PrideArchiveClient`) for the operator to run, given U14's rule that the runner never fetches its inputs? | **ANSWERED 2026-11-05 (the user): yes,** "operator may fetch pride" (D54). An operator command, not a runner step. Each record is stored with its sha256, fetch time and mzLib version, and `build` reads the newest per accession. E-mail addresses are never stored. |
+| U21 | Which release carries P35's three catalog tables (`deposit_records`, `deposit_contacts`, `deposit_references`) and the served view of shared raw files ptmQtl asked for (their 062)? All are build-side only: no schema bump, no re-ingest. | **ANSWERED 2026-11-05 (the user): 1.5.0** (D54). |
+
+### Fragment ions (PXR-R44, G116; `design/RELEASE_1.5.0.md`), 2026-11-05
+
+| ID | Question | Default (work proceeds on it) |
+|---|---|---|
+| U22 | Where do fragment ions live: a table inside every bundle (a schema bump, every deposit re-ingested, all ids move) or a companion beside the bundle (no re-ingest, no id moves, a second thing to host)? | **ANSWERED 2026-11-05 (the user): "fragment ions in every bundle"** (D53). The agent had recommended the companion. PXD031782 loses nothing: it is already out of the catalog. |
+| U23 | Which rows: every `AllPeptides.psmtsv` row or only those at 1%? | **ANSWERED 2026-11-05 (the user): 1% PEP q-value, with the q-value notch fallback for a search with no PEP** (D53), about 2 GB across the store. 1.4% to 3.0% of `peptidoforms_1pct` rows have no ions under it, since that view uses the q-value rule. |
 
 ## Waiting on aging (thread `design/threads/aging/`)
 

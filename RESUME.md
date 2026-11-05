@@ -2,14 +2,14 @@
 
 <!-- BEGIN GENERATED -- render_resume.py owns this block; edit state.yaml, not here -->
 
-**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-11-04
+**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-11-05
 
 | | |
 |---|---|
-| Commits | 833 |
+| Commits | 839 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
-| Locked decisions | 52 |
-| Open gaps | 117 |
+| Locked decisions | 54 |
+| Open gaps | 119 |
 | Gate items skipped | 5 |
 
 **Worktrees** -- details in `code/PINNED.md`
@@ -23,6 +23,8 @@
 | `code/_wt_142` | feat/1.4.2 | `3447228b` | `3447228` | at pin |
 | `code/_wt_ai_contrib` | feat/ai-contributions | `1db8a535` | `1db8a535` | at pin |
 | `code/_wt_mzlib_sumo` | fix/sumo-remnant-target-lysine | `6974a4d4` | `6974a4d4` | at pin |
+
+> **1 document(s) in `design/` not referenced above** -- `RELEASE_1.5.0.md`. Add a line for each, or say why not.
 
 <!-- END GENERATED -->
 
