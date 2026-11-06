@@ -69,6 +69,12 @@ depends on it is marked as such.
 | U23 | Which rows: every `AllPeptides.psmtsv` row or only those at 1%? | **ANSWERED 2026-11-05 (the user): 1% PEP q-value, with the q-value notch fallback for a search with no PEP** (D53), about 2 GB across the store. 1.4% to 3.0% of `peptidoforms_1pct` rows have no ions under it, since that view uses the q-value rule. (Measured on five deposits only, and moot now the view moved too: U24.) |
 | U24 | The user moved `peptidoforms_1pct` to 1% PEP q-value too (2026-11-05). On 21 of 194 deposits, mostly low-resolution, that rule accepts fewer peptides than the q-value rule: 19 lose over half, and PXD057502 goes from 5,962 to 0, with no ions. The PSM level holds on 18 of the 21, so this is peptide-level `PEP_QValue`, not a failed model. What does such a search use? | **ANSWERED 2026-11-05 (the user): "priority is 1%pep q-value when it is computed. when it is not computed, we fall back to q-value notch"** (D55). So these 21 stay on PEP q-value, and only PXD058775 falls back. The agent's proposed test on a count is dropped. `design/RELEASE_1.5.0.md`, `results/pep_rule_2026-11-05/`. |
 
+### Per-run counts (G125; `design/RELEASE_1.5.0.md`), 2026-11-06
+
+| ID | Question | Default (work proceeds on it) |
+|---|---|---|
+| U25 | New searches no longer write per-file lines in results.txt (PXReprise's `label-free-dda@14` and `lowres@7`, live 2026-11-06, on the user's word to them of 2026-11-05). So bundles from them hold no run-level PSM, peptide or protein-group counts, and no run-level MS2 or precursor counts until PXReprise pins MetaMorpheus 1.1.14, which carries #2955. Every bundle served today holds all five. Recount them per run from the whole search at 1.5.0's re-ingest, or leave the gap and state it? | **Recount at 1.5.0, for every deposit**, as our 119 told aging, under a definition from its owner, with a finding on any bundle still lacking the rows. aging reads none of these rows (its 120). Not built. |
+
 ## Waiting on aging (thread `design/threads/aging/`)
 
 | ID | Question | Status |

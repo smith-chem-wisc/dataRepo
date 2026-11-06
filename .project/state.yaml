@@ -595,10 +595,11 @@ decisions:
       the peptide-level PEP q-value finding.
 gaps:
   - >-
-    G122 NEW 2026-11-05: PXR-R48 (PXReprise 087). PXD025315's 1.49 GB AllQuantifiedPeaks.tsv cannot be ingested: ReadTsv
+    G122 CLOSED 2026-11-06: PXReprise delivered PXD025315 at 18:33 UTC as `3d76e6ec83ecc5a1`, as predicted, and it is in
+    catalog 53f5ff162ba37e84. PXR-R48 (PXReprise 087). PXD025315's 1.49 GB AllQuantifiedPeaks.tsv could not be ingested: ReadTsv
     decoded the whole file into one string, past .NET's longest. TsvReader reads one row at a time; ReadTsv wraps it;
     PeakQuality holds no table. Branch feat/1.4.3 `33250a8`, merged to master `1190f85`; released as 1.4.3 on the user's
-    word. PXD025315 ingests as `3d76e6ec83ecc5a1` (scratch). Close when PXReprise delivers it.
+    word. Worktree code/_wt_143 removed 2026-11-06; branch feat/1.4.3 kept (master holds it).
   - >-
     G123 NEW 2026-11-05: 1.5.0 (D53-D56; design/RELEASE_1.5.0.md), not built: `peptidoform_ions` in every bundle (schema
     0.0.17, cs-1.3.0, one whole-store re-ingest), `peptidoforms_1pct` on the same rule with peptidoforms.best_pep_q_value,
@@ -610,6 +611,19 @@ gaps:
     G124 NEW 2026-11-05: pep DATAREPO-89 (our 009). On 21 of 194 deposits, mostly low-res, peptide-level PEP_QValue accepts far
     fewer peptides than the q-value rule (161,117 -> 40,517; PXD057502 to 0), while PSM level gains on 18 of them. Is it right
     or a defect, and can entrapment say? The answer changes D55's rule only if the user says so. Close on pep's answer.
+  - >-
+    G125 NEW 2026-11-06: run-scope `metrics` lose their source (U25). PXReprise's label-free-dda@14 and lowres@7, live
+    2026-11-06 on the user's word to them of 2026-11-05, set WriteIndividualFiles = false, as tmt-dda@3 will when released, so
+    results.txt has no `<file> - ...` lines. Those lines are the only source (Readers.cs:515-522, Ingester.cs:1036) of run-scope
+    psms_1pct, peptides, protein_groups, ms2_scans and precursors: 5,051 rows each on all 196 deposits in catalog
+    53f5ff162ba37e84. A bundle from these profiles has none of the five, and no finding says so. Read from the code: no @14
+    search has been ingested (PXD005035 is first). run-scope `ms2` and `run_minutes` come from qc_report.json and stay.
+    MetaMorpheus #2955 (released in 1.1.14, 2026-11-06; PXReprise has not pinned it) writes each file's MS2 Scans and Precursors
+    lines on a search of two or more files, which ResultsScansPerFile already reads. The other three have no source after @14
+    (QuantProject 077 says the same: they "still need the tables"); PXReprise's own note counts only the two. Our
+    aging 119 promised per-run counts from the whole search's 1% set, and aging 120 accepted and reads no run-scope rows. It
+    was never built and was not in the 1.5.0 plan until today. Our 065 had warned PXReprise of the loss, and their 066 said
+    they would tell us before the setting changed; it is step 4 of their pick-up list. Default: recount at 1.5.0's re-ingest.
   - >-
     G120 NEW 2026-11-04: ptmQtl DATAREPO-P35, PRIDE deposit records. Our 061 proposed three build-side catalog tables
     (`deposit_records`, `deposit_contacts`, `deposit_references`, names provisional), keyed by bare accession, read at
@@ -678,10 +692,14 @@ gaps:
     GO re-runs once per target set. Also: go's 029 says one corner changes rows that the deposits they checked do not
     reach; read it before building.
   - >-
-    G112 NEW 2026-10-25: kegg's pathway engines (D50) when kegg's mzLib PR-3 is released. Columns as kegg 005 v2 with
+    G112 NEW 2026-10-25: kegg's pathway engines (D50) when kegg's mzLib PR-1 to PR-4 are in a release (kegg 007; this note
+    read PR-3 until 2026-11-06). Build from kegg's design/DEFINITIONS.md, not their 005 draft. Columns as kegg 005 v2 with
     our 006: T1 `organism` (NCBITaxon CURIE string, not int), optionally `sequence_accession` for `sequence_key`; T5
     names to match go's closure. Views protein_reactome, protein_reactome_area, reactome_equivalence; checks: drift
-    (not_in_release per target set), coverage, one Reactome release per catalog. Coverage measured on 5c0c60396486635d:
+    (not_in_release per target set), coverage, one Reactome release per catalog, and a build refusal when one organism has
+    two Reactome codes across target sets (KEGG-D6, answered yes in our 009; read from `#!species_codes`). kegg D20: a member
+    with no pathway whose entry reads annotated reads no_reference. kegg D19: T1 organism may be empty, `unknown` only in the
+    header; optional header keys may be missing. Coverage measured on 5c0c60396486635d:
     74.5/64.6/56.1% of 1% groups have a pathway (human/mouse/rat), results/kegg_coverage_2026-10-25/.
   - >-
     G113 NEW 2026-10-25: 1.4.0's predicted bundle ids (results/reingest_140_2026-10-20 compare_deposits.tsv) are stale
@@ -1877,13 +1895,6 @@ repos:  # PR D and PR E worktrees retired 2026-09-24: both merged, in mzLib 1.0.
     base_clone: "E:/CodeReview/dataRepo (origin = smith-chem-wisc/dataRepo)"
     pinned: ec584c73be1e962d96537bac74cede50ae712cac
   - name: dataRepo
-    worktree: code/_wt_140_ingest
-    branch: feat/1.4.0-ingest
-    base_clone: "E:/CodeReview/dataRepo (origin = smith-chem-wisc/dataRepo)"
-    # Held by datarepo-9b (which since 2026-10-20 also holds the threads). The scratch re-ingest binary was built
-    # from 54453e1; the pushed tip 0c1f8d0 adds DATAREPO-84, DATAREPO-D7 and ptmQtl's S2c v3 and S2e.
-    pinned: 0c1f8d0aeb281dde98a8668088892874febd4001
-  - name: dataRepo
     worktree: code/_wt_141
     branch: feat/1.4.1
     base_clone: "E:/CodeReview/dataRepo (origin = smith-chem-wisc/dataRepo)"
@@ -1902,13 +1913,6 @@ repos:  # PR D and PR E worktrees retired 2026-09-24: both merged, in mzLib 1.0.
     # 1.4.2 (DEF-TMT v3.22, #2941 finding and verdict, matched_ion descriptions). Merged as 1248c17 and released
     # 2026-11-03 (tag v1.4.2); can be retired.
     pinned: 3447228
-  - name: dataRepo
-    worktree: code/_wt_143
-    branch: feat/1.4.3
-    base_clone: "E:/CodeReview/dataRepo (origin = smith-chem-wisc/dataRepo)"
-    # 1.4.3 (TsvReader, PXR-R48). Merged as 1190f85 and released 2026-11-05 (tag v1.4.3). A local branch with no upstream on
-    # purpose: master holds it, so nothing can be lost. Can be retired once PXReprise delivers PXD025315.
-    pinned: 33250a8
   - name: dataRepo
     worktree: code/_wt_ai_contrib
     branch: feat/ai-contributions

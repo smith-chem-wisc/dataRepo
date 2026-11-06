@@ -2340,3 +2340,23 @@ that push is not ours and it was left alone. sdrf and logs each read one ahead a
 were pushing: a peer's count is true only when read.
 
 PXReprise had not answered 089 or 090 at this close, so 1.5.0 stays unbuilt. No code changed, and no decision or gap moved.
+
+## 2026-11-06 (later): PXD025315 delivered, KEGG-D6 answered, and @14 takes five run-scope metrics with it
+
+PXReprise closed its day without posting 091, which is step 3 of its own pick-up list, so 1.5.0 stays unbuilt. Its store and catalog answered
+what the thread had not: PXD025315 is delivered as `3d76e6ec83ecc5a1`, as predicted, in catalog `53f5ff162ba37e84` (1.4.3, 196 bundles;
+checked in `catalog_bundles`, not the store folder). G122 is closed and `code/_wt_143` removed.
+
+Reading PXReprise's list turned up "tell qc and dataRepo that @14 writes no per-file tables". Identifications are safe, since the ingest reads only
+the combined tables. But `metrics` rows at run scope come only from results.txt's per-file lines, which is what our 065 warned of. PXReprise's note
+says two of the five go (`ms2_scans`, `precursors`, which #2955 restores); by the code it is all five, and #2955 does not touch `psms_1pct`, `peptides`
+or `protein_groups`. It looked serious until aging 119 and 120 turned up: aging reads none of these rows, and we had promised a recount from the whole
+search, which was never built and never reached the 1.5.0 plan. So it is not urgent, but it is our unkept promise. It went on 1.5.0's build list as
+G125, with U25 for the user. It is read from the code only: no @14 bundle exists yet, and PXD005035 is the first.
+
+KEGG-D6 is answered (kegg 009): yes, ours, a build refusal. Writing it showed G112's "when PR-3 is released" was stale. kegg 007 had said PR-1 to PR-4
+since 10-25, and T1 itself comes with PR-4.
+
+QuantProject 077 landed mid-session: MetaMorpheus 1.1.14 is released on mzLib 1.0.597, carrying #2955, so the notes just written as "unreleased" were
+corrected before they were committed. It also confirms the three counts "still need the tables". Nothing moves until PXReprise pins it. `isobaric_peptide_q_psm_level`
+is already bounded at 1.1.13 (`Isobaric.PeptideQIsPsmLevel`), and #2936 is noted on 1.5.0's build list. No reply is asked.

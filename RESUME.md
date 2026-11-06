@@ -2,14 +2,14 @@
 
 <!-- BEGIN GENERATED -- render_resume.py owns this block; edit state.yaml, not here -->
 
-**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-11-05
+**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-11-06
 
 | | |
 |---|---|
-| Commits | 850 |
+| Commits | 853 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
 | Locked decisions | 56 |
-| Open gaps | 120 |
+| Open gaps | 121 |
 | Gate items skipped | 5 |
 
 **Worktrees** -- details in `code/PINNED.md`
@@ -17,11 +17,9 @@
 | Worktree | Branch | HEAD | Pin | Status |
 |---|---|---|---|---|
 | `code/_wt_ptmqtl` | feat/ptmqtl-engine | `ec584c73` | `ec584c73` | at pin |
-| `code/_wt_140_ingest` | -- | -- | `0c1f8d0a` | **missing on disk** |
 | `code/_wt_141` | feat/1.4.1 | `e41c4af8` | `e41c4af` | at pin |
 | `code/_wt_tmt` | feat/tmt | `9e18c4dc` | `9e18c4d` | at pin |
 | `code/_wt_142` | feat/1.4.2 | `3447228b` | `3447228` | at pin |
-| `code/_wt_143` | feat/1.4.3 | `33250a81` | `33250a8` | at pin |
 | `code/_wt_ai_contrib` | feat/ai-contributions | `1db8a535` | `1db8a535` | at pin |
 | `code/_wt_mzlib_sumo` | fix/sumo-remnant-target-lysine | `6974a4d4` | `6974a4d4` | at pin |
 
@@ -35,7 +33,30 @@ reanalyses. The results cover search, quant, provenance, design and organelle an
 use it, but AI agents are the main users. The question it serves is how organelle proteomes change
 with age.
 
-## Latest (2026-11-05): 1.4.3 released; 1.5.0 decided, with `peptidoforms_1pct` moving to 1% PEP q-value; not built
+## Latest (2026-11-06): PXD025315 delivered; KEGG-D6 answered; @14 takes five run-scope metrics
+
+- **PXD025315 is delivered** as `3d76e6ec83ecc5a1`, as predicted. aging serves catalog `53f5ff162ba37e84` (built by 1.4.3, 196 bundles). G122 is
+  closed and `code/_wt_143` removed.
+- **KEGG-D6 is answered** (kegg 009): yes, ours, a build refusal, built with G112. G112 waits on kegg's PR-1 to PR-4 in an mzLib release.
+- **PXReprise's @14 profiles are live (G125, U25).** They write no per-file lines in results.txt, the only source of five run-scope `metrics`
+  (`psms_1pct`, `peptides`, `protein_groups`, `ms2_scans`, `precursors`). Identifications are unaffected, and aging reads none of these rows.
+  - MetaMorpheus #2955 (released in 1.1.14 on 2026-11-06, not yet pinned) restores the last two. PXReprise's note counts only those two; by the
+    code it is all five, and QuantProject 077 agrees.
+  - Our aging 119 promised a recount from the whole search. It was never built, and it is now on 1.5.0's build list.
+  - This is read from the code. PXD005035 is the first @14 deposit: check its `metrics` when it arrives.
+- **In flight (re-check with `threads.py inbox`):**
+  - PXReprise: 091, PXR-R49 (the window) and PXR-R50 (MS2 or MS3). It is step 3 of their pick-up list; none had come at our last check;
+  - pep: DATAREPO-89 (G124). Its answer changes the rule only if the user says so;
+  - ptmQtl DATAREPO-P33, pyMzLib DATAREPO-70.
+- **Still owed by us:** PXReprise R30-R39. Start with R30-R32: their 062 says six split deposits wait, and the catalog serves no split key yet. Schema
+  0.0.16 already widened the key, so R30 is largely overtaken.
+- **Left for the user:** U25; delete `F:\datarepo_scratch_143` (3.5 GB) from a separate PowerShell window. The agent's delete is refused, and a command
+  sent through the chat does not run.
+- **Pick up at:** run `threads.py inbox` and read PXReprise's 091. If PXR-R49 names a window, start 1.5.0 by the plan's "Order": branch `feat/1.5.0`,
+  settle the build list, measure a whole-store scratch re-ingest, predict every id, and release only on the user's word. If it does not, build nothing
+  and take R30-R32.
+
+## Earlier (2026-11-05): 1.4.3 released; 1.5.0 decided, with `peptidoforms_1pct` moving to 1% PEP q-value; not built
 
 - **datarepo 1.4.3 is released** (tag `v1.4.3` on `1190f85`). `TsvReader` reads a table of any size one row at a time
   (PXR-R48). No row and no id moved. Catalogs and bundles stay on ingest path `cs-1.2.0`, schema 0.0.16.
@@ -64,17 +85,6 @@ with age.
   42147234119 is red, almost entirely DuckDB 2.0 errors, because the branch predates master's `duckdb<2` pin. That says nothing about
   master. The user was offered its deletion from GitHub and has not answered. `feat/1.4.3` has no upstream on purpose: master holds it.
   pyMzLib's three unpushed commits are `design/threads/bridge/` files, not ours.
-- **In flight (re-check with `threads.py inbox`):**
-  - PXReprise: PXR-R49 (the window), PXR-R50 (MS2 or MS3), and PXD025315's delivery on 1.4.3 (expect `3d76e6ec83ecc5a1`; G122). None
-    had come at the 2026-11-06 close;
-  - pep: DATAREPO-89 (G124). Its answer changes the rule only if the user says so;
-  - ptmQtl DATAREPO-P33, pyMzLib DATAREPO-70.
-- **Still owed by us:** PXReprise R30-R39, kegg's KEGG-D6.
-- **Left for the user:** delete `F:\datarepo_scratch_143` (3.5 GB) from a separate PowerShell window. The agent's delete is refused,
-  and a command sent through the chat does not run.
-- **Pick up at:** run `threads.py inbox` and read PXReprise's answer to 089 and 090. If PXR-R49 names a window, start 1.5.0 by
-  the plan's "Order": branch `feat/1.5.0`, settle the build list, measure a whole-store scratch re-ingest, predict every id, and
-  release only on the user's word. If it does not, build nothing and take PXReprise R30-R39 or kegg's KEGG-D6.
 
 ## Earlier (2026-11-04): ptmQtl's PRIDE records accepted, not built; duplicate raw files told
 

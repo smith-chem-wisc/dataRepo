@@ -6,19 +6,25 @@ This folder is a `/project`-managed research project. **You are de facto working
 
 - **Phase:** INCEPTION
 - **Goal:** An AI-ready, API-accessible repository for the search + quant results of the many PRIDE datasets the `aging` pipeline reanalyzes. Humans can use it, but AI agents are the main users. The question it serves is how organelle proteomes change with age.
-- **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`) and read PXReprise's answer to our 089 and 090:
-  PXR-R49 (the 1.5.0 window), PXR-R50 (record MS2 or MS3), and PXD025315's delivery on 1.4.3 (expect
-  `3d76e6ec83ecc5a1`). **Then 1.5.0 (G123; D53-D56; plan `design/RELEASE_1.5.0.md`):** decided by the user, not built,
-  and **nothing is built until PXReprise answers on the window**. Still owed: PXReprise R30-R39, kegg's KEGG-D6. We also
-  wait on ptmQtl's DATAREPO-P33, pyMzLib DATAREPO-70, pep's DATAREPO-89. At the 2026-11-06 close PXReprise had not answered
-  (checker: `last=090-dataRepo`), and everything of ours was on GitHub.
+- **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`) and read PXReprise's 091 when it comes:
+  PXR-R49 (the 1.5.0 window) and PXR-R50 (record MS2 or MS3). It is step 3 of their own pick-up list at their 2026-11-06 close,
+  after a reboot check and sdrf 025. **Then 1.5.0 (G123; D53-D56; plan `design/RELEASE_1.5.0.md`):** decided by the user, not built,
+  and **nothing is built until PXReprise answers on the window**. Still owed: PXReprise R30-R39. **Start with R30-R32:** their 062 says
+  six split deposits wait, and the catalog serves no split key yet. We also wait on ptmQtl's DATAREPO-P33, pyMzLib DATAREPO-70, pep's
+  DATAREPO-89. U25 (G125) is open with a default.
+  - **2026-11-06: PXD025315 is delivered** as `3d76e6ec83ecc5a1`, as predicted. aging serves catalog `53f5ff162ba37e84` (built by 1.4.3,
+    196 bundles). G122 is closed and `code/_wt_143` removed. KEGG-D6 is answered (kegg 009): yes, a build refusal, with G112.
+    - **PXReprise's @14 profiles are live, which takes away five run-scope `metrics` from every new bundle (G125, U25).** `psms_1pct`,
+      `peptides`, `protein_groups`, `ms2_scans` and `precursors` per run come only from results.txt's per-file lines. MetaMorpheus #2955
+      (released in 1.1.14, 2026-11-06, not yet pinned) restores the last two; PXReprise's note counts only those two. Our aging 119 promised a recount from
+      the whole search, and it was never built. It is now on 1.5.0's build list. aging reads none of these rows. Read from the code, not
+      yet seen on a @14 bundle: PXD005035 is the first, so check its `metrics` when it arrives.
   - **2026-11-05: datarepo 1.4.3 is RELEASED** (the user: "release the reader fix"). Tag `v1.4.3` on `1190f85`, published
     17:37 UTC. win-x64 zip sha256 `6a4ea62f9b40e5ac0e0ed2e01be186c13615cff1668ee6999bbf1bd48ed99a22`. Tutorial catalog
     `6622391f2ebec9fe`. `TsvReader` reads a table of any size, one row at a time (PXR-R48). No row and no id moves. The
     downloaded binary reproduced the tutorial, PXD017944 `3cd52dd1b39472d8` and PXD025315 `3d76e6ec83ecc5a1`. Told
     PXReprise 089, aging 129, ptmQtl 063,
-    go 032 (GO-D13: none). The worktree `code/_wt_143` can go once PXD025315 is delivered. Its branch has no upstream on
-    purpose: master holds it.
+    go 032 (GO-D13: none). Branch `feat/1.4.3` has no upstream on purpose: master holds it.
     - **The user decided 1.5.0 the same day:** fragment ions in every bundle (schema 0.0.17, one whole-store re-ingest,
       against the agent's recommendation of a companion store), at 1% PEP q-value with the q-value notch fallback for a
       search with no PEP; an operator command may fetch PRIDE records; P35 ships in 1.5.0. `deposit_facts` and PRIDE
@@ -130,7 +136,7 @@ This folder is a `/project`-managed research project. **You are de facto working
       old copies (34.2 GB) are deleted (PXR-R29, PXReprise 060).
     - **D50:** reference annotation is stored once per TARGET SET (go's `annotation_db_sha256`), never per deposit.
       - GO per target set (G111): build on go's fixture `go-view-v1-a83d1c63` when mzLib#1497 is released.
-      - kegg's Reactome engines (G112, kegg threads 001-006): build when kegg's PR-3 is released.
+      - kegg's Reactome engines (G112, kegg threads 001-009): build when kegg's PR-1 to PR-4 are in an mzLib release (kegg 007).
   0. **1.4.0 is built and measured; it waits only on the first searches of PXD006815 and PXD022393** (G103).
      PXReprise 057 (2026-10-21) REVERTED the ten lowres@4 re-searches (they lost 1-16% of PSMs), so the predicted ids
      hold for the ten again. They re-ingested three with `--overwrite` so `--latest` serves the earlier bundles (G109:

@@ -156,6 +156,21 @@ q-value notch."
   takes those 21 deposits for small ones.
 - **`<=` or `<`.** The views use `<=`. mzLib's `PassesConfidence` and #2909's `pep q-value < 0.01` line use `<`. Now the rule is mzLib's, measure the
   rows at exactly 0.01 before choosing.
+- **Run-scope counts (G125, U25; added 2026-11-06).** `metrics` rows with `scope = 'run'` and `source = 'results.txt'` (`psms_1pct`,
+  `peptides`, `protein_groups`, `ms2_scans`, `precursors`: 5,051 rows each on all 196 deposits in catalog `53f5ff162ba37e84`) come only from
+  results.txt's per-file lines (`Readers.cs:515`, `Ingester.cs:1036`).
+  - PXReprise's `label-free-dda@14` and `lowres@7`, live 2026-11-06, turn those lines off, so a bundle from them has none of the five, and no
+    finding says so. This is read from the code: no @14 search has been ingested yet.
+  - MetaMorpheus #2955 (released in 1.1.14, 2026-11-06; PXReprise has not pinned it) brings back `ms2_scans` and `precursors` on a search of two or
+    more files, in the form `ResultsScansPerFile` already reads. The other three have no source: they "still need the tables" (QuantProject 077).
+  - Our aging 119 promised per-run counts from the whole search's 1% set; aging 120 accepted, and reads no run-scope rows. This re-ingest is the
+    time to do it: one definition for every deposit, rather than per-file FDR for old bundles and nothing for new ones.
+  - To settle: which rule counts peptides now that the view moves, and the definition ids, which are their owners' (D24). Today's rows cite dataset
+    definitions for per-file-FDR counts.
+  - The isobaric finding's sentence on per-file `_Peptides.psmtsv` (`Ingester.cs:669`) stops being true under `tmt-dda@3`. Rewrite it with the #2941 re-read above.
+- **MetaMorpheus 1.1.14's #2936 (QuantProject 077).** PEP now computes for a search with over 1000 PSMs and only 100 to 1000 peptides. PXD058775, the
+  only deposit on the notch, reads 1,859 PSMs and 226 peptides at 1% (results.txt), so a re-search would probably leave the fallback. D55 does not change,
+  since it is decided per search, and no re-search is implied. The code path must still exist, and a fixture must still reach it.
 - What else rides on the one re-ingest (the mzLib 1.0.597 bump, whose parity tests must be re-run, is the obvious candidate).
 - **Reader:** a second pass with `TsvReader` (1.4.3), which reads these columns from a table one row at a time.
 
