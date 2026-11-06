@@ -60,8 +60,13 @@ with age.
     `protein_groups_1pct` keep their rules.
 - **Told:** PXReprise 089 then 090, aging 129 then 130 (each pair corrects "1.4% to 3.0% of rows have no ions", which came from five
   unrepresentative deposits), ptmQtl 063, go 032, pep 009. ptmQtl and QuantProject hear about the view at build.
+- **Pushed 2026-11-06:** `wip/d37-g81-python` (`3e68781`), the parked Python specification, is on origin and not merged. Its CI run
+  42147234119 is red, almost entirely DuckDB 2.0 errors, because the branch predates master's `duckdb<2` pin. That says nothing about
+  master. The user was offered its deletion from GitHub and has not answered. `feat/1.4.3` has no upstream on purpose: master holds it.
+  pyMzLib's three unpushed commits are `design/threads/bridge/` files, not ours.
 - **In flight (re-check with `threads.py inbox`):**
-  - PXReprise: PXR-R49 (the window), PXR-R50 (MS2 or MS3), and PXD025315's delivery on 1.4.3 (expect `3d76e6ec83ecc5a1`; G122);
+  - PXReprise: PXR-R49 (the window), PXR-R50 (MS2 or MS3), and PXD025315's delivery on 1.4.3 (expect `3d76e6ec83ecc5a1`; G122). None
+    had come at the 2026-11-06 close;
   - pep: DATAREPO-89 (G124). Its answer changes the rule only if the user says so;
   - ptmQtl DATAREPO-P33, pyMzLib DATAREPO-70.
 - **Still owed by us:** PXReprise R30-R39, kegg's KEGG-D6.
@@ -89,7 +94,7 @@ No code changed and nothing was released.
   - replies from aging or PXReprise to 128 and 085;
   - PXReprise's report of the 1.4.2 swap;
   - ptmQtl's copy of 061 is committed in their repo but unpushed (`git -C E:\CodeReview\ptmQtl status -sb`). Their repo
-    holds its own unpushed work, so that push is theirs.
+    holds its own unpushed work, so that push is theirs. (Obsolete: it is on their origin, read 2026-11-06.)
 - **Pick up at (superseded 2026-11-05 by the section above; the swap, G116, U20 and U21 are done):** run `threads.py inbox` and read PXReprise's report of the 1.4.2 swap. Expected ids are PXD034564
   `ff841cc55ccccb31`, PXD043296 `eb5e98c7e6ccd75c` and PXD051031 `fccf50e5513f38f7`. Then write the fragment-ion design
   for the user (G116, PXR-R44): two options with a recommendation. Put U20 and U21 from `design/OPEN_QUESTIONS.md` to

@@ -10,12 +10,13 @@ This folder is a `/project`-managed research project. **You are de facto working
   PXR-R49 (the 1.5.0 window), PXR-R50 (record MS2 or MS3), and PXD025315's delivery on 1.4.3 (expect
   `3d76e6ec83ecc5a1`). **Then 1.5.0 (G123; D53-D56; plan `design/RELEASE_1.5.0.md`):** decided by the user, not built,
   and **nothing is built until PXReprise answers on the window**. Still owed: PXReprise R30-R39, kegg's KEGG-D6. We also
-  wait on ptmQtl's DATAREPO-P33, pyMzLib DATAREPO-70, pep's DATAREPO-89.
+  wait on ptmQtl's DATAREPO-P33, pyMzLib DATAREPO-70, pep's DATAREPO-89. At the 2026-11-06 close PXReprise had not answered
+  (checker: `last=090-dataRepo`), and everything of ours was on GitHub.
   - **2026-11-05: datarepo 1.4.3 is RELEASED** (the user: "release the reader fix"). Tag `v1.4.3` on `1190f85`, published
     17:37 UTC. win-x64 zip sha256 `6a4ea62f9b40e5ac0e0ed2e01be186c13615cff1668ee6999bbf1bd48ed99a22`. Tutorial catalog
     `6622391f2ebec9fe`. `TsvReader` reads a table of any size, one row at a time (PXR-R48). No row and no id moves. The
     downloaded binary reproduced the tutorial, PXD017944 `3cd52dd1b39472d8` and PXD025315 `3d76e6ec83ecc5a1`. Told
-    PXReprise 089, aging 129 (their copy is committed, unpushed: their repo holds its own work ahead of it), ptmQtl 063,
+    PXReprise 089, aging 129, ptmQtl 063,
     go 032 (GO-D13: none). The worktree `code/_wt_143` can go once PXD025315 is delivered. Its branch has no upstream on
     purpose: master holds it.
     - **The user decided 1.5.0 the same day:** fragment ions in every bundle (schema 0.0.17, one whole-store re-ingest,
@@ -36,7 +37,7 @@ This folder is a `/project`-managed research project. **You are de facto working
     tables read at build from PRIDE records the operator fetches (no bundle change, no re-ingest, no e-mail). Their 062
     says yes as written and asks for a served view of shared raw files, derived at build. Waits on the user: U20 (may an
     operator command fetch PRIDE records, given U14) and U21 (which release). 062 asks nothing back. ptmQtl's copy of 061
-    is committed in their repo, unpushed: their repo holds its own unpushed work ahead of it, so that push is theirs.
+    is on their origin (read 2026-11-06).
     - **Duplicate raw files told (G121), no action on us:** aging 128, PXReprise 085. PXD006815's `_T_Z73a.raw` is
       `_T_Z74.raw`, so A5's pooled values hold Z74's trypsin run. PXD033430 and PXD057544 share three renamed controls.
       aging decides, and any re-search request comes from them.
@@ -254,7 +255,7 @@ This folder is a `/project`-managed research project. **You are de facto working
     supersedes D36). Plan: `design/CSHARP_PORT.md` (phases 1-5, parity = row-by-row diff against
     Python 0.32.0 on aging's store). **No new substantive Python.** Python is frozen at 0.32.0.
     D37 + G76 + G81 now ship in C# (phase 2): the ten `pxreprise:` texts, `cite()` and pep 005's
-    rule are parked on local branch `wip/d37-g81-python` (3e68781) as specification. G76 = mzLib
+    rule are parked on branch `wip/d37-g81-python` (3e68781; on origin since 2026-11-06; do not merge) as specification. G76 = mzLib
     `PeptideUniquenessClassifier`, mapped by D40 (is_unique = one gene, is_isoform_specific = one
     sequence). U16-U18 open with defaults. Tell PXReprise, aging, pep, pyMzLib of the plan.
   - dia (G82): wait for DATAREPO-65/66 or a real output folder (dia 002).
@@ -749,6 +750,9 @@ This folder is a `/project`-managed research project. **You are de facto working
   report separates the deposits that lose rows. And the loss is at peptide level only: 18 of those 21 gain PSMs.
 - **A `PEP_QValue` above 1 does not mean "not computed".** The unset value is exactly 2. PXD020462 holds 57,407 target rows above 1, mostly real
   numbers such as 1.0212. Whether PEP was computed is decided per search (mzLib's `QuantifiedPsmRule`).
+- **`ci.yml` runs on a push to ANY branch, using that branch's own workflow, so an old branch can go red for old reasons.**
+  `wip/d37-g81-python` (run 42147234119, 2026-11-06) predates master's `duckdb<2` pin, so pip took DuckDB 2.0.0 and its tests stop on
+  `ResourceInUseException`. That says nothing about master. The branch's tests were never run and it is not to be merged, so leave it red.
 
 **Sibling project: `E:\CodeReview\aging`** (the NCEMS pipeline). aging *produces* results under
 `F:\aging_data\<run>\<PXD>\` with `provenance.json` (schema `aging-provenance/2`). dataRepo *ingests and serves*

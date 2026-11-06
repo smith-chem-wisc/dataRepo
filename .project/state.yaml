@@ -447,7 +447,7 @@ decisions:
       own package, they chose the port). SUPERSEDES D36 (executables built from the Python). No new
       substantive Python goes into dataRepo; the Python 0.32.0 stays the operator's running version and
       the reference the port is diffed against until parity. Plan: design/CSHARP_PORT.md. The
-      half-built D37/G81 Python is parked on local branch wip/d37-g81-python (3e68781) as specification.
+      half-built D37/G81 Python is parked on branch wip/d37-g81-python (3e68781; on origin since 2026-11-06, not merged) as specification.
   - id: D42
     date: 2026-10-06
     text: >-

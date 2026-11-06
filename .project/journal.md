@@ -2319,3 +2319,24 @@ reconciliation stays on it. ptmQtl and QuantProject were not told, since no code
 
 Nothing of 1.5.0 is built, and nothing will be until PXReprise answers PXR-R49. `F:\datarepo_scratch_143` (3.5 GB) is still on disk:
 the safety check refused the agent's delete, and the user's `!` line and pasted `Remove-Item` both arrived as chat text and ran nothing.
+
+## 2026-11-06: The parked Python branch went to origin, and its CI is red for a reason already known
+
+The user asked that everything be pushed to GitHub. Almost everything was: master matched origin at `3a44c66`, no worktree held
+uncommitted work, there were no stashes, and every tag was on origin. The one exception was `wip/d37-g81-python` (`3e68781`), the
+half-built D37/G81 Python parked on 2026-10-04 as the port's specification, which had only ever been on this disk. It was read before
+the push because the repo is public: three Python files, nothing secret-shaped. It went up at 01:57 UTC on 11-06. It is not merged, and
+its "Do not merge" stands. `feat/1.4.3` also has no upstream and stays that way, since master holds every commit of it.
+
+`ci.yml` runs on a push to any branch, so the push started run 42147234119, which failed in the ingester job's Tests step. The branch is
+482 commits behind master and predates master's `duckdb>=1.1,<2` pin, so pip took DuckDB 2.0.0, and 200 of the 201 exception lines in the
+log are that version's `ResourceInUseException`. The one `AssertionError` was not looked at. The commit says its tests were never run,
+so the red says nothing about its code either way, and nothing about master. The user was told the branch can be deleted from GitHub if
+they would rather not have it there, and has not answered.
+
+The check also found two notes out of date. aging's copy of 129 and ptmQtl's copy of 061, both described as committed and unpushed, are
+on their origins (`ed84505075`, `6a72fc0`). pyMzLib is three commits ahead, all `design/threads/bridge/` files between it and bridge, so
+that push is not ours and it was left alone. sdrf and logs each read one ahead and then even minutes later, because their own sessions
+were pushing: a peer's count is true only when read.
+
+PXReprise had not answered 089 or 090 at this close, so 1.5.0 stays unbuilt. No code changed, and no decision or gap moved.
