@@ -36,6 +36,17 @@ in place. Nothing was written under `F:`. The scripts here are the ones run; the
 **Also read from the code, not run:** a re-key leaves `curated_run_design` rows dangling, so the `study-reference` check fails (`Integrity.cs:154-156`). In catalog
 `53f5ff162ba37e84`, PXD052189 has 32 curated runs and PXD057407 has 10.
 
+## A second store (PXR-R34, thread 095)
+
+`compare_stores.py` compares the scratch bundles with the served ones file by file. Served: written 10-29 by 1.4.0. Scratch: written 11-06 by 1.4.3, on another drive.
+
+| bundle | files | byte-identical | differs |
+|---|---:|---:|---|
+| PXD017944 `3cd52dd1b39472d8` | 26 | 25 | `bundle.json` |
+| PXD027754 `2799534125b81db3` | 24 | 23 | `bundle.json` |
+
+`bundle.json` differs in exactly three fields on both: `ingester.version`, `manifest` and `written_utc`.
+
 ## Per-run MS2, the same day (PXR-R51, G125)
 
 Asked of catalog `53f5ff162ba37e84`: results.txt's `ms2_scans` equals the QC report's `ms2` on 5,051 of 5,051 runs, across all 196 deposits.

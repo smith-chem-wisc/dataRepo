@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Commits | 859 |
+| Commits | 864 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
 | Locked decisions | 56 |
 | Open gaps | 123 |
@@ -58,7 +58,8 @@ with age.
   - sdrf: SDRF-D12, SDRF-D13, PXR-F9;
   - pep: DATAREPO-89 (G124). Its answer changes the rule only if the user says so;
   - ptmQtl DATAREPO-P33, pyMzLib DATAREPO-70.
-- **Still owed by us:** PXReprise R33-R39. R33, R35 and R37-R39 need the user's calls (the Alzheimer's question, hosting, the grant wording). R34 and R36 are technical.
+- **PXR-R34 to R36 are answered (095).** A second store writes byte-identical tables: 25 of 26 and 23 of 24 files, and `bundle.json` differs in three fields. So a later merge loses nothing.
+- **Still owed by us:** PXReprise R33 (waits on the user's Alzheimer's choice, their G61) and R37-R39 (`feat/ai-contributions`: under review; R38 and the design's "Open for the user" are the user's).
 - **Left for the user:** U25, U26, U27; `wip/d37-g81-python` off GitHub (ordered; the agent's delete is refused, and the local branch stays); delete `F:\datarepo_scratch_143` (3.5 GB). Each from a
   separate PowerShell window: a command sent through the chat does not run.
 - **Pick up at:** run `threads.py inbox` and read PXReprise's answers. If PXR-R49 names a window, start 1.5.0 by the plan's "Order": branch `feat/1.5.0`,

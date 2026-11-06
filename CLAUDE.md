@@ -9,7 +9,7 @@ This folder is a `/project`-managed research project. **You are de facto working
 - **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`) and read PXReprise's answers:
   PXR-R49 (the 1.5.0 window), PXR-R50 (record MS2 or MS3) and PXR-R51 (where else to read per-run scan counts).
   **Then 1.5.0 (G123; D53-D56; plan `design/RELEASE_1.5.0.md`):** decided by the user, not built,
-  and **nothing is built until PXReprise answers on the window**. Still owed: PXReprise R33-R39 (R33, R35, R37-R39 need the user's calls). **PXR-R52 (G127, the
+  and **nothing is built until PXReprise answers on the window**. Still owed: PXReprise R33 (waits on the user's choice, their G61) and R37-R39 (the review of `feat/ai-contributions`; R38 and the design's "Open for the user" are the user's). R34-R36 are answered (095). **PXR-R52 (G127, the
   SDRF as the sample record) has a route proposed in sdrf 034, not decided: read sdrf's answer to SDRF-D12, SDRF-D13 and PXR-F9.** We also wait on ptmQtl's DATAREPO-P33,
   pyMzLib DATAREPO-70, pep's DATAREPO-89. U25 (G125), U26 (G126) and U27 (G127) are open with defaults.
   - **2026-11-06: PXD025315 is delivered** as `3d76e6ec83ecc5a1`, as predicted. aging serves catalog `53f5ff162ba37e84` (built by 1.4.3,
