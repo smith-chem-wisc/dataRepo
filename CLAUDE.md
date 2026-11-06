@@ -6,11 +6,11 @@ This folder is a `/project`-managed research project. **You are de facto working
 
 - **Phase:** INCEPTION
 - **Goal:** An AI-ready, API-accessible repository for the search + quant results of the many PRIDE datasets the `aging` pipeline reanalyzes. Humans can use it, but AI agents are the main users. The question it serves is how organelle proteomes change with age.
-- **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`) and read PXReprise's answer to our 089:
+- **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`) and read PXReprise's answer to our 089 and 090:
   PXR-R49 (the 1.5.0 window), PXR-R50 (record MS2 or MS3), and PXD025315's delivery on 1.4.3 (expect
-  `3d76e6ec83ecc5a1`). **Then 1.5.0 (G123; D53, D54; plan `design/RELEASE_1.5.0.md`):** decided by the user, not built,
+  `3d76e6ec83ecc5a1`). **Then 1.5.0 (G123; D53-D56; plan `design/RELEASE_1.5.0.md`):** decided by the user, not built,
   and **nothing is built until PXReprise answers on the window**. Still owed: PXReprise R30-R39, kegg's KEGG-D6. We also
-  wait on ptmQtl's DATAREPO-P33, pyMzLib DATAREPO-70.
+  wait on ptmQtl's DATAREPO-P33, pyMzLib DATAREPO-70, pep's DATAREPO-89.
   - **2026-11-05: datarepo 1.4.3 is RELEASED** (the user: "release the reader fix"). Tag `v1.4.3` on `1190f85`, published
     17:37 UTC. win-x64 zip sha256 `6a4ea62f9b40e5ac0e0ed2e01be186c13615cff1668ee6999bbf1bd48ed99a22`. Tutorial catalog
     `6622391f2ebec9fe`. `TsvReader` reads a table of any size, one row at a time (PXR-R48). No row and no id moves. The
@@ -21,6 +21,14 @@ This folder is a `/project`-managed research project. **You are de facto working
       against the agent's recommendation of a companion store), at 1% PEP q-value with the q-value notch fallback for a
       search with no PEP; an operator command may fetch PRIDE records; P35 ships in 1.5.0. `deposit_facts` and PRIDE
       records are companions beside the bundle. DATAREPO-88 is proposed in aging 129.
+    - **D55, the same day: `peptidoforms_1pct` moves to that rule too.** PEP q-value when it was computed, whatever it
+      accepts; the notch when it was not (mzLib's `QuantifiedPsmRule`, per search). 6,310,124 -> 8,064,334 rows, median +28%.
+      21 deposits, mostly low-res, fall from 161,117 to 40,517 and PXD057502 to 0; the user chose this over the agent's
+      count test, so do not reopen it. Measured in `results/pep_rule_2026-11-05/`. D56: `psms.matched_ion_*` are dropped.
+      Told PXReprise 090 and aging 130, which correct 089 and 129 ("1.4-3.0% of rows have no ions" came from five
+      unrepresentative deposits). pep 009 asks DATAREPO-89 (is peptide-level `PEP_QValue` right on the 21?); the answer
+      changes no rule unless the user says so. ptmQtl and QuantProject are not told yet: no code of theirs reads the view,
+      but tell them at build, and re-read #2941 for QuantProject's `DEF-TMT-*` note, which names the view.
     - **1.4.2 swap done** (PXReprise 088): live 14:54 UTC 11-05, all three predicted TMT ids matched; PXD027548 is
       `a0f8c8a9c9c2deef`.
   - **2026-11-04: ptmQtl's DATAREPO-P35 is designed and accepted, NOT built (G120).** Our 061 proposed three catalog
