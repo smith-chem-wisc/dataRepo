@@ -16,7 +16,8 @@ This folder is a `/project`-managed research project. **You are de facto working
     `6622391f2ebec9fe`. `TsvReader` reads a table of any size, one row at a time (PXR-R48). No row and no id moves. The
     downloaded binary reproduced the tutorial, PXD017944 `3cd52dd1b39472d8` and PXD025315 `3d76e6ec83ecc5a1`. Told
     PXReprise 089, aging 129 (their copy is committed, unpushed: their repo holds its own work ahead of it), ptmQtl 063,
-    go 032 (GO-D13: none). The worktree `code/_wt_143` can go once PXD025315 is delivered.
+    go 032 (GO-D13: none). The worktree `code/_wt_143` can go once PXD025315 is delivered. Its branch has no upstream on
+    purpose: master holds it.
     - **The user decided 1.5.0 the same day:** fragment ions in every bundle (schema 0.0.17, one whole-store re-ingest,
       against the agent's recommendation of a companion store), at 1% PEP q-value with the q-value notch fallback for a
       search with no PEP; an operator command may fetch PRIDE records; P35 ships in 1.5.0. `deposit_facts` and PRIDE
@@ -714,7 +715,9 @@ This folder is a `/project`-managed research project. **You are de facto working
 - **The auto-mode classifier refuses the agent's delete of store files, even with the user's order** (2026-10-25,
   "Irreversible Local Destruction"). Hand the user the command. **The `!` prefix runs bash here, not PowerShell**: give
   `find ... -delete` rather than `Get-ChildItem | Remove-Item`. Record what is deleted (path, size, the hash run.json
-  keeps) first, and verify with a scratch build after.
+  keeps) first, and verify with a scratch build after. **On 2026-11-05 a `!` line and a pasted `Remove-Item` both arrived as chat
+  text and ran nothing,** and the refusal also covered the agent's own scratch folder and said not to re-issue the delete through
+  another shell. Ask the user to paste the command into a separate PowerShell window.
 - **A raw file's name is not its identity; `runs.sha256` is.** 193 deposits passed PXReprise's duplicate check (between
   deposits only, name + size), yet PXD006815 holds one run under two animals' names and two deposits share three renamed
   runs. `SELECT sha256, list(DISTINCT dataset_id), list(file_name) FROM runs GROUP BY sha256 HAVING count(*) > 1` finds
@@ -739,6 +742,13 @@ This folder is a `/project`-managed research project. **You are de facto working
 - **`RunNameMap.Resolve` has a side effect:** it counts every unmatched name. Cache only names that matched.
 - **A deposit's search folder is not under one date.** Read `run:` in `F:\aging_data\batch\manifest.yaml`
   (`run_2026-09-21/<PXD>`). `F:\aging_data\batch\state.json` keys its entries under `datasets`.
+- **Five deposits are not the store.** "1.4% to 3.0% of rows have no ions" came from five deposits, none low-resolution, and reached two
+  peers before a count of every served `AllPeptides.psmtsv` showed 21 deposits collapsing. That count takes 5 min at five at a time
+  (`results/pep_rule_2026-11-05/rule_uncomputed.py`). Run it before quoting a peer anything about a rule.
+- **`LogLoss: Infinity` does not mean PEP failed.** 64 deposits read it and 44 of them gain rows under 1% `PEP_QValue`. No line of the training
+  report separates the deposits that lose rows. And the loss is at peptide level only: 18 of those 21 gain PSMs.
+- **A `PEP_QValue` above 1 does not mean "not computed".** The unset value is exactly 2. PXD020462 holds 57,407 target rows above 1, mostly real
+  numbers such as 1.0212. Whether PEP was computed is decided per search (mzLib's `QuantifiedPsmRule`).
 
 **Sibling project: `E:\CodeReview\aging`** (the NCEMS pipeline). aging *produces* results under
 `F:\aging_data\<run>\<PXD>\` with `provenance.json` (schema `aging-provenance/2`). dataRepo *ingests and serves*

@@ -2278,3 +2278,44 @@ files instead of the query alone, because pooling treats deposits as independent
 check must run without anyone remembering it. That closes the wait U21's default named; U20 and U21 still need the user.
 Left untouched on purpose: the fragment-ion design (G116), DATAREPO-88 (G117), and the unread go, kegg, pep and
 QuantProject threads. No code changed this session.
+
+## 2026-11-05: datarepo 1.4.3 released; 1.5.0 decided, and `peptidoforms_1pct` moved to 1% PEP q-value after a whole-store count
+
+PXReprise 087 opened the day: PXD025315's 1.49 GB peak table could not be ingested, because `ReadTsv` decoded the file into
+one string past .NET's longest. The user said "if you change the reader, change it smartly", so `TsvReader` now reads one row at
+a time and `PeakQuality` reads three columns and holds no table. A bundle id hashes inputs and never code, so the same id proves
+nothing about a reader; we compared tables byte for byte with served bundles instead. PXD034590's peak table went from 67 s and
+7.5 GB to 10 s and 0.8 GB, and PXD025315's from out of memory to 13 s and 1.2 GB. Released as 1.4.3 on the user's word (tag
+`v1.4.3` on `1190f85`). No row and no id moved.
+
+The same reply settled 1.5.0. The agent had recommended a companion store for fragment ions; the user chose a table inside every
+bundle, which costs one whole-store re-ingest but keeps everything about a search in its bundle. The rows are at 1% PEP q-value,
+with the q-value notch for a file with no PEP (D53). An operator command may fetch PRIDE records, and ptmQtl's tables ship in 1.5.0
+(D54). Told PXReprise 089, aging 129, ptmQtl 063 and go 032.
+
+The agent's report said some `peptidoforms_1pct` rows would have no ions, since that view used the q-value rule, and quoted 1.4% to
+3.0% from the five deposits it had measured. The user answered: "I think we need to change the rule to 1% pep Q value". Counting
+that across all 194 served `AllPeptides.psmtsv` changed the picture. The q-value counts matched the catalog to within one row, and
+the store goes from 6,310,124 to 8,064,334 rows (median +28%), but 21 deposits fall from 161,117 to 40,517, with nothing between
+ratio 0.88 and 1.03. Nineteen lose over half, PXD057502 goes from 5,962 to 0, and 18 of the 21 are among the 32 low-resolution
+deposits. None of the five had been low-resolution, so the figure already sent in 089 and 129 did not describe the store.
+
+The agent's diagnosis was wrong twice before the data corrected it. It first said the cause looked clear from `LogLoss: Infinity`,
+but 64 deposits read that and 44 of them gain rows. It then called these failed PEP models, but the same bundles' `psms.parquet`
+gain rows at PSM level on 18 of the 21: PXD022227 goes from 184,016 to 260,862 PSMs while its peptides go from 18,035 to 1,303. So
+this is peptide-level `PEP_QValue`. MetaMorpheus reports the low counts itself (`accepted` 1,417 on PXD022227), and the 1% cut falls
+off a plateau: 32,534 targets pass at 5%. Nothing in these files says which rule is right, since every count rests on the same decoys.
+
+The agent recommended sending a search to the notch when the PEP rule accepted fewer peptides than the q-value rule, a test that
+catches exactly the 21. The user turned it down: "priority is 1%pep q-value when it is computed. when it is not computed, we fall back
+to q-value notch" (D55). The fallback answers whether the value exists, never how much it accepts, and a test on a count favours the
+larger number anyway. That is mzLib's `QuantifiedPsmRule`, which ptmQtl's S7 already calls. Reading "computed" per row instead would
+differ by at most 14 rows, all in PXD020462, whose values above 1 are mostly real numbers such as 1.0212 rather than the unset 2.
+The 21 stay on PEP q-value, knowingly, and PXD057502 serves nothing at 1%.
+
+The user then said yes to all three follow-ups: PXReprise 090 and aging 130 correct 089 and 129, pep 009 asks DATAREPO-89 (is this
+right, and can entrapment say?), and `psms.matched_ion_*` go at 1.5.0 (D56). `metrics` keeps the q-value count on all 194, and the
+reconciliation stays on it. ptmQtl and QuantProject were not told, since no code of theirs reads the view; they hear at build.
+
+Nothing of 1.5.0 is built, and nothing will be until PXReprise answers PXR-R49. `F:\datarepo_scratch_143` (3.5 GB) is still on disk:
+the safety check refused the agent's delete, and the user's `!` line and pasted `Remove-Item` both arrived as chat text and ran nothing.

@@ -6,10 +6,10 @@
 
 | | |
 |---|---|
-| Commits | 849 |
+| Commits | 850 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
 | Locked decisions | 56 |
-| Open gaps | 119 |
+| Open gaps | 120 |
 | Gate items skipped | 5 |
 
 **Worktrees** -- details in `code/PINNED.md`
@@ -21,10 +21,9 @@
 | `code/_wt_141` | feat/1.4.1 | `e41c4af8` | `e41c4af` | at pin |
 | `code/_wt_tmt` | feat/tmt | `9e18c4dc` | `9e18c4d` | at pin |
 | `code/_wt_142` | feat/1.4.2 | `3447228b` | `3447228` | at pin |
+| `code/_wt_143` | feat/1.4.3 | `33250a81` | `33250a8` | at pin |
 | `code/_wt_ai_contrib` | feat/ai-contributions | `1db8a535` | `1db8a535` | at pin |
 | `code/_wt_mzlib_sumo` | fix/sumo-remnant-target-lysine | `6974a4d4` | `6974a4d4` | at pin |
-
-> **1 document(s) in `design/` not referenced above** -- `RELEASE_1.5.0.md`. Add a line for each, or say why not.
 
 <!-- END GENERATED -->
 
@@ -36,7 +35,43 @@ reanalyses. The results cover search, quant, provenance, design and organelle an
 use it, but AI agents are the main users. The question it serves is how organelle proteomes change
 with age.
 
-## Latest (2026-11-04): ptmQtl's PRIDE records accepted, not built; duplicate raw files told
+## Latest (2026-11-05): 1.4.3 released; 1.5.0 decided, with `peptidoforms_1pct` moving to 1% PEP q-value; not built
+
+- **datarepo 1.4.3 is released** (tag `v1.4.3` on `1190f85`). `TsvReader` reads a table of any size one row at a time
+  (PXR-R48). No row and no id moved. Catalogs and bundles stay on ingest path `cs-1.2.0`, schema 0.0.16.
+- **1.5.0 is decided by the user and NOT built** (G123, D53-D56). The plan is `design/RELEASE_1.5.0.md`, and its "For the build
+  to settle" list is what remains to decide.
+  - `peptidoform_ions` in every bundle: schema 0.0.17, ingest path `cs-1.3.0`, one whole-store re-ingest, every id moves.
+  - `peptidoforms_1pct` moves to the same rule, and `peptidoforms.best_pep_q_value` is added.
+  - `psms.matched_ion_*` go. `deposit_facts` and PRIDE records are companions beside the bundle. DATAREPO-88 is included.
+- **The rule (D55, do not reopen):** per search, `PEP_QValue` <= 0.01 when it was computed, whatever that accepts; `QValue Notch` <=
+  0.01 when it was not. It is mzLib's `QuantifiedPsmRule`. The agent's count-based fallback was turned down.
+- **What it does, on all 194 deposits** (`results/pep_rule_2026-11-05/`):
+
+  | | deposits | q-value rule | 1.5.0 rule |
+  |---|---:|---:|---:|
+  | gain rows (ratio 1.03 to 3.87) | 173 | 6,149,007 | 8,023,817 |
+  | lose rows (ratio 0 to 0.88) | 21 | 161,117 | 40,517 |
+  | all (median ratio 1.28) | 194 | 6,310,124 | 8,064,334 |
+
+  - 19 of the 21 lose over half, and PXD057502 goes to 0 with no ions. 18 of the 21 are low-resolution, and PSM level gains on 18.
+  - Only PXD058775 falls back to the notch.
+  - `n_peptidoforms_1pct` stops matching results.txt. `metrics` and the reconciliation keep the q-value count. `n_psms_1pct` and
+    `protein_groups_1pct` keep their rules.
+- **Told:** PXReprise 089 then 090, aging 129 then 130 (each pair corrects "1.4% to 3.0% of rows have no ions", which came from five
+  unrepresentative deposits), ptmQtl 063, go 032, pep 009. ptmQtl and QuantProject hear about the view at build.
+- **In flight (re-check with `threads.py inbox`):**
+  - PXReprise: PXR-R49 (the window), PXR-R50 (MS2 or MS3), and PXD025315's delivery on 1.4.3 (expect `3d76e6ec83ecc5a1`; G122);
+  - pep: DATAREPO-89 (G124). Its answer changes the rule only if the user says so;
+  - ptmQtl DATAREPO-P33, pyMzLib DATAREPO-70.
+- **Still owed by us:** PXReprise R30-R39, kegg's KEGG-D6.
+- **Left for the user:** delete `F:\datarepo_scratch_143` (3.5 GB) from a separate PowerShell window. The agent's delete is refused,
+  and a command sent through the chat does not run.
+- **Pick up at:** run `threads.py inbox` and read PXReprise's answer to 089 and 090. If PXR-R49 names a window, start 1.5.0 by
+  the plan's "Order": branch `feat/1.5.0`, settle the build list, measure a whole-store scratch re-ingest, predict every id, and
+  release only on the user's word. If it does not, build nothing and take PXReprise R30-R39 or kegg's KEGG-D6.
+
+## Earlier (2026-11-04): ptmQtl's PRIDE records accepted, not built; duplicate raw files told
 
 No code changed and nothing was released.
 
@@ -55,12 +90,12 @@ No code changed and nothing was released.
   - PXReprise's report of the 1.4.2 swap;
   - ptmQtl's copy of 061 is committed in their repo but unpushed (`git -C E:\CodeReview\ptmQtl status -sb`). Their repo
     holds its own unpushed work, so that push is theirs.
-- **Pick up at:** run `threads.py inbox` and read PXReprise's report of the 1.4.2 swap. Expected ids are PXD034564
+- **Pick up at (superseded 2026-11-05 by the section above; the swap, G116, U20 and U21 are done):** run `threads.py inbox` and read PXReprise's report of the 1.4.2 swap. Expected ids are PXD034564
   `ff841cc55ccccb31`, PXD043296 `eb5e98c7e6ccd75c` and PXD051031 `fccf50e5513f38f7`. Then write the fragment-ion design
   for the user (G116, PXR-R44): two options with a recommendation. Put U20 and U21 from `design/OPEN_QUESTIONS.md` to
   the user at the same time. Then aging's DATAREPO-88 (G117), also a proposal before any build.
-- Not read yet: go 031, kegg 008, pep 007-008, QuantProject 075-076 (mzLib #1552, #1553). ptmQtl 062 is read. The
-  inbox's unread flags stay on because `--mark-read` marks everything at once.
+- Not read yet (superseded 2026-11-05: all were read that day): go 031, kegg 008, pep 007-008, QuantProject 075-076 (mzLib
+  #1552, #1553). ptmQtl 062 is read. The inbox's unread flags stay on because `--mark-read` marks everything at once.
 
 ## Earlier (2026-11-03): 1.4.2 released; fragment ions and DATAREPO-88 next
 

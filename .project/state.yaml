@@ -600,10 +600,16 @@ gaps:
     PeakQuality holds no table. Branch feat/1.4.3 `33250a8`, merged to master `1190f85`; released as 1.4.3 on the user's
     word. PXD025315 ingests as `3d76e6ec83ecc5a1` (scratch). Close when PXReprise delivers it.
   - >-
-    G123 NEW 2026-11-05: 1.5.0 (D53, D54; design/RELEASE_1.5.0.md), not built: `peptidoform_ions` in every bundle (schema
-    0.0.17, cs-1.3.0, one whole-store re-ingest), `deposit_facts` (PXR-R46, R47) and PRIDE records as companions,
-    DATAREPO-88. Send the shape to PXReprise and aging first and agree the window; nothing is built until PXReprise answers.
-    To settle in the build: drop psms.matched_ion_*, add peptidoforms.best_pep_q_value, and what else rides on the re-ingest.
+    G123 NEW 2026-11-05: 1.5.0 (D53-D56; design/RELEASE_1.5.0.md), not built: `peptidoform_ions` in every bundle (schema
+    0.0.17, cs-1.3.0, one whole-store re-ingest), `peptidoforms_1pct` on the same rule with peptidoforms.best_pep_q_value,
+    psms.matched_ion_* dropped, `deposit_facts` (PXR-R46, R47) and PRIDE records as companions, DATAREPO-88. Shape sent:
+    PXReprise 089 and 090, aging 129 and 130. Nothing is built until PXReprise answers PXR-R49 (the window). To settle in the
+    build: how "computed" is read (agent recommends mzLib's ChooseTier), a finding on the 21 deposits, `<=` or `<`, and what
+    else rides on the re-ingest. Tell ptmQtl and QuantProject at build.
+  - >-
+    G124 NEW 2026-11-05: pep DATAREPO-89 (our 009). On 21 of 194 deposits, mostly low-res, peptide-level PEP_QValue accepts far
+    fewer peptides than the q-value rule (161,117 -> 40,517; PXD057502 to 0), while PSM level gains on 18 of them. Is it right
+    or a defect, and can entrapment say? The answer changes D55's rule only if the user says so. Close on pep's answer.
   - >-
     G120 NEW 2026-11-04: ptmQtl DATAREPO-P35, PRIDE deposit records. Our 061 proposed three build-side catalog tables
     (`deposit_records`, `deposit_contacts`, `deposit_references`, names provisional), keyed by bare accession, read at
@@ -1896,6 +1902,13 @@ repos:  # PR D and PR E worktrees retired 2026-09-24: both merged, in mzLib 1.0.
     # 1.4.2 (DEF-TMT v3.22, #2941 finding and verdict, matched_ion descriptions). Merged as 1248c17 and released
     # 2026-11-03 (tag v1.4.2); can be retired.
     pinned: 3447228
+  - name: dataRepo
+    worktree: code/_wt_143
+    branch: feat/1.4.3
+    base_clone: "E:/CodeReview/dataRepo (origin = smith-chem-wisc/dataRepo)"
+    # 1.4.3 (TsvReader, PXR-R48). Merged as 1190f85 and released 2026-11-05 (tag v1.4.3). A local branch with no upstream on
+    # purpose: master holds it, so nothing can be lost. Can be retired once PXReprise delivers PXD025315.
+    pinned: 33250a8
   - name: dataRepo
     worktree: code/_wt_ai_contrib
     branch: feat/ai-contributions
