@@ -66,7 +66,8 @@ depends on it is marked as such.
 | ID | Question | Default (work proceeds on it) |
 |---|---|---|
 | U22 | Where do fragment ions live: a table inside every bundle (a schema bump, every deposit re-ingested, all ids move) or a companion beside the bundle (no re-ingest, no id moves, a second thing to host)? | **ANSWERED 2026-11-05 (the user): "fragment ions in every bundle"** (D53). The agent had recommended the companion. PXD031782 loses nothing: it is already out of the catalog. |
-| U23 | Which rows: every `AllPeptides.psmtsv` row or only those at 1%? | **ANSWERED 2026-11-05 (the user): 1% PEP q-value, with the q-value notch fallback for a search with no PEP** (D53), about 2 GB across the store. 1.4% to 3.0% of `peptidoforms_1pct` rows have no ions under it, since that view uses the q-value rule. |
+| U23 | Which rows: every `AllPeptides.psmtsv` row or only those at 1%? | **ANSWERED 2026-11-05 (the user): 1% PEP q-value, with the q-value notch fallback for a search with no PEP** (D53), about 2 GB across the store. 1.4% to 3.0% of `peptidoforms_1pct` rows have no ions under it, since that view uses the q-value rule. (Measured on five deposits only, and moot now the view moved too: U24.) |
+| U24 | The user moved `peptidoforms_1pct` to 1% PEP q-value too (2026-11-05). On 21 of 194 deposits, mostly low-resolution, that rule accepts fewer peptides than the q-value rule: 19 lose over half, and PXD057502 goes from 5,962 to 0, with no ions. The PSM level holds on 18 of the 21, so this is peptide-level `PEP_QValue`, not a failed model. What does such a search use? | **ANSWERED 2026-11-05 (the user): "priority is 1%pep q-value when it is computed. when it is not computed, we fall back to q-value notch"** (D55). So these 21 stay on PEP q-value, and only PXD058775 falls back. The agent's proposed test on a count is dropped. `design/RELEASE_1.5.0.md`, `results/pep_rule_2026-11-05/`. |
 
 ## Waiting on aging (thread `design/threads/aging/`)
 

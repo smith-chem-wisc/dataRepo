@@ -578,6 +578,21 @@ decisions:
       The user, 2026-11-05 (U20, U21): "operator may fetch pride"; "1.5 is fine". An operator command stores PRIDE records in
       the store with sha256, fetch time and mzLib version, never e-mail; U14 stays true of the runner. ptmQtl's three tables
       and the shared-raw-files view ship in 1.5.0.
+  - id: D55
+    date: 2026-11-05
+    text: >-
+      The user, 2026-11-05 (U24): "I think we need to change the rule to 1% pep Q value"; "priority is 1%pep q-value when it
+      is computed. when it is not computed, we fall back to q-value notch". So peptidoforms_1pct moves to the same rule as
+      peptidoform_ions, decided per search, and the fallback never depends on how many rows the PEP rule accepts (mzLib's
+      QuantifiedPsmRule). Against the agent's recommendation of a count test: 21 of 194 deposits keep 40,517 rows against
+      161,117 under the q-value rule, and PXD057502 serves 0. n_psms_1pct and protein_groups_1pct keep their rules.
+      Measurement: results/pep_rule_2026-11-05/.
+  - id: D56
+    date: 2026-11-05
+    text: >-
+      The user, 2026-11-05: yes to dropping psms.matched_ion_series and psms.matched_ion_count at 1.5.0 (null in every row of
+      every bundle; a schema bump is the only time to do it), and yes to correcting PXReprise 089 and aging 129 and telling pep
+      the peptide-level PEP q-value finding.
 gaps:
   - >-
     G122 NEW 2026-11-05: PXR-R48 (PXReprise 087). PXD025315's 1.49 GB AllQuantifiedPeaks.tsv cannot be ingested: ReadTsv
