@@ -2360,3 +2360,18 @@ since 10-25, and T1 itself comes with PR-4.
 QuantProject 077 landed mid-session: MetaMorpheus 1.1.14 is released on mzLib 1.0.597, carrying #2955, so the notes just written as "unreleased" were
 corrected before they were committed. It also confirms the three counts "still need the tables". Nothing moves until PXReprise pins it. `isobaric_peptide_q_psm_level`
 is already bounded at 1.1.13 (`Isobaric.PeptideQIsPsmLevel`), and #2936 is noted on 1.5.0's build list. No reply is asked.
+
+## 2026-11-06 (evening): the user corrected "only source"; split deposits answered from a trial, not from reading
+
+The user read the brief and said results.txt is "not the only place to get per run scan counts", and to ask PXReprise. They were right. The brief had said those lines were "our only source", true of the
+`metrics` rows and false of the fact: `ms2_scans` equals the QC report's `ms2` on 5,051 of 5,051 runs, in a table we already store. It went in 091 as PXR-R51, with that number. A QC report holds no
+precursor count, so precursors are what the question is really about. The user also ordered `wip/d37-g81-python` off GitHub; the classifier refused the agent's delete, so that one is the user's command.
+
+R30-R32 were answered by doing it. `accession` already becomes the dataset id, so the answer looked obvious from `Ingester.cs:244`, and reading would have stopped there. Ingesting PXD027754 under a split key
+with the released binary confirmed it (`6f88a1ee622775bf`, every row count equal, both control ids reproduced), and building and generating a site found what reading had not: a bare bundle beside its own halves
+builds with 107 checks passing, the site's PRIDE link names a project that does not exist, and `n_datasets_1pct` counts one deposit twice. It also showed that 062's table had moved: PXD052189 is served now. The
+second half was a stand-in, the same folder under another key, and 093 says so. The catalog side is G126, default 1.5.0 (U26).
+
+Two slips on the way. The script that posts a thread took positional arguments, and PowerShell 5.1 dropped an empty one, so 091 recorded its ask as answered; it was caught and fixed in both copies before the commit,
+and the script now takes named flags. The same trap had already fired a minute earlier and been patched only for that call. And PXReprise posted 092 (PXR-R52: the user's hope that the SDRF becomes the sample record) while
+this was being written, which the checker caught before 093 went out; it is logged as G127, for a separate reply with sdrf.

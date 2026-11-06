@@ -6,10 +6,10 @@
 
 | | |
 |---|---|
-| Commits | 853 |
+| Commits | 857 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
 | Locked decisions | 56 |
-| Open gaps | 121 |
+| Open gaps | 123 |
 | Gate items skipped | 5 |
 
 **Worktrees** -- details in `code/PINNED.md`
@@ -38,23 +38,26 @@ with age.
 - **PXD025315 is delivered** as `3d76e6ec83ecc5a1`, as predicted. aging serves catalog `53f5ff162ba37e84` (built by 1.4.3, 196 bundles). G122 is
   closed and `code/_wt_143` removed.
 - **KEGG-D6 is answered** (kegg 009): yes, ours, a build refusal, built with G112. G112 waits on kegg's PR-1 to PR-4 in an mzLib release.
-- **PXReprise's @14 profiles are live (G125, U25).** They write no per-file lines in results.txt, the only source of five run-scope `metrics`
+- **PXR-R30 to R32 are answered (PXReprise 093; `results/split_trial_2026-11-06/`).** A split key already ingests and builds on released 1.4.3: `accession: PXD027754-rat` gives
+  `6f88a1ee622775bf`, with every row count equal to the bare bundle's and the served control ids reproduced. Retire a bare entry with `status: superseded`.
+  - The catalog side is not built (G126): PRIDE link, double counts, deposit page, and a refusal of a bare key beside its own halves, which today builds silently. Default release 1.5.0 (U26).
+  - A re-key strands aging's curated rows: PXD052189 has 32 runs, PXD057407 has 10. The second half in the trial is a stand-in, since no mouse search exists.
+- **PXReprise's @14 profiles are live (G125, U25).** They write no per-file lines in results.txt, the only source of five run-scope `metrics` rows
   (`psms_1pct`, `peptides`, `protein_groups`, `ms2_scans`, `precursors`). Identifications are unaffected, and aging reads none of these rows.
-  - MetaMorpheus #2955 (released in 1.1.14 on 2026-11-06, not yet pinned) restores the last two. PXReprise's note counts only those two; by the
-    code it is all five, and QuantProject 077 agrees.
-  - Our aging 119 promised a recount from the whole search. It was never built, and it is now on 1.5.0's build list.
+  - **Results.txt is not the only place for per-run scan counts (the user).** The QC report's `ms2` equals `ms2_scans` on 5,051 of 5,051 runs, so MS2 is safe. Precursors are the open one: PXR-R51 (our 091).
+  - MetaMorpheus #2955 (released in 1.1.14 on 2026-11-06, not yet pinned) restores `ms2_scans` and `precursors`. The other three still need the tables (QuantProject 077).
+  - Our aging 119 promised a recount of those three from the whole search. It was never built, and it is now on 1.5.0's build list.
   - This is read from the code. PXD005035 is the first @14 deposit: check its `metrics` when it arrives.
 - **In flight (re-check with `threads.py inbox`):**
-  - PXReprise: 091, PXR-R49 (the window) and PXR-R50 (MS2 or MS3). It is step 3 of their pick-up list; none had come at our last check;
+  - PXReprise: PXR-R49 (the window), PXR-R50 (MS2 or MS3), PXR-R51 (per-run scan counts);
   - pep: DATAREPO-89 (G124). Its answer changes the rule only if the user says so;
   - ptmQtl DATAREPO-P33, pyMzLib DATAREPO-70.
-- **Still owed by us:** PXReprise R30-R39. Start with R30-R32: their 062 says six split deposits wait, and the catalog serves no split key yet. Schema
-  0.0.16 already widened the key, so R30 is largely overtaken.
-- **Left for the user:** U25; delete `F:\datarepo_scratch_143` (3.5 GB) from a separate PowerShell window. The agent's delete is refused, and a command
-  sent through the chat does not run.
-- **Pick up at:** run `threads.py inbox` and read PXReprise's 091. If PXR-R49 names a window, start 1.5.0 by the plan's "Order": branch `feat/1.5.0`,
+- **Still owed by us:** PXReprise R33-R39 and PXR-R52 (G127: the SDRF as the sample record, the user's hope; settle with sdrf, who hold PXR-F9).
+- **Left for the user:** U25, U26; `wip/d37-g81-python` off GitHub (ordered; the agent's delete is refused, and the local branch stays); delete `F:\datarepo_scratch_143` (3.5 GB). Each from a
+  separate PowerShell window: a command sent through the chat does not run.
+- **Pick up at:** run `threads.py inbox` and read PXReprise's answers. If PXR-R49 names a window, start 1.5.0 by the plan's "Order": branch `feat/1.5.0`,
   settle the build list, measure a whole-store scratch re-ingest, predict every id, and release only on the user's word. If it does not, build nothing
-  and take R30-R32.
+  and take PXR-R52 with sdrf.
 
 ## Earlier (2026-11-05): 1.4.3 released; 1.5.0 decided, with `peptidoforms_1pct` moving to 1% PEP q-value; not built
 

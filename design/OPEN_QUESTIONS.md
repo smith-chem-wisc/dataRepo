@@ -73,7 +73,13 @@ depends on it is marked as such.
 
 | ID | Question | Default (work proceeds on it) |
 |---|---|---|
-| U25 | New searches no longer write per-file lines in results.txt (PXReprise's `label-free-dda@14` and `lowres@7`, live 2026-11-06, on the user's word to them of 2026-11-05). So bundles from them hold no run-level PSM, peptide or protein-group counts, and no run-level MS2 or precursor counts until PXReprise pins MetaMorpheus 1.1.14, which carries #2955. Every bundle served today holds all five. Recount them per run from the whole search at 1.5.0's re-ingest, or leave the gap and state it? | **Recount at 1.5.0, for every deposit**, as our 119 told aging, under a definition from its owner, with a finding on any bundle still lacking the rows. aging reads none of these rows (its 120). Not built. |
+| U25 | New searches no longer write per-file lines in results.txt (PXReprise's `label-free-dda@14` and `lowres@7`, live 2026-11-06, on the user's word to them of 2026-11-05). So bundles from them hold no run-level PSM, peptide or protein-group counts, and no run-level `ms2_scans` or `precursors` rows until PXReprise pins MetaMorpheus 1.1.14, which carries #2955. Per-run MS2 stays in every bundle from the QC report (`ms2`, equal on all 5,051 runs). The user, 2026-11-06: results.txt is not the only place for scan counts, so PXR-R51 asks PXReprise where else; precursors are the open one. Every bundle served today holds all five. Recount them per run from the whole search at 1.5.0's re-ingest, or leave the gap and state it? | **Recount at 1.5.0, for every deposit**, as our 119 told aging, under a definition from its owner, with a finding on any bundle still lacking the rows. aging reads none of these rows (its 120). Not built. |
+
+### Split deposits (G126; `design/RELEASE_1.5.0.md`), 2026-11-06
+
+| ID | Question | Default (work proceeds on it) |
+|---|---|---|
+| U26 | A split key already ingests and builds on 1.4.3, but a served split gets a wrong PRIDE link and double counts until the catalog side is built (no re-ingest needed). Which release carries it: 1.5.0, or a smaller release before it if PXReprise wants to serve a split sooner? | **1.5.0.** PXReprise was told the default and asked to say if it needs it sooner (093). |
 
 ## Waiting on aging (thread `design/threads/aging/`)
 

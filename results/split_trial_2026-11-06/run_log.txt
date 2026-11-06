@@ -1,0 +1,32 @@
+﻿== before: control and bare deposit
+PXD017944
+  bundle   C:\Users\trish\AppData\Local\Temp\claude\af6e45eaa41babf7\cbfe7974-7464-465f-a2d2-2b1c8aa53a64\scratchpad\split\store\PXD017944\3cd52dd1b39472d8
+  tables   datasets 1, samples 20, runs 20, assays 20, psms 107,280, peptidoforms 23,700, protein_groups 1,510, proteins 10,816, ptm_sites 5,405, ptm_stoichiometry 10,220, quant_values 155,727, definitions 17, provenance_records 3, findings 6, metrics 180, search_modifications_declared 63
+  findings 5 open warning(s): high_contamination, low_core_use, no_sdrf, occupancy_not_stored, unplaced_ptm_sites
+PXD027754
+  bundle   C:\Users\trish\AppData\Local\Temp\claude\af6e45eaa41babf7\cbfe7974-7464-465f-a2d2-2b1c8aa53a64\scratchpad\split\store\PXD027754\2799534125b81db3
+  tables   datasets 1, samples 20, runs 20, assays 20, psms 1,498,854, peptidoforms 657,037, protein_groups 1,672, proteins 42,777, ptm_sites 2,532, ptm_stoichiometry 1,874, quant_values 101,410, definitions 17, provenance_records 3, findings 7, metrics 180, search_modifications_declared 2
+  MISMATCH psms_target_1pct: bundle 116756 vs producer 116780 (results.txt: All target PSMs with q-value <= 0.01 (pxreprise:DEF-PSM-1PCT v1))
+  findings 6 open warning(s): count_mismatch, low_core_use, low_id_rate, no_sdrf, occupancy_not_stored, unplaced_ptm_sites
+exit=0  t=579s
+== after: the two split keys
+PXD027754-rat
+  bundle   C:\Users\trish\AppData\Local\Temp\claude\af6e45eaa41babf7\cbfe7974-7464-465f-a2d2-2b1c8aa53a64\scratchpad\split\store\PXD027754-rat\6f88a1ee622775bf
+  tables   datasets 1, samples 20, runs 20, assays 20, psms 1,498,854, peptidoforms 657,037, protein_groups 1,672, proteins 42,777, ptm_sites 2,532, ptm_stoichiometry 1,874, quant_values 101,410, definitions 17, provenance_records 3, findings 7, metrics 180, search_modifications_declared 2
+  MISMATCH psms_target_1pct: bundle 116756 vs producer 116780 (results.txt: All target PSMs with q-value <= 0.01 (pxreprise:DEF-PSM-1PCT v1))
+  findings 6 open warning(s): count_mismatch, low_core_use, low_id_rate, no_sdrf, occupancy_not_stored, unplaced_ptm_sites
+PXD027754-mouse
+  bundle   C:\Users\trish\AppData\Local\Temp\claude\af6e45eaa41babf7\cbfe7974-7464-465f-a2d2-2b1c8aa53a64\scratchpad\split\store\PXD027754-mouse\5a6fd7af5b7544f5
+  tables   datasets 1, samples 20, runs 20, assays 20, psms 1,498,854, peptidoforms 657,037, protein_groups 1,672, proteins 42,777, ptm_sites 2,532, ptm_stoichiometry 1,874, quant_values 101,410, definitions 17, provenance_records 3, findings 7, metrics 180, search_modifications_declared 2
+  MISMATCH psms_target_1pct: bundle 116756 vs producer 116780 (results.txt: All target PSMs with q-value <= 0.01 (pxreprise:DEF-PSM-1PCT v1))
+  findings 6 open warning(s): count_mismatch, low_core_use, low_id_rate, no_sdrf, occupancy_not_stored, unplaced_ptm_sites
+exit=0  t=1366s
+== after: the retired bare entry must be refused
+PXD027754
+  refused  PXD027754 has status 'superseded' in C:\Users\trish\AppData\Local\Temp\claude\af6e45eaa41babf7\cbfe7974-7464-465f-a2d2-2b1c8aa53a64\scratchpad\split\after.yaml and will not be loaded. The producer's reason: split into PXD027754-rat and PXD027754-mouse
+exit=1
+== store
+PXD017944: 3cd52dd1b39472d8
+PXD027754: 2799534125b81db3
+PXD027754-mouse: 5a6fd7af5b7544f5
+PXD027754-rat: 6f88a1ee622775bf

@@ -6,19 +6,25 @@ This folder is a `/project`-managed research project. **You are de facto working
 
 - **Phase:** INCEPTION
 - **Goal:** An AI-ready, API-accessible repository for the search + quant results of the many PRIDE datasets the `aging` pipeline reanalyzes. Humans can use it, but AI agents are the main users. The question it serves is how organelle proteomes change with age.
-- **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`) and read PXReprise's 091 when it comes:
-  PXR-R49 (the 1.5.0 window) and PXR-R50 (record MS2 or MS3). It is step 3 of their own pick-up list at their 2026-11-06 close,
-  after a reboot check and sdrf 025. **Then 1.5.0 (G123; D53-D56; plan `design/RELEASE_1.5.0.md`):** decided by the user, not built,
-  and **nothing is built until PXReprise answers on the window**. Still owed: PXReprise R30-R39. **Start with R30-R32:** their 062 says
-  six split deposits wait, and the catalog serves no split key yet. We also wait on ptmQtl's DATAREPO-P33, pyMzLib DATAREPO-70, pep's
-  DATAREPO-89. U25 (G125) is open with a default.
+- **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`) and read PXReprise's answers:
+  PXR-R49 (the 1.5.0 window), PXR-R50 (record MS2 or MS3) and PXR-R51 (where else to read per-run scan counts).
+  **Then 1.5.0 (G123; D53-D56; plan `design/RELEASE_1.5.0.md`):** decided by the user, not built,
+  and **nothing is built until PXReprise answers on the window**. Still owed: PXReprise R33-R39 and **PXR-R52 (G127: the SDRF as the sample
+  record, the user's hope; settle with sdrf, who hold PXR-F9)**. We also wait on ptmQtl's DATAREPO-P33, pyMzLib DATAREPO-70, pep's
+  DATAREPO-89. U25 (G125) and U26 (G126) are open with defaults.
   - **2026-11-06: PXD025315 is delivered** as `3d76e6ec83ecc5a1`, as predicted. aging serves catalog `53f5ff162ba37e84` (built by 1.4.3,
     196 bundles). G122 is closed and `code/_wt_143` removed. KEGG-D6 is answered (kegg 009): yes, a build refusal, with G112.
-    - **PXReprise's @14 profiles are live, which takes away five run-scope `metrics` from every new bundle (G125, U25).** `psms_1pct`,
-      `peptides`, `protein_groups`, `ms2_scans` and `precursors` per run come only from results.txt's per-file lines. MetaMorpheus #2955
-      (released in 1.1.14, 2026-11-06, not yet pinned) restores the last two; PXReprise's note counts only those two. Our aging 119 promised a recount from
-      the whole search, and it was never built. It is now on 1.5.0's build list. aging reads none of these rows. Read from the code, not
+    - **PXR-R30 to R32 are answered (PXReprise 093; `results/split_trial_2026-11-06/`).** A split key already ingests and builds on released 1.4.3:
+      `accession: PXD027754-rat` gives `6f88a1ee622775bf`, every row count equal. Retire a bare entry with `status: superseded`. The catalog side is NOT built
+      (G126: PRIDE link, double counts, deposit page, a refusal of a bare key beside its halves), default release 1.5.0 (U26). A re-key strands aging's curated
+      rows (PXD052189 32 runs, PXD057407 10).
+    - **PXReprise's @14 profiles are live, which takes away five run-scope `metrics` rows from every new bundle (G125, U25).** `psms_1pct`,
+      `peptides`, `protein_groups`, `ms2_scans` and `precursors` rows come only from results.txt's per-file lines. MetaMorpheus #2955
+      (released in 1.1.14, 2026-11-06, not yet pinned) restores the last two. **Results.txt is not the only place for per-run scan counts (the user):**
+      the QC report's `ms2` equals `ms2_scans` on 5,051 of 5,051 runs, so MS2 is safe; precursors are the open one (PXR-R51, our 091). Our aging 119 promised a recount
+      of the other three from the whole search, and it was never built. It is on 1.5.0's build list. aging reads none of these rows. Read from the code, not
       yet seen on a @14 bundle: PXD005035 is the first, so check its `metrics` when it arrives.
+    - **The user ordered `wip/d37-g81-python` deleted from GitHub.** The agent's delete was refused, so the user runs it; check with `git ls-remote`. The local branch stays as the specification.
   - **2026-11-05: datarepo 1.4.3 is RELEASED** (the user: "release the reader fix"). Tag `v1.4.3` on `1190f85`, published
     17:37 UTC. win-x64 zip sha256 `6a4ea62f9b40e5ac0e0ed2e01be186c13615cff1668ee6999bbf1bd48ed99a22`. Tutorial catalog
     `6622391f2ebec9fe`. `TsvReader` reads a table of any size, one row at a time (PXR-R48). No row and no id moves. The
@@ -756,6 +762,12 @@ This folder is a `/project`-managed research project. **You are de facto working
   report separates the deposits that lose rows. And the loss is at peptide level only: 18 of those 21 gain PSMs.
 - **A `PEP_QValue` above 1 does not mean "not computed".** The unset value is exactly 2. PXD020462 holds 57,407 target rows above 1, mostly real
   numbers such as 1.0212. Whether PEP was computed is decided per search (mzLib's `QuantifiedPsmRule`).
+- **PowerShell 5.1 drops an empty-string argument to a native program.** `script.py a "" b` arrives as two arguments, so a positional value silently shifts. It recorded PXR-R51 as
+  answered instead of asked in our 091 (2026-11-06), caught before the commit. Use named flags.
+- **The auto-mode classifier also refuses the agent's `git push origin --delete`, even on the user's order** (2026-11-06, "Git Destructive"). Hand the user the command, for a separate
+  PowerShell window. Do not route around it with `gh api`.
+- **"Only source" is a claim about every peer's outputs.** We told the user results.txt was the only source of per-run scan counts. It was the only source of those `metrics` rows, while the QC
+  report held the same MS2 count on all 5,051 runs, in a table we already store. The user caught it. Say which rows a source fills, and ask the producer before saying nothing else holds a fact.
 - **`ci.yml` runs on a push to ANY branch, using that branch's own workflow, so an old branch can go red for old reasons.**
   `wip/d37-g81-python` (run 42147234119, 2026-11-06) predates master's `duckdb<2` pin, so pip took DuckDB 2.0.0 and its tests stop on
   `ResourceInUseException`. That says nothing about master. The branch's tests were never run and it is not to be merged, so leave it red.

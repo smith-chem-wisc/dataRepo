@@ -161,6 +161,8 @@ q-value notch."
   results.txt's per-file lines (`Readers.cs:515`, `Ingester.cs:1036`).
   - PXReprise's `label-free-dda@14` and `lowres@7`, live 2026-11-06, turn those lines off, so a bundle from them has none of the five, and no
     finding says so. This is read from the code: no @14 search has been ingested yet.
+  - **results.txt is not the only place for per-run scan counts** (the user, 2026-11-06). `ms2_scans` equals the QC report's `ms2` on 5,051 of 5,051 runs, so
+    per-run MS2 is safe. A QC report holds no precursor count. PXR-R51 (our 091) asks PXReprise where else to read them; build this item after its answer.
   - MetaMorpheus #2955 (released in 1.1.14, 2026-11-06; PXReprise has not pinned it) brings back `ms2_scans` and `precursors` on a search of two or
     more files, in the form `ResultsScansPerFile` already reads. The other three have no source: they "still need the tables" (QuantProject 077).
   - Our aging 119 promised per-run counts from the whole search's 1% set; aging 120 accepted, and reads no run-scope rows. This re-ingest is the
@@ -187,6 +189,20 @@ Both have their own cadence and must not move a search bundle's id, so these two
   three tables (`deposit_records`, `deposit_contacts`, `deposit_references`; our 061).
 - **Shared raw files:** ptmQtl's served view, derived at build from `runs.sha256`: one row per run whose sha256 appears more
   than once, saying whether the other copies are in the same accession (their 062).
+
+## Split deposits: the catalog side (G126, U26; proposed in PXReprise 093, not built)
+
+A split key already ingests and builds on 1.4.3 (`results/split_trial_2026-11-06/`), so none of this needs the re-ingest. It rides 1.5.0 by default only because
+1.5.0 bumps the catalog format anyway; the release is the user's word (U26).
+
+- `dataset_overview` gains `accession`, `split_group` (both derived from the key, `Usi.DepositAccession`) and `split_reason` (a non-content manifest field, checked against
+  `species`, `enrichment`, `label`, `chemistry`, as `restrictions` is at `Manifest.cs:82`).
+- One deposit-level view, one row per accession, listing its keys. Name to settle.
+- The site: a deposit page at `datasets/<accession>.html` that links its halves and keeps today's address, sibling links on each half, the PRIDE link from the accession (`Site.cs:195`),
+  and a headline that counts accessions.
+- `protein_index.n_datasets*` and `peptide_index.n_datasets` count accessions (`DepositDerived.cs:62-64,84`). `dataset_ids*` keep the keys. No value moves until something is split.
+- The census compares by accession (`Catalog.cs:1797-1823`).
+- A build refuses a bare key served beside its own halves. Tested today: 107 checks pass and nothing complains.
 
 ## DATAREPO-88 (aging 126)
 

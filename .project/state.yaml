@@ -612,6 +612,20 @@ gaps:
     fewer peptides than the q-value rule (161,117 -> 40,517; PXD057502 to 0), while PSM level gains on 18 of them. Is it right
     or a defect, and can entrapment say? The answer changes D55's rule only if the user says so. Close on pep's answer.
   - >-
+    G127 NEW 2026-11-06: PXR-R52 (PXReprise 092), the user's hope that the SDRF becomes the sample record in dataRepo. A curated
+    SDRF gives characteristics only; its factor values reach the catalog through a study layer, and only aging has one
+    (StudyWriter.cs:206), so a project such as the diabetes one gets no treatment conditions. What route, for any question: the
+    search's own SDRF (MetaMorpheus 1.1.14's InputSdrfPath copies a curator's sample half into it, and we do not read that file)
+    or a generic study layer? Settle with sdrf (their PXR-F9), copy PXReprise. Mind 1.5.0's window. Not answered yet.
+  - >-
+    G126 NEW 2026-11-06: split deposits, the catalog side (PXR-R32; our PXReprise 093; results/split_trial_2026-11-06). A split key
+    already ingests and builds on released 1.4.3, so PXReprise can start. NOT BUILT, all without a re-ingest: dataset_overview
+    gains accession, split_group, split_reason (manifest field, not hashed, checked against species|enrichment|label|chemistry);
+    one deposit-level view; site deposit page at datasets/<accession>.html, sibling links, PRIDE link from the accession
+    (Site.cs:195), headline counts accessions; protein_index/peptide_index n_datasets* count accessions (DepositDerived.cs:62-64,84);
+    census compares by accession (Catalog.cs:1797-1823); a build REFUSES a bare key served beside its own halves (tested: 107 checks
+    pass, nothing complains). Which release is U26, default 1.5.0.
+  - >-
     G125 NEW 2026-11-06: run-scope `metrics` lose their source (U25). PXReprise's label-free-dda@14 and lowres@7, live
     2026-11-06 on the user's word to them of 2026-11-05, set WriteIndividualFiles = false, as tmt-dda@3 will when released, so
     results.txt has no `<file> - ...` lines. Those lines are the only source (Readers.cs:515-522, Ingester.cs:1036) of run-scope
@@ -624,6 +638,10 @@ gaps:
     aging 119 promised per-run counts from the whole search's 1% set, and aging 120 accepted and reads no run-scope rows. It
     was never built and was not in the 1.5.0 plan until today. Our 065 had warned PXReprise of the loss, and their 066 said
     they would tell us before the setting changed; it is step 4 of their pick-up list. Default: recount at 1.5.0's re-ingest.
+    CORRECTED 2026-11-06 by the user: results.txt is not the only place to get per-run scan counts; ask PXReprise. Our first
+    telling said "only source", true of those metrics rows and not of scan counts. Measured: ms2_scans equals qc_report.json's ms2
+    on 5,051 of 5,051 runs, and runs.ms2_spectra also comes from the QC report, so per-run MS2 is safe. A QC report holds no
+    precursor count, so precursors are the open one. Asked as PXR-R51 (our 091).
   - >-
     G120 NEW 2026-11-04: ptmQtl DATAREPO-P35, PRIDE deposit records. Our 061 proposed three build-side catalog tables
     (`deposit_records`, `deposit_contacts`, `deposit_references`, names provisional), keyed by bare accession, read at
@@ -953,7 +971,7 @@ gaps:
     keyed by sha256, named in the manifest; the build reads it into dataset_databases and dataset_overview
     (`search_database_set`). No re-ingest, no schema change (D32). Waits on PXR-R19.
   - >-
-    G95 NEW 2026-10-11 (PXR-R8/R18, our PXReprise 036). Several searches under one accession (PXReprise's D33 split
+    G95 (ingest side settled 2026-11-06: tested on 1.4.3, answered in our PXReprise 093; catalog side is G126) NEW 2026-10-11 (PXR-R8/R18, our PXReprise 036). Several searches under one accession (PXReprise's D33 split
     deposits; contract rule 2). Today one accession is one manifest entry, one bundle per catalog, and every id is
     prefixed by the dataset id, so two searches collide. Proposed key `<accession>-<group>` for each search of a split
     deposit (a deposit's only search keeps the bare accession). Widening the schema's dataset_id pattern rides
