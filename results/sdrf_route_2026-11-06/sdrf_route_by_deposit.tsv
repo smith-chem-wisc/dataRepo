@@ -1,0 +1,197 @@
+dataset_id	chosen_by	factor_values	operator_sdrf	factor_columns	informative_factors	factors_with_no_characteristic	stored_treatment_like	own_sdrf	own_real_characteristics	own_factor_distinct
+PXD001054	none		False					True	biological replicate	1
+PXD002467	experimental_design (question)	left out	False	group	group	group		True	biological replicate	16
+PXD004916	metadata	kept	False					True	biological replicate	1
+PXD005014	none		False					True	biological replicate	1
+PXD005123	none		False					True	biological replicate	1
+PXD006023	none		False					True	biological replicate	1
+PXD006216	none		False					True	biological replicate	1
+PXD006578	none		False					True	biological replicate	1
+PXD006589	none		False					True	biological replicate	1
+PXD006815	experimental_design (question)	left out	False	group	group	group		True	biological replicate	2
+PXD006898	none		False					True	biological replicate	1
+PXD007035	none		False					True	biological replicate	1
+PXD007049	none		False					True	biological replicate	1
+PXD007188	none		False					True	biological replicate	1
+PXD007906	none		False					True	biological replicate	1
+PXD007999	none		False					False		0
+PXD008050	none		False					True	biological replicate	1
+PXD008344	metadata	kept	False	organism part				True	biological replicate	1
+PXD008934	metadata	kept	False	disease	disease			True	biological replicate	1
+PXD008990	none		False					True	biological replicate	1
+PXD009212	none		False					True	biological replicate	1
+PXD009430	none		False					True	biological replicate	1
+PXD010091	none		False					True	biological replicate	1
+PXD010115	metadata	kept	False	organism part				True	biological replicate	1
+PXD010820	metadata	kept	False	organism part				True	biological replicate	1
+PXD011314	metadata	kept	False	organism part				True	biological replicate	1
+PXD011740	experimental_design (question)	left out	False	compartment	compartment	compartment		True	biological replicate	2
+PXD012213	none		False					True	biological replicate	1
+PXD012307	metadata	kept	False					True	biological replicate	1
+PXD012753	none		False					True	biological replicate	1
+PXD012754	none		False					True	biological replicate	1
+PXD013240	none		False					True	biological replicate	1
+PXD013640	none		False					True	biological replicate	1
+PXD014097	none		False					True	biological replicate	1
+PXD014098	none		False					True	biological replicate	1
+PXD014274	metadata	kept	False	disease,genotype	disease,genotype			True	biological replicate	1
+PXD014416	none		False					True	biological replicate	1
+PXD015079	none		False					True	biological replicate	1
+PXD015170	none		False					True	biological replicate	1
+PXD015239	none		False					True	biological replicate	1
+PXD015729	none		False					True	biological replicate	1
+PXD016430	none		False					True	biological replicate	1
+PXD016793	none		False					True	biological replicate	1
+PXD017058	none		False					True	biological replicate	1
+PXD017475	none		False					True	biological replicate	1
+PXD017505	metadata	kept	False	organism part				True	biological replicate	1
+PXD017944	none		False					True	biological replicate	1
+PXD018097	none		False					True	biological replicate	1
+PXD018315	none		False					True	biological replicate	1
+PXD018399	none		False					True	biological replicate	1
+PXD018545	metadata	kept	False					True	biological replicate	1
+PXD018655	none		False					True	biological replicate	1
+PXD018969	none		False					False		0
+PXD018999	none		False					True	biological replicate	1
+PXD019279	none		False					True	biological replicate	1
+PXD019849	none		False					True	biological replicate	1
+PXD020462	none		False					True	biological replicate	1
+PXD021069	none		False					True	biological replicate	1
+PXD021762	metadata	kept	False					True	biological replicate	1
+PXD022128	none		False					True	biological replicate	1
+PXD022180	none		False					True	biological replicate	1
+PXD022196	experimental_design (question)	left out	False	group	group	group		True	biological replicate	4
+PXD022227	none		False					True	biological replicate	1
+PXD022363	none		False					True	biological replicate	1
+PXD022393	none		False					True	biological replicate	1
+PXD022678	none		False					True	biological replicate	1
+PXD022737	none		False					True	biological replicate	1
+PXD023381	none		False					True	biological replicate	1
+PXD024216	none		False					True	biological replicate	1
+PXD024478	none		False					True	biological replicate	1
+PXD024633	metadata	kept	False					True	biological replicate	1
+PXD024685	none		False					True	biological replicate	1
+PXD024803	none		False					True	biological replicate	1
+PXD025240	experimental_design (deposit)	kept	False	organism part	organism part			True	biological replicate	2
+PXD025280	none		False					True	biological replicate	1
+PXD025315	none		False					True	biological replicate	1
+PXD025321	none		False					True	biological replicate	1
+PXD025503	none		False					True	biological replicate	1
+PXD026219	none		False					True	biological replicate	1
+PXD026335	none		False					True	biological replicate	1
+PXD026608	metadata	kept	False					True	biological replicate	1
+PXD026934	none		False					True	biological replicate	1
+PXD027318	none		False					False		0
+PXD027526	none		False					True	biological replicate	1
+PXD027548	none		False					True	biological replicate	1
+PXD027734	none		False					True	biological replicate	1
+PXD027754	none		False					True	biological replicate	1
+PXD027971	none		False					True	biological replicate	1
+PXD028157	none		False					True	biological replicate	1
+PXD028590	none		False					True	biological replicate	1
+PXD028852	none		False					True	biological replicate	1
+PXD028865	none		False					True	biological replicate	1
+PXD028975	none		False					True	biological replicate	1
+PXD029116	none		False					True	biological replicate	1
+PXD030773	none		False					True	biological replicate	1
+PXD030776	none		False					True	biological replicate	1
+PXD030939	none		False					True	biological replicate	1
+PXD031223	metadata	kept	False					True	biological replicate	1
+PXD031604	none		False					True	biological replicate	1
+PXD032040	none		False					False		0
+PXD032044	none		False					True	biological replicate	1
+PXD032046	none		False					True	biological replicate	1
+PXD032202	none		False					False		0
+PXD032240	none		False					True	biological replicate	1
+PXD032757	none		False					True	biological replicate	1
+PXD033430	none		False					True	biological replicate	1
+PXD034432	metadata	kept	False	organism part				True	biological replicate	1
+PXD034465	none		False					True	biological replicate	1
+PXD034564	none		False					True	biological replicate	1
+PXD034590	metadata	kept	False	organism part				True	biological replicate	1
+PXD035107	none		False					True	biological replicate	1
+PXD035149	none		False					True	biological replicate	1
+PXD035171	none		False					True	biological replicate	1
+PXD035299	none		False					True	biological replicate	1
+PXD035412	none		False					True	biological replicate	1
+PXD035446	none		False					True	biological replicate	1
+PXD036557	metadata	kept	False					False		0
+PXD037230	none		False					True	biological replicate	1
+PXD038328	none		False					True	biological replicate	1
+PXD038718	none		False					True	biological replicate	1
+PXD039172	none		False					True	biological replicate	1
+PXD041139	none		False					True	biological replicate	1
+PXD041376	none		False					True	biological replicate	1
+PXD041660	metadata	kept	False	organism part				True	biological replicate	1
+PXD041766	none		False					True	biological replicate	1
+PXD042301	metadata	kept	False	genotype,age	genotype,age			False		0
+PXD042428	none		False					True	biological replicate	1
+PXD043001	none		False					True	biological replicate	1
+PXD043296	none		False					True	biological replicate	1
+PXD043644	none		False					True	biological replicate	1
+PXD043779	none		False					True	biological replicate	1
+PXD043964	none		False					True	biological replicate	1
+PXD044227	none		False					True	biological replicate	1
+PXD044453	none		False					True	biological replicate	1
+PXD044773	metadata	kept	False	organism part				False		0
+PXD044996	none		False					True	biological replicate	1
+PXD045821	none		False					True	biological replicate	1
+PXD045861	metadata	kept	False					True	biological replicate	1
+PXD045887	none		False					True	biological replicate	1
+PXD047288	none		False					True	biological replicate	1
+PXD047289	operator_sdrf	left out	True	age group				True	biological replicate	1
+PXD047292	operator_sdrf	left out	True	age group	age group			True	biological replicate	3
+PXD047293	operator_sdrf	left out	True	age group	age group			True	biological replicate	3
+PXD048393	none		False					True	biological replicate	1
+PXD048720	none		False					True	biological replicate	1
+PXD048877	metadata	kept	False					True	biological replicate	1
+PXD049018	none		False					True	biological replicate	1
+PXD049957	none		False					True	biological replicate	1
+PXD050351	none		False					True	biological replicate	1
+PXD051031	none		False					True	biological replicate	1
+PXD051203	operator_sdrf	left out	True	age group	age group			True	biological replicate	3
+PXD051644	operator_sdrf	left out	True	age group				True	biological replicate	1
+PXD051715	metadata	kept	False					True	biological replicate	1
+PXD052189	none		False					False		0
+PXD052631	none		False					True	biological replicate	1
+PXD052797	none		False					True	biological replicate	1
+PXD053288	none		False					True	biological replicate	1
+PXD054290	metadata	kept	False	organism part				True	biological replicate	1
+PXD055228	metadata	kept	False					True	biological replicate	1
+PXD056276	none		False					True	biological replicate	1
+PXD056433	experimental_design (question)	left out	False	group	group	group	characteristics[treatment]	True	biological replicate	4
+PXD056458	operator_sdrf	left out	True	age group	age group			True	biological replicate	3
+PXD057407	none		False					True	biological replicate	1
+PXD057409	none		False					True	biological replicate	1
+PXD057490	none		False					True	biological replicate	1
+PXD057499	none		False					True	biological replicate	1
+PXD057502	none		False					True	biological replicate	1
+PXD057544	none		False					True	biological replicate	1
+PXD057545	none		False					True	biological replicate	1
+PXD057554	none		False					True	biological replicate	1
+PXD058082	none		False					True	biological replicate	1
+PXD058156	none		False					True	biological replicate	1
+PXD058248	operator_sdrf	left out	True	age group	age group			True	biological replicate	3
+PXD058253	experimental_design (question)	left out	False	age group	age group			True	biological replicate	3
+PXD058611	none		False					True	biological replicate	1
+PXD058775	none		False					False		0
+PXD058855	none		False					True	biological replicate	1
+PXD058971	none		False					True	biological replicate	1
+PXD059520	none		False					True	biological replicate	1
+PXD059591	none		False					True	biological replicate	1
+PXD059818	metadata	kept	False	protein amount	protein amount	protein amount		True	biological replicate	1
+PXD060832	none		False					True	biological replicate	1
+PXD060982	metadata	kept	False	organism part				True	biological replicate	1
+PXD061069	metadata	kept	False	organism part				True	biological replicate	1
+PXD061654	none		False					True	biological replicate	1
+PXD064236	none		False					True	biological replicate	1
+PXD067102	metadata	kept	False	organism part				True	biological replicate	1
+PXD067622	none		False					True	biological replicate	1
+PXD068498	none		False					True	biological replicate	1
+PXD069093	metadata	kept	False	organism part				True	biological replicate	1
+PXD071171	none		False					True	biological replicate	1
+PXD073846	metadata	kept	False	organism part				True	biological replicate	1
+PXD073999	none		False					True	biological replicate	1
+PXD075372	none		False					True	biological replicate	1
+PXD077298	none		False					True	biological replicate	1
+PXD082596	none		False					True	biological replicate	1

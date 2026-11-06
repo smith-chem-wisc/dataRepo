@@ -81,6 +81,12 @@ depends on it is marked as such.
 |---|---|---|
 | U26 | A split key already ingests and builds on 1.4.3, but a served split gets a wrong PRIDE link and double counts until the catalog side is built (no re-ingest needed). Which release carries it: 1.5.0, or a smaller release before it if PXReprise wants to serve a split sooner? | **1.5.0.** PXReprise was told the default and asked to say if it needs it sooner (093). |
 
+### The SDRF as the sample record (G127; `results/sdrf_route_2026-11-06/`), 2026-11-06
+
+| ID | Question | Default (work proceeds on it) |
+|---|---|---|
+| U27 | The user hopes the SDRF carries all treatment conditions and sample facts into dataRepo (PXR-R52, PXR-F9). Proposed in sdrf 034: a treatment is a sample fact written as `characteristics[treatment]`, which reaches the catalog today for any project; `factor value[...]` stays out of a shared bundle. Is that the route? And should the search's own SDRF become the record for new searches, or should we keep reading the input SDRF? | **Yes to the route. Keep reading the input SDRF** until a search with `InputSdrfPath` exists to test; sdrf takes PXR-F9 to the user first. The larger gap is that 151 of 196 deposits read no SDRF at all, which sdrf's drafts could fill. |
+
 ## Waiting on aging (thread `design/threads/aging/`)
 
 | ID | Question | Status |

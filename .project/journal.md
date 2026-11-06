@@ -2375,3 +2375,13 @@ second half was a stand-in, the same folder under another key, and 093 says so. 
 Two slips on the way. The script that posts a thread took positional arguments, and PowerShell 5.1 dropped an empty one, so 091 recorded its ask as answered; it was caught and fixed in both copies before the commit,
 and the script now takes named flags. The same trap had already fired a minute earlier and been patched only for that call. And PXReprise posted 092 (PXR-R52: the user's hope that the SDRF becomes the sample record) while
 this was being written, which the checker caught before 093 went out; it is logged as G127, for a separate reply with sdrf.
+
+## 2026-11-06 (night): PXR-R52, where treatment conditions go; the premise was smaller than it looked
+
+092 said a curated SDRF's treatment conditions do not reach the catalog without a study layer, and the same thing was already written to sdrf. It is true of `factor value[...]` columns. It is not true of treatments: PXD056433 has been serving `characteristics[treatment]` from a curated SDRF, with its factor values left out, and nobody had looked. sdrf's D64 that same day made a treatment a fact of the living sample, so the column it belongs in already reaches the catalog. Route proposed to sdrf in 034, copied to PXReprise in 094, and U27 for the user. Not decided, since sdrf said PXR-F9 goes to the user first.
+
+The count across all 196 moved the question. 151 deposits read no SDRF, so they have no treatment by any route, which is a larger gap than which column carries it. The search's own SDRF holds nothing beyond organism and biological replicate anywhere. Of 13 curated SDRFs, five have a factor with no same-named characteristic, and the first pass called those five lost. Reading the SDRFs corrected that: PXD056433's `group` is two stored characteristics crossed, and PXD006815's study layer has `age group`, so three really keep the fact only in sample names (PXD002467, PXD011740, PXD022196; aging 131).
+
+Looking for where a reader would find a treatment turned up our own fault. `samples.condition` says "e.g. HGPS, caloric restriction" and `Sdrf.cs:277` fills it only from `characteristics[disease]`, on 5 deposits. An agent asking about treatment conditions goes there first and reads NULL as "none known". It is on 1.5.0's list, with a finding for dropped factor columns.
+
+One draft slip, caught before the commit: 131 told aging to add a column to the SDRF, without saying that an edited design SDRF is refused on its sha256 unless named as `operator_sdrf`. All three deposits are design SDRFs, so the advice as written would have failed for them. Both copies were corrected together.

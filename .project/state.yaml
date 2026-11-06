@@ -616,7 +616,15 @@ gaps:
     SDRF gives characteristics only; its factor values reach the catalog through a study layer, and only aging has one
     (StudyWriter.cs:206), so a project such as the diabetes one gets no treatment conditions. What route, for any question: the
     search's own SDRF (MetaMorpheus 1.1.14's InputSdrfPath copies a curator's sample half into it, and we do not read that file)
-    or a generic study layer? Settle with sdrf (their PXR-F9), copy PXReprise. Mind 1.5.0's window. Not answered yet.
+    or a generic study layer? Settle with sdrf (their PXR-F9), copy PXReprise. Mind 1.5.0's window. ROUTE PROPOSED 2026-11-06 (our sdrf
+    034 asks SDRF-D12, SDRF-D13; PXReprise 094; aging 131; results/sdrf_route_2026-11-06; U27), not decided: a treatment is a sample
+    fact, written as characteristics[treatment], and is read today for any project (PXD056433 serves naive/trained with its factor values
+    left out); factor values stay out of a curated SDRF's bundle, and a question's grouping goes with membership (PXR-R33, R35); no generic
+    study layer for treatments. Measured on 196: 151 read no SDRF; 31+1 keep factor values, 6+7 leave them out; the search's own SDRF is on 186
+    and holds nothing beyond organism and biological replicate. To build at 1.5.0: a finding naming a factor column left out with no same-named
+    characteristic (PXD011740, PXD022196, PXD002467 keep the fact only in sample names; aging told); samples.condition's description, which
+    says "caloric restriction" while Sdrf.cs:277 fills it only from characteristics[disease]. Reading the search's own SDRF waits on sdrf and
+    the user, and needs its input's sha256, assumed cells marked, and a real InputSdrfPath search to test.
   - >-
     G126 NEW 2026-11-06: split deposits, the catalog side (PXR-R32; our PXReprise 093; results/split_trial_2026-11-06). A split key
     already ingests and builds on released 1.4.3, so PXReprise can start. NOT BUILT, all without a re-ingest: dataset_overview

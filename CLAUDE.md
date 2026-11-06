@@ -9,9 +9,9 @@ This folder is a `/project`-managed research project. **You are de facto working
 - **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`) and read PXReprise's answers:
   PXR-R49 (the 1.5.0 window), PXR-R50 (record MS2 or MS3) and PXR-R51 (where else to read per-run scan counts).
   **Then 1.5.0 (G123; D53-D56; plan `design/RELEASE_1.5.0.md`):** decided by the user, not built,
-  and **nothing is built until PXReprise answers on the window**. Still owed: PXReprise R33-R39 and **PXR-R52 (G127: the SDRF as the sample
-  record, the user's hope; settle with sdrf, who hold PXR-F9)**. We also wait on ptmQtl's DATAREPO-P33, pyMzLib DATAREPO-70, pep's
-  DATAREPO-89. U25 (G125) and U26 (G126) are open with defaults.
+  and **nothing is built until PXReprise answers on the window**. Still owed: PXReprise R33-R39 (R33, R35, R37-R39 need the user's calls). **PXR-R52 (G127, the
+  SDRF as the sample record) has a route proposed in sdrf 034, not decided: read sdrf's answer to SDRF-D12, SDRF-D13 and PXR-F9.** We also wait on ptmQtl's DATAREPO-P33,
+  pyMzLib DATAREPO-70, pep's DATAREPO-89. U25 (G125), U26 (G126) and U27 (G127) are open with defaults.
   - **2026-11-06: PXD025315 is delivered** as `3d76e6ec83ecc5a1`, as predicted. aging serves catalog `53f5ff162ba37e84` (built by 1.4.3,
     196 bundles). G122 is closed and `code/_wt_143` removed. KEGG-D6 is answered (kegg 009): yes, a build refusal, with G112.
     - **PXR-R30 to R32 are answered (PXReprise 093; `results/split_trial_2026-11-06/`).** A split key already ingests and builds on released 1.4.3:
@@ -24,6 +24,10 @@ This folder is a `/project`-managed research project. **You are de facto working
       the QC report's `ms2` equals `ms2_scans` on 5,051 of 5,051 runs, so MS2 is safe; precursors are the open one (PXR-R51, our 091). Our aging 119 promised a recount
       of the other three from the whole search, and it was never built. It is on 1.5.0's build list. aging reads none of these rows. Read from the code, not
       yet seen on a @14 bundle: PXD005035 is the first, so check its `metrics` when it arrives.
+    - **PXR-R52, the user's hope that the SDRF is the sample record (G127; `results/sdrf_route_2026-11-06/`).** Proposed, not decided: a treatment is a sample fact in
+      `characteristics[treatment]`, read today for any project (PXD056433 serves naive/trained with its factor values left out); factor values stay out of a curated SDRF's bundle. 151 of 196
+      deposits read no SDRF at all, and the search's own SDRF holds nothing beyond organism and biological replicate. **`samples.condition` is misdescribed:** it says "caloric restriction" and holds only
+      `characteristics[disease]`, on 5 deposits. Its fix and a finding for dropped factor columns are on 1.5.0's list.
     - **The user ordered `wip/d37-g81-python` deleted from GitHub.** The agent's delete was refused, so the user runs it; check with `git ls-remote`. The local branch stays as the specification.
   - **2026-11-05: datarepo 1.4.3 is RELEASED** (the user: "release the reader fix"). Tag `v1.4.3` on `1190f85`, published
     17:37 UTC. win-x64 zip sha256 `6a4ea62f9b40e5ac0e0ed2e01be186c13615cff1668ee6999bbf1bd48ed99a22`. Tutorial catalog

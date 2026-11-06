@@ -170,6 +170,13 @@ q-value notch."
   - To settle: which rule counts peptides now that the view moves, and the definition ids, which are their owners' (D24). Today's rows cite dataset
     definitions for per-file-FDR counts.
   - The isobaric finding's sentence on per-file `_Peptides.psmtsv` (`Ingester.cs:669`) stops being true under `tmt-dda@3`. Rewrite it with the #2941 re-read above.
+- **A factor column left out with nothing beside it (G127, U27).** A curated SDRF's `factor value[...]` is dropped with only a note in `bundle.json`. Add a finding naming each one with no
+  same-named characteristic. It is a row, so it rides this re-ingest. On today's store it fires on 5 deposits, and on PXD011740, PXD022196 and PXD002467 the fact survives only in sample names
+  (`results/sdrf_route_2026-11-06/`).
+- **`samples.condition`'s description (G127).** It says "e.g. HGPS, caloric restriction", and `Sdrf.cs:277` fills it only from `characteristics[disease]` (5 of 196 deposits). Say what it holds, and
+  point a reader to `sample_characteristics` for treatments. A changed description also needs its `McpParityTests` mask.
+- **SDRF drafts (G127).** If sdrf's drafts become `operator_sdrf` entries, this re-ingest carries them at no extra cost. sdrf's hold and G68 fix come first, and each draft must group files as its
+  search's design does. PXReprise is asked to weigh this when answering PXR-R49.
 - **MetaMorpheus 1.1.14's #2936 (QuantProject 077).** PEP now computes for a search with over 1000 PSMs and only 100 to 1000 peptides. PXD058775, the
   only deposit on the notch, reads 1,859 PSMs and 226 peptides at 1% (results.txt), so a re-search would probably leave the fallback. D55 does not change,
   since it is decided per search, and no re-search is implied. The code path must still exist, and a fixture must still reach it.

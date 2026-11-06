@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Commits | 857 |
+| Commits | 859 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
 | Locked decisions | 56 |
 | Open gaps | 123 |
@@ -48,16 +48,22 @@ with age.
   - MetaMorpheus #2955 (released in 1.1.14 on 2026-11-06, not yet pinned) restores `ms2_scans` and `precursors`. The other three still need the tables (QuantProject 077).
   - Our aging 119 promised a recount of those three from the whole search. It was never built, and it is now on 1.5.0's build list.
   - This is read from the code. PXD005035 is the first @14 deposit: check its `metrics` when it arrives.
+- **PXR-R52, the SDRF as the sample record (G127, U27; `results/sdrf_route_2026-11-06/`).** Route proposed to sdrf (034, copied to PXReprise 094), not decided.
+  - A treatment is a sample fact in `characteristics[treatment]`, read today for any project: PXD056433 serves naive/trained with its factor values left out. No study layer needed.
+  - Measured on 196 deposits: 151 read no SDRF at all, which is the larger gap and what sdrf's drafts could fill, free at 1.5.0's re-ingest. The search's own SDRF holds nothing beyond organism and biological replicate.
+  - Three of aging's curated designs keep their grouping only in sample names (PXD002467, PXD011740, PXD022196; aging 131).
+  - On 1.5.0's list: a finding for a factor column left out with nothing beside it, and `samples.condition`'s description, which claims treatments and holds only a disease name.
 - **In flight (re-check with `threads.py inbox`):**
   - PXReprise: PXR-R49 (the window), PXR-R50 (MS2 or MS3), PXR-R51 (per-run scan counts);
+  - sdrf: SDRF-D12, SDRF-D13, PXR-F9;
   - pep: DATAREPO-89 (G124). Its answer changes the rule only if the user says so;
   - ptmQtl DATAREPO-P33, pyMzLib DATAREPO-70.
-- **Still owed by us:** PXReprise R33-R39 and PXR-R52 (G127: the SDRF as the sample record, the user's hope; settle with sdrf, who hold PXR-F9).
-- **Left for the user:** U25, U26; `wip/d37-g81-python` off GitHub (ordered; the agent's delete is refused, and the local branch stays); delete `F:\datarepo_scratch_143` (3.5 GB). Each from a
+- **Still owed by us:** PXReprise R33-R39. R33, R35 and R37-R39 need the user's calls (the Alzheimer's question, hosting, the grant wording). R34 and R36 are technical.
+- **Left for the user:** U25, U26, U27; `wip/d37-g81-python` off GitHub (ordered; the agent's delete is refused, and the local branch stays); delete `F:\datarepo_scratch_143` (3.5 GB). Each from a
   separate PowerShell window: a command sent through the chat does not run.
 - **Pick up at:** run `threads.py inbox` and read PXReprise's answers. If PXR-R49 names a window, start 1.5.0 by the plan's "Order": branch `feat/1.5.0`,
   settle the build list, measure a whole-store scratch re-ingest, predict every id, and release only on the user's word. If it does not, build nothing
-  and take PXR-R52 with sdrf.
+  and take PXR-R34 and R36, or sdrf's answer on G127.
 
 ## Earlier (2026-11-05): 1.4.3 released; 1.5.0 decided, with `peptidoforms_1pct` moving to 1% PEP q-value; not built
 
