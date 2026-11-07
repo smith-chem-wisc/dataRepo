@@ -643,8 +643,14 @@ gaps:
     and #1557 release and PXReprise reruns. #1557 brings a new source word, `community sdrf`: stored verbatim (Sdrf.cs:284), and the schema's
     `source` description needs the word at that release. PXR-F9 is with the user; sdrf sends the contract.
   - >-
-    G128 NEW 2026-11-06: the MCP sandbox could write into the store (U28; results/sandbox_2026-11-06 on branch feat/1.4.4, kept off
-    origin because its tests show how). Found by the independent review of feat/ai-contributions, reproduced and extended by the agent on
+    G128 RELEASED 2026-11-07 in datarepo 1.4.4 (the user: "release 1.4.4"; tag v1.4.4 on 91f5458, published 14:10 UTC; win-x64 zip
+    sha256 0be76af2faeb9234217237030befe0f6c269f955b31c157f14e2631025014f97; tutorial catalog 44001693e380c634). CI: Linux 770 passed, 0
+    failed. The downloaded program reproduced the tutorial, PXD017944 3cd52dd1b39472d8 and PXD025315 3d76e6ec83ecc5a1 (16 of 16 tables
+    byte-identical each) and refused every probe in results/sandbox_2026-11-06 on a scratch store. Told PXReprise 101 (with the sha256),
+    aging 133, ptmQtl 064, QuantProject 079. Left: point our MCP entry (F:\aging_batch\datarepo-1.3.6) at 1.4.4 once PXReprise installs
+    it. A folder catalog's id hashes the folder it points at, so the same store gives a new id in a new --out (1.4.3 too, by design);
+    release_id is the content-only one. Was: G128 NEW 2026-11-06: the MCP sandbox could write into the store (U28; results/sandbox_2026-11-06, kept off
+    origin until the release because its tests show how). Found by the independent review of feat/ai-contributions, reproduced and extended by the agent on
     released 1.4.3 against a scratch store. A statement's kind does not say it only reads, and allowed_directories allows writing as well as
     reading. A client could replace a served table with the row count, catalog id and all build checks unchanged, overwrite bundle.json so
     that the next build crashes, and write files under the store; on a one-file catalog too, put invented rows in front of a served table,
@@ -1977,12 +1983,6 @@ repos:  # PR D and PR E worktrees retired 2026-09-24: both merged, in mzLib 1.0.
     # 1.4.2 (DEF-TMT v3.22, #2941 finding and verdict, matched_ion descriptions). Merged as 1248c17 and released
     # 2026-11-03 (tag v1.4.2); can be retired.
     pinned: 3447228
-  - name: dataRepo
-    worktree: code/_wt_144
-    branch: feat/1.4.4
-    base_clone: "E:/CodeReview/dataRepo (origin = smith-chem-wisc/dataRepo)"
-    # The MCP sandbox fix (G128, U28). Local only on purpose until the user says release: its tests show how.
-    pinned: b684c02
   - name: dataRepo
     worktree: code/_wt_ai_contrib
     branch: feat/ai-contributions

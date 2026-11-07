@@ -2,13 +2,13 @@
 
 <!-- BEGIN GENERATED -- render_resume.py owns this block; edit state.yaml, not here -->
 
-**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-11-06
+**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-11-07
 
 | | |
 |---|---|
-| Commits | 870 |
+| Commits | 882 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
-| Locked decisions | 56 |
+| Locked decisions | 57 |
 | Open gaps | 125 |
 | Gate items skipped | 5 |
 
@@ -20,7 +20,6 @@
 | `code/_wt_141` | feat/1.4.1 | `e41c4af8` | `e41c4af` | at pin |
 | `code/_wt_tmt` | feat/tmt | `9e18c4dc` | `9e18c4d` | at pin |
 | `code/_wt_142` | feat/1.4.2 | `3447228b` | `3447228` | at pin |
-| `code/_wt_144` | feat/1.4.4 | `50547294` | `b684c02` | **off pin** -- `git -C code/_wt_144 checkout --detach b684c02` |
 | `code/_wt_ai_contrib` | feat/ai-contributions | `1db8a535` | `1db8a535` | at pin |
 | `code/_wt_mzlib_sumo` | fix/sumo-remnant-target-lysine | `6974a4d4` | `6974a4d4` | at pin |
 
@@ -34,9 +33,27 @@ reanalyses. The results cover search, quant, provenance, design and organelle an
 use it, but AI agents are the main users. The question it serves is how organelle proteomes change
 with age.
 
-## Latest (2026-11-06): the MCP sandbox could write into the store; AI contributions reviewed; PXD025315 delivered; @14 takes five run-scope metrics
+## Latest (2026-11-07): 1.4.4 released; the user's word on AI contributions (D57); the SDRF discussion opened
 
-- **The MCP sandbox could write into the store (G128, U28). A fix is built on local branch `feat/1.4.4`, not pushed and not released: the user's word.** Worktree `code/_wt_144`; `results/sandbox_2026-11-06/` is on that branch.
+- **datarepo 1.4.4 is RELEASED** (the user: "release 1.4.4"; G128). Tag `v1.4.4` on `91f5458`, published 14:10 UTC; win-x64 zip sha256
+  `0be76af2faeb9234217237030befe0f6c269f955b31c157f14e2631025014f97`; tutorial catalog `44001693e380c634`. No row or bundle id moves.
+  - CI: Linux 770 passed, 0 failed, the fix's first run off Windows; all four release builds ran the tutorial.
+  - The downloaded program reproduced the tutorial, PXD017944 `3cd52dd1b39472d8` and PXD025315 `3d76e6ec83ecc5a1` (16 of 16 tables byte-identical each) and refused every
+    probe in `results/sandbox_2026-11-06/` on a scratch store.
+  - Told PXReprise 101 (with the sha256 for their v0.4.41 pin), aging 133, ptmQtl 064, QuantProject 079. `code/_wt_144` is removed; master holds `feat/1.4.4`.
+  - **Left:** point our MCP entry, still on `F:\aging_batch\datarepo-1.3.6`, at 1.4.4 once PXReprise's swap installs it.
+- **PXReprise 098 to 100:** PXR-R53 closed (nothing reaches `datarepo mcp` from off this machine); PXR-R49 answered (no fixed window, a pin swap's gap, a week's notice
+  after the store is measured on a copy), so 1.5.0 is unblocked; R50 (`sps_ms3` in `qc_report.json`), R51 (MS2 from the QC report; precursors only from MetaMorpheus, which
+  1.1.14 restores). New asks: **PXR-R54** (should a TMT channel marked `empty` make no sample, assay or values?) and **PXR-R55** (a modification class on sites; a catalog
+  column is the user's word). 099: one real 1.1.14 search with `InputSdrfPath`; 1.4.3 ingests it with `no_sdrf`, and its output SDRF is not kept.
+- **D57, the user on U29:** no host for now (the users are the user and Alex); results come in through the operator's inbox and a person reviews them, but saving asks nobody
+  to fill anything in; not held for 1.5.0, because old results on old data are the build's to carry. Which release, and the order against 1.5.0, are open.
+- **The user wants to discuss keeping the SDRF with the results,** one plain question at a time. First question asked: travel with the data, be the official record of sample
+  facts, or both? 45 of 196 bundles already keep the SDRF they read, verbatim; 151 read none.
+
+## 2026-11-06: the MCP sandbox could write into the store; AI contributions reviewed; PXD025315 delivered; @14 takes five run-scope metrics
+
+- **The MCP sandbox could write into the store (G128, U28). Released as 1.4.4 on 2026-11-07, above.** Until then the fix sat on local branch `feat/1.4.4`, kept off origin.
   - The review of `feat/ai-contributions` found one route. Run on released 1.4.3 against a scratch store: a client of a folder catalog replaced a served table with the row count, catalog id and all checks unchanged, and overwrote `bundle.json` so that the next build crashed. On any catalog it put invented rows in front of a served table, certified by `tables_touched` (D20).
   - The fix is an allow-list of what a statement may call. A first fix for the reported route alone still wrote: only sweeping DuckDB's functions showed that.
   - aging's store, stat only: 520 bundles, none with a file over an hour newer than its bundle. No sign, and not proof, because `bundle.json` holds no table hashes.

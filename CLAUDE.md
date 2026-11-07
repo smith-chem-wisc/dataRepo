@@ -6,18 +6,26 @@ This folder is a `/project`-managed research project. **You are de facto working
 
 - **Phase:** INCEPTION
 - **Goal:** An AI-ready, API-accessible repository for the search + quant results of the many PRIDE datasets the `aging` pipeline reanalyzes. Humans can use it, but AI agents are the main users. The question it serves is how organelle proteomes change with age.
-- **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`) and read PXReprise's answers:
-  PXR-R49 (the 1.5.0 window), PXR-R50 (record MS2 or MS3) and PXR-R51 (where else to read per-run scan counts).
-  **Then 1.5.0 (G123; D53-D56; plan `design/RELEASE_1.5.0.md`):** decided by the user, not built,
-  and **nothing is built until PXReprise answers on the window**. Still owed: PXReprise R33 (waits on the user's choice, their G61) and R38 (the user's, U29). **PXR-R52 (G127, the
-  SDRF as the sample record): sdrf 035 agrees the route; PXR-F9 is with the user, and sdrf sends the contract.** We also wait on PXReprise's PXR-R53, ptmQtl's DATAREPO-P33,
-  pyMzLib DATAREPO-70, pep's DATAREPO-89. U25 (G125), U26 (G126), U27 (G127), U28 (G128) and U29 (G129) are open with defaults.
-  - **2026-11-06: THE MCP SANDBOX COULD WRITE INTO THE STORE (G128, U28). The fix is on local branch `feat/1.4.4` (worktree `code/_wt_144`), NOT pushed, NOT released: the user's word.**
-    It stays off origin until then, because its tests show how; threads name the class and not the statements. Run on released 1.4.3 against a scratch store: a client of a folder catalog replaced a
-    served table with the row count, catalog id and checks unchanged, and overwrote `bundle.json` so the next build crashed. On any catalog it put invented rows in front of a served table (D20).
-    aging's store, stat only: no sign, not proof. Told PXReprise and aging; PXR-R53 asks if anything is reachable from off this machine. On the word: push, CI, merge, tutorial, binaries, ids, publish; tell
-    PXReprise, aging, ptmQtl, QuantProject; repoint our MCP entry, still on 1.3.6.
-    - **`feat/ai-contributions` reviewed (G129, U29; `results` none, the reply is in our PXReprise thread).** Not as it stands: contributions after three fixes, the session record redone, the host last and read-only. Proposed after 1.5.0.
+- **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`).
+  **The user asked to DISCUSS keeping the SDRF with the results (2026-11-07), one plain question at a time.** Asked first, not yet answered: should the SDRF travel with
+  the data (whoever gets a dataset's results gets its sample sheet), be the official record of sample facts (in place of aging's curated study tables), or both? The facts:
+  45 of 196 bundles read an SDRF and keep a verbatim copy in `sources/`; 151 read none; MetaMorpheus's own `experiment.sdrf.tsv` (186 of 196, organism and biological
+  replicate only) is not kept; a question's or operator's curated SDRF loses its factor values from the tables on 13 (`results/sdrf_route_2026-11-06/`). The agent's
+  proposal: the search's own SDRF in every bundle at 1.5.0; corrected SDRFs beside the bundle, dated and hashed, so a fix never moves a bundle id; groupings kept, marked.
+  **Then the order of 1.5.0 and AI contributions (D57):** PXR-R49 is answered (PXReprise 098: no fixed window, a pin swap's gap, a week's notice after the store is measured
+  on a copy), so **1.5.0 (G123; D53-D56; `design/RELEASE_1.5.0.md`) is unblocked**, but the user has not yet chosen it over contributions. The agent recommended 1.5.0 first,
+  contributions built alongside. Still owed: PXReprise R33 (their G61), R38 in part (which release), R52, R54 (an `empty` TMT channel: no sample, assay or values?) and R55
+  (a modification class on sites; a catalog column is the user's word). sdrf sends the PXR-F9 contract. We wait on ptmQtl's DATAREPO-P33, pyMzLib DATAREPO-70, pep's
+  DATAREPO-89. U25 (G125), U26 (G126), U27 (G127) are open with defaults; U29's (b) keeps its default.
+  - **2026-11-07: datarepo 1.4.4 is RELEASED** (the user: "release 1.4.4"). Tag `v1.4.4` on `91f5458`, published 14:10 UTC. win-x64 zip sha256
+    `0be76af2faeb9234217237030befe0f6c269f955b31c157f14e2631025014f97`. Tutorial catalog `44001693e380c634`. The MCP sandbox could write into the store (G128): fixed by allow-lists,
+    `results/sandbox_2026-11-06/`. CI on Linux 770 passed, 0 failed. The downloaded program reproduced the tutorial, PXD017944 `3cd52dd1b39472d8` and PXD025315 `3d76e6ec83ecc5a1`
+    (all tables byte-identical) and refused every probe. Told PXReprise 101, aging 133, ptmQtl 064, QuantProject 079. `code/_wt_144` removed; branch `feat/1.4.4` has no upstream:
+    master holds it. **Left: point our MCP entry (`F:\aging_batch\datarepo-1.3.6`) at 1.4.4** once PXReprise's swap installs `F:\aging_batch\datarepo-1.4.4` (asked in 101).
+    PXR-R53 is closed (098): nothing reaches `datarepo mcp` from off this machine.
+    - **D57, the user on U29 (AI contributions):** no host for now (the users are the user and Alex); results come in through the operator's inbox and a person reviews them, but
+      saving asks nobody to fill anything in; not held for 1.5.0, since old results pointing at old data are the build's to carry. Which release is open. Told PXReprise 101.
+    - **`feat/ai-contributions` reviewed (G129; the reply is our PXReprise 097).** Not as it stands: contributions after three fixes, the session record redone, the host last and read-only.
   - **2026-11-06: PXD025315 is delivered** as `3d76e6ec83ecc5a1`, as predicted. aging serves catalog `53f5ff162ba37e84` (built by 1.4.3,
     196 bundles). G122 is closed and `code/_wt_143` removed. KEGG-D6 is answered (kegg 009): yes, a build refusal, with G112.
     - **PXR-R30 to R32 are answered (PXReprise 093; `results/split_trial_2026-11-06/`).** A split key already ingests and builds on released 1.4.3:
@@ -788,6 +796,10 @@ This folder is a `/project`-managed research project. **You are de facto working
 - **`ci.yml` runs on a push to ANY branch, using that branch's own workflow, so an old branch can go red for old reasons.**
   `wip/d37-g81-python` (run 42147234119, 2026-11-06) predates master's `duckdb<2` pin, so pip took DuckDB 2.0.0 and its tests stop on
   `ResourceInUseException`. That says nothing about master. The branch's tests were never run and it is not to be merged, so leave it red.
+- **`[skip ci]` on the HEAD commit of a push skips CI for the whole push,** release merge included. A notes commit on top of an unpushed release merge must not carry it
+  (2026-11-07, D57's commit, caught before the push).
+- **A folder catalog's id hashes the folder its views point at** (`data_root`, `derived_root`), so the same store built into another `--out` gets another id, on 1.4.3 too.
+  Compare `release_id` across folders, and rebuild into the same folder to see an id hold (2026-11-07, probing the release).
 
 **Sibling project: `E:\CodeReview\aging`** (the NCEMS pipeline). aging *produces* results under
 `F:\aging_data\<run>\<PXD>\` with `provenance.json` (schema `aging-provenance/2`). dataRepo *ingests and serves*
