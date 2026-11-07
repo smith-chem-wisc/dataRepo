@@ -9,9 +9,15 @@ This folder is a `/project`-managed research project. **You are de facto working
 - **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`) and read PXReprise's answers:
   PXR-R49 (the 1.5.0 window), PXR-R50 (record MS2 or MS3) and PXR-R51 (where else to read per-run scan counts).
   **Then 1.5.0 (G123; D53-D56; plan `design/RELEASE_1.5.0.md`):** decided by the user, not built,
-  and **nothing is built until PXReprise answers on the window**. Still owed: PXReprise R33 (waits on the user's choice, their G61) and R37-R39 (the review of `feat/ai-contributions`; R38 and the design's "Open for the user" are the user's). R34-R36 are answered (095). **PXR-R52 (G127, the
-  SDRF as the sample record) has a route proposed in sdrf 034, not decided: read sdrf's answer to SDRF-D12, SDRF-D13 and PXR-F9.** We also wait on ptmQtl's DATAREPO-P33,
-  pyMzLib DATAREPO-70, pep's DATAREPO-89. U25 (G125), U26 (G126) and U27 (G127) are open with defaults.
+  and **nothing is built until PXReprise answers on the window**. Still owed: PXReprise R33 (waits on the user's choice, their G61) and R38 (the user's, U29). **PXR-R52 (G127, the
+  SDRF as the sample record): sdrf 035 agrees the route; PXR-F9 is with the user, and sdrf sends the contract.** We also wait on PXReprise's PXR-R53, ptmQtl's DATAREPO-P33,
+  pyMzLib DATAREPO-70, pep's DATAREPO-89. U25 (G125), U26 (G126), U27 (G127), U28 (G128) and U29 (G129) are open with defaults.
+  - **2026-11-06: THE MCP SANDBOX COULD WRITE INTO THE STORE (G128, U28). The fix is on local branch `feat/1.4.4` (worktree `code/_wt_144`), NOT pushed, NOT released: the user's word.**
+    It stays off origin until then, because its tests show how; threads name the class and not the statements. Run on released 1.4.3 against a scratch store: a client of a folder catalog replaced a
+    served table with the row count, catalog id and checks unchanged, and overwrote `bundle.json` so the next build crashed. On any catalog it put invented rows in front of a served table (D20).
+    aging's store, stat only: no sign, not proof. Told PXReprise and aging; PXR-R53 asks if anything is reachable from off this machine. On the word: push, CI, merge, tutorial, binaries, ids, publish; tell
+    PXReprise, aging, ptmQtl, QuantProject; repoint our MCP entry, still on 1.3.6.
+    - **`feat/ai-contributions` reviewed (G129, U29; `results` none, the reply is in our PXReprise thread).** Not as it stands: contributions after three fixes, the session record redone, the host last and read-only. Proposed after 1.5.0.
   - **2026-11-06: PXD025315 is delivered** as `3d76e6ec83ecc5a1`, as predicted. aging serves catalog `53f5ff162ba37e84` (built by 1.4.3,
     196 bundles). G122 is closed and `code/_wt_143` removed. KEGG-D6 is answered (kegg 009): yes, a build refusal, with G112.
     - **PXR-R30 to R32 are answered (PXReprise 093; `results/split_trial_2026-11-06/`).** A split key already ingests and builds on released 1.4.3:
@@ -772,6 +778,13 @@ This folder is a `/project`-managed research project. **You are de facto working
   PowerShell window. Do not route around it with `gh api`.
 - **"Only source" is a claim about every peer's outputs.** We told the user results.txt was the only source of per-run scan counts. It was the only source of those `metrics` rows, while the QC
   report held the same MS2 count on all 5,051 runs, in a table we already store. The user caught it. Say which rows a source fills, and ask the producer before saying nothing else holds a fact.
+- **A statement's kind does not say it only reads, and `allowed_directories` allows writing as well as reading** (2026-11-06, G128; the statements are in `results/sandbox_2026-11-06/` on `feat/1.4.4`, kept off
+  master until the release). So what a statement may call is an allow-list, and a test makes each function a new DuckDB adds a decision. `json_serialize_sql` reports a failure as a document, not an error: check its
+  `error` field, or a walk over it finds nothing to object to.
+- **A review's reproduction is one door.** The review named one statement, and a fix for that alone passed all 718 tests and still wrote into the store. Listing everything the engine offers and trying what
+  could write found the rest in minutes, including a forgery the review missed. Sweep the class before calling a hole closed.
+- **Master is public whenever anyone pushes it, so a recipe for a hole in released binaries does not go in its notes or journal.** I wrote the statements into both and took them out before the push (2026-11-06).
+- **Never send a write probe through our own `datarepo` MCP tool.** It serves aging's real store. Build a scratch folder catalog and drive `datarepo mcp` over stdio (`results/sandbox_2026-11-06/` on `feat/1.4.4`).
 - **`ci.yml` runs on a push to ANY branch, using that branch's own workflow, so an old branch can go red for old reasons.**
   `wip/d37-g81-python` (run 42147234119, 2026-11-06) predates master's `duckdb<2` pin, so pip took DuckDB 2.0.0 and its tests stop on
   `ResourceInUseException`. That says nothing about master. The branch's tests were never run and it is not to be merged, so leave it red.

@@ -624,7 +624,30 @@ gaps:
     and holds nothing beyond organism and biological replicate. To build at 1.5.0: a finding naming a factor column left out with no same-named
     characteristic (PXD011740, PXD022196, PXD002467 keep the fact only in sample names; aging told); samples.condition's description, which
     says "caloric restriction" while Sdrf.cs:277 fills it only from characteristics[disease]. Reading the search's own SDRF waits on sdrf and
-    the user, and needs its input's sha256, assumed cells marked, and a real InputSdrfPath search to test.
+    the user, and needs its input's sha256, assumed cells marked, and a real InputSdrfPath search to test. SDRF-D12 AND D13 ANSWERED
+    (sdrf 035, 2026-11-06): yes to characteristics[treatment]; a fact written as a factor is also written in a characteristic or comment
+    column, as sdrf's convention for a curated SDRF, not a spec rule, so our finding is the right check. Drafts stay on hold until mzLib #1555
+    and #1557 release and PXReprise reruns. #1557 brings a new source word, `community sdrf`: stored verbatim (Sdrf.cs:284), and the schema's
+    `source` description needs the word at that release. PXR-F9 is with the user; sdrf sends the contract.
+  - >-
+    G128 NEW 2026-11-06: the MCP sandbox could write into the store (U28; results/sandbox_2026-11-06 on branch feat/1.4.4, kept off
+    origin because its tests show how). Found by the independent review of feat/ai-contributions, reproduced and extended by the agent on
+    released 1.4.3 against a scratch store. A statement's kind does not say it only reads, and allowed_directories allows writing as well as
+    reading. A client could replace a served table with the row count, catalog id and all build checks unchanged, overwrite bundle.json so
+    that the next build crashes, and write files under the store; on a one-file catalog too, put invented rows in front of a served table,
+    certified by tables_touched (D20). The review named one route; sweeping DuckDB's functions found the others, after a first fix for
+    that route alone still wrote. FIX BUILT, NOT PUSHED OR RELEASED: allow-lists of table functions and PRAGMAs, EXPLAIN takes one SELECT,
+    query() is checked as its own statement, what cannot be read is refused, and a test forces a decision on each function a new DuckDB adds.
+    aging's store, stat only: 520 bundles, 0 files dated over an hour after their bundle; no sign, not proof, because bundle.json holds no
+    table hashes. Told PXReprise and aging without the statements. Asks PXR-R53 (is anything reachable from off this machine). Release on the
+    user's word, then repoint our own MCP entry, still on 1.3.6, and tell ptmQtl and QuantProject. A table hash in bundle.json would make a
+    rewrite detectable: worth weighing for 1.5.0, whose schema moves anyway. Not built.
+  - >-
+    G129 NEW 2026-11-06: feat/ai-contributions reviewed (PXR-R37 to R39; U29). Not as it stands. Take contributions after fixing what
+    observed and reproduced claim, the value that jams every later build, and A13/A14. Redo the session record (it moves the catalog id on
+    an idle connection, and refuses a one-file catalog). Build the host last, read-only, under an account that cannot write the data. Finding
+    1 repeated by the agent, 3 and 5 read at the source, the rest are the reviewer's runs. Proposed after 1.5.0, so no contribution's basis is
+    stranded by the re-ingest; the user's word. D16 (hosted MCP only on evidence of demand) needs the user's word to change.
   - >-
     G126 NEW 2026-11-06: split deposits, the catalog side (PXR-R32; our PXReprise 093; results/split_trial_2026-11-06). A split key
     already ingests and builds on released 1.4.3, so PXReprise can start. NOT BUILT, all without a re-ingest: dataset_overview
@@ -1939,6 +1962,12 @@ repos:  # PR D and PR E worktrees retired 2026-09-24: both merged, in mzLib 1.0.
     # 1.4.2 (DEF-TMT v3.22, #2941 finding and verdict, matched_ion descriptions). Merged as 1248c17 and released
     # 2026-11-03 (tag v1.4.2); can be retired.
     pinned: 3447228
+  - name: dataRepo
+    worktree: code/_wt_144
+    branch: feat/1.4.4
+    base_clone: "E:/CodeReview/dataRepo (origin = smith-chem-wisc/dataRepo)"
+    # The MCP sandbox fix (G128, U28). Local only on purpose until the user says release: its tests show how.
+    pinned: b684c02
   - name: dataRepo
     worktree: code/_wt_ai_contrib
     branch: feat/ai-contributions

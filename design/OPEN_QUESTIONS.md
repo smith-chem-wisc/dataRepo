@@ -87,6 +87,18 @@ depends on it is marked as such.
 |---|---|---|
 | U27 | The user hopes the SDRF carries all treatment conditions and sample facts into dataRepo (PXR-R52, PXR-F9). Proposed in sdrf 034: a treatment is a sample fact written as `characteristics[treatment]`, which reaches the catalog today for any project; `factor value[...]` stays out of a shared bundle. Is that the route? And should the search's own SDRF become the record for new searches, or should we keep reading the input SDRF? | **Yes to the route. Keep reading the input SDRF** until a search with `InputSdrfPath` exists to test; sdrf takes PXR-F9 to the user first. The larger gap is that 151 of 196 deposits read no SDRF at all, which sdrf's drafts could fill. |
 
+### A hole in the MCP sandbox (G128), 2026-11-06
+
+| ID | Question | Default (work proceeds on it) |
+|---|---|---|
+| U28 | A client of `datarepo mcp` on a folder catalog can write into the store: run on 1.4.3, read from the code back to 1.3.5. The fix is built and tested on local branch `feat/1.4.4`, not pushed, because its tests show how to do it. Release it as 1.4.4 now? It moves no row and no bundle id. PXReprise and aging swap one binary and restart their servers. | **Hold until the user says:** a release is only ever on the user's word. The agent's recommendation is yes, now, ahead of 1.5.0. |
+
+### AI contributions and hosting (G129; PXR-R37 to R39), 2026-11-06
+
+| ID | Question | Default (work proceeds on it) |
+|---|---|---|
+| U29 | The review of `feat/ai-contributions` says not to take it as it stands (PXReprise, our reply to R37-R39). Four choices are the user's. (a) Which release carries contributions? (b) What may a contribution claim? Today `reproduced: true` came back for a result citing `SELECT 1`, so `observed` and `reproduced` can only mean "this call happened" and "these rows came back", and the grant wording has to match. (c) Does hosting go ahead now? D16 says hosted MCP only on evidence of demand, and PXReprise 064 says the user has chosen to host. (d) The design's four "Open for the user" items: grant wording, who may submit, contributions on a working build, who reviews before the next model is told to build on one. | **(a) After 1.5.0,** so that no contribution has a basis the re-ingest strands. **(b) The narrow meanings above.** **(c) No host until it is rebuilt, last, read-only, under an account that cannot write the data, with limits and a stage-two sandbox.** **(d) Saves through the operator's inbox only; no public write endpoint; everything `unreviewed` until a person says.** |
+
 ## Waiting on aging (thread `design/threads/aging/`)
 
 | ID | Question | Status |

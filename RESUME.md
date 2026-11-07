@@ -6,10 +6,10 @@
 
 | | |
 |---|---|
-| Commits | 864 |
+| Commits | 870 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
 | Locked decisions | 56 |
-| Open gaps | 123 |
+| Open gaps | 125 |
 | Gate items skipped | 5 |
 
 **Worktrees** -- details in `code/PINNED.md`
@@ -20,6 +20,7 @@
 | `code/_wt_141` | feat/1.4.1 | `e41c4af8` | `e41c4af` | at pin |
 | `code/_wt_tmt` | feat/tmt | `9e18c4dc` | `9e18c4d` | at pin |
 | `code/_wt_142` | feat/1.4.2 | `3447228b` | `3447228` | at pin |
+| `code/_wt_144` | feat/1.4.4 | `50547294` | `b684c02` | **off pin** -- `git -C code/_wt_144 checkout --detach b684c02` |
 | `code/_wt_ai_contrib` | feat/ai-contributions | `1db8a535` | `1db8a535` | at pin |
 | `code/_wt_mzlib_sumo` | fix/sumo-remnant-target-lysine | `6974a4d4` | `6974a4d4` | at pin |
 
@@ -33,8 +34,17 @@ reanalyses. The results cover search, quant, provenance, design and organelle an
 use it, but AI agents are the main users. The question it serves is how organelle proteomes change
 with age.
 
-## Latest (2026-11-06): PXD025315 delivered; KEGG-D6 answered; @14 takes five run-scope metrics
+## Latest (2026-11-06): the MCP sandbox could write into the store; AI contributions reviewed; PXD025315 delivered; @14 takes five run-scope metrics
 
+- **The MCP sandbox could write into the store (G128, U28). A fix is built on local branch `feat/1.4.4`, not pushed and not released: the user's word.** Worktree `code/_wt_144`; `results/sandbox_2026-11-06/` is on that branch.
+  - The review of `feat/ai-contributions` found one route. Run on released 1.4.3 against a scratch store: a client of a folder catalog replaced a served table with the row count, catalog id and all checks unchanged, and overwrote `bundle.json` so that the next build crashed. On any catalog it put invented rows in front of a served table, certified by `tables_touched` (D20).
+  - The fix is an allow-list of what a statement may call. A first fix for the reported route alone still wrote: only sweeping DuckDB's functions showed that.
+  - aging's store, stat only: 520 bundles, none with a file over an hour newer than its bundle. No sign, and not proof, because `bundle.json` holds no table hashes.
+  - **The branch stays off origin until the release,** because its tests show how. The threads name the class and not the statements. PXReprise and aging are warned, and PXR-R53 asks whether anything is reachable from off this machine.
+  - **On the user's word:** push, CI, merge, rerun the tutorial, binaries, check ids, publish; tell PXReprise, aging, ptmQtl, QuantProject; repoint our own MCP entry, still on 1.3.6.
+- **`feat/ai-contributions` is reviewed (G129, U29; PXR-R37 and R39 answered).** Not as it stands. Contributions after three fixes, the session record redone, and the host built last, read-only. Proposed after 1.5.0, and the release is the user's, so R38 stays open.
+- **sdrf 035 answers SDRF-D12 and D13:** the route stands, and a fact written as a factor is also written in a characteristic or comment column (their convention, not a spec rule). Drafts wait on mzLib #1555 and #1557. PXR-F9 is with the user. A new source word, `community sdrf`, fails no ingest, because the column is verbatim.
+- **QuantProject 078:** mzLib #1559 opened (isobaric observation table); nothing calls it yet, and nothing changes for us.
 - **PXD025315 is delivered** as `3d76e6ec83ecc5a1`, as predicted. aging serves catalog `53f5ff162ba37e84` (built by 1.4.3, 196 bundles). G122 is
   closed and `code/_wt_143` removed.
 - **KEGG-D6 is answered** (kegg 009): yes, ours, a build refusal, built with G112. G112 waits on kegg's PR-1 to PR-4 in an mzLib release.
@@ -54,15 +64,15 @@ with age.
   - Three of aging's curated designs keep their grouping only in sample names (PXD002467, PXD011740, PXD022196; aging 131).
   - On 1.5.0's list: a finding for a factor column left out with nothing beside it, and `samples.condition`'s description, which claims treatments and holds only a disease name.
 - **In flight (re-check with `threads.py inbox`):**
-  - PXReprise: PXR-R49 (the window), PXR-R50 (MS2 or MS3), PXR-R51 (per-run scan counts);
-  - sdrf: SDRF-D12, SDRF-D13, PXR-F9;
+  - PXReprise: PXR-R49 (the window), PXR-R50 (MS2 or MS3), PXR-R51 (per-run scan counts), PXR-R53 (is anything reachable from off this machine);
+  - sdrf: PXR-F9, and word that drafts can be used;
   - pep: DATAREPO-89 (G124). Its answer changes the rule only if the user says so;
   - ptmQtl DATAREPO-P33, pyMzLib DATAREPO-70.
 - **PXR-R34 to R36 are answered (095).** A second store writes byte-identical tables: 25 of 26 and 23 of 24 files, and `bundle.json` differs in three fields. So a later merge loses nothing.
-- **Still owed by us:** PXReprise R33 (waits on the user's Alzheimer's choice, their G61) and R37-R39 (`feat/ai-contributions`: under review; R38 and the design's "Open for the user" are the user's).
-- **Left for the user:** U25, U26, U27; `wip/d37-g81-python` off GitHub (ordered; the agent's delete is refused, and the local branch stays); delete `F:\datarepo_scratch_143` (3.5 GB). Each from a
+- **Still owed by us:** PXReprise R33 (waits on the user's Alzheimer's choice, their G61) and R38 (which release carries contributions: the user's, U29).
+- **Left for the user:** U28 (release 1.4.4), U29, U25, U26, U27; `wip/d37-g81-python` off GitHub (ordered; the agent's delete is refused, and the local branch stays); delete `F:\datarepo_scratch_143` (3.5 GB). Each from a
   separate PowerShell window: a command sent through the chat does not run.
-- **Pick up at:** run `threads.py inbox` and read PXReprise's answers. If PXR-R49 names a window, start 1.5.0 by the plan's "Order": branch `feat/1.5.0`,
+- **Pick up at:** run `threads.py inbox` and read PXReprise's answers. If the user has said to release 1.4.4, do that first. If PXR-R49 names a window, start 1.5.0 by the plan's "Order": branch `feat/1.5.0`,
   settle the build list, measure a whole-store scratch re-ingest, predict every id, and release only on the user's word. If it does not, build nothing
   and take PXR-R34 and R36, or sdrf's answer on G127.
 

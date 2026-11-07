@@ -175,6 +175,8 @@ q-value notch."
   (`results/sdrf_route_2026-11-06/`).
 - **`samples.condition`'s description (G127).** It says "e.g. HGPS, caloric restriction", and `Sdrf.cs:277` fills it only from `characteristics[disease]` (5 of 196 deposits). Say what it holds, and
   point a reader to `sample_characteristics` for treatments. A changed description also needs its `McpParityTests` mask.
+- **`sample_characteristics.source`'s description (G127, sdrf 035).** Add sdrf's new word, `community sdrf` (bigbio's file on PRIDE), from mzLib #1557. The column is verbatim and not an enum, so no ingest fails without it.
+- **A sha256 per table in `bundle.json`? Not decided (G128).** Today it holds row counts and no table hashes, so a rewrite of a stored table cannot be detected from the store, and a re-ingest would replace the only evidence. This schema bump is the free moment to add one. `build` would then be able to check it, at a cost not yet measured. **Raise with the user before building.**
 - **SDRF drafts (G127).** If sdrf's drafts become `operator_sdrf` entries, this re-ingest carries them at no extra cost. sdrf's hold and G68 fix come first, and each draft must group files as its
   search's design does. PXReprise is asked to weigh this when answering PXR-R49.
 - **MetaMorpheus 1.1.14's #2936 (QuantProject 077).** PEP now computes for a search with over 1000 PSMs and only 100 to 1000 peptides. PXD058775, the
