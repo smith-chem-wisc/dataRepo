@@ -593,6 +593,19 @@ decisions:
       The user, 2026-11-05: yes to dropping psms.matched_ion_series and psms.matched_ion_count at 1.5.0 (null in every row of
       every bundle; a schema bump is the only time to do it), and yes to correcting PXReprise 089 and aging 129 and telling pep
       the peptide-level PEP q-value finding.
+  - id: D57
+    date: 2026-11-07
+    text: >-
+      The user, 2026-11-07 (U29, G129): "until this is hosted, me and alex are the only users. i like what you say in #4 that
+      analysis results come in through a port that gets reviewed. but i really want that to be as automatic as reasonable. if
+      anyone has to fill out anyforms then noone will ever submit anything. we will have to deal with the logistics of old
+      results pointing to old data. that is the nature of this project." So: no host for now, and the users are the user and
+      Alex, on this machine. AI results come in through the operator's inbox and a person reviews them, but saving one asks
+      nobody to fill anything in: the server records what it can itself (the model as its client states it, the session's
+      queries, the bundle ids they read, a hash of the rows). Contributions are not held for 1.5.0: a result keeps pointing at
+      the data it used, and the build carries old results across a re-ingest. Which release carries them, and their order
+      against 1.5.0, is still open. (b), what observed and reproduced may claim, was not answered: the narrow meanings stand.
+      Same day: "release 1.4.4".
 gaps:
   - >-
     G122 CLOSED 2026-11-06: PXReprise delivered PXD025315 at 18:33 UTC as `3d76e6ec83ecc5a1`, as predicted, and it is in
@@ -648,6 +661,8 @@ gaps:
     an idle connection, and refuses a one-file catalog). Build the host last, read-only, under an account that cannot write the data. Finding
     1 repeated by the agent, 3 and 5 read at the source, the rest are the reviewer's runs. Proposed after 1.5.0, so no contribution's basis is
     stranded by the re-ingest; the user's word. D16 (hosted MCP only on evidence of demand) needs the user's word to change.
+    2026-11-07, D57: the user does not hold contributions for 1.5.0 (old results on old data are the build's to carry), wants saving to
+    ask nobody to fill anything in, a person to review, and no host for now. Which release, and the order against 1.5.0, is open.
   - >-
     G126 NEW 2026-11-06: split deposits, the catalog side (PXR-R32; our PXReprise 093; results/split_trial_2026-11-06). A split key
     already ingests and builds on released 1.4.3, so PXReprise can start. NOT BUILT, all without a re-ingest: dataset_overview
