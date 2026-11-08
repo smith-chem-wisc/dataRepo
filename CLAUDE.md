@@ -7,21 +7,33 @@ This folder is a `/project`-managed research project. **You are de facto working
 - **Phase:** INCEPTION
 - **Goal:** An AI-ready, API-accessible repository for the search + quant results of the many PRIDE datasets the `aging` pipeline reanalyzes. Humans can use it, but AI agents are the main users. The question it serves is how organelle proteomes change with age.
 - **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`).
-  **The user asked to DISCUSS keeping the SDRF with the results (2026-11-07), one plain question at a time.** Asked first, not yet answered: should the SDRF travel with
-  the data (whoever gets a dataset's results gets its sample sheet), be the official record of sample facts (in place of aging's curated study tables), or both? The facts:
-  45 of 196 bundles read an SDRF and keep a verbatim copy in `sources/`; 151 read none; MetaMorpheus's own `experiment.sdrf.tsv` (186 of 196, organism and biological
-  replicate only) is not kept; a question's or operator's curated SDRF loses its factor values from the tables on 13 (`results/sdrf_route_2026-11-06/`). The agent's
-  proposal: the search's own SDRF in every bundle at 1.5.0; corrected SDRFs beside the bundle, dated and hashed, so a fix never moves a bundle id; groupings kept, marked.
+  **Then continue the SDRF discussion with the user (G127, G130; U30, U31), one plain question at a time.** Two questions are with the user, unanswered:
+  - **U30: how does dataRepo keep each SDRF?** Default: both. The search's own SDRF and design file go in the bundle at 1.5.0, factor values marked as that search's
+    grouping. PXReprise's checked SDRF and check report sit beside the bundle, dated and hashed, so a fix never moves a bundle id.
+  - **U31: release mzLib #1555/#1557** so sdrf's drafts come off hold? The user's to merge.
+
+  What changed on 2026-11-07:
+  - **PXReprise 103 answered PXR-R56.** No stage reads a checked SDRF yet. 146 of the 151 have none on PRIDE, and 148 have held sdrf drafts. 27 of the 31 PRIDE SDRFs
+    were refused as designs.
+  - **The user then ruled in other sessions:**
+    - PXReprise makes every deposit's SDRF, one per group for a split. That is PXReprise 104 (their D65), plan `E:\CodeReview\PXReprise\design\PLAN_sdrf-every-deposit.md`.
+      It is delivered by re-ingest, with no re-search, once we say how it is stored.
+    - A search with an input SDRF writes its own SDRF and design for us (QuantProject 080, 081).
+
+  **Owed to QuantProject: DATAREPO-D14** (will ingest read the search's own SDRF, and keep factor values?). Answer it after the user answers U30; the factor-value rule is
+  the user's. mzLib #1561 (QuantProject 082) checks that an SDRF gives a usable design. dia 005 asks nothing: a DIA peptide reader is in mzLib #1538, and protein groups
+  are read by `ProteinGroupFromTsvFile`. All five were read at the 2026-11-08 close.
   **Then the order of 1.5.0 and AI contributions (D57):** PXR-R49 is answered (PXReprise 098: no fixed window, a pin swap's gap, a week's notice after the store is measured
   on a copy), so **1.5.0 (G123; D53-D56; `design/RELEASE_1.5.0.md`) is unblocked**, but the user has not yet chosen it over contributions. The agent recommended 1.5.0 first,
   contributions built alongside. Still owed: PXReprise R33 (their G61), R38 in part (which release), R52, R54 (an `empty` TMT channel: no sample, assay or values?) and R55
   (a modification class on sites; a catalog column is the user's word). sdrf sends the PXR-F9 contract. We wait on ptmQtl's DATAREPO-P33, pyMzLib DATAREPO-70, pep's
-  DATAREPO-89. U25 (G125), U26 (G126), U27 (G127) are open with defaults; U29's (b) keeps its default.
+  DATAREPO-89. U25 (G125), U26 (G126), U27 (G127), U30 and U31 (G127, G130) are open with defaults; U29's (b) keeps its default.
   - **2026-11-07: datarepo 1.4.4 is RELEASED** (the user: "release 1.4.4"). Tag `v1.4.4` on `91f5458`, published 14:10 UTC. win-x64 zip sha256
     `0be76af2faeb9234217237030befe0f6c269f955b31c157f14e2631025014f97`. Tutorial catalog `44001693e380c634`. The MCP sandbox could write into the store (G128): fixed by allow-lists,
     `results/sandbox_2026-11-06/`. CI on Linux 770 passed, 0 failed. The downloaded program reproduced the tutorial, PXD017944 `3cd52dd1b39472d8` and PXD025315 `3d76e6ec83ecc5a1`
     (all tables byte-identical) and refused every probe. Told PXReprise 101, aging 133, ptmQtl 064, QuantProject 079. `code/_wt_144` removed; branch `feat/1.4.4` has no upstream:
-    master holds it. **Left: point our MCP entry (`F:\aging_batch\datarepo-1.3.6`) at 1.4.4** once PXReprise's swap installs `F:\aging_batch\datarepo-1.4.4` (asked in 101).
+    master holds it. Our MCP entry is on `F:\aging_batch\datarepo-1.4.4` (local scope, repointed 11-07). At the 11-08 close `claude mcp get datarepo` timed out once,
+    while `datarepo.exe mcp --catalog F:\aging_data\repo\catalogs --check` opened aging's newest catalog `193581ce5b78f6a7` (pointed 08:15 UTC) in 2 s. Re-check it.
     PXR-R53 is closed (098): nothing reaches `datarepo mcp` from off this machine.
     - **D57, the user on U29 (AI contributions):** no host for now (the users are the user and Alex); results come in through the operator's inbox and a person reviews them, but
       saving asks nobody to fill anything in; not held for 1.5.0, since old results pointing at old data are the build's to carry. Which release is open. Told PXReprise 101.
@@ -800,6 +812,10 @@ This folder is a `/project`-managed research project. **You are de facto working
   (2026-11-07, D57's commit, caught before the push).
 - **A folder catalog's id hashes the folder its views point at** (`data_root`, `derived_root`), so the same store built into another `--out` gets another id, on 1.4.3 too.
   Compare `release_id` across folders, and rebuild into the same folder to see an id hold (2026-11-07, probing the release).
+- **Run `claude mcp add` from Bash, not PowerShell.** PowerShell 5.1 drops the `--` before the server's command line, so the add fails ("unknown option '--catalog'")
+  after the `remove` has already gone through, leaving no entry (2026-11-07).
+- **The user rules on our matters in other projects' sessions.** The SDRF's maker (PXReprise D65) and the search's own SDRF (QuantProject 080) were both decided there
+  while we were asking. Read the inbox before putting a question to the user again.
 
 **Sibling project: `E:\CodeReview\aging`** (the NCEMS pipeline). aging *produces* results under
 `F:\aging_data\<run>\<PXD>\` with `provenance.json` (schema `aging-provenance/2`). dataRepo *ingests and serves*

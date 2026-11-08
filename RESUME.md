@@ -2,14 +2,14 @@
 
 <!-- BEGIN GENERATED -- render_resume.py owns this block; edit state.yaml, not here -->
 
-**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-11-07
+**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-11-08
 
 | | |
 |---|---|
-| Commits | 882 |
+| Commits | 890 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
 | Locked decisions | 57 |
-| Open gaps | 125 |
+| Open gaps | 126 |
 | Gate items skipped | 5 |
 
 **Worktrees** -- details in `code/PINNED.md`
@@ -33,7 +33,27 @@ reanalyses. The results cover search, quant, provenance, design and organelle an
 use it, but AI agents are the main users. The question it serves is how organelle proteomes change
 with age.
 
-## Latest (2026-11-07): 1.4.4 released; the user's word on AI contributions (D57); the SDRF discussion opened
+## Latest (2026-11-07, later): why 151 deposits have no SDRF; the user ruled elsewhere on who makes it; how we keep it is with the user
+
+- **PXR-R56 answered (PXReprise 103):** no pipeline stage writes or reads a checked SDRF yet.
+  - Of the 151 deposits with none: 144 had no PRIDE SDRF and no aging curation, 5 are served from set-aside searches, and 2 come from the old Python pipeline.
+  - 146 still list none on PRIDE.
+  - sdrf's drafts are held for 148 until mzLib #1555 and #1557 are released.
+  - 27 of the 31 PRIDE SDRFs we keep were refused as designs.
+- **The user ruled in other sessions:**
+  - **PXReprise makes every deposit's SDRF** (PXReprise 104, their D65; `E:\CodeReview\PXReprise\design\PLAN_sdrf-every-deposit.md`). It is independent of deposited ones, then
+    compared, with a check report, and a split deposit gets one per group. It is delivered by re-ingest, with no re-search, once we say how it is stored.
+  - **A search with an input SDRF writes its own SDRF and its design for dataRepo** (QuantProject 080, 081). That is their DATAREPO-D14, G130, owed after the user answers U30.
+    mzLib #1561 (082) checks that an SDRF gives a usable design.
+- **With the user, unanswered:**
+  - **U30, how we keep each SDRF.** Default: the search's own SDRF and design in the bundle at 1.5.0, with factor values marked as the search's grouping. PXReprise's checked SDRF
+    goes beside the bundle, dated and hashed.
+  - **U31, release mzLib #1555/#1557.**
+- dia 005 asks nothing: DIA peptides have a reader in mzLib #1538, and protein groups are MetaMorpheus's own format. Nothing was built.
+- **Pick up at:** run `threads.py inbox`. Then ask the user U30 in plain words, one question at a time, and answer QuantProject's DATAREPO-D14 from their answer. Then the order
+  of 1.5.0 and AI contributions (CLAUDE.md).
+
+## 2026-11-07: 1.4.4 released; the user's word on AI contributions (D57); the SDRF discussion opened
 
 - **datarepo 1.4.4 is RELEASED** (the user: "release 1.4.4"; G128). Tag `v1.4.4` on `91f5458`, published 14:10 UTC; win-x64 zip sha256
   `0be76af2faeb9234217237030befe0f6c269f955b31c157f14e2631025014f97`; tutorial catalog `44001693e380c634`. No row or bundle id moves.
@@ -41,7 +61,7 @@ with age.
   - The downloaded program reproduced the tutorial, PXD017944 `3cd52dd1b39472d8` and PXD025315 `3d76e6ec83ecc5a1` (16 of 16 tables byte-identical each) and refused every
     probe in `results/sandbox_2026-11-06/` on a scratch store.
   - Told PXReprise 101 (with the sha256 for their v0.4.41 pin), aging 133, ptmQtl 064, QuantProject 079. `code/_wt_144` is removed; master holds `feat/1.4.4`.
-  - **Left:** point our MCP entry, still on `F:\aging_batch\datarepo-1.3.6`, at 1.4.4 once PXReprise's swap installs it.
+  - **Done the same day:** our MCP entry points at `F:\aging_batch\datarepo-1.4.4` (local scope).
 - **PXReprise 098 to 100:** PXR-R53 closed (nothing reaches `datarepo mcp` from off this machine); PXR-R49 answered (no fixed window, a pin swap's gap, a week's notice
   after the store is measured on a copy), so 1.5.0 is unblocked; R50 (`sps_ms3` in `qc_report.json`), R51 (MS2 from the QC report; precursors only from MetaMorpheus, which
   1.1.14 restores). New asks: **PXR-R54** (should a TMT channel marked `empty` make no sample, assay or values?) and **PXR-R55** (a modification class on sites; a catalog

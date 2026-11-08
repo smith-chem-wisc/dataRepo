@@ -642,13 +642,24 @@ gaps:
     column, as sdrf's convention for a curated SDRF, not a spec rule, so our finding is the right check. Drafts stay on hold until mzLib #1555
     and #1557 release and PXReprise reruns. #1557 brings a new source word, `community sdrf`: stored verbatim (Sdrf.cs:284), and the schema's
     `source` description needs the word at that release. PXR-F9 is with the user; sdrf sends the contract.
+    2026-11-07, PXR-R56 ANSWERED (asked in our PXReprise 102 at the user's word; their 103): no stage writes or reads a checked SDRF.
+    Of the 151 with none: 144 had no PRIDE SDRF and no aging curation (default design), 5 are served from set-aside searches, 2 from
+    the old Python pipeline. 146 still list none on PRIDE. sdrf drafts are held for 148 (none for PXD025315, PXD027548, PXD042428). 27
+    of the 31 "metadata" deposits had PRIDE's SDRF refused as a design, so their bundle keeps a file the search did not quantify under.
+    THEN THE USER RULED IN OTHER SESSIONS. PXReprise 104 (their D65; E:\CodeReview\PXReprise\design\PLAN_sdrf-every-deposit.md):
+    PXReprise makes every deposit's SDRF, independently of any deposited one, then compares and reports. One per group for a split,
+    beside the group's raw files. aging's 13 curated SDRFs become inputs. The paid evidence reading is a machine setting. It is
+    delivered as the sample record by re-ingest, no re-search, once we say how it is stored. QuantProject 080 and 081: with an input
+    SDRF, MetaMorpheus makes the design and writes an output SDRF with everything the input had, new file names pointing at the old,
+    and both go to dataRepo; with none, nothing automatic. That is G130. How we store it is U30, and the mzLib release is U31; both are
+    asked, neither answered.
   - >-
     G128 RELEASED 2026-11-07 in datarepo 1.4.4 (the user: "release 1.4.4"; tag v1.4.4 on 91f5458, published 14:10 UTC; win-x64 zip
     sha256 0be76af2faeb9234217237030befe0f6c269f955b31c157f14e2631025014f97; tutorial catalog 44001693e380c634). CI: Linux 770 passed, 0
     failed. The downloaded program reproduced the tutorial, PXD017944 3cd52dd1b39472d8 and PXD025315 3d76e6ec83ecc5a1 (16 of 16 tables
     byte-identical each) and refused every probe in results/sandbox_2026-11-06 on a scratch store. Told PXReprise 101 (with the sha256),
-    aging 133, ptmQtl 064, QuantProject 079. Left: point our MCP entry (F:\aging_batch\datarepo-1.3.6) at 1.4.4 once PXReprise installs
-    it. A folder catalog's id hashes the folder it points at, so the same store gives a new id in a new --out (1.4.3 too, by design);
+    aging 133, ptmQtl 064, QuantProject 079. Our MCP entry was repointed at F:\aging_batch\datarepo-1.4.4 on 2026-11-07 (local scope;
+    run claude mcp add from Bash, since PowerShell drops the `--`). A folder catalog's id hashes the folder it points at, so the same store gives a new id in a new --out (1.4.3 too, by design);
     release_id is the content-only one. Was: G128 NEW 2026-11-06: the MCP sandbox could write into the store (U28; results/sandbox_2026-11-06, kept off
     origin until the release because its tests show how). Found by the independent review of feat/ai-contributions, reproduced and extended by the agent on
     released 1.4.3 against a scratch store. A statement's kind does not say it only reads, and allowed_directories allows writing as well as
@@ -669,6 +680,14 @@ gaps:
     stranded by the re-ingest; the user's word. D16 (hosted MCP only on evidence of demand) needs the user's word to change.
     2026-11-07, D57: the user does not hold contributions for 1.5.0 (old results on old data are the build's to carry), wants saving to
     ask nobody to fill anything in, a person to review, and no host for now. Which release, and the order against 1.5.0, is open.
+  - >-
+    G130 NEW 2026-11-07: QuantProject DATAREPO-D14 (their 080, narrowed by 081), from the user's ruling there. When an input SDRF sits
+    beside the raw files, MetaMorpheus makes the design from it and writes its own SDRF carrying everything the input had
+    (comment[searched data file] pointing at comment[data file]), with the input's path and sha256 in results.txt. Both that SDRF and
+    the design file are for dataRepo. Asks: will ingest read it as the sample record beside the design, what do we need, in which
+    release, and will factor values be kept (our sdrf 034 rule leaves a curated SDRF's out; the user's words cover "all of the sdrf
+    information"; the rule is the user's). Today ingest never reads experiment.sdrf.tsv. Not answered: it waits on the user's U30.
+    mzLib #1561 (082, SdrfSearchDesign: an SDRF gives a usable design or every reason it does not) is open, called by nothing yet.
   - >-
     G126 NEW 2026-11-06: split deposits, the catalog side (PXR-R32; our PXReprise 093; results/split_trial_2026-11-06). A split key
     already ingests and builds on released 1.4.3, so PXReprise can start. NOT BUILT, all without a re-ingest: dataset_overview
