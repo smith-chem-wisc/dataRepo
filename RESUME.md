@@ -2,13 +2,13 @@
 
 <!-- BEGIN GENERATED -- render_resume.py owns this block; edit state.yaml, not here -->
 
-**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-11-08
+**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-11-09
 
 | | |
 |---|---|
-| Commits | 890 |
+| Commits | 893 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
-| Locked decisions | 57 |
+| Locked decisions | 58 |
 | Open gaps | 126 |
 | Gate items skipped | 5 |
 
@@ -32,6 +32,22 @@ Build an AI-ready, API-accessible repository for the results of the `aging` pipe
 reanalyses. The results cover search, quant, provenance, design and organelle annotation. Humans can
 use it, but AI agents are the main users. The question it serves is how organelle proteomes change
 with age.
+
+## Latest (2026-11-09): 1.4.5, the split deposits' catalog side, is built (D58); not released
+
+- **PXReprise 105 (PXR-R57):** their split searches are built and held until a released datarepo serves a split. The user said "yes" to a
+  release of its own before 1.5.0 (U26 answered, D58).
+- **Built on `feat/1.4.5` (`f33cacf`, pushed):** catalog format 16, no re-ingest, no bundle id moves.
+  - `split_reason` in the manifest (four values; refused on a bare key);
+  - `dataset_overview.accession`, `split_group`, `split_reason`, and a `deposits` table;
+  - `protein_index`/`peptide_index` counting deposits, and the census by accession;
+  - a build refusal of a deposit served whole beside its parts, warned by `datarepo manifest`;
+  - on the site: the PRIDE link from the accession, deposit counts, a page per split deposit, and siblings named.
+- **Tested:** 12 new tests; CI on Linux fails only the tutorial test, which is rerun at release. Real data
+  (`results/split_145_2026-11-09/`): PXD027754's parts keep their 1.4.3 ids, and their indexes equal the whole's. A rebuild of
+  aging's 205 bundles equals their serving catalog in every index value; the first build takes 686 s.
+- **Told PXReprise 106.** Release on the user's word only.
+- **Pick up at:** run `threads.py inbox`. Then U30 with the user (one plain question), then DATAREPO-D14 for QuantProject.
 
 ## Latest (2026-11-07, later): why 151 deposits have no SDRF; the user ruled elsewhere on who makes it; how we keep it is with the user
 

@@ -1,0 +1,34 @@
+﻿split 0641521e9e09c00e 16 | whole 210ae335bd53cd3b | lone ffb375f964a7dbec
+release ids: 1cfe96c133c57f02 d0bf49190deea700 a6b7f1551b7dd781
+-- split dataset_overview
+   ('PXD017944', '3cd52dd1b39472d8', 'PXD017944', None, None, 20, 69785, 879)
+   ('PXD027754-mouse', '5a6fd7af5b7544f5', 'PXD027754', 'mouse', 'species', 20, 116756, 487)
+   ('PXD027754-rat', '6f88a1ee622775bf', 'PXD027754', 'rat', 'species', 20, 116756, 487)
+-- split deposits
+   ('PXD017944', 1, ['PXD017944'], [], [], 20)
+   ('PXD027754', 2, ['PXD027754-mouse', 'PXD027754-rat'], ['mouse', 'rat'], ['species'], 40)
+-- split split/census checks
+   ('split deposits (none served both whole and in parts)', True, 1, 1, None)
+-- split failed checks: 0 of 59
+-- whole dataset_overview
+   ('PXD017944', '3cd52dd1b39472d8', 'PXD017944', None, None, 20, 69785, 879)
+   ('PXD027754', '2799534125b81db3', 'PXD027754', None, None, 20, 116756, 487)
+-- whole deposits
+   ('PXD017944', 1, ['PXD017944'], [], [], 20)
+   ('PXD027754', 1, ['PXD027754'], [], [], 20)
+-- whole split/census checks
+   ('split deposits (none served both whole and in parts)', True, 0, 0, None)
+-- whole failed checks: 0 of 42
+-- lone dataset_overview
+   ('PXD017944', '3cd52dd1b39472d8', 'PXD017944', None, None, 20, 69785, 879)
+   ('PXD027754-rat', '6f88a1ee622775bf', 'PXD027754', 'rat', 'species', 20, 116756, 487)
+-- lone deposits
+   ('PXD017944', 1, ['PXD017944'], [], [], 20)
+   ('PXD027754', 1, ['PXD027754-rat'], ['rat'], ['species'], 20)
+-- lone split/census checks
+   ('split deposits (none served both whole and in parts)', True, 1, 1, None)
+-- lone failed checks: 0 of 42
+protein_index: split 53445 rows, whole 53445, lone 53445; split == whole: True; lone == whole: True
+  rows whose dataset_ids is longer than n_datasets (a count by key would have read more): 42777
+peptide_index: split 10732 rows, whole 10732, lone 10732; split == whole: True; lone == whole: True
+  rows whose dataset_ids is longer than n_datasets (a count by key would have read more): 4105

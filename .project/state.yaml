@@ -606,6 +606,15 @@ decisions:
       the data it used, and the build carries old results across a re-ingest. Which release carries them, and their order
       against 1.5.0, is still open. (b), what observed and reproduced may claim, was not answered: the narrow meanings stand.
       Same day: "release 1.4.4".
+  - id: D58
+    date: 2026-11-09
+    text: >-
+      The user, 2026-11-09 (U26, G126; PXReprise 105 asks PXR-R57): "yes" to the split deposits' catalog side as a release of
+      its own, 1.4.5, before 1.5.0. Catalog format 16, no schema bump, no re-ingest: split_reason (manifest, not content,
+      checked against species|enrichment|label|chemistry, refused on a bare key), dataset_overview.accession/split_group/
+      split_reason, the deposits table, protein_index/peptide_index n_datasets* counting deposits, the census by accession, a
+      build refusal of a deposit served whole beside its parts, and the site (PRIDE link by accession, deposit counts, a page
+      per split deposit, siblings named). Branch feat/1.4.5, worktree code/_wt_145. Release on the user's word.
 gaps:
   - >-
     G122 CLOSED 2026-11-06: PXReprise delivered PXD025315 at 18:33 UTC as `3d76e6ec83ecc5a1`, as predicted, and it is in
@@ -689,7 +698,7 @@ gaps:
     information"; the rule is the user's). Today ingest never reads experiment.sdrf.tsv. Not answered: it waits on the user's U30.
     mzLib #1561 (082, SdrfSearchDesign: an SDRF gives a usable design or every reason it does not) is open, called by nothing yet.
   - >-
-    G126 NEW 2026-11-06: split deposits, the catalog side (PXR-R32; our PXReprise 093; results/split_trial_2026-11-06). A split key
+    G126 BUILT 2026-11-09 on feat/1.4.5 (D58, the user's "yes" to U26: its own release, 1.4.5), not released. NEW 2026-11-06: split deposits, the catalog side (PXR-R32; our PXReprise 093; results/split_trial_2026-11-06). A split key
     already ingests and builds on released 1.4.3, so PXReprise can start. NOT BUILT, all without a re-ingest: dataset_overview
     gains accession, split_group, split_reason (manifest field, not hashed, checked against species|enrichment|label|chemistry);
     one deposit-level view; site deposit page at datasets/<accession>.html, sibling links, PRIDE link from the accession

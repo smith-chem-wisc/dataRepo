@@ -79,7 +79,7 @@ depends on it is marked as such.
 
 | ID | Question | Default (work proceeds on it) |
 |---|---|---|
-| U26 | A split key already ingests and builds on 1.4.3, but a served split gets a wrong PRIDE link and double counts until the catalog side is built (no re-ingest needed). Which release carries it: 1.5.0, or a smaller release before it if PXReprise wants to serve a split sooner? | **1.5.0.** PXReprise was told the default and asked to say if it needs it sooner (093). |
+| U26 | A split key already ingests and builds on 1.4.3, but a served split gets a wrong PRIDE link and double counts until the catalog side is built (no re-ingest needed). Which release carries it: 1.5.0, or a smaller release before it if PXReprise wants to serve a split sooner? | **ANSWERED 2026-11-09 (D58): its own release, 1.4.5.** PXReprise 105 asked for a date (PXR-R57); the user said "yes" to a catalog-only release before 1.5.0. Built on `feat/1.4.5`; released on the user's word. |
 
 ### The SDRF as the sample record (G127; `results/sdrf_route_2026-11-06/`), 2026-11-06
 

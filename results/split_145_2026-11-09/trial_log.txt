@@ -1,0 +1,93 @@
+﻿bare run: run_2026-09-21/PXD027754 | status: include | control run: run_2026-09-21/PXD017944
+wrote C:\Users\trish\AppData\Local\Temp\claude\af6e45eaa41babf7\ddef7e36-d8aa-47c4-8b48-ed5763fee5c3\scratchpad\split145\manifest.yaml
+== ingest the parts (093 on 1.4.3: -rat 6f88a1ee622775bf, -mouse 5a6fd7af5b7544f5)
+PXD027754-rat
+  bundle   C:\Users\trish\AppData\Local\Temp\claude\af6e45eaa41babf7\ddef7e36-d8aa-47c4-8b48-ed5763fee5c3\scratchpad\split145\store\PXD027754-rat\6f88a1ee622775bf
+  tables   datasets 1, samples 20, runs 20, assays 20, psms 1,498,854, peptidoforms 657,037, protein_groups 1,672, proteins 42,777, ptm_sites 2,532, ptm_stoichiometry 1,874, quant_values 101,410, definitions 17, provenance_records 3, findings 7, metrics 180, search_modifications_declared 2
+  MISMATCH psms_target_1pct: bundle 116756 vs producer 116780 (results.txt: All target PSMs with q-value <= 0.01 (pxreprise:DEF-PSM-1PCT v1))
+  findings 6 open warning(s): count_mismatch, low_core_use, low_id_rate, no_sdrf, occupancy_not_stored, unplaced_ptm_sites
+PXD027754-mouse
+  bundle   C:\Users\trish\AppData\Local\Temp\claude\af6e45eaa41babf7\ddef7e36-d8aa-47c4-8b48-ed5763fee5c3\scratchpad\split145\store\PXD027754-mouse\5a6fd7af5b7544f5
+  tables   datasets 1, samples 20, runs 20, assays 20, psms 1,498,854, peptidoforms 657,037, protein_groups 1,672, proteins 42,777, ptm_sites 2,532, ptm_stoichiometry 1,874, quant_values 101,410, definitions 17, provenance_records 3, findings 7, metrics 180, search_modifications_declared 2
+  MISMATCH psms_target_1pct: bundle 116756 vs producer 116780 (results.txt: All target PSMs with q-value <= 0.01 (pxreprise:DEF-PSM-1PCT v1))
+  findings 6 open warning(s): count_mismatch, low_core_use, low_id_rate, no_sdrf, occupancy_not_stored, unplaced_ptm_sites
+exit=0  t=943s
+== junction the served whole deposit and the control into the scratch store (read only)
+== build: the parts and the control (must pass)
+catalog  C:\Users\trish\AppData\Local\Temp\claude\af6e45eaa41babf7\ddef7e36-d8aa-47c4-8b48-ed5763fee5c3\scratchpad\split145\cat_split\catalog-0641521e9e09c00e.duckdb
+  id       0641521e9e09c00e
+  release  1cfe96c133c57f02
+  latest   C:\Users\trish\AppData\Local\Temp\claude\af6e45eaa41babf7\ddef7e36-d8aa-47c4-8b48-ed5763fee5c3\scratchpad\split145\cat_split\latest.json names it
+  dataset  PXD017944    bundle 3cd52dd1b39472d8
+  dataset  PXD027754-rat bundle 6f88a1ee622775bf
+  dataset  PXD027754-mouse bundle 5a6fd7af5b7544f5
+  note     logs.resolve_genes coverage (databases with an artefact): 0 of 4; no artefact for 4d3ac6446e3a (PXD017944); 7f08fd3c9eac (PXD027754-mouse, PXD027754-rat); ea4a2360e651 (PXD027754-mouse, PXD027754-rat); f9cdd188fd7f (PXD017944)
+  note     go.annotate_groups coverage (bundles with an artefact): 0 of 3; no artefact for PXD017944 (3cd52dd1b39472d8); PXD027754-mouse (5a6fd7af5b7544f5); PXD027754-rat (6f88a1ee622775bf)
+  note     logs.register_orthology (snapshots registered): 0 of 1; no snapshot registered
+  note     ptmqtl.site_pairs coverage (bundles with an artefact): 0 of 3; no artefact for PXD017944, PXD027754-mouse, PXD027754-rat
+  tables   assays 60, datasets 3, definitions 51, findings 20, gene_resolutions 0, metrics 540, peptidoforms 1,337,774, protein_groups 4,854, proteins 96,370, provenance_records 9, ptm_sites 10,469, ptm_stoichiometry 13,968, quant_values 358,547, runs 60, samples 60, search_modifications_declared 67
+  derived  3 deposit(s) computed, 0 reused from an earlier build
+  indexes  2
+  checks   59 run, all passed
+  timing   tables 1.1 s, derived: sample names 0.0 s, derived: deposits (3 computed, 0 reused) 5.3 s, derived: per-deposit tables 0.1 s, derived: protein_index 0.5 s, derived: peptide_index 0.1 s, study and engines 0.1 s, manifest 0.1 s, checks: bundles 0.0 s, checks: study 0.0 s, checks: engines 0.0 s, checks: manifest 0.0 s, indexes 0.4 s, catalog tables 1.1 s, move 0.4 s
+exit=0  t=955s
+== build: the whole deposit and the control (the comparison)
+catalog  C:\Users\trish\AppData\Local\Temp\claude\af6e45eaa41babf7\ddef7e36-d8aa-47c4-8b48-ed5763fee5c3\scratchpad\split145\cat_whole\catalog-210ae335bd53cd3b.duckdb
+  id       210ae335bd53cd3b
+  release  d0bf49190deea700
+  latest   C:\Users\trish\AppData\Local\Temp\claude\af6e45eaa41babf7\ddef7e36-d8aa-47c4-8b48-ed5763fee5c3\scratchpad\split145\cat_whole\latest.json names it
+  dataset  PXD017944    bundle 3cd52dd1b39472d8
+  dataset  PXD027754    bundle 2799534125b81db3
+  note     logs.resolve_genes coverage (databases with an artefact): 0 of 4; no artefact for 4d3ac6446e3a (PXD017944); 7f08fd3c9eac (PXD027754); ea4a2360e651 (PXD027754); f9cdd188fd7f (PXD017944)
+  note     go.annotate_groups coverage (bundles with an artefact): 0 of 2; no artefact for PXD017944 (3cd52dd1b39472d8); PXD027754 (2799534125b81db3)
+  note     logs.register_orthology (snapshots registered): 0 of 1; no snapshot registered
+  note     ptmqtl.site_pairs coverage (bundles with an artefact): 0 of 2; no artefact for PXD017944, PXD027754
+  tables   assays 40, datasets 2, definitions 34, findings 13, gene_resolutions 0, metrics 360, peptidoforms 680,737, protein_groups 3,182, proteins 53,593, provenance_records 6, ptm_sites 7,937, ptm_stoichiometry 12,094, quant_values 257,137, runs 40, samples 40, search_modifications_declared 65
+  derived  2 deposit(s) computed, 0 reused from an earlier build
+  indexes  2
+  checks   42 run, all passed
+  timing   tables 0.6 s, derived: sample names 0.0 s, derived: deposits (2 computed, 0 reused) 4.0 s, derived: per-deposit tables 0.0 s, derived: protein_index 0.3 s, derived: peptide_index 0.1 s, study and engines 0.1 s, manifest 0.1 s, checks: bundles 0.0 s, checks: study 0.0 s, checks: engines 0.0 s, checks: manifest 0.0 s, indexes 0.2 s, catalog tables 0.6 s, move 0.1 s
+exit=0  t=962s
+== build: the whole deposit beside its parts (must be refused)
+datarepo.exe : datarepo: the bundles do not hold together as one catalog, so nothing was written:
+At C:\Users\trish\AppData\Local\Temp\claude\af6e45eaa41babf7\ddef7e36-d8aa-47c4-8b48-ed5763fee5c3\scratchpad\split145\t
+rial.ps1:24 char:1
++ & $Exe build "$S\manifest.yaml" PXD017944 PXD027754 PXD027754-rat PXD ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (datarepo: the b...ng was written::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  - split deposits (none served both whole and in parts): 0 vs 1 (served both whole and in parts: PXD027754 beside 
+PXD027754-mouse, PXD027754-rat. Every count for the deposit would be counted twice. Retire the whole search (status: 
+superseded) or leave its parts out.)
+exit=1
+== build: one part alone and the control (a lone part)
+catalog  C:\Users\trish\AppData\Local\Temp\claude\af6e45eaa41babf7\ddef7e36-d8aa-47c4-8b48-ed5763fee5c3\scratchpad\split145\cat_lone\catalog-ffb375f964a7dbec.duckdb
+  id       ffb375f964a7dbec
+  release  a6b7f1551b7dd781
+  latest   C:\Users\trish\AppData\Local\Temp\claude\af6e45eaa41babf7\ddef7e36-d8aa-47c4-8b48-ed5763fee5c3\scratchpad\split145\cat_lone\latest.json names it
+  dataset  PXD017944    bundle 3cd52dd1b39472d8
+  dataset  PXD027754-rat bundle 6f88a1ee622775bf
+  note     logs.resolve_genes coverage (databases with an artefact): 0 of 4; no artefact for 4d3ac6446e3a (PXD017944); 7f08fd3c9eac (PXD027754-rat); ea4a2360e651 (PXD027754-rat); f9cdd188fd7f (PXD017944)
+  note     go.annotate_groups coverage (bundles with an artefact): 0 of 2; no artefact for PXD017944 (3cd52dd1b39472d8); PXD027754-rat (6f88a1ee622775bf)
+  note     logs.register_orthology (snapshots registered): 0 of 1; no snapshot registered
+  note     ptmqtl.site_pairs coverage (bundles with an artefact): 0 of 2; no artefact for PXD017944, PXD027754-rat
+  tables   assays 40, datasets 2, definitions 34, findings 13, gene_resolutions 0, metrics 360, peptidoforms 680,737, protein_groups 3,182, proteins 53,593, provenance_records 6, ptm_sites 7,937, ptm_stoichiometry 12,094, quant_values 257,137, runs 40, samples 40, search_modifications_declared 65
+  derived  2 deposit(s) computed, 0 reused from an earlier build
+  indexes  2
+  checks   42 run, all passed
+  timing   tables 0.2 s, derived: sample names 0.0 s, derived: deposits (2 computed, 0 reused) 1.4 s, derived: per-deposit tables 0.0 s, derived: protein_index 0.3 s, derived: peptide_index 0.1 s, study and engines 0.1 s, manifest 0.0 s, checks: bundles 0.0 s, checks: study 0.0 s, checks: engines 0.0 s, checks: manifest 0.0 s, indexes 0.2 s, catalog tables 0.6 s, move 0.1 s
+exit=0  t=966s
+== site from the split catalog
+site     C:\Users\trish\AppData\Local\Temp\claude\af6e45eaa41babf7\ddef7e36-d8aa-47c4-8b48-ed5763fee5c3\scratchpad\split145\site_split
+  catalog  0641521e9e09c00e
+  wrote    95 files, 3 dataset pages, 1 split-deposit page
+  skipped  croissant.json: no --data-url: a Croissant file describes downloadable files, and none are published
+exit=0
+site     C:\Users\trish\AppData\Local\Temp\claude\af6e45eaa41babf7\ddef7e36-d8aa-47c4-8b48-ed5763fee5c3\scratchpad\split145\site_lone
+  catalog  ffb375f964a7dbec
+  wrote    91 files, 2 dataset pages, 1 split-deposit page
+  skipped  croissant.json: no --data-url: a Croissant file describes downloadable files, and none are published
+  skipped  robots.txt: no --base-url: both need the site's absolute address
+  skipped  sitemap.xml: no --base-url: both need the site's absolute address
+exit=0  t=967s

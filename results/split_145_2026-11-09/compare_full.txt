@@ -1,0 +1,13 @@
+﻿new c4eeb4ca4f1036ed 16 0.0.0-dev release 7716cd67090cc1f8
+old bd0cc5ef03ab5111 1.4.3 release c079b266a0b2dca0
+same bundles: True
+protein_index: 128658 rows new, 128658 old; every column equal: True
+peptide_index: 794032 rows new, 794032 old; every column equal: True
+protein_datasets: 6759096 rows new, 6759096 old; every column equal: True
+dataset_overview: 23 old columns, equal: True
+new overview columns: ['accession', 'split_group', 'split_reason']
+deposits: (205, 205, 0)
+accession = dataset_id everywhere: True
+split check: [(True, 0, 0)]
+failed checks: 0 of 4172 | old: 4190
+census rows new/old: 0 0

@@ -7,6 +7,12 @@ This folder is a `/project`-managed research project. **You are de facto working
 - **Phase:** INCEPTION
 - **Goal:** An AI-ready, API-accessible repository for the search + quant results of the many PRIDE datasets the `aging` pipeline reanalyzes. Humans can use it, but AI agents are the main users. The question it serves is how organelle proteomes change with age.
 - **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`).
+  **2026-11-09: datarepo 1.4.5 (split deposits' catalog side, G126) is BUILT, not released** (D58: the user's "yes" to U26, a release of its own
+  before 1.5.0, on PXReprise 105's PXR-R57). Branch `feat/1.4.5` at `f33cacf` (pushed; worktree `code/_wt_145`): catalog format 16, no re-ingest.
+  CI on Linux: 781 passed, only `TheTutorialPrintsWhatTheProgramPrints` fails (61 checks now; rerun the tutorial at release). Real-data trial and a
+  scratch rebuild of aging's 205 bundles (every index value equal; first build 686 s): `results/split_145_2026-11-09/`. Told PXReprise 106 (keep
+  `deliver_split_deposits` off until their pin is 1.4.5). **Release on the user's word only**, with the usual recipe; aging serves a 1.4.3-built
+  catalog (`bd0cc5ef03ab5111`).
   **Then continue the SDRF discussion with the user (G127, G130; U30, U31), one plain question at a time.** Two questions are with the user, unanswered:
   - **U30: how does dataRepo keep each SDRF?** Default: both. The search's own SDRF and design file go in the bundle at 1.5.0, factor values marked as that search's
     grouping. PXReprise's checked SDRF and check report sit beside the bundle, dated and hashed, so a fix never moves a bundle id.
