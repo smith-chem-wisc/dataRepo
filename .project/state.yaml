@@ -766,6 +766,11 @@ gaps:
     (c) age_effect_meta reshaped (method_scope key, method-term table), (d) the 125 guidance reworded. Acknowledged
     only (our 127). Known: our reader gives one sample_id per distinct TmtDesign `Sample Name` (Isobaric.cs:161-173);
     PXReprise's default design names every file x channel a sample and every file its own Plex, hence PXD043296's 216.
+    2026-11-09 aging 135 (asks nothing): DEF-AGE-EFFECT-META is v1.4 (their D166), so (c)'s method-term table is one row per
+    (isobaric dataset, response), not per method: term id, dataset_id, response, method isobaric_ms2|ms3, value, 90% interval,
+    estimator, the label-free dataset_ids, n_shared_features, definition_id, status. age_effect_meta's method_term_id may name
+    several terms (a list or a link table, our call). MS3 enters method_scope=all after QuantProject's C4 check; MS2 never yet
+    (method_term_not_estimable in all); reporter_level_not_recorded keeps a dataset out of all. (d) reworded for v1.4. Still not built.
   - >-
     G118 NEW 2026-11-03: PXR-R43 promised (our 083): before the first PXReprise profile naming a MetaMorpheus #2909
     filter, the results.txt reader reads each `Identification filter for ...` line and takes count lines with `<` or

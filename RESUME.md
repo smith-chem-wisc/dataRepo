@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Commits | 906 |
+| Commits | 908 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
 | Locked decisions | 58 |
 | Open gaps | 127 |
@@ -33,6 +33,30 @@ reanalyses. The results cover search, quant, provenance, design and organelle an
 use it, but AI agents are the main users. The question it serves is how organelle proteomes change
 with age.
 
+## Latest (2026-11-09, later): the SDRF after the last search, and the database a search read (G131, U30, U32)
+
+- **The user on U30:** a search is calibration, GPTMD, then search and quant. Calibration writes new raw files, GPTMD a new
+  database. The SDRF written after the last search names them and, they believe, points back to the originals, so "the final
+  contains everything. but you should verify this with the sdrf project." Asked as **sdrf 036 (SDRF-D14)**: do the input columns
+  survive, is the file name the only pointer back, should it name the database, is it rewritten on a correction?
+- **The user's check, done read-only:** `results/searched_db_2026-11-09/`. Of the 208 served bundles:
+  - 150 searched GPTMD's databases, recorded with sha256 only in the provenance copy;
+  - 48 read the input databases, which are recorded;
+  - 10 (MetaMorpheus 1.1.11) have no sha256 for the proteome database they searched. Their files are still there and were hashed
+    on 2026-11-09 (`ten.txt`).
+  - No table names the database a search read. That is **G131**: decided that the pointer is needed; not built, release not chosen.
+- **PXReprise 108** asks PXR-R58 (what happens when a sample fact is corrected during or after a search) and PXR-R59 (are GPTMD's
+  databases kept, and where).
+- **U32 (keep the databases themselves) is OPEN with no default.** The user: "i'm not prepared to make a decision on databases at
+  the moment. leave the decision open." Build nothing on it.
+- **aging 135 asks nothing.** DEF-AGE-EFFECT-META v1.4 has one method term per isobaric dataset, which reshapes DATAREPO-88 (c)
+  (G117, not built). aging publishes and serves MCP on 1.4.5.
+- **Pick up at:**
+  1. `threads.py inbox`.
+  2. Repoint our MCP entry to `F:\aging_batch\datarepo-1.4.5` (installed 2026-11-09). Do it from Bash.
+  3. When sdrf answers SDRF-D14 and PXReprise answers PXR-R58/R59, take U30 back to the user, one plain question at a time.
+  4. Then answer QuantProject's DATAREPO-D14.
+
 ## Latest (2026-11-09): datarepo 1.4.5 RELEASED, the split deposits' catalog side (D58)
 
 - **Released on the user's word ("release 1.4.5").** Tag `v1.4.5` on `80af834`, published 14:47 UTC. win-x64 zip sha256
@@ -55,7 +79,7 @@ Before the release, the same day:
   (`results/split_145_2026-11-09/`): PXD027754's parts keep their 1.4.3 ids, and their indexes equal the whole's. A rebuild of
   aging's 205 bundles equals their serving catalog in every index value; the first build takes 686 s.
 - **Told PXReprise 106.** Release on the user's word only.
-- **Pick up at:** run `threads.py inbox`. Then U30 with the user (one plain question), then DATAREPO-D14 for QuantProject.
+- **Pick up at:** superseded by the section above.
 
 ## Latest (2026-11-07, later): why 151 deposits have no SDRF; the user ruled elsewhere on who makes it; how we keep it is with the user
 

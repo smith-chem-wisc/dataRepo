@@ -13,12 +13,21 @@ This folder is a `/project`-managed research project. **You are de facto working
   `2f2e7deb0e4dd6fd` (61 checks). The downloaded program reproduced the tutorial, PXD017944 `3cd52dd1b39472d8` and the split trial's `release_id`
   `1cfe96c133c57f02`, and refused the whole deposit beside its parts. Evidence: `results/split_145_2026-11-09/` (scratch rebuild of aging's 205
   bundles equals their serving catalog; first build 686 s). Told PXReprise 106 (PXR-R57) and 107 (pin swap, then `deliver_split_deposits`), aging
-  134, ptmQtl 065 (their pooled `n_datasets` would count a split's parts). `code/_wt_145` removed; branch kept on origin. Our MCP entry stays on
-  1.4.4 until PXReprise installs `F:\aging_batch\datarepo-1.4.5`; then repoint it from Bash. DATAREPO-P33 was answered in ptmQtl 054 (the wait
-  named below is stale).
-  **Then continue the SDRF discussion with the user (G127, G130; U30, U31), one plain question at a time.** Two questions are with the user, unanswered:
+  134, ptmQtl 065 (their pooled `n_datasets` would count a split's parts). `code/_wt_145` removed; branch kept on origin.
+  **Second: repoint our MCP entry to `F:\aging_batch\datarepo-1.4.5`** (installed 2026-11-09; aging 135 says their publish and MCP run it), from Bash,
+  then check with `claude mcp get datarepo`. DATAREPO-P33 was answered in ptmQtl 054 (the wait named below is stale).
+  **2026-11-09, later: the searched database (G131) and the final SDRF (U30).** The user's check is in `results/searched_db_2026-11-09/`. Of 208 served
+  bundles, 150 searched GPTMD's databases, recorded with sha256 only in the provenance copy. Ten MetaMorpheus 1.1.11 searches have no sha256 for theirs,
+  and their files were hashed that day. No table names the database a search read. The pointer is decided as needed and NOT built, release not chosen.
+  **U32 (keeping the databases themselves) is OPEN with NO default:** the user: "i'm not prepared to make a decision on databases at the moment. leave
+  the decision open." Build nothing on it, and do not raise it again unprompted. **Waiting on:** sdrf 036 SDRF-D14 (does the final SDRF keep the input
+  columns and point back; should it name the database) and PXReprise 108 PXR-R58 (a corrected sample fact) and R59 (are GPTMD databases kept).
+  aging 135 asks nothing: DATAREPO-88 (c)'s method-term table is now one row per isobaric dataset (G117, not built).
+  **Then continue the SDRF discussion with the user (G127, G130; U30, U31), one plain question at a time, once those answers are in.** Two questions are with the user:
   - **U30: how does dataRepo keep each SDRF?** Default: both. The search's own SDRF and design file go in the bundle at 1.5.0, factor values marked as that search's
-    grouping. PXReprise's checked SDRF and check report sit beside the bundle, dated and hashed, so a fix never moves a bundle id.
+    grouping. PXReprise's checked SDRF and check report sit beside the bundle, dated and hashed, so a fix never moves a bundle id. **The user's clarification
+    (2026-11-09):** the SDRF written after the last search names the calibrated files and the new database and points back to the originals, so the final
+    one holds everything. That is to be verified with sdrf (SDRF-D14), not assumed.
   - **U31: release mzLib #1555/#1557** so sdrf's drafts come off hold? The user's to merge.
 
   What changed on 2026-11-07:
@@ -825,6 +834,14 @@ This folder is a `/project`-managed research project. **You are de facto working
   after the `remove` has already gone through, leaving no entry (2026-11-07).
 - **The user rules on our matters in other projects' sessions.** The SDRF's maker (PXReprise D65) and the search's own SDRF (QuantProject 080) were both decided there
   while we were asking. Read the inbox before putting a question to the user again.
+- **`dataset_databases`, `datasets.search_database` and `bundle.json`'s `protein_databases` name the database GPTMD STARTED from, not the one the
+  search read.** With a GPTMD task the search reads `*GPTMD.xml` (results.txt "Databases loaded"), which is recorded only in the bundle's
+  `sources/provenance_04_search.json` `outputs[]` (G131). Never answer "which database was searched" from those tables.
+- **A listing that does not recurse will tell you a file is gone.** GPTMD's databases sit in a task subfolder of `04_search`; a wildcard
+  `Get-ChildItem` on the search folder found none, and a draft to PXReprise said ten searches' databases were deleted (2026-11-09, caught before
+  sending). Use `-Recurse` or a `**` glob before claiming anything is missing.
+- **aging's `latest.json` moves while you work.** A comparison of a scratch rebuild against "the serving catalog" first read an older 204-bundle catalog
+  (2026-11-09). Read the catalog id `latest.json` names when you start, and compare against that id, not the file name.
 
 **Sibling project: `E:\CodeReview\aging`** (the NCEMS pipeline). aging *produces* results under
 `F:\aging_data\<run>\<PXD>\` with `provenance.json` (schema `aging-provenance/2`). dataRepo *ingests and serves*
