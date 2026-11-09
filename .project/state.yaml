@@ -617,6 +617,19 @@ decisions:
       per split deposit, siblings named). Branch feat/1.4.5. Same day: "release 1.4.5" (tag v1.4.5 on 80af834).
 gaps:
   - >-
+    G131 NEW 2026-11-09: no table names the database a search READ (the user: "somehow somewhere we need to store a pointer to the
+    database ... without it there is no hope of reproducing a result"; results/searched_db_2026-11-09/). Of the 208 served bundles,
+    150 searched GPTMD's databases, recorded with sha256 only in the bundle's copy of the search provenance (outputs[]). 48 ran no
+    GPTMD and read the input databases, recorded as protein_database sources. 10 (MetaMorpheus 1.1.11: PXD007999, PXD018969,
+    PXD027318, PXD032040, PXD032202, PXD036557, PXD042301, PXD044773, PXD052189, PXD058775) searched a proteome GPTMD database with
+    no recorded sha256. Their files are still in the search folders and were hashed 2026-11-09 (ten.txt); nine recorded contaminant
+    GPTMD files still match. dataset_databases, datasets.search_database and bundle.json's protein_databases all name what GPTMD
+    STARTED from. To build (decided: the pointer; release not chosen): the catalog names each search's searched databases (path,
+    sha256, size, role searched|input) at build from the provenance copy (no re-ingest, D32), with a check naming a search whose
+    searched database has no sha256. Keeping the files themselves is U32 (asked PXReprise PXR-R59, our 108). Same message asks PXR-R58
+    (what happens when a sample fact is corrected), which decides U30's "beside" copy. A first pass wrongly said the ten files were gone
+    (the listing never looked inside the task folder); corrected before sending.
+  - >-
     G122 CLOSED 2026-11-06: PXReprise delivered PXD025315 at 18:33 UTC as `3d76e6ec83ecc5a1`, as predicted, and it is in
     catalog 53f5ff162ba37e84. PXR-R48 (PXReprise 087). PXD025315's 1.49 GB AllQuantifiedPeaks.tsv could not be ingested: ReadTsv
     decoded the whole file into one string, past .NET's longest. TsvReader reads one row at a time; ReadTsv wraps it;
