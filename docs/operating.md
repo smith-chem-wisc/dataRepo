@@ -43,10 +43,10 @@ installed, and no .NET or Python is needed.
 | macOS, Intel | `datarepo-<version>-osx-x64.tar.gz` |
 
 ```bash
-mkdir -p /opt/datarepo-1.4.4 && cd /opt/datarepo-1.4.4
-curl -LO https://github.com/smith-chem-wisc/dataRepo/releases/download/v1.4.4/datarepo-1.4.4-linux-x64.tar.gz
-tar -xzf datarepo-1.4.4-linux-x64.tar.gz          # tar keeps the executable bit; a zip would lose it
-/opt/datarepo-1.4.4/datarepo/datarepo doctor
+mkdir -p /opt/datarepo-1.4.5 && cd /opt/datarepo-1.4.5
+curl -LO https://github.com/smith-chem-wisc/dataRepo/releases/download/v1.4.5/datarepo-1.4.5-linux-x64.tar.gz
+tar -xzf datarepo-1.4.5-linux-x64.tar.gz          # tar keeps the executable bit; a zip would lose it
+/opt/datarepo-1.4.5/datarepo/datarepo doctor
 ```
 
 Call the program by its path, put its folder on `PATH`, or point a tool at it (PXReprise's machine
@@ -84,6 +84,8 @@ keeps both too and moves only isobaric bundles (QuantProject's `DEF-TMT-*` at v3
 each TMT or iTRAQ bundle once; label-free bundles keep their ids. 1.4.3 moves nothing: it reads a table of any size, so
 swap the binary and retry any ingest that failed with `OutOfMemoryException` in `ReadTsv`. 1.4.4 moves nothing either:
 it closes the MCP server's routes to writing (see the CHANGELOG), so swap the binary and restart every `datarepo mcp`.
+1.4.5 moves no bundle: it serves a deposit searched in parts as one deposit (catalog format 16; `split_reason`, below).
+Swap the binary and build. The first folder publish recomputes every deposit's derived rows (686 s on 205 bundles).
 
 ### Building from source
 
@@ -193,6 +195,32 @@ because a misspelt key would sit where no filter on the real one finds it. The d
 table. The next `build` writes the restrictions to `dataset_restrictions` and onto the dataset's
 `dataset_overview.restrictions`, and moves the catalog id, with no re-ingest. `datarepo manifest` lists
 them as `restricted <use>: <reason>`.
+
+A deposit whose runs differ in species, enrichment, labelling or chemistry can be **searched in parts**
+(a split, PXReprise's PXR-R30 to R32). Each part is its own entry, keyed `<accession>-<group>`, with
+`split_reason` saying why. In the same write that adds the parts, retire the whole search's entry:
+
+```yaml
+  - accession: PXD076192
+    status: superseded
+    reason: "split into PXD076192-mouse and PXD076192-human"
+    run: <the whole search's folder>
+  - accession: PXD076192-mouse
+    split_reason: species
+    run: <this part's search folder>
+    # ... the rest of the entry, as for any search
+```
+
+`split_reason` is one of `species`, `enrichment`, `label` and `chemistry`. Loading the manifest refuses
+any other value, and refuses one on a key with no `-<group>`. It is not identity, so no bundle id moves
+when it changes. Write nothing else about the split (no `split_group`, no separate accession): the key
+already says both. From 1.4.5 the catalog names each part's deposit (`dataset_overview.accession`,
+`split_group`, `split_reason`), lists every deposit in `deposits`, and counts deposits, not parts, in
+`protein_index` and `peptide_index`. **`build` refuses a catalog that serves a deposit both whole and in
+parts**, since every count for it would be counted twice: if it does, the whole entry is still
+`include`. `datarepo manifest` prints each part as `split  part of <accession>`, and names a whole entry
+still `include` beside an `include` part (`WHOLE AND PARTS`, exit `1`) before any build. USIs keep naming
+the bare accession, which is what PRIDE holds.
 
 An SDRF you **curated** for a search goes in the dataset's `operator_sdrf`, absolute or relative to the
 manifest's folder (G107):
