@@ -7,12 +7,15 @@ This folder is a `/project`-managed research project. **You are de facto working
 - **Phase:** INCEPTION
 - **Goal:** An AI-ready, API-accessible repository for the search + quant results of the many PRIDE datasets the `aging` pipeline reanalyzes. Humans can use it, but AI agents are the main users. The question it serves is how organelle proteomes change with age.
 - **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`).
-  **2026-11-09: datarepo 1.4.5 (split deposits' catalog side, G126) is BUILT, not released** (D58: the user's "yes" to U26, a release of its own
-  before 1.5.0, on PXReprise 105's PXR-R57). Branch `feat/1.4.5` at `f33cacf` (pushed; worktree `code/_wt_145`): catalog format 16, no re-ingest.
-  CI on Linux: 781 passed, only `TheTutorialPrintsWhatTheProgramPrints` fails (61 checks now; rerun the tutorial at release). Real-data trial and a
-  scratch rebuild of aging's 205 bundles (every index value equal; first build 686 s): `results/split_145_2026-11-09/`. Told PXReprise 106 (keep
-  `deliver_split_deposits` off until their pin is 1.4.5). **Release on the user's word only**, with the usual recipe; aging serves a 1.4.3-built
-  catalog (`bd0cc5ef03ab5111`).
+  **2026-11-09: datarepo 1.4.5 is RELEASED** (the user: "release 1.4.5"; D58, G126: a deposit searched in parts is served as one deposit).
+  Tag `v1.4.5` on `80af834` (merge of `feat/1.4.5`: `f33cacf` + `41992e2`), published 14:47 UTC. win-x64 zip sha256
+  `e8d0cfd8f106aeb09f5ac87e1e8dccdb670fdcff85d724216b58c834c549bd7c`. Catalog format 16, no re-ingest, no bundle id moves. Tutorial catalog
+  `2f2e7deb0e4dd6fd` (61 checks). The downloaded program reproduced the tutorial, PXD017944 `3cd52dd1b39472d8` and the split trial's `release_id`
+  `1cfe96c133c57f02`, and refused the whole deposit beside its parts. Evidence: `results/split_145_2026-11-09/` (scratch rebuild of aging's 205
+  bundles equals their serving catalog; first build 686 s). Told PXReprise 106 (PXR-R57) and 107 (pin swap, then `deliver_split_deposits`), aging
+  134, ptmQtl 065 (their pooled `n_datasets` would count a split's parts). `code/_wt_145` removed; branch kept on origin. Our MCP entry stays on
+  1.4.4 until PXReprise installs `F:\aging_batch\datarepo-1.4.5`; then repoint it from Bash. DATAREPO-P33 was answered in ptmQtl 054 (the wait
+  named below is stale).
   **Then continue the SDRF discussion with the user (G127, G130; U30, U31), one plain question at a time.** Two questions are with the user, unanswered:
   - **U30: how does dataRepo keep each SDRF?** Default: both. The search's own SDRF and design file go in the bundle at 1.5.0, factor values marked as that search's
     grouping. PXReprise's checked SDRF and check report sit beside the bundle, dated and hashed, so a fix never moves a bundle id.

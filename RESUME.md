@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Commits | 893 |
+| Commits | 900 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
 | Locked decisions | 58 |
 | Open gaps | 126 |
@@ -33,7 +33,15 @@ reanalyses. The results cover search, quant, provenance, design and organelle an
 use it, but AI agents are the main users. The question it serves is how organelle proteomes change
 with age.
 
-## Latest (2026-11-09): 1.4.5, the split deposits' catalog side, is built (D58); not released
+## Latest (2026-11-09): datarepo 1.4.5 RELEASED, the split deposits' catalog side (D58)
+
+- **Released on the user's word ("release 1.4.5").** Tag `v1.4.5` on `80af834`, published 14:47 UTC. win-x64 zip sha256
+  `e8d0cfd8f106aeb09f5ac87e1e8dccdb670fdcff85d724216b58c834c549bd7c`. Tutorial catalog `2f2e7deb0e4dd6fd`.
+- **The downloaded program reproduced:** the tutorial, PXD017944 `3cd52dd1b39472d8`, and the split trial's `release_id`
+  `1cfe96c133c57f02`. It also refused the whole deposit beside its parts.
+- **Told:** PXReprise 107 (pin swap, then `deliver_split_deposits`), aging 134, ptmQtl 065.
+
+Before the release, the same day:
 
 - **PXReprise 105 (PXR-R57):** their split searches are built and held until a released datarepo serves a split. The user said "yes" to a
   release of its own before 1.5.0 (U26 answered, D58).
