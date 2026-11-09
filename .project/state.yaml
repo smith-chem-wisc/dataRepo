@@ -626,7 +626,7 @@ gaps:
     GPTMD files still match. dataset_databases, datasets.search_database and bundle.json's protein_databases all name what GPTMD
     STARTED from. To build (decided: the pointer; release not chosen): the catalog names each search's searched databases (path,
     sha256, size, role searched|input) at build from the provenance copy (no re-ingest, D32), with a check naming a search whose
-    searched database has no sha256. Keeping the files themselves is U32 (asked PXReprise PXR-R59, our 108). Same message asks PXR-R58
+    searched database has no sha256. Keeping the files themselves is U32, left OPEN by the user with no default ("leave the decision open"); PXReprise PXR-R59 (our 108) gathers facts only. Same message asks PXR-R58
     (what happens when a sample fact is corrected), which decides U30's "beside" copy. A first pass wrongly said the ten files were gone
     (the listing never looked inside the task folder); corrected before sending.
   - >-

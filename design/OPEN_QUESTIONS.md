@@ -93,7 +93,7 @@ depends on it is marked as such.
 
 | ID | Question | Default (work proceeds on it) |
 |---|---|---|
-| U32 | The user: "somehow somewhere we need to store a pointer to the database ... Might even be good to store the database somehow but that is probably unweildy. it needs to be somewhere because without it there is no hope of reproducing a result." The pointer is decided. **Should the databases themselves be kept, and by whom?** All 159 GPTMD databases are 51.7 GB as written and about 5 GB with zstd -3. The 46 distinct originals are 11.6 GB. The served bundles are 29.4 GiB. Asked PXReprise as PXR-R59 (our 108). | **Keep them, compressed, under their sha256,** beside the bundles or wherever PXReprise keeps them; PXReprise says where. The pointer goes in the catalog whatever the answer. |
+| U32 | The user: "somehow somewhere we need to store a pointer to the database ... Might even be good to store the database somehow but that is probably unweildy. it needs to be somewhere because without it there is no hope of reproducing a result." The pointer is decided. **Should the databases themselves be kept, and by whom?** All 159 GPTMD databases are 51.7 GB as written and about 5 GB with zstd -3. The 46 distinct originals are 11.6 GB. The served bundles are 29.4 GiB. Asked PXReprise as PXR-R59 (our 108). | **OPEN, no default (the user, 2026-11-09: "i'm not prepared to make a decision on databases at the moment. leave the decision open").** Nothing is stored or built on it. PXReprise's answer to PXR-R59 is information for the user, not a decision. The agent's view, when asked: keep them compressed under their sha256. |
 
 ### A hole in the MCP sandbox (G128), 2026-11-06
 
