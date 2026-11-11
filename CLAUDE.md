@@ -733,7 +733,11 @@ This folder is a `/project`-managed research project. **You are de facto working
   `ProForma` field (`[UniProt:N6,N6-dimethyllysine on K]` -> `[UNIMOD:36]`), but no ingest code reads that field:
   peptidoform keys and USIs come from our own `Proforma.cs` over the full sequence (`Identifications.cs`). This bullet
   said the keys move for two weeks, and the 1.4.0 plan (PXReprise 049 item 1) repeated it: a belief, not a measurement.
-  Still re-run the psmtsv parity tests on any mzLib bump; they are the canary.
+  **But mzLib 1.0.597 DOES move peptidoform keys** (measured 2026-11-11, `results/mzlib597_2026-11-11/` on `feat/1.5.0`):
+  #1416/#1524 link 106 UniProt modifications to Unimod in mzLib's own code, and our `Proforma.cs` asks mzLib, so a mass
+  tag becomes an accession (967 of 360,551 keys in PXD034564). The bundle id does NOT move, so an mzLib bump rides an
+  ingest-path bump. **The psmtsv canary passed and saw none of it:** measure every bump by ingesting real deposits on both
+  versions and comparing every table.
 - **A pre-release mzLib makes the go engine refuse, by design** (GO-A1: go files from an unreleased writer are never
   stored). On a branch built against a locally packed mzLib, the go tests fail for that reason alone.
 - **MetaMorpheus modification names can hold brackets** (`[Metal:Cu[I] on D]`). Parse full sequences by bracket depth
