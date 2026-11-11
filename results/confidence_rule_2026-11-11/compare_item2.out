@@ -1,0 +1,46 @@
+catalog cfab8ab81b2673f1 {'PXD058775': 'f973337f70227e3d', 'PXD057502': '7f2a7f357e3b8713'}
+
+PXD057502: served 7f2a7f357e3b8713 -> item 2 7a9b7c7a33af3651
+  confidence_rule: pep_q_value
+  target peptidoforms: pep_q < 0.01 / notch < 0.01 / q-value rule (1.4.5 view) / best_pep_q_value NULL / > 1: (0, 6286, 5962, 0, 95)
+  finding confidence_rule_fewer_peptides: This search's confidence rule (`pep_q_value`, strictly below 0.01) passes 0 target peptidoform(s); the q-value rule `peptidoforms_1pct` held up to datarepo 1.4.5 (`best_q_value`, and `best_q_value_notch` where there is one, at or below 0.01) passed 5962. `peptidoforms_1pct` follows the confidence rule (D55), so this deposit's 1% peptide count is lower than its search's q-value count: the rule did that, not a small study. results.txt's own peptide count, where the search wrote one, is in `metrics` (`name = 'peptides'`, `scope = 'dataset'`). Whether peptide-level PEP q-value is rightly this strict on such a search is pep's to say (DATAREPO-89).
+  assays                           equal
+  datasets                         equal  (+ columns ['confidence_rule'])
+  definitions                      equal
+  findings                         0 only served, 1 only new
+  metrics                          equal
+  peptidoforms                     1353 only served, 1353 only new  (+ columns ['best_pep_q_value'])
+  protein_groups                   equal
+  proteins                         equal
+  provenance_records               equal
+  psms                             3092 only served, 3092 only new
+  ptm_sites                        2 only served, 2 only new
+  ptm_stoichiometry                equal
+  quant_values                     equal
+  runs                             equal
+  samples                          equal
+  search_modifications_declared    equal
+
+PXD058775: served f973337f70227e3d -> item 2 0b92797364a7e76f
+  confidence_rule: q_value_notch
+  target peptidoforms: pep_q < 0.01 / notch < 0.01 / q-value rule (1.4.5 view) / best_pep_q_value NULL / > 1: (229, 252, 226, 0, 6)
+  finding confidence_rule_fallback: PEP was not trained for this search: all 10479 target PSMs carry one PEP value (0.0), as MetaMorpheus leaves them when PEP training fails, so they cannot show that it trained (mzLib's `QuantifiedPsmRule.ChooseTier`, over the search's target PSMs). So its confidence rule (`datasets.confidence_rule` = `q_value_notch`) reads its notch q-value: `peptidoforms_1pct` takes target peptidoforms whose `best_q_value_notch` is strictly below 0.01, where a search with trained PEP reads `best_pep_q_value` (D55). The search still wrote numbers in `PEP_QValue`; they are stored as written and are not read here. Compare this deposit's 1% counts with others' knowing they rest on another q-value.
+  assays                           equal
+  datasets                         equal  (+ columns ['confidence_rule'])
+  definitions                      equal
+  findings                         0 only served, 1 only new
+  metrics                          equal
+  peptidoforms                     16 only served, 16 only new  (+ columns ['best_pep_q_value'])
+  protein_groups                   equal
+  proteins                         equal
+  provenance_records               equal
+  psms                             23 only served, 23 only new
+  ptm_sites                        equal
+  ptm_stoichiometry                equal
+  quant_values                     equal
+  runs                             equal
+  samples                          equal
+  search_modifications_declared    equal
+moved rows, paired (item 1's mzLib 1.0.597 key change expected):
+  PXD057502: peptidoforms (paired, mass tag -> no mass tag, other columns equal) (1353, 1348, 1353); psms (paired by id, only peptidoform/usi differ, old had a mass tag) (3092, 3092, 3092); ptm_sites (paired, NULL -> accession) (2, 2)
+  PXD058775: peptidoforms (paired, mass tag -> no mass tag, other columns equal) (16, 16, 16); psms (paired by id, only peptidoform/usi differ, old had a mass tag) (23, 23, 23); ptm_sites (paired, NULL -> accession) (0, 0)

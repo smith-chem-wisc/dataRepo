@@ -1,0 +1,4 @@
+catalog cfab8ab81b2673f1 1.4.5
+  PXD058775 f973337f70227e3d: q_value_notch (target PEPs distinct 1, all PEPs distinct 1)
+181 bundles; tiers from target PSMs: {'pep_q_value': 180, 'q_value_notch': 1}
+differ between target-only and all PSMs: none

@@ -14,7 +14,7 @@ pushed schema version is frozen, so 0.0.17 goes out once, with every column belo
 | # | item | source | status |
 |---|---|---|---|
 | 1 | mzLib 1.0.595 -> 1.0.597. **It moves peptidoform keys** (mass tag -> Unimod accession for UniProt modifications mzLib #1416/#1524 newly link; 69 of 64,731 in PXD011740, 967 of 360,551 in PXD034564), nothing else, and no bundle id: so it rides `cs-1.3.0`, never alone. Tell ptmQtl/QuantProject/aging at the announcement (`results/mzlib597_2026-11-11/`). A later release carrying #1555/#1557/#1578 is taken if it lands first | | **done** |
-| 2 | Per-search confidence rule recorded at ingest (`ChooseTier`) as `datasets.confidence_rule`, `peptidoforms.best_pep_q_value`, the fallback finding, the fewer-than-q-value finding. **Strictly below 0.01, as mzLib's `PassesConfidence` and ptmQtl's S7:** measured 2026-11-11 on aging's 181 served deposits (catalog `cfab8ab81b2673f1`, `results/confidence_rule_2026-11-11/`), 4 of 7,816,802 target peptide rows sit at exactly 0.01 on `PEP_QValue` (PXD011314, PXD012753 x2, PXD047289), and none on `QValue Notch` in PXD058775, the one notch search | D53, D55 | schema drafted |
+| 2 | Per-search confidence rule recorded at ingest (`ChooseTier`) as `datasets.confidence_rule`, `peptidoforms.best_pep_q_value`, the fallback finding, the fewer-than-q-value finding. **Strictly below 0.01, as mzLib's `PassesConfidence` and ptmQtl's S7:** measured 2026-11-11 on aging's 181 served deposits (catalog `cfab8ab81b2673f1`, `results/confidence_rule_2026-11-11/`), 4 of 7,816,802 target peptide rows sit at exactly 0.01 on `PEP_QValue` (PXD011314, PXD012753 x2, PXD047289), and none on `QValue Notch` in PXD058775, the one notch search. Decided from target PSMs only (ptmQtl S7); both findings written (the user, 2026-11-11). Real scratch ingests: PXD058775 reads `q_value_notch` (252 target peptidoforms pass) with `confidence_rule_fallback`; PXD057502 passes 0 against the q-value rule's 5,962, with `confidence_rule_fewer_peptides`; every other moved row is item 1's key change (`compare_item2.out`) | D53, D55 | **built** (local, unpushed) |
 | 3 | `peptidoform_ions`: the six `Matched Ion *` columns under the per-search rule, `selected_by`; a bundle with none still builds | D53, G116 | |
 | 4 | Drop `psms.matched_ion_series`, `psms.matched_ion_count` | D56 | |
 | 5 | `gene_resolutions.ensembl_xref_agreement` (nullable, checked against agrees/silent/disagrees); `DefinitionId` v2 only when our mzLib carries #1578 | D59, G133 | |
@@ -81,10 +81,16 @@ A new table is a schema bump, and `build` refuses a store of mixed versions (`Ca
 
 **The rule, decided per search:**
 
-- `results.txt` has a PEP block (pep 007's test): a target row with `PEP_QValue` at or below 0.01.
-- It has none: a target row with `QValue Notch` at or below 0.01.
+- **As built (item 2, 2026-11-11; the user took all three recommendations):** mzLib's `QuantifiedPsmRule.ChooseTier`
+  decides the whole search from its target PSMs (ptmQtl S7's form), not results.txt's PEP block. PEP trained: a target row
+  with `PEP_QValue` strictly below 0.01. Not trained: a target row with `QValue Notch` strictly below 0.01. On all 181 served
+  deposits, target-only and mzLib's documented every-PSM form give the same tier, and only PXD058775 is off PEP
+  (`results/confidence_rule_2026-11-11/tier_targets_vs_all.out`).
 - Targets are `T` and `ET` (pep 008; DATAREPO-87).
-- A finding says when the fallback was used. The text cites MetaMorpheus's own `PepQValueElseQValueNotch` (#2909).
+- A finding (`confidence_rule_fallback`) says when the fallback was used, and why. It cites mzLib's `QuantifiedPsmRule`, not
+  MetaMorpheus's `PepQValueElseQValueNotch`: #2909, which adds that name, is still open (checked 2026-11-11).
+- A second finding (`confidence_rule_fewer_peptides`) names both counts where the rule passes fewer target peptidoforms than
+  1.4.5's q-value rule.
 
 **Why per search, not per row.** PXD058775 (1 of 196 searches, the only one with no PEP block) trained no PEP: its `PEP`
 column holds one value. Yet its `PEP_QValue` still holds numbers, 229 of them at or below 1%, so a test on the row would trust
