@@ -1,0 +1,37 @@
+PXD011740: 595 ['b7dbca088aa5c165']  597 ['b7dbca088aa5c165']
+  assays.parquet                                     12  equal
+  datasets.parquet                                    1  equal
+  definitions.parquet                                17  equal
+  findings.parquet                                    8  equal
+  metrics.parquet                                   116  equal
+  peptidoforms.parquet                           64,731  DIFFER: 69 rows only in 595, 69 only in 597
+  protein_groups.parquet                          3,002  equal
+  proteins.parquet                               23,720  equal
+  provenance_records.parquet                          3  equal
+  psms.parquet                                  176,667  DIFFER: 120 rows only in 595, 120 only in 597
+  ptm_sites.parquet                               6,207  DIFFER: 4 rows only in 595, 4 only in 597
+  ptm_stoichiometry.parquet                      11,389  equal
+  quant_values.parquet                          131,034  equal
+  runs.parquet                                       12  equal
+  sample_characteristics.parquet                     24  equal
+  samples.parquet                                    12  equal
+  search_modifications_declared.parquet              66  equal
+  bundle.json modification_registry differs
+PXD034564: 595 ['ff841cc55ccccb31']  597 ['ff841cc55ccccb31']
+  assays.parquet                                    320  equal
+  datasets.parquet                                    1  equal
+  definitions.parquet                                14  equal
+  findings.parquet                                   11  equal
+  metrics.parquet                                   238  equal
+  peptidoforms.parquet                          360,551  DIFFER: 967 rows only in 595, 967 only in 597
+  protein_groups.parquet                          7,331  equal
+  proteins.parquet                               41,059  equal
+  provenance_records.parquet                          3  equal
+  psms.parquet                                  495,857  DIFFER: 1276 rows only in 595, 1276 only in 597
+  ptm_sites.parquet                              78,418  DIFFER: 123 rows only in 595, 123 only in 597
+  quant_values.parquet                          901,996  DIFFER: 1395 rows only in 595, 1395 only in 597
+  runs.parquet                                       32  equal
+  samples.parquet                                   320  equal
+  search_modifications_declared.parquet               4  equal
+  bundle.json modification_registry differs
+RESULT: 7 difference(s)

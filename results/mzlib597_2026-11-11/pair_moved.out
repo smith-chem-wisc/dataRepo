@@ -1,0 +1,8 @@
+PXD011740 peptidoforms (paired, mass tag -> none, other columns equal): (69, 69, 69)
+PXD011740 psms (paired by psm_id, only peptidoform/usi differ, old had a mass tag): (120, 120, 120)
+PXD011740 ptm_sites (paired by id, modification NULL -> accession): (4, 4)
+PXD011740 quant_values (moved old/new, old with a mass tag, (assay, definition, value) unmatched): (0, 0, 0, 0)
+PXD034564 peptidoforms (paired, mass tag -> none, other columns equal): (967, 963, 967)
+PXD034564 psms (paired by psm_id, only peptidoform/usi differ, old had a mass tag): (1276, 1276, 1276)
+PXD034564 ptm_sites (paired by id, modification NULL -> accession): (123, 123)
+PXD034564 quant_values (moved old/new, old with a mass tag, (assay, definition, value) unmatched): (1395, 1395, 1395, 0)
