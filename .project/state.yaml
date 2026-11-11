@@ -626,6 +626,12 @@ decisions:
       stays on top of it with go (our aging 137; we did not write to go). On logs 034's LOGS-D5: "yes to both". gene_resolutions
       takes ensembl_xref_agreement (nullable; agrees/silent/disagrees) at schema 0.0.17 (1.5.0), and a run that fills it records
       logs:DEF-GENE-RESOLUTION v2 on its rows and in run.json (our logs 035).
+  - id: D60
+    date: 2026-11-11
+    text: >-
+      The user, 2026-11-11 (D57's open order): "1.5.0 first". Build 1.5.0 now on feat/1.5.0 (design/RELEASE_1.5.0.md), the
+      search's-own-SDRF part last since it waits on sdrf's SDRF-D14; AI contributions are built alongside on their own branch,
+      not before.
 gaps:
   - >-
     G134 NEW 2026-11-11: PXReprise 109 answered PXR-R58: a corrected sample fact is a new search, never an edit, and a bundle keeps
