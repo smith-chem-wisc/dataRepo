@@ -1,0 +1,7 @@
+PXD058775    0b92797364a7e76f  ok: 17 table(s), 6 copied source(s)
+verified 1 bundle(s): 1 ok, 0 without table checksums (not verified), 0 with problems
+exit 0
+PXD058775    0b92797364a7e76f  1 problem(s)
+    changed  peptidoform_ions.parquet  recorded abb65e8514d44e4c4d6a4866dd9804b75094b77d15cb6dd3f54f64f2f6665a9d, now 5207a5e3f183953e5540716f41e2a52b623bd88561ced3e178148eb123ff9db3
+verified 1 bundle(s): 0 ok, 0 without table checksums (not verified), 1 with problems
+exit 1
