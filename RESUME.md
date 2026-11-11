@@ -2,14 +2,14 @@
 
 <!-- BEGIN GENERATED -- render_resume.py owns this block; edit state.yaml, not here -->
 
-**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-11-09
+**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-11-11
 
 | | |
 |---|---|
-| Commits | 908 |
+| Commits | 922 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
-| Locked decisions | 58 |
-| Open gaps | 127 |
+| Locked decisions | 59 |
+| Open gaps | 130 |
 | Gate items skipped | 5 |
 
 **Worktrees** -- details in `code/PINNED.md`

@@ -615,7 +615,38 @@ decisions:
       split_reason, the deposits table, protein_index/peptide_index n_datasets* counting deposits, the census by accession, a
       build refusal of a deposit served whole beside its parts, and the site (PRIDE link by accession, deposit counts, a page
       per split deposit, siblings named). Branch feat/1.4.5. Same day: "release 1.4.5" (tag v1.4.5 on 80af834).
+  - id: D59
+    date: 2026-11-11
+    text: >-
+      The user, 2026-11-11, on aging 136's DATAREPO-89 (go.annotate_groups refuses all 20 isobaric deposits, because an isobaric
+      search writes no AllQuantifiedProteinGroups.tsv): "i suggest handing this to the quantProject and recommend the
+      quantProject generate tmt quant output that follows the naming that lfq uses or something that differentiates the output
+      from the regular search output". So the fix is the producer's file naming, not a special case in our go engine
+      (QUANTPROJECT-Q3, our QuantProject 086). aging watches for output that changes with TMT, DIA and whatever comes next, and
+      stays on top of it with go (our aging 137; we did not write to go). On logs 034's LOGS-D5: "yes to both". gene_resolutions
+      takes ensembl_xref_agreement (nullable; agrees/silent/disagrees) at schema 0.0.17 (1.5.0), and a run that fills it records
+      logs:DEF-GENE-RESOLUTION v2 on its rows and in run.json (our logs 035).
 gaps:
+  - >-
+    G134 NEW 2026-11-11: PXReprise 109 answered PXR-R58: a corrected sample fact is a new search, never an edit, and a bundle keeps
+    only its own search's SDRFs (the one it read and the one it wrote), never a newer one beside them. Their v0.4.46 (unreleased)
+    marks the output SDRF read-only. `BundleWriter.cs:192` copies sources with `File.Copy`, which keeps that flag on Windows, so
+    `ingest --overwrite` would fail on the copy. When the search's SDRF goes into bundles (U30, G130), clear the attribute on the
+    copy and test an overwrite. PXR-R59 waits on their user (GPTMD may write only a supplement of the sites it adds).
+  - >-
+    G133 NEW 2026-11-11: LOGS-D5 answered yes (D59; our logs 035). On 1.5.0's build list: `gene_resolutions.ensembl_xref_agreement`
+    (nullable string, each value checked against agrees/silent/disagrees as `outcome` is checked) in schema 0.0.17, with
+    `LogsEngine.DefinitionId` moving to `logs:DEF-GENE-RESOLUTION v2` in the same commit that fills it, once our mzLib carries
+    #1578 (in review 2026-11-10). If 1.5.0 ships first, its runs are v1 with the column NULL, and a later mzLib bump leaves a v1
+    and a v2 artefact per database, which the catalog refuses: say so in that release's notes. logs tells us at the mzLib
+    release (since 1.0.0 we call mzLib's resolver directly, not pyMzLib).
+  - >-
+    G132 NEW 2026-11-11: go.annotate_groups refuses all 20 isobaric deposits (aging 136, DATAREPO-89, answered in our 137). An
+    isobaric search writes its groups to AllProteinGroups.tsv (role `protein_groups`) and no AllQuantifiedProteinGroups.tsv, while
+    GoEngine.cs:97 and Catalog.cs:1256 key on `protein_group_quant`. D59: handed to QuantProject (QUANTPROJECT-Q3, our 086):
+    isobaric quant output under the label-free naming, or names of its own. Build nothing in our engine. When a released
+    MetaMorpheus writes the new names, teach ingest them; under the label-free naming, tell an isobaric
+    AllQuantifiedProteinGroups.tsv from a label-free one by the search's design file.
   - >-
     G131 NEW 2026-11-09: no table names the database a search READ (the user: "somehow somewhere we need to store a pointer to the
     database ... without it there is no hope of reproducing a result"; results/searched_db_2026-11-09/). Of the 208 served bundles,
