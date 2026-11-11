@@ -1,7 +1,43 @@
 # 1.5.0: fragment ions in every bundle, deposit facts, PRIDE records, channel designs
 
-**Status: decided by the user 2026-11-05 (D53, D54, D55), not built.** It closes U20-U24 and answers G116 (PXR-R44), G117
-(DATAREPO-88), G120 and PXR-R46/R47. The reader fix (PXR-R48) went first, as 1.4.3.
+**Status: decided by the user 2026-11-05 (D53, D54, D55); building since 2026-11-11 (D60: "1.5.0 first") on `feat/1.5.0`
+(worktree `code/_wt_150`).** It closes U20-U24 and answers G116 (PXR-R44), G117 (DATAREPO-88), G120 and PXR-R46/R47. The reader
+fix (PXR-R48) went first, as 1.4.3.
+
+## Build list (2026-11-11)
+
+The sections below hold the reasoning; this is what is built, in order. **The schema stays unpushed until its list is closed:** a
+pushed schema version is frozen, so 0.0.17 goes out once, with every column below.
+
+**Ingest (schema 0.0.17, ingest path `cs-1.3.0`, one whole-store re-ingest):**
+
+| # | item | source | status |
+|---|---|---|---|
+| 1 | mzLib 1.0.595 -> 1.0.597; re-run the psmtsv parity tests (the canary). A later release carrying #1555/#1557/#1578 is taken if it lands first | | |
+| 2 | Per-search confidence rule recorded at ingest (`ChooseTier`), `peptidoforms.best_pep_q_value`, the fallback finding, the fewer-than-q-value finding; measure `<=` against `<` at exactly 0.01 | D53, D55 | |
+| 3 | `peptidoform_ions`: the six `Matched Ion *` columns under the per-search rule, `selected_by`; a bundle with none still builds | D53, G116 | |
+| 4 | Drop `psms.matched_ion_series`, `psms.matched_ion_count` | D56 | |
+| 5 | `gene_resolutions.ensembl_xref_agreement` (nullable, checked against agrees/silent/disagrees); `DefinitionId` v2 only when our mzLib carries #1578 | D59, G133 | |
+| 6 | sha256 per table file in `bundle.json`; `datarepo verify` re-hashes on demand | D61 | |
+| 7 | Run-scope counts: MS2 from `qc_report.json`'s `ms2` (PXR-R51), precursors from results.txt where 1.1.14 writes them, PSMs/peptides/groups recounted from the whole search's 1% set (our aging 119); definition ids are their owners' | G125, U25 | |
+| 8 | Finding for a dropped `factor value[...]` with no same-named characteristic; `samples.condition` and `sample_characteristics.source` descriptions (+ `McpParityTests` masks) | G127 | |
+| 9 | Rewrite the isobaric finding and `DEF-TMT-*` note (`Ingester.cs:668-669`) after re-reading #2941 | | |
+| 10 | **Last:** the search's own SDRF and design file in the bundle, copied content-only (PXReprise v0.4.46 marks the output SDRF read-only). Waits on sdrf's SDRF-D14 | U30, G130, G134 | waiting |
+
+**Build side (catalog format 17, no re-ingest):**
+
+| # | item | source | status |
+|---|---|---|---|
+| 11 | `peptidoforms_1pct` reads the recorded rule; derivation id hashes it; descriptions and the site state the rule | D55 | |
+| 12 | PRIDE records: operator fetch command, `_companion/pride/`, ptmQtl's three tables, the shared-raw-files view | U20, U21, G120 | |
+| 13 | `deposit_facts` companion (`sdrf_column`) | PXR-R46/R47 | |
+| 14 | DATAREPO-88: (a) `isobaric_channels` view; (b) `quant_scale` from `qc_report.json`'s `sps_ms3` (PXR-R50; no manifest field); (c) aging layer 0.7.0, method-term table one row per isobaric dataset (aging 135); (d) aging's newest guidance text, re-read first | G117 | |
+
+**Not in 1.5.0 unless the user says:** the searched-database pointer (G131, build-side, release not chosen); GO per target set (G111);
+the go refusal of isobaric deposits (G132, handed to QuantProject). **Already shipped:** split deposits (1.4.5, D58).
+
+**Then:** tell PXReprise, aging, ptmQtl, QuantProject the shape; measure a whole-store scratch re-ingest; predict ids; PXReprise's week's
+notice (PXR-R49); release on the user's word.
 
 ## What the user decided
 
