@@ -1,0 +1,19 @@
+catalog cfab8ab81b2673f1 181 bundles
+30/181 21s
+60/181 37s
+90/181 44s
+120/181 52s
+150/181 58s
+180/181 65s
+done 181 read, 0 without AllPeptides.psmtsv on disk, 65s
+  n_pass: 7,816,821 rows in 180 deposit(s)
+  n_ambiguous: 138 rows in 138 deposit(s)
+  n_blank_ion_cell: 0 rows in 0 deposit(s)
+  n_pipe_ion_cell: 0 rows in 0 deposit(s)
+  n_counts_not_int: 0 rows in 0 deposit(s)
+  n_full_sequence_repeated: 0 rows in 0 deposit(s)
+  n_contaminant_pass: 110,690 rows in 180 deposit(s)
+deposits with no passing target row: ['PXD057502']
+counts examples: []
+most ambiguous: [(1, 'PXD077298'), (1, 'PXD075372'), (1, 'PXD073846'), (1, 'PXD071171'), (1, 'PXD068498')]
+missing: []

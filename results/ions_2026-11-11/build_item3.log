@@ -1,0 +1,17 @@
+catalog  F:\datarepo_scratch_150\catalog_item3\catalog-7fba2c8cd7e27f95.duckdb
+  id       7fba2c8cd7e27f95
+  release  ebac8f33941ff925
+  latest   F:\datarepo_scratch_150\catalog_item3\latest.json names it
+  dataset  PXD058775    bundle 0b92797364a7e76f
+  dataset  PXD057502    bundle 7a9b7c7a33af3651
+  dataset  PXD011740    bundle f9c3d0f04e13dc66
+  dataset  PXD034564    bundle 6c6a5eaf5490f675
+  note     logs.resolve_genes coverage (databases with an artefact): 0 of 12; no artefact for 25e3737826af (PXD057502); 26ea83c286fa (PXD058775); 31804be05b1a (PXD011740); 3c4ac3fb481e (PXD057502); 4d3d1c9bba00 (PXD011740); 5332711b2e3e (PXD057502); 6709e22a3c05 (PXD034564); be08bf25b790 (PXD057502, PXD058775); d1f6be915b69 (PXD058775); db47863bb689 (PXD034564); e887b4d5fa27 (PXD011740); fd80cf8839f8 (PXD011740)
+  note     go.annotate_groups coverage (bundles with an artefact): 0 of 4; no artefact for PXD011740 (f9c3d0f04e13dc66); PXD034564 (6c6a5eaf5490f675); PXD057502 (7a9b7c7a33af3651); PXD058775 (0b92797364a7e76f)
+  note     logs.register_orthology (snapshots registered): 0 of 1; no snapshot registered
+  note     ptmqtl.site_pairs coverage (bundles with an artefact): 0 of 4; no artefact for PXD011740, PXD034564, PXD057502, PXD058775
+  tables   assays 359, datasets 4, definitions 65, findings 34, gene_resolutions 0, metrics 610, peptidoform_ions 88,281, peptidoforms 976,344, protein_groups 13,552, proteins 112,060, provenance_records 10, ptm_sites 92,530, ptm_stoichiometry 37,667, quant_values 1,118,928, runs 71, sample_characteristics 24, samples 359, search_modifications_declared 136
+  derived  4 deposit(s) computed, 0 reused from an earlier build
+  indexes  2
+  checks   79 run, all passed
+  timing   tables 1.5 s, derived: sample names 0.1 s, derived: deposits (4 computed, 0 reused) 4.4 s, derived: per-deposit tables 0.1 s, derived: protein_index 0.7 s, derived: peptide_index 0.3 s, study and engines 0.5 s, manifest 0.1 s, checks: bundles 0.0 s, checks: study 0.0 s, checks: engines 0.0 s, checks: manifest 0.0 s, indexes 0.5 s, catalog tables 1.7 s, move 0.1 s

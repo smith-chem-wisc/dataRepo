@@ -1,0 +1,21 @@
+PXD058775
+  bundle   F:\datarepo_scratch_150\store_item3\PXD058775\0b92797364a7e76f
+  tables   datasets 1, samples 18, runs 18, assays 18, psms 18,011, peptidoforms 6,191, peptidoform_ions 252, protein_groups 216, proteins 5,257, ptm_sites 128, ptm_stoichiometry 115, quant_values 6,229, definitions 17, provenance_records 1, findings 7, metrics 164, search_modifications_declared 64
+  findings 6 open warning(s): calibration_failed, confidence_rule_fallback, high_contamination, low_id_rate, no_design_file, no_sdrf
+PXD057502
+  bundle   F:\datarepo_scratch_150\store_item3\PXD057502\7a9b7c7a33af3651
+  tables   datasets 1, samples 9, runs 9, assays 9, psms 1,376,912, peptidoforms 544,871, protein_groups 3,003, proteins 42,024, ptm_sites 7,777, ptm_stoichiometry 26,163, quant_values 79,669, definitions 17, provenance_records 3, findings 8, metrics 92, search_modifications_declared 2
+  MISMATCH psms_target_1pct: bundle 82421 vs producer 82424 (results.txt: All target PSMs with q-value <= 0.01 (pxreprise:DEF-PSM-1PCT v1))
+  findings 7 open warning(s): confidence_rule_fewer_peptides, count_mismatch, low_core_use, low_id_rate, no_sdrf, occupancy_not_stored, unplaced_ptm_sites
+PXD011740
+  bundle   F:\datarepo_scratch_150\store_item3\PXD011740\f9c3d0f04e13dc66
+  tables   datasets 1, samples 12, sample_characteristics 24, runs 12, assays 12, psms 176,667, peptidoforms 64,731, peptidoform_ions 22,358, protein_groups 3,002, proteins 23,720, ptm_sites 6,207, ptm_stoichiometry 11,389, quant_values 131,034, definitions 17, provenance_records 3, findings 8, metrics 116, search_modifications_declared 66
+  MISMATCH psms_target_1pct: bundle 89011 vs producer 89023 (results.txt: All target PSMs with q-value <= 0.01 (pxreprise:DEF-PSM-1PCT v1))
+  WARN     1 unresolved modification(s): Unimod:Nethylmaleimide+water on C
+  findings 6 open warning(s): count_mismatch, high_contamination, occupancy_not_stored, sdrf_skeleton, unplaced_ptm_sites, unresolved_modifications
+PXD034564
+  bundle   F:\datarepo_scratch_150\store_item3\PXD034564\6c6a5eaf5490f675
+  tables   datasets 1, samples 320, runs 32, assays 320, psms 495,857, peptidoforms 360,551, peptidoform_ions 65,671, protein_groups 7,331, proteins 41,059, ptm_sites 78,418, quant_values 901,996, definitions 14, provenance_records 3, findings 11, metrics 238, search_modifications_declared 4
+  MISMATCH peptidoforms_target_1pct: bundle 44059 vs producer 43102 (results.txt: All target peptides with q-value <= 0.01)
+  findings 9 open warning(s): calibration_failed, count_mismatch, isobaric_peptide_q_psm_level, isobaric_unlabelled_peptides, low_core_use, low_id_rate, no_channel_design, no_sdrf, unplaced_ptm_sites
+exit 0

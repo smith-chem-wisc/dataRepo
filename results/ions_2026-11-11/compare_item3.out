@@ -1,0 +1,30 @@
+
+PXD011740 f9c3d0f04e13dc66 rule pep_q_value
+  peptidoform_ions rows 22,358 (ambiguous 1, peptidoforms 22,357); passing target rows in the file (ion_cells.tsv) 22,358
+  peptidoforms passing the rule but no ions: 0; with ions but not passing: 0
+  size 4.2 MB of a 22.2 MB bundle (187 bytes/row)
+  bundle.json peptidoform_ions: {'read': True, 'source': 'AllPeptides.psmtsv', 'rule': 'pep_q_value', 'rows_read': 64733, 'passed': 22358, 'written': 22358, 'left_out_no_ion_series': 0, 'left_out_no_peptidoform': 0, 'missing_headers': []}
+  against served (1.4.5; item 1's key change and item 2's findings expected): moved: peptidoforms (69 only before, 69 only now); psms (120 only before, 120 only now); ptm_sites (4 only before, 4 only now)
+
+PXD034564 6c6a5eaf5490f675 rule pep_q_value
+  peptidoform_ions rows 65,671 (ambiguous 1, peptidoforms 65,671); passing target rows in the file (ion_cells.tsv) 65,671
+  peptidoforms passing the rule but no ions: 0; with ions but not passing: 0
+  size 35.3 MB of a 108.1 MB bundle (538 bytes/row)
+  bundle.json peptidoform_ions: {'read': True, 'source': 'AllPeptides.psmtsv', 'rule': 'pep_q_value', 'rows_read': 360551, 'passed': 65671, 'written': 65671, 'left_out_no_ion_series': 0, 'left_out_no_peptidoform': 0, 'missing_headers': []}
+  against served (1.4.5; item 1's key change and item 2's findings expected): moved: peptidoforms (967 only before, 967 only now); psms (1276 only before, 1276 only now); ptm_sites (123 only before, 123 only now); quant_values (1395 only before, 1395 only now)
+
+PXD057502: no peptidoform_ions.parquet (no row to write)
+
+PXD057502 7a9b7c7a33af3651 rule pep_q_value
+  peptidoform_ions rows 0 (ambiguous 0, peptidoforms 0); passing target rows in the file (ion_cells.tsv) 0
+  peptidoforms passing the rule but no ions: 0; with ions but not passing: 0
+  size 0.0 MB of a 175.9 MB bundle (0 bytes/row)
+  bundle.json peptidoform_ions: {'read': True, 'source': 'AllPeptides.psmtsv', 'rule': 'pep_q_value', 'rows_read': 544872, 'passed': 0, 'written': 0, 'left_out_no_ion_series': 0, 'left_out_no_peptidoform': 0, 'missing_headers': []}
+  against item 2: every other table equal
+
+PXD058775 0b92797364a7e76f rule q_value_notch
+  peptidoform_ions rows 252 (ambiguous 0, peptidoforms 252); passing target rows in the file (ion_cells.tsv) 252
+  peptidoforms passing the rule but no ions: 0; with ions but not passing: 0
+  size 0.1 MB of a 1.9 MB bundle (251 bytes/row)
+  bundle.json peptidoform_ions: {'read': True, 'source': 'AllPeptides.psmtsv', 'rule': 'q_value_notch', 'rows_read': 6191, 'passed': 252, 'written': 252, 'left_out_no_ion_series': 0, 'left_out_no_peptidoform': 0, 'missing_headers': []}
+  against item 2: every other table equal
