@@ -1,0 +1,4 @@
+PXD058775
+  bundle   F:\datarepo_scratch_150\store_item4\PXD058775\0b92797364a7e76f
+  tables   datasets 1, samples 18, runs 18, assays 18, psms 18,011, peptidoforms 6,191, peptidoform_ions 252, protein_groups 216, proteins 5,257, ptm_sites 128, ptm_stoichiometry 115, quant_values 6,229, definitions 17, provenance_records 1, findings 7, metrics 164, search_modifications_declared 64
+  findings 6 open warning(s): calibration_failed, confidence_rule_fallback, high_contamination, low_id_rate, no_design_file, no_sdrf
