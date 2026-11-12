@@ -639,6 +639,15 @@ decisions:
       command". At 1.5.0 ingest writes a sha256 per table file into bundle.json (no bundle id moves: the id hashes inputs), and
       a separate `datarepo verify` command re-hashes the store on demand and names any table that changed. Not checked on
       every build, which would read the whole store (~86 GB).
+  - id: D62
+    date: 2026-11-11
+    text: >-
+      The user and Alex, 2026-11-11, confirmed by the user here 2026-11-12 after we read it in PXReprise's diabetes thread
+      (their 004, commit 309d4b6): "yes. alex and i agreed to move datarepo into pxreprise. but I don't know how that will
+      transpire yet." dataRepo's functionality moves into PXReprise. How and when are NOT decided (U33). Diabetes 004's
+      account is a proposal, not a ruling of ours: after datarepo 1.5.0 ships, preparation as PRs the user reviews, one
+      shared store (reversing PXReprise D64), `datarepo push`/`pull` drafted on `feat/storage-push-pull` (not pushed, not in
+      our repo). 1.5.0's build list stands (D60); nothing is built toward the move until the user says how.
 gaps:
   - >-
     G134 NEW 2026-11-11: PXReprise 109 answered PXR-R58: a corrected sample fact is a new search, never an edit, and a bundle keeps

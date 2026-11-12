@@ -7,6 +7,14 @@ This folder is a `/project`-managed research project. **You are de facto working
 - **Phase:** INCEPTION
 - **Goal:** An AI-ready, API-accessible repository for the search + quant results of the many PRIDE datasets the `aging` pipeline reanalyzes. Humans can use it, but AI agents are the main users. The question it serves is how organelle proteomes change with age.
 - **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`).
+  **2026-11-12: dataRepo moves into PXReprise (D62).** The user confirmed PXReprise's diabetes 004 (2026-11-11): "alex and i agreed to move
+  datarepo into pxreprise. but I don't know how that will transpire yet." How and when are open (U33). 004's account (after 1.5.0; preparation
+  as PRs the user reviews; one shared store, reversing PXReprise D64; `datarepo push`/`pull` on a `feat/storage-push-pull` branch not in our
+  repo) is a proposal, not a ruling. **1.5.0's build list stands; build nothing toward the move until the user says how.**
+  **1.5.0 is being built (D60)** on local `feat/1.5.0` (`code/_wt_150`): items 1-7 done, only item 1 pushed; schema 0.0.17 stays unpushed until
+  the build list is closed (`design/RELEASE_1.5.0.md` on that branch). PXReprise 111 answered PXR-R60: their v0.4.47 (`9fcc209`, unreleased)
+  reads `AllProteinGroups.tsv`, and they rebuild the 43 isobaric payloads before our 1.5.0 re-ingest. **Tell them the re-ingest date.**
+  **QuantProject 088-091 are NOT read yet** (088 asks DATAREPO-D15), though a blanket `--mark-read` on 2026-11-12 cleared their unread flag.
   **2026-11-09: datarepo 1.4.5 is RELEASED** (the user: "release 1.4.5"; D58, G126: a deposit searched in parts is served as one deposit).
   Tag `v1.4.5` on `80af834` (merge of `feat/1.4.5`: `f33cacf` + `41992e2`), published 14:47 UTC. win-x64 zip sha256
   `e8d0cfd8f106aeb09f5ac87e1e8dccdb670fdcff85d724216b58c834c549bd7c`. Catalog format 16, no re-ingest, no bundle id moves. Tutorial catalog
