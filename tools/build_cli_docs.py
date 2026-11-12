@@ -39,7 +39,7 @@ GROUPS: list[tuple[str, str, list[str]]] = [
         "Ingest: a producer's run becomes a bundle",
         "An instance operator runs these once per dataset, after the search. See "
         "[ingest.md](ingest.md) and [study.md](study.md).",
-        ["manifest", "ingest", "inspect", "verify", "study", "run"],
+        ["manifest", "ingest", "inspect", "verify", "study", "run", "pride"],
     ),
     (
         "Build and publish: bundles become a catalog and a site",
@@ -71,6 +71,13 @@ NOTES: dict[str, str] = {
     ),
     "run": "A development build (version `0.0.0-dev`, or no recorded commit) is refused: see "
            "[operating.md](operating.md#1-install-one-released-version).",
+    "pride": (
+        "The only command that reaches PRIDE: `build` reads the records it kept and fetches nothing. Each record "
+        "is kept under `<store>/_companion/pride/<accession>/<record id>/` (`record.json`, `fetch.json`), never in a "
+        "bundle, and a record unchanged since the last fetch writes nothing. E-mail is never stored. A deposit PRIDE "
+        "has no record of is kept as `found = false`; a failed fetch keeps nothing, is printed as `failed`, and makes "
+        "the command exit `1` after the rest are fetched."
+    ),
 }
 
 

@@ -34,7 +34,7 @@ namespace DataRepo.Cli
     {
         private const string Prog = "datarepo";
 
-        private static readonly string[] Commands = ["ingest", "study", "manifest", "inspect", "verify", "build", "catalog", "query", "site", "publish", "run", "mcp", "doctor"];
+        private static readonly string[] Commands = ["ingest", "study", "manifest", "inspect", "verify", "build", "catalog", "query", "site", "publish", "run", "pride", "mcp", "doctor"];
         private static readonly string[] Pending = [];
 
         /// <summary>Each command's one line, as <c>datarepo -h</c> lists it and as its own <c>-h</c> prints it
@@ -52,6 +52,7 @@ namespace DataRepo.Cli
             ["site"] = DataRepo.Site.SiteCommand.Summary,
             ["publish"] = "build the catalog from every ingested dataset, then write the static site",
             ["run"] = "run a released engine on stored data (the instance operator's step)",
+            ["pride"] = "fetch each deposit's PRIDE record into the store, beside its bundles (the instance operator's step)",
             ["mcp"] = DataRepo.Mcp.McpCommand.Summary,
             ["doctor"] = "report this build's version, schema and components, and any registered MCP servers",
         };
@@ -112,6 +113,7 @@ namespace DataRepo.Cli
                     "query" => CatalogCommands.Query(rest),
                     "publish" => CatalogCommands.Publish(rest),
                     "run" => RunCommand.Run(rest),
+                    "pride" => Pride(rest, Console.Out),
                     "mcp" => DataRepo.Mcp.McpCommand.Run(rest, Console.Out, Console.Error),
                     "site" => DataRepo.Site.SiteCommand.Run(rest, Console.Out, Console.Error),
                     "doctor" => Doctor(rest),
@@ -445,6 +447,37 @@ namespace DataRepo.Cli
                 }
             }
             output.WriteLine($"verified {folders.Count} bundle(s): {ok} ok, {unrecorded} without table checksums (not verified), {failed} with problems");
+            return failed > 0 ? 1 : 0;
+        }
+
+        /// <summary><c>datarepo pride</c> (1.5.0 item 12; U20): each deposit's PRIDE record, fetched through mzLib's
+        /// <c>PrideArchiveClient</c> and kept beside the bundles (<see cref="DataRepo.Catalog.PrideRecords"/>). The only
+        /// command that reaches PRIDE; <c>build</c> reads what it kept.</summary>
+        /// <param name="fetch">The record for an accession; mzLib's client when null. Tests pass a stand-in.</param>
+        /// <returns>1 when any fetch failed (the rest are still kept); 0 otherwise.</returns>
+        internal static int Pride(string[] argv, TextWriter output, Func<string, OrderedDictionary<string, object?>>? fetch = null)
+        {
+            const string usage = $"usage: {Prog} pride [-h] --store STORE [accession ...]";
+            var args = new Args.Spec($"{Prog} pride", Summaries["pride"])
+                .Positional("accession", "deposits to fetch; default is every deposit with a bundle in the store", "*")
+                .Option("--store", Args.Kind.Value, "the store to keep the records in, under <store>/_companion/pride/<accession>/")
+                .Parse(argv);
+            var store = args.Value("--store") ?? throw new Args.UsageException(usage, "--store is required");
+            var accessions = args.Positionals("accession").ToList();
+            if (accessions.Count == 0) accessions = DataRepo.Catalog.PrideRecords.StoreAccessions(store);
+            if (accessions.Count == 0) throw new Args.UsageException(usage, $"{store} holds no bundle; name the accessions to fetch");
+            using var client = new UsefulProteomicsDatabases.PrideArchiveClient();
+            var results = DataRepo.Catalog.PrideRecords.Fetch(store, accessions, fetch ?? DataRepo.Catalog.PrideRecords.Client(client));
+            foreach (var r in results)
+                output.WriteLine(r.Outcome switch
+                {
+                    "failed" => $"  failed     {r.Accession}  {r.Detail}",
+                    _ => $"  {r.Outcome,-10} {r.Accession}  {(r.Found == false ? "PRIDE has no record of it" : "record")} {r.Detail}",
+                });
+            var failed = results.Count(r => r.Outcome == "failed");
+            output.WriteLine($"fetched {results.Count} deposit(s): {results.Count(r => r.Outcome == "written")} written, "
+                + $"{results.Count(r => r.Outcome == "unchanged")} unchanged, {failed} failed; kept under "
+                + BundleWriter.PathText(Path.Combine(store, DataRepo.Catalog.PrideRecords.CompanionDir, DataRepo.Catalog.PrideRecords.Kind)));
             return failed > 0 ? 1 : 0;
         }
 

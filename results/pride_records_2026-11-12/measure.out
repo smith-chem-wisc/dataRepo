@@ -1,0 +1,29 @@
+(1) records kept: 194; found: 194; with an e-mail key: 0; with an e-mail address: 0; with one replaced by the marker: 2
+  lab heads per deposit: {1: 194}
+  submitters per deposit: {1: 194}
+  papers per deposit: {0: 23, 1: 168, 2: 3}
+  lab-head ORCID: 0 of 194; submitter ORCID: 127 of 194
+  papers 174: PubMed 0 23, no citation line 15, no DOI 2
+  submitter has the lab head's last name: 56 of 194
+  lab-head contact ids recurring: 0; submitter accounts on more than one deposit: 21
+  lab-head last name 'PhD': 0
+
+(2) scratch catalog 35f8dbe222c97fae (eight bundles):
+  deposit_records: 8 rows
+  deposit_contacts: 16 rows
+  deposit_references: 8 rows
+  contacts by role: [('lab_head', 8), ('submitter', 8)]
+  references with pubmed / doi: (8, 7, 8)
+  deposits joined through dataset_overview.accession: 8
+  shared_raw_files rows here: 0
+
+(3) shared_raw_files over the runs of aging's serving catalog 3bde62130d08a4c4 (5,838 runs):
+   ('PXD006815:20170508_QEp7_JRW_SA_T_Z73a', 2, ['PXD006815:20170508_QEp7_JRW_SA_T_Z74'], True, False)
+   ('PXD006815:20170508_QEp7_JRW_SA_T_Z74', 2, ['PXD006815:20170508_QEp7_JRW_SA_T_Z73a'], True, False)
+   ('PXD033430:Control-1', 2, ['PXD057544:Con1_Lum_20mar1101'], False, True)
+   ('PXD033430:Control-2', 2, ['PXD057544:Con2_Lum_20mar1102'], False, True)
+   ('PXD033430:Control-3', 2, ['PXD057544:Con3_Lum_20mar1103'], False, True)
+   ('PXD057544:Con1_Lum_20mar1101', 2, ['PXD033430:Control-1'], False, True)
+   ('PXD057544:Con2_Lum_20mar1102', 2, ['PXD033430:Control-2'], False, True)
+   ('PXD057544:Con3_Lum_20mar1103', 2, ['PXD033430:Control-3'], False, True)
+  8 runs; across deposits: 6; within a deposit: 2
