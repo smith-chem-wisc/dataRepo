@@ -18,6 +18,10 @@ This folder is a `/project`-managed research project. **You are de facto working
   SDRFs and design WITH factor values; every other SDRF (community, sdrf drafts, PXReprise's checked one, authors') goes beside the bundle,
   dated and hashed, served together with a column naming the sheet. Build item 8 shrinks to two descriptions; item 10 carries the rest and
   waits on sdrf SDRF-D14 + SDRF-D15 (our 037) and pride PRIDE-D1 (our 007).
+  **D64 (2026-11-12): a TMT/iTRAQ search by MetaMorpheus <= 1.1.13 is refused, not warned about** (item 9, `08da6c5`). PXReprise 112 asks
+  PXR-R61: re-search PXD027548, PXD034564, PXD043296, PXD051031 on 1.1.14 before the re-ingest. Items 8 and 9 are built (local). At the
+  1.5.0 notice tell QuantProject that such searches are refused (their DEF-TMT text is untouched; only our bracketed note changed) and
+  aging that the four are re-searched. G135 (new): an explicit `--mm-settings` reaches rows, not the bundle id.
   **QuantProject 088-091 are NOT read yet** (088 asks DATAREPO-D15), though a blanket `--mark-read` on 2026-11-12 cleared their unread flag.
   **2026-11-09: datarepo 1.4.5 is RELEASED** (the user: "release 1.4.5"; D58, G126: a deposit searched in parts is served as one deposit).
   Tag `v1.4.5` on `80af834` (merge of `feat/1.4.5`: `f33cacf` + `41992e2`), published 14:47 UTC. win-x64 zip sha256

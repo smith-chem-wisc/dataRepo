@@ -6,10 +6,10 @@
 
 | | |
 |---|---|
-| Commits | 936 |
+| Commits | 940 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
-| Locked decisions | 63 |
-| Open gaps | 130 |
+| Locked decisions | 64 |
+| Open gaps | 131 |
 | Gate items skipped | 5 |
 
 **Worktrees** -- details in `code/PINNED.md`

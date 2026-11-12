@@ -665,7 +665,23 @@ decisions:
       nothing is called verified. (4) Both parts ship in 1.5.0, so nothing a bundle holds today is lost in between. (5) Item 8
       keeps only the two column descriptions (its finding is dropped); the rest joins item 10 with items 12-13. (6) Asked sdrf
       (SDRF-D15) and pride (PRIDE-D1) what they have made and where.
+  - id: D64
+    date: 2026-11-12
+    text: >-
+      The user, on 1.5.0 build item 9 (the #2941 warning on multiplex searches up to MetaMorpheus 1.1.13): "i would rather that
+      we re-search these files so we are not carrying around a bunch of rules and warnings specific to a handful of files", then
+      "let's go with your recommendation". So ingest refuses a TMT/iTRAQ search by MetaMorpheus 1.1.13 or earlier, or of unknown
+      release, naming #2941 and 1.1.14; the isobaric_peptide_q_psm_level warning and the build's #2941 exception are removed
+      (feat/1.5.0 08da6c5, isobaric reader 4). PXReprise is asked to re-search PXD027548, PXD034564, PXD043296 and PXD051031 on
+      1.1.14 before the 1.5.0 re-ingest (PXR-R61, our 112); one not done by then is absent from the catalog until it is.
 gaps:
+  - >-
+    G135 NEW 2026-11-12: an operator's `--mm-settings` reaches rows and not the bundle id. A scratch ingest of PXD027232 (MetaMorpheus
+    1.1.14) with 1.1.11's settings keyed 4 peptidoforms `K[+114.042927]` in place of `K[UNIMOD:121]` and got the same id,
+    b33d8bcbd9af59b4, as with 1.1.14's (feat/1.5.0 results/isobaric_refusal_2026-11-12/). The default folder,
+    <work_root>/mm_settings/<entry's metamorpheus>, is covered by the entry's version, so only an explicit override, or a
+    folder whose contents change, gets around it. Fix: hash the modification files the registry read into the id (as a source
+    or a declaration), or refuse an override whose release differs from the search's. Not on 1.5.0's list; the user's call.
   - >-
     G134 NEW 2026-11-11: PXReprise 109 answered PXR-R58: a corrected sample fact is a new search, never an edit, and a bundle keeps
     only its own search's SDRFs (the one it read and the one it wrote), never a newer one beside them. Their v0.4.46 (unreleased)
