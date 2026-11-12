@@ -674,6 +674,15 @@ decisions:
       release, naming #2941 and 1.1.14; the isobaric_peptide_q_psm_level warning and the build's #2941 exception are removed
       (feat/1.5.0 08da6c5, isobaric reader 4). PXReprise is asked to re-search PXD027548, PXD034564, PXD043296 and PXD051031 on
       1.1.14 before the 1.5.0 re-ingest (PXR-R61, our 112); one not done by then is absent from the catalog until it is.
+  - id: D65
+    date: 2026-11-12
+    text: >-
+      PRIDE's contact e-mail is kept, and nothing PRIDE publishes is redacted. The user, on 1.5.0 build item 12, after two
+      affiliations were found holding addresses (and one a telephone number) that the agreed rule would have removed: "this is
+      all public and we frequently email the depositors and lab heads. i see no reason to keep anything private. pride is
+      public." This reverses the e-mail exclusion our ptmQtl 061 proposed and their 062 accepted: `deposit_contacts` gains
+      `email`, as PRIDE publishes it, and free text is kept verbatim. Tell ptmQtl at the 1.5.0 notice (a column they can
+      ignore). Still true and still said in the descriptions: no contact field identifies a person or a lab on its own.
 gaps:
   - >-
     G135 NEW 2026-11-12: an operator's `--mm-settings` reaches rows and not the bundle id. A scratch ingest of PXD027232 (MetaMorpheus
