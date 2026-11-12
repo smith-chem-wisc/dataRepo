@@ -1,0 +1,14 @@
+== PXD027232  new b33d8bcbd9af59b4  old 3092c336f84cc096
+   definitions.parquet: 2 row(s) only in old, 2 only in new
+   sources added: [], removed: []
+   run peptides_1pct_whole_search qc_payload.json pxreprise:DEF-PEPTIDE-1PCT-RUN 1 580
+   run psms_1pct_whole_search qc_payload.json pxreprise:DEF-PSM-1PCT-RUN 1 772
+   run ms2 qc_report.json pxreprise:DEF-MS2 1 25730
+   dataset ms2_scans 25730.0 pxreprise:DEF-MS2
+   dataset peptides 580.0 pxreprise:DEF-PEPTIDE-1PCT
+   dataset precursors 41150.0 pxreprise:DEF-PRECURSORS
+   dataset protein_groups 371.0 pxreprise:DEF-PROTEINGROUP-1PCT
+   dataset psms_1pct 772.0 pxreprise:DEF-PSM-1PCT
+   source provenance:05_qc sources/provenance_05_qc.json 5c434353b580
+   source qc_payload sources/qc_payload.json b439afc5a439
+   finding run_counts_missing (info): No per-run `metrics` row from results.txt for `psms_1pct` (1 of 1 runs), `peptides` (1 of 1 runs), `protein_groups` (1 of 1 runs), `precursors` (1 of 1 runs), `ms2_scans` (1 of 1 runs). These counts were not written, which is not a count of zero. MetaMorpheus writes results.txt's per-file lines only for a search of two or more files, and this deposit has one run, so its deposit-wide rows (`scope = 'dataset'`) count that run. Each run's MS2 spectra are also counted by the QC report, in `runs.ms2_spectra` and `metrics` (`name = 'ms2'`, `source = 'qc_report.json'`), for 1 of the 1 runs. PXReprise's QC payload counts each run's share of the whole search's 1% set instead, a different number (the FDR is the whole search's, not recomputed on each file), under names of its own (`source = 'qc_payload.json'`): `psms_1pct_whole_search` for 1 of the 1 runs, `peptides_1pct_whole_search` for 1 of the 1 runs, `protein_groups_1pct_whole_search` for none of them.

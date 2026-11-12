@@ -1,0 +1,10 @@
+== PXD043296
+PXD043296
+  failed   PXD043296: this is a multiplex (TMT) search by MetaMorpheus 1.1.13. Up to and including 1.1.13, such a search writes its AllPeptides.psmtsv with each peptide's best PSM's PSM-level q-values, not peptide-level ones (MetaMorpheus #2941), so its peptide confidence cannot be stored as what it claims to be. Re-search the deposit on MetaMorpheus 1.1.14 or later.
+exit=0
+== PXD027232
+PXD027232
+  bundle   F:\datarepo_scratch_150\store_item9\PXD027232\b33d8bcbd9af59b4
+  tables   datasets 1, samples 6, runs 1, assays 6, psms 20,726, peptidoforms 15,938, peptidoform_ions 638, protein_groups 386, proteins 13,807, ptm_sites 1,425, quant_values 5,904, definitions 16, provenance_records 4, findings 8, metrics 18, search_modifications_declared 7
+  findings 6 open warning(s): isobaric_channels_not_in_sdrf, low_core_use, low_id_rate, no_channel_design, sdrf_skeleton, unplaced_ptm_sites
+exit=0
