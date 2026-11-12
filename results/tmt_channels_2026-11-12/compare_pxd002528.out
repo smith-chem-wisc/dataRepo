@@ -1,0 +1,12 @@
+served 1.4.5 bundle: F:/aging_data/repo/store/PXD002528/5ca828db8870d011/
+1.5.0 bundle:        F:/datarepo_scratch_150/store_item14/PXD002528\48d62c47bcc4ea9e\
+1.4.5: assays 200, samples 200, quant_values 770,446
+1.5.0: assays 200, samples 84, quant_values 770,446
+1.5.0 assays by design_sample_type, with a sample / without: [('empty', 0, 116), ('study sample', 84, 0)]
+1.5.0 plexes: (20, 0)
+1.5.0 runs.reporter_level: [('ms2', 20)]
+values on empty channels: 254,704, median 1.565e+04; on study samples: 515,742, median 6.476e+05
+quant_values rows of 1.4.5 not in 1.5.0 (assay, feature, definition, value): 521
+1.4.5 samples not in 1.5.0 (the empty channels' fake samples): 116
+of those, keyed by a mass tag in 1.4.5 ('[+' or '[-' in feature_id): 5
+rows that differ once the feature key is set aside (assay, definition, value): 0
