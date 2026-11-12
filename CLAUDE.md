@@ -14,6 +14,10 @@ This folder is a `/project`-managed research project. **You are de facto working
   **1.5.0 is being built (D60)** on local `feat/1.5.0` (`code/_wt_150`): items 1-7 done, only item 1 pushed; schema 0.0.17 stays unpushed until
   the build list is closed (`design/RELEASE_1.5.0.md` on that branch). PXReprise 111 answered PXR-R60: their v0.4.47 (`9fcc209`, unreleased)
   reads `AllProteinGroups.tsv`, and they rebuild the 43 isobaric payloads before our 1.5.0 re-ingest. **Tell them the re-ingest date.**
+  **D63 (2026-11-12): every sample sheet is kept and labelled; only the search's grouping is decided.** A bundle keeps its search's own
+  SDRFs and design WITH factor values; every other SDRF (community, sdrf drafts, PXReprise's checked one, authors') goes beside the bundle,
+  dated and hashed, served together with a column naming the sheet. Build item 8 shrinks to two descriptions; item 10 carries the rest and
+  waits on sdrf SDRF-D14 + SDRF-D15 (our 037) and pride PRIDE-D1 (our 007).
   **QuantProject 088-091 are NOT read yet** (088 asks DATAREPO-D15), though a blanket `--mark-read` on 2026-11-12 cleared their unread flag.
   **2026-11-09: datarepo 1.4.5 is RELEASED** (the user: "release 1.4.5"; D58, G126: a deposit searched in parts is served as one deposit).
   Tag `v1.4.5` on `80af834` (merge of `feat/1.4.5`: `f33cacf` + `41992e2`), published 14:47 UTC. win-x64 zip sha256

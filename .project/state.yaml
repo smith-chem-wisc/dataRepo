@@ -648,6 +648,23 @@ decisions:
       account is a proposal, not a ruling of ours: after datarepo 1.5.0 ships, preparation as PRs the user reviews, one
       shared store (reversing PXReprise D64), `datarepo push`/`pull` drafted on `feat/storage-push-pull` (not pushed, not in
       our repo). 1.5.0's build list stands (D60); nothing is built toward the move until the user says how.
+  - id: D63
+    date: 2026-11-12
+    text: >-
+      The user, on 1.5.0 build item 8 (G127, U27, U30): "I made a decision at some point that we decide the factor to use in the
+      search and the quantification. We would use the original deposited SDRF as information but that it was not definitive
+      because errors are typical. What I did not intend was for us to just discard good information from the deposited SDRF. It
+      makes sense to me that we should retain that information but be cautious about its use if that information was not
+      verified." Then "the sdrf and pride projects may have added information", and "lets go with your recommendations and send
+      the messages". So: (1) a bundle keeps only what its search used (the SDRF it read, the one it wrote, its design file),
+      factor values INCLUDED and marked as the grouping the values were computed under; leaving a question's or operator's SDRF's
+      factor values out (G107, U27's default) is reversed. (2) Every other sample sheet made for a deposit (PRIDE's community
+      annotation, sdrf's drafts, PXReprise's checked SDRF (their D65), the authors' own) is kept BESIDE the bundle as a companion,
+      next to deposit_facts and PRIDE records, each copy dated and hashed, so a newer one never moves a bundle id. (3) The
+      catalog serves them together; each row names the sheet it came from; sdrf's per-value source columns are kept verbatim;
+      nothing is called verified. (4) Both parts ship in 1.5.0, so nothing a bundle holds today is lost in between. (5) Item 8
+      keeps only the two column descriptions (its finding is dropped); the rest joins item 10 with items 12-13. (6) Asked sdrf
+      (SDRF-D15) and pride (PRIDE-D1) what they have made and where.
 gaps:
   - >-
     G134 NEW 2026-11-11: PXReprise 109 answered PXR-R58: a corrected sample fact is a new search, never an edit, and a bundle keeps
