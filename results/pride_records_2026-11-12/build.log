@@ -1,5 +1,5 @@
-catalog  F:\datarepo_scratch_150\catalog_item12\catalog-35f8dbe222c97fae.duckdb
-  id       35f8dbe222c97fae
+catalog  F:\datarepo_scratch_150\catalog_item12\catalog-4c3b1ee410e1261c.duckdb
+  id       4c3b1ee410e1261c
   release  322f55275797a7c8
   latest   F:\datarepo_scratch_150\catalog_item12\latest.json names it
   dataset  PXD011740    bundle f9c3d0f04e13dc66
@@ -19,4 +19,4 @@ catalog  F:\datarepo_scratch_150\catalog_item12\catalog-35f8dbe222c97fae.duckdb
   derived  0 deposit(s) computed, 8 reused from an earlier build
   indexes  2
   checks   157 run, all passed
-  timing   tables 0.8 s, derived: sample names 0.4 s, derived: deposits (0 computed, 8 reused) 0.2 s, derived: per-deposit tables 0.0 s, derived: protein_index 0.6 s, derived: peptide_index 0.4 s, study and engines 0.4 s, manifest 1.4 s, checks: bundles 0.1 s, checks: study 0.0 s, checks: engines 0.0 s, checks: manifest 0.0 s, indexes 1.3 s, catalog tables 3.7 s, move 0.0 s
+  timing   tables 0.4 s, derived: sample names 0.1 s, derived: deposits (0 computed, 8 reused) 0.1 s, derived: per-deposit tables 0.0 s, derived: protein_index 0.4 s, derived: peptide_index 0.4 s, study and engines 0.5 s, manifest 0.3 s, checks: bundles 0.0 s, checks: study 0.0 s, checks: engines 0.0 s, checks: manifest 0.0 s, indexes 1.0 s, catalog tables 10.1 s, move 0.0 s

@@ -21,10 +21,11 @@ the view's SQL, as the build wrote it, over the runs of aging's serving catalog 
   little since 2026-11-04, because aging's catalog changed (193 -> 194 deposits) and PRIDE edits its records. Papers: 0 on 23
   deposits, 1 on 168, 2 on 3; of 174, PubMed 0 on 23, no citation line on 15, no DOI on 2. Submitter ORCID 127 of 194. The
   `PhD` last name of our 061 was on PXD028852 and PXD049018, which aging's catalog no longer serves.
-- **Found by filling it: e-mail addresses in free text.** Leaving PRIDE's e-mail field out did not keep e-mail out: two
-  affiliations (PXD015079, PXD021194) held an address the submitter typed in, one with a telephone number. Every kept text now
-  has any e-mail address replaced by `[e-mail removed]` (`PrideRecords.WithoutEmail`); after the fix no record holds an
-  address and those two hold the marker. An `@` with no dotted domain after it (`BayBioMS@MRI`, a facility's name) is kept.
-  The telephone number is kept, as written; whether to remove it too is the user's.
-- The first scratch fetch, before the fix, is `F:/datarepo_scratch_150/pride_store`; it holds the two addresses as PRIDE
-  publishes them. The measured store is `pride_store2`.
+- **E-mail is kept (D65).** The agreed rule left PRIDE's e-mail field out, and filling the tables showed that was not
+  enough: two affiliations (PXD015079, PXD021194) held an address the submitter typed in, one with a telephone number. Asked
+  about the telephone number, the user ruled: "this is all public and we frequently email the depositors and lab heads. i see no
+  reason to keep anything private. pride is public." So `deposit_contacts.email` is kept as PRIDE publishes it, and free text is
+  verbatim. Every lab head and every submitter of the 194 has one. The counts are in `measure.out`; no address is printed.
+- Three scratch fetches are on disk: `pride_store` (e-mail field left out), and `pride_store2`, which holds the redacted fetch
+  and then the D65 fetch beside it (add-only; the newest is what was measured). The scratch catalog was rebuilt from the D65
+  records: `4c3b1ee410e1261c`, 157 checks passed.

@@ -1,4 +1,5 @@
-(1) records kept: 194; found: 194; with an e-mail key: 0; with an e-mail address: 0; with one replaced by the marker: 2
+(1) records kept: 194; found: 194
+  contacts with an e-mail: lab heads 194 of 194, submitters 194 of 194; affiliations holding an address as well: 2
   lab heads per deposit: {1: 194}
   submitters per deposit: {1: 194}
   papers per deposit: {0: 23, 1: 168, 2: 3}
@@ -8,7 +9,7 @@
   lab-head contact ids recurring: 0; submitter accounts on more than one deposit: 21
   lab-head last name 'PhD': 0
 
-(2) scratch catalog 35f8dbe222c97fae (eight bundles):
+(2) scratch catalog 4c3b1ee410e1261c (eight bundles):
   deposit_records: 8 rows
   deposit_contacts: 16 rows
   deposit_references: 8 rows

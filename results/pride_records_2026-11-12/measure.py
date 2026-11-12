@@ -1,5 +1,5 @@
 """1.5.0 item 12, scratch and read-only. (1) The PRIDE records `datarepo pride` kept for every deposit in aging's serving
-catalog (F:/datarepo_scratch_150/pride_store), set beside our 2026-11-04 measurement of 193 (ptmQtl 061), applying the
+catalog (F:/datarepo_scratch_150/pride_store2), set beside our 2026-11-04 measurement of 193 (ptmQtl 061), applying the
 catalog's rules (an empty string is NULL, PubMed 0 is NULL). (2) The three tables of a scratch catalog of eight bundles
 (catalog_item12). (3) `shared_raw_files`, its SQL taken from that catalog, run over the runs of aging's serving catalog."""
 import collections
@@ -23,11 +23,14 @@ records = {}
 for acc_dir in sorted(glob.glob(f"{STORE}/*")):
     kept = sorted(glob.glob(f"{acc_dir}/*/record.json"))
     records[acc_dir.replace("\\", "/").rsplit("/", 1)[1]] = json.load(open(kept[-1], encoding="utf-8"))
-print(f"(1) records kept: {len(records)}; found: {sum(r['found'] for r in records.values())}; "
-      f"with an e-mail key: {sum('\"email\"' in json.dumps(r).lower() for r in records.values())}; with an e-mail address: "
-      f"{sum(bool(ADDRESS.search(json.dumps(r))) for r in records.values())}; with one replaced by the marker: "
-      f"{sum('[e-mail removed]' in json.dumps(r) for r in records.values())}")
+print(f"(1) records kept: {len(records)}; found: {sum(r['found'] for r in records.values())}")
 found = [r for r in records.values() if r["found"]]
+# D65: e-mail is kept as PRIDE publishes it. Counted, never printed.
+contacts = [c for r in found for c in r["lab_heads"] + r["submitters"]]
+print(f"  contacts with an e-mail: lab heads {sum(text(c['email']) is not None for r in found for c in r['lab_heads'])} of "
+      f"{sum(len(r['lab_heads']) for r in found)}, submitters {sum(text(c['email']) is not None for r in found for c in r['submitters'])} of "
+      f"{sum(len(r['submitters']) for r in found)}; affiliations holding an address as well: "
+      f"{sum(bool(ADDRESS.search(c['affiliation'] or '')) for c in contacts)}")
 print("  lab heads per deposit:", dict(collections.Counter(len(r["lab_heads"]) for r in found)))
 print("  submitters per deposit:", dict(collections.Counter(len(r["submitters"]) for r in found)))
 print("  papers per deposit:", dict(sorted(collections.Counter(len(r["references"]) for r in found).items())))
