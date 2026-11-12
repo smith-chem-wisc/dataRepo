@@ -1,0 +1,8 @@
+new catalog ('bb4286b4ae40107f', '17')
+old catalog ('7fba2c8cd7e27f95', '16')
+dataset    rule               view     ions  recount   q-rule(1.4.5 view)
+PXD011740  pep_q_value      22,357   22,357   22,357               16,644  same
+PXD034564  pep_q_value      65,671   65,671   65,671               44,059  same
+PXD057502  pep_q_value           0        0        0                5,962  same
+PXD058775  q_value_notch       252      252      252                  226  same
+ALL SAME
