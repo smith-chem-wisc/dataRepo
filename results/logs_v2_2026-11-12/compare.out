@@ -1,0 +1,11 @@
+v2 artefact 7471a3ceee8aa722: aging_isoforms_mouse_agingPTM-v6.xml, definition logs:DEF-GENE-RESOLUTION v2, release {'mzlib': '1.0.598'}
+  vs stored 399d453367acd65a (logs:DEF-GENE-RESOLUTION v1, mzLib 1.0.595): rows 72 / 72; 19 v1 columns: 0 rows only in v1, 0 only in v2; v1's agreement cells filled: absent
+  (ensembl_xref_agrees, ensembl_xref_agreement, rows): [(False, 'silent', 4), (True, 'agrees', 51), (None, None, 17)]
+  rows breaking logs 034's pairing: 0; definition ids on rows: ['logs:DEF-GENE-RESOLUTION v2']
+  entries with a row that agrees: 46; agrees or silent: 50; disagrees: 0
+v2 artefact a2f92189a6122b88: UP000000589_all_genecentric_2026_03_agingPTM-v6.xml, definition logs:DEF-GENE-RESOLUTION v2, release {'mzlib': '1.0.598'}
+  vs stored 34a6a17d4cd77e4d (logs:DEF-GENE-RESOLUTION v1, mzLib 1.0.595): rows 22,383 / 22,383; 19 v1 columns: 0 rows only in v1, 0 only in v2; v1's agreement cells filled: absent
+  (ensembl_xref_agrees, ensembl_xref_agreement, rows): [(False, 'disagrees', 2), (False, 'silent', 1183), (True, 'agrees', 19553), (None, None, 1645)]
+  rows breaking logs 034's pairing: 0; definition ids on rows: ['logs:DEF-GENE-RESOLUTION v2']
+  entries with a row that agrees: 19,130; agrees or silent: 20,254; disagrees: 2
+RESULT: v2 = v1 + the new column, paired as logs 034 says
