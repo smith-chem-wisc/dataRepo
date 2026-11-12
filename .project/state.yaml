@@ -692,6 +692,17 @@ decisions:
       separate fact table would give a reader two answers with two sets of rules. If a facts file still ships on its own, it goes
       beside the bundle as one more sheet, its quotes and locators verbatim. Asked PXReprise PXR-R62 (our 114); default: take the
       evidence through the sheets.
+  - id: D67
+    date: 2026-11-12
+    text: >-
+      1.5.0 ships without build item 10 (sample sheets, D63); item 10 follows as a release of its own, timed with PXReprise's
+      re-search wave. The user: "proceed according to your plan", on the agent's recommendation. Why: every other item (1-9, 11,
+      12, 14) is built and measured, while item 10 waits on three peers with no date (sdrf SDRF-D14/D15, pride PRIDE-D1,
+      PXReprise PXR-R62), and the SDRFs it would keep mostly do not exist yet: PXReprise 113 says its next MetaMorpheus release
+      (mzLib 1.0.598) makes every deposit due for a re-search on PXReprise's own SDRFs, so the sheets arrive with that wave.
+      Nothing is lost by waiting: a bundle keeps exactly what it holds today until item 10 ships, and its in-bundle half and its
+      beside-the-bundle half still ship together (D63). Next: measure 1.5.0's whole-store scratch re-ingest, predict ids, give
+      PXReprise the date with a week's notice, tell aging, ptmQtl, QuantProject and sdrf, then release on the user's word.
 gaps:
   - >-
     G135 NEW 2026-11-12: an operator's `--mm-settings` reaches rows and not the bundle id. A scratch ingest of PXD027232 (MetaMorpheus
