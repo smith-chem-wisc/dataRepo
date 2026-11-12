@@ -1,0 +1,28 @@
+PXD027232
+  bundle   F:\datarepo_scratch_150\store_item7b\PXD027232\3092c336f84cc096
+  tables   datasets 1, samples 6, runs 1, assays 6, psms 20,726, peptidoforms 15,938, peptidoform_ions 638, protein_groups 386, proteins 13,807, ptm_sites 1,425, quant_values 5,904, definitions 16, provenance_records 4, findings 8, metrics 18, search_modifications_declared 7
+  findings 6 open warning(s): isobaric_channels_not_in_sdrf, low_core_use, low_id_rate, no_channel_design, sdrf_skeleton, unplaced_ptm_sites
+PXD021757
+  bundle   F:\datarepo_scratch_150\store_item7b\PXD021757\2e123f04bccb92ff
+  tables   datasets 1, samples 80, runs 8, assays 80, psms 64,953, peptidoforms 39,550, peptidoform_ions 24,409, protein_groups 3,716, proteins 15,092, ptm_sites 41,376, quant_values 422,934, definitions 16, provenance_records 4, findings 6, metrics 62, search_modifications_declared 4
+  findings 4 open warning(s): low_core_use, no_channel_design, no_sdrf, unplaced_ptm_sites
+PXD058775
+  bundle   F:\datarepo_scratch_150\store_item7b\PXD058775\0b92797364a7e76f
+  tables   datasets 1, samples 18, runs 18, assays 18, psms 18,011, peptidoforms 6,191, peptidoform_ions 252, protein_groups 216, proteins 5,257, ptm_sites 128, ptm_stoichiometry 115, quant_values 6,229, definitions 20, provenance_records 1, findings 7, metrics 164, search_modifications_declared 64
+  findings 6 open warning(s): calibration_failed, confidence_rule_fallback, high_contamination, low_id_rate, no_design_file, no_sdrf
+PXD023647
+  bundle   F:\datarepo_scratch_150\store_item7b\PXD023647\06509b9b02d0e8a3
+  tables   datasets 1, samples 198, runs 11, assays 198, psms 170,542, peptidoforms 28,916, peptidoform_ions 16,312, protein_groups 4,486, proteins 12,866, ptm_sites 28,863, quant_values 633,152, definitions 16, provenance_records 4, findings 9, metrics 80, search_modifications_declared 4
+  MISMATCH psms_target_1pct: bundle 135647 vs producer 135648 (results.txt: All target PSMs with q-value <= 0.01 (pxreprise:DEF-PSM-1PCT v1))
+  findings 5 open warning(s): count_mismatch, low_core_use, no_channel_design, no_sdrf, unplaced_ptm_sites
+PXD001054
+  bundle   F:\datarepo_scratch_150\store_item7b\PXD001054\9e29e01d0522ff35
+  tables   datasets 1, samples 9, runs 9, assays 9, psms 127,043, peptidoforms 47,817, peptidoform_ions 9,959, protein_groups 1,533, proteins 21,687, ptm_sites 4,450, ptm_stoichiometry 11,949, quant_values 68,137, definitions 20, provenance_records 3, findings 5, metrics 92, search_modifications_declared 65
+  MISMATCH psms_target_1pct: bundle 55829 vs producer 55832 (results.txt: All target PSMs with q-value <= 0.01 (pxreprise:DEF-PSM-1PCT v1))
+  findings 4 open warning(s): count_mismatch, no_sdrf, occupancy_not_stored, unplaced_ptm_sites
+PXD014274
+  bundle   F:\datarepo_scratch_150\store_item7b\PXD014274\610cb3c006b2da3b
+  tables   datasets 1, samples 38, sample_characteristics 384, runs 38, assays 38, psms 239,892, peptidoforms 16,090, peptidoform_ions 7,637, protein_groups 3,005, proteins 7,419, ptm_sites 7,280, ptm_stoichiometry 20,015, quant_values 261,672, definitions 20, provenance_records 3, findings 13, metrics 324, search_modifications_declared 63
+  MISMATCH psms_target_1pct: bundle 116639 vs producer 116638 (results.txt: All target PSMs with q-value <= 0.01 (pxreprise:DEF-PSM-1PCT v1))
+  MISMATCH peptidoforms_target_1pct: bundle 6416 vs producer 6415 (results.txt: All target peptides with q-value <= 0.01)
+  findings 8 open warning(s): count_mismatch, high_contamination, low_core_use, occupancy_not_stored, sdrf_partial, sdrf_uncoded, unplaced_ptm_sites

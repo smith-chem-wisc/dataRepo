@@ -1,0 +1,5 @@
+PXD005035
+  bundle   F:\datarepo_scratch_150\store_item7b\PXD005035\0dd30b36e0a39c27
+  tables   datasets 1, samples 141, sample_characteristics 846, runs 141, assays 141, psms 7,287,521, peptidoforms 908,082, peptidoform_ions 69,422, protein_groups 11,563, proteins 42,952, ptm_sites 48,779, ptm_stoichiometry 2,286,331, quant_values 4,260,053, definitions 20, provenance_records 4, findings 9, metrics 866, search_modifications_declared 65
+  MISMATCH psms_target_1pct: bundle 4.15835e+06 vs producer 4.16037e+06 (results.txt: All target PSMs with q-value <= 0.01 (pxreprise:DEF-PSM-1PCT v1))
+  findings 7 open warning(s): count_mismatch, low_core_use, occupancy_not_stored, peptide_rows_localization_ambiguous, sdrf_partial, sdrf_uncoded, unplaced_ptm_sites

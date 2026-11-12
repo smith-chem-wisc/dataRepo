@@ -1,0 +1,17 @@
+PXD027232
+  bundle   F:\datarepo_scratch_150\store_item7\PXD027232\8b5ea3ab42fe6996
+  tables   datasets 1, samples 6, runs 1, assays 6, psms 20,726, peptidoforms 15,938, peptidoform_ions 638, protein_groups 386, proteins 13,807, ptm_sites 1,425, quant_values 5,904, definitions 14, provenance_records 3, findings 8, metrics 16, search_modifications_declared 7
+  findings 6 open warning(s): isobaric_channels_not_in_sdrf, low_core_use, low_id_rate, no_channel_design, sdrf_skeleton, unplaced_ptm_sites
+PXD021757
+  bundle   F:\datarepo_scratch_150\store_item7\PXD021757\57cdc6b5ed086157
+  tables   datasets 1, samples 80, runs 8, assays 80, psms 64,953, peptidoforms 39,550, peptidoform_ions 24,409, protein_groups 3,716, proteins 15,092, ptm_sites 41,376, quant_values 422,934, definitions 14, provenance_records 3, findings 6, metrics 46, search_modifications_declared 4
+  findings 4 open warning(s): low_core_use, no_channel_design, no_sdrf, unplaced_ptm_sites
+PXD007758
+  bundle   F:\datarepo_scratch_150\store_item7\PXD007758\cada2b9ff3343556
+  tables   datasets 1, samples 9, sample_characteristics 54, runs 9, assays 9, psms 2,239,119, peptidoforms 1,115,618, peptidoform_ions 1,846, protein_groups 4,810, proteins 43,753, ptm_sites 8,377, ptm_stoichiometry 2,747, quant_values 194,364, definitions 17, provenance_records 3, findings 9, metrics 47, search_modifications_declared 2
+  MISMATCH psms_target_1pct: bundle 223894 vs producer 223901 (results.txt: All target PSMs with q-value <= 0.01 (pxreprise:DEF-PSM-1PCT v1))
+  findings 7 open warning(s): confidence_rule_fewer_peptides, count_mismatch, low_core_use, occupancy_not_stored, peptide_rows_localization_ambiguous, sdrf_uncoded, unplaced_ptm_sites
+PXD058775
+  bundle   F:\datarepo_scratch_150\store_item7\PXD058775\0b92797364a7e76f
+  tables   datasets 1, samples 18, runs 18, assays 18, psms 18,011, peptidoforms 6,191, peptidoform_ions 252, protein_groups 216, proteins 5,257, ptm_sites 128, ptm_stoichiometry 115, quant_values 6,229, definitions 17, provenance_records 1, findings 7, metrics 164, search_modifications_declared 64
+  findings 6 open warning(s): calibration_failed, confidence_rule_fallback, high_contamination, low_id_rate, no_design_file, no_sdrf

@@ -1,0 +1,5 @@
+PXD007758
+  bundle   F:\datarepo_scratch_150\store_item7b\PXD007758\61b79edd1c53f5d6
+  tables   datasets 1, samples 9, sample_characteristics 54, runs 9, assays 9, psms 2,239,119, peptidoforms 1,115,618, peptidoform_ions 1,846, protein_groups 4,810, proteins 43,753, ptm_sites 8,377, ptm_stoichiometry 2,747, quant_values 194,364, definitions 20, provenance_records 4, findings 9, metrics 74, search_modifications_declared 2
+  MISMATCH psms_target_1pct: bundle 223894 vs producer 223901 (results.txt: All target PSMs with q-value <= 0.01 (pxreprise:DEF-PSM-1PCT v1))
+  findings 7 open warning(s): confidence_rule_fewer_peptides, count_mismatch, low_core_use, occupancy_not_stored, peptide_rows_localization_ambiguous, sdrf_uncoded, unplaced_ptm_sites

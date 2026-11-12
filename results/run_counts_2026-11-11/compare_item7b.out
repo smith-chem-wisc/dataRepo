@@ -1,0 +1,120 @@
+== PXD001054  new 9e29e01d0522ff35  (no item-7 bundle to compare)
+   run ms2 qc_report.json pxreprise:DEF-MS2 9 159445
+   run ms2_scans results.txt pxreprise:DEF-MS2 9 159445
+   run peptides results.txt aging:DEF-PEPTIDE-1PCT-RUN 9 32301
+   run precursors results.txt pxreprise:DEF-PRECURSORS 9 275361
+   run protein_groups results.txt aging:DEF-PROTEINGROUP-1PCT-RUN 9 5100
+   run psms_1pct results.txt aging:DEF-PSM-1PCT-RUN 9 55787
+   dataset ms2_scans 159445.0 pxreprise:DEF-MS2
+   dataset peptides 8164.0 pxreprise:DEF-PEPTIDE-1PCT
+   dataset precursors 275361.0 pxreprise:DEF-PRECURSORS
+   dataset protein_groups 912.0 pxreprise:DEF-PROTEINGROUP-1PCT
+   dataset psms_1pct 55832.0 pxreprise:DEF-PSM-1PCT
+== PXD005035  new 0dd30b36e0a39c27  (no item-7 bundle to compare)
+   run peptides_1pct_whole_search qc_payload.json pxreprise:DEF-PEPTIDE-1PCT-RUN 141 1821102
+   run protein_groups_1pct_whole_search qc_payload.json pxreprise:DEF-PROTEINGROUP-1PCT-RUN 141 218582
+   run psms_1pct_whole_search qc_payload.json pxreprise:DEF-PSM-1PCT-RUN 141 4158349
+   run ms2 qc_report.json pxreprise:DEF-MS2 141 4125881
+   dataset ms2_scans 4125881.0 pxreprise:DEF-MS2
+   dataset peptides 57068.0 pxreprise:DEF-PEPTIDE-1PCT
+   dataset precursors 10146478.0 pxreprise:DEF-PRECURSORS
+   dataset protein_groups 3511.0 pxreprise:DEF-PROTEINGROUP-1PCT
+   dataset psms_1pct 4160371.0 pxreprise:DEF-PSM-1PCT
+   source provenance:05_qc sources/provenance_05_qc.json 88685b487b4c
+   source qc_payload sources/qc_payload.json 624bc2467539
+   finding run_counts_missing (info): No per-run `metrics` row from results.txt for `psms_1pct` (141 of 141 runs), `peptides` (141 of 141 runs), `protein_groups` (141 of 141 runs), `precursors` (141 of 141 runs), `ms2_scans` (141 of 141 runs). These counts were not written, which is not a count of zero. The search task sets `WriteIndividualFiles = false`, and MetaMorpheus writes results.txt's per-file PSM, peptide and protein-group lines only when it is true (before 1.1.14, MetaMorpheus #2955, its per-file precursor and MS2 lines too). Each run's MS2 spectra are also counted by the QC report, in `runs.ms2_spectra` and `metrics` (`name = 'ms2'`, `source = 'qc_report.json'`), for 141 of the 141 runs. PXReprise's QC payload counts each run's share of the whole search's 1% set instead, a different number (the FDR is the whole search's, not recomputed on each file), under names of its own (`source = 'qc_payload.json'`): `psms_1pct_whole_search` for 141 of the 141 runs, `peptides_1pct_whole_search` for 141 of the 141 runs, `protein_groups_1pct_whole_search` for 141 of the 141 runs.
+== PXD007758  new 61b79edd1c53f5d6  old cada2b9ff3343556
+   definitions.parquet: 0 row(s) only in old, 3 only in new
+   findings.parquet: 1 row(s) only in old, 1 only in new
+   metrics.parquet: 0 row(s) only in old, 27 only in new
+   provenance_records.parquet: 0 row(s) only in old, 1 only in new
+   sources added: ['provenance:05_qc', 'qc_payload'], removed: []
+   run peptides_1pct_whole_search qc_payload.json pxreprise:DEF-PEPTIDE-1PCT-RUN 9 83394
+   run protein_groups_1pct_whole_search qc_payload.json pxreprise:DEF-PROTEINGROUP-1PCT-RUN 9 18859
+   run psms_1pct_whole_search qc_payload.json pxreprise:DEF-PSM-1PCT-RUN 9 223894
+   run ms2 qc_report.json pxreprise:DEF-MS2 9 1142881
+   dataset ms2_scans 1142881.0 pxreprise:DEF-MS2
+   dataset peptides 14046.0 pxreprise:DEF-PEPTIDE-1PCT
+   dataset precursors 2792232.0 pxreprise:DEF-PRECURSORS
+   dataset protein_groups 2471.0 pxreprise:DEF-PROTEINGROUP-1PCT
+   dataset psms_1pct 223901.0 pxreprise:DEF-PSM-1PCT
+   source provenance:05_qc sources/provenance_05_qc.json af562f5f6a7c
+   source qc_payload sources/qc_payload.json ac0e324799b1
+   finding run_counts_missing (info): No per-run `metrics` row from results.txt for `psms_1pct` (9 of 9 runs), `peptides` (9 of 9 runs), `protein_groups` (9 of 9 runs), `precursors` (9 of 9 runs), `ms2_scans` (9 of 9 runs). These counts were not written, which is not a count of zero. The search task sets `WriteIndividualFiles = false`, and MetaMorpheus writes results.txt's per-file PSM, peptide and protein-group lines only when it is true (before 1.1.14, MetaMorpheus #2955, its per-file precursor and MS2 lines too). Each run's MS2 spectra are also counted by the QC report, in `runs.ms2_spectra` and `metrics` (`name = 'ms2'`, `source = 'qc_report.json'`), for 9 of the 9 runs. PXReprise's QC payload counts each run's share of the whole search's 1% set instead, a different number (the FDR is the whole search's, not recomputed on each file), under names of its own (`source = 'qc_payload.json'`): `psms_1pct_whole_search` for 9 of the 9 runs, `peptides_1pct_whole_search` for 9 of the 9 runs, `protein_groups_1pct_whole_search` for 9 of the 9 runs.
+== PXD014274  new 610cb3c006b2da3b  (no item-7 bundle to compare)
+   run ms2 qc_report.json pxreprise:DEF-MS2 38 400389
+   run ms2_scans results.txt pxreprise:DEF-MS2 38 400389
+   run peptides results.txt aging:DEF-PEPTIDE-1PCT-RUN 38 57699
+   run precursors results.txt pxreprise:DEF-PRECURSORS 38 750973
+   run protein_groups results.txt aging:DEF-PROTEINGROUP-1PCT-RUN 38 19516
+   run psms_1pct results.txt aging:DEF-PSM-1PCT-RUN 38 117300
+   dataset ms2_scans 400389.0 pxreprise:DEF-MS2
+   dataset peptides 6415.0 pxreprise:DEF-PEPTIDE-1PCT
+   dataset precursors 750973.0 pxreprise:DEF-PRECURSORS
+   dataset protein_groups 1318.0 pxreprise:DEF-PROTEINGROUP-1PCT
+   dataset psms_1pct 116638.0 pxreprise:DEF-PSM-1PCT
+== PXD021757  new 2e123f04bccb92ff  old 57cdc6b5ed086157
+   definitions.parquet: 0 row(s) only in old, 2 only in new
+   findings.parquet: 1 row(s) only in old, 1 only in new
+   metrics.parquet: 0 row(s) only in old, 16 only in new
+   provenance_records.parquet: 0 row(s) only in old, 1 only in new
+   sources added: ['provenance:05_qc', 'qc_payload'], removed: []
+   run peptides_1pct_whole_search qc_payload.json pxreprise:DEF-PEPTIDE-1PCT-RUN 8 29670
+   run psms_1pct_whole_search qc_payload.json pxreprise:DEF-PSM-1PCT-RUN 8 33860
+   run ms2 qc_report.json pxreprise:DEF-MS2 8 211878
+   run ms2_scans results.txt pxreprise:DEF-MS2 8 211878
+   run precursors results.txt pxreprise:DEF-PRECURSORS 8 304032
+   dataset ms2_scans 211878.0 pxreprise:DEF-MS2
+   dataset peptides 19028.0 pxreprise:DEF-PEPTIDE-1PCT
+   dataset precursors 304032.0 pxreprise:DEF-PRECURSORS
+   dataset protein_groups 3183.0 pxreprise:DEF-PROTEINGROUP-1PCT
+   dataset psms_1pct 33860.0 pxreprise:DEF-PSM-1PCT
+   source provenance:05_qc sources/provenance_05_qc.json 5d8098370350
+   source qc_payload sources/qc_payload.json 15b3760bef92
+   finding run_counts_missing (info): No per-run `metrics` row from results.txt for `psms_1pct` (8 of 8 runs), `peptides` (8 of 8 runs), `protein_groups` (8 of 8 runs). These counts were not written, which is not a count of zero. The search task sets `WriteIndividualFiles = false`, and MetaMorpheus writes results.txt's per-file PSM, peptide and protein-group lines only when it is true (before 1.1.14, MetaMorpheus #2955, its per-file precursor and MS2 lines too). PXReprise's QC payload counts each run's share of the whole search's 1% set instead, a different number (the FDR is the whole search's, not recomputed on each file), under names of its own (`source = 'qc_payload.json'`): `psms_1pct_whole_search` for 8 of the 8 runs, `peptides_1pct_whole_search` for 8 of the 8 runs, `protein_groups_1pct_whole_search` for none of them.
+== PXD023647  new 06509b9b02d0e8a3  (no item-7 bundle to compare)
+   run peptides_1pct_whole_search qc_payload.json pxreprise:DEF-PEPTIDE-1PCT-RUN 11 22529
+   run psms_1pct_whole_search qc_payload.json pxreprise:DEF-PSM-1PCT-RUN 11 135647
+   run ms2 qc_report.json pxreprise:DEF-MS2 11 432653
+   run ms2_scans results.txt pxreprise:DEF-MS2 11 432653
+   run precursors results.txt pxreprise:DEF-PRECURSORS 11 671461
+   dataset ms2_scans 432653.0 pxreprise:DEF-MS2
+   dataset peptides 14483.0 pxreprise:DEF-PEPTIDE-1PCT
+   dataset precursors 671461.0 pxreprise:DEF-PRECURSORS
+   dataset protein_groups 3540.0 pxreprise:DEF-PROTEINGROUP-1PCT
+   dataset psms_1pct 135648.0 pxreprise:DEF-PSM-1PCT
+   source provenance:05_qc sources/provenance_05_qc.json 610c50750f63
+   source qc_payload sources/qc_payload.json d3f711a0fa55
+   finding run_counts_missing (info): No per-run `metrics` row from results.txt for `psms_1pct` (11 of 11 runs), `peptides` (11 of 11 runs), `protein_groups` (11 of 11 runs). These counts were not written, which is not a count of zero. The search task sets `WriteIndividualFiles = false`, and MetaMorpheus writes results.txt's per-file PSM, peptide and protein-group lines only when it is true (before 1.1.14, MetaMorpheus #2955, its per-file precursor and MS2 lines too). PXReprise's QC payload counts each run's share of the whole search's 1% set instead, a different number (the FDR is the whole search's, not recomputed on each file), under names of its own (`source = 'qc_payload.json'`): `psms_1pct_whole_search` for 11 of the 11 runs, `peptides_1pct_whole_search` for 11 of the 11 runs, `protein_groups_1pct_whole_search` for none of them.
+== PXD027232  new 3092c336f84cc096  old 8b5ea3ab42fe6996
+   definitions.parquet: 0 row(s) only in old, 2 only in new
+   findings.parquet: 1 row(s) only in old, 1 only in new
+   metrics.parquet: 0 row(s) only in old, 2 only in new
+   provenance_records.parquet: 0 row(s) only in old, 1 only in new
+   sources added: ['provenance:05_qc', 'qc_payload'], removed: []
+   run peptides_1pct_whole_search qc_payload.json pxreprise:DEF-PEPTIDE-1PCT-RUN 1 580
+   run psms_1pct_whole_search qc_payload.json pxreprise:DEF-PSM-1PCT-RUN 1 772
+   run ms2 qc_report.json pxreprise:DEF-MS2 1 25730
+   dataset ms2_scans 25730.0 pxreprise:DEF-MS2
+   dataset peptides 580.0 pxreprise:DEF-PEPTIDE-1PCT
+   dataset precursors 41150.0 pxreprise:DEF-PRECURSORS
+   dataset protein_groups 371.0 pxreprise:DEF-PROTEINGROUP-1PCT
+   dataset psms_1pct 772.0 pxreprise:DEF-PSM-1PCT
+   source provenance:05_qc sources/provenance_05_qc.json 5c434353b580
+   source qc_payload sources/qc_payload.json b439afc5a439
+   finding run_counts_missing (info): No per-run `metrics` row from results.txt for `psms_1pct` (1 of 1 runs), `peptides` (1 of 1 runs), `protein_groups` (1 of 1 runs), `precursors` (1 of 1 runs), `ms2_scans` (1 of 1 runs). These counts were not written, which is not a count of zero. MetaMorpheus writes results.txt's per-file lines only for a search of two or more files, and this deposit has one run, so its deposit-wide rows (`scope = 'dataset'`) count that run. Each run's MS2 spectra are also counted by the QC report, in `runs.ms2_spectra` and `metrics` (`name = 'ms2'`, `source = 'qc_report.json'`), for 1 of the 1 runs. PXReprise's QC payload counts each run's share of the whole search's 1% set instead, a different number (the FDR is the whole search's, not recomputed on each file), under names of its own (`source = 'qc_payload.json'`): `psms_1pct_whole_search` for 1 of the 1 runs, `peptides_1pct_whole_search` for 1 of the 1 runs, `protein_groups_1pct_whole_search` for none of them.
+== PXD058775  new 0b92797364a7e76f  old 0b92797364a7e76f
+   definitions.parquet: 0 row(s) only in old, 3 only in new
+   metrics.parquet: 54 row(s) only in old, 54 only in new
+   sources added: [], removed: []
+   run ms2 qc_report.json pxreprise:DEF-MS2 18 1164723
+   run ms2_scans results.txt pxreprise:DEF-MS2 18 1164723
+   run peptides results.txt aging:DEF-PEPTIDE-1PCT-RUN 18 1265
+   run precursors results.txt pxreprise:DEF-PRECURSORS 18 2294374
+   run protein_groups results.txt aging:DEF-PROTEINGROUP-1PCT-RUN 18 1093
+   run psms_1pct results.txt aging:DEF-PSM-1PCT-RUN 18 1648
+   dataset ms2_scans 1164723.0 pxreprise:DEF-MS2
+   dataset peptides 226.0 pxreprise:DEF-PEPTIDE-1PCT
+   dataset precursors 2294374.0 pxreprise:DEF-PRECURSORS
+   dataset protein_groups 153.0 pxreprise:DEF-PROTEINGROUP-1PCT
+   dataset psms_1pct 1859.0 pxreprise:DEF-PSM-1PCT
