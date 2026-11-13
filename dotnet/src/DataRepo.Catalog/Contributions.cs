@@ -326,7 +326,7 @@ public static class Contributions
 
     private static Dictionary<string, object?> Query(object? value, string at)
     {
-        var f = Fields(value, at, ["sql", "observed"], ["catalog_id", "result_sha256", "row_count", "truncated", "session_id", "seq"]);
+        var f = Fields(value, at, ["sql", "observed"], ["catalog_id", "result_sha256", "row_count", "truncated", "session_id", "seq", "max_rows"]);
         var q = new Dictionary<string, object?>(StringComparer.Ordinal)
         {
             ["sql"] = Text(f["sql"], $"{at}.sql", max: MaxSqlChars),
@@ -347,6 +347,14 @@ public static class Contributions
             var seq = Integer(n, $"{at}.seq");
             if (seq < 1) throw new ContributionException($"{at}.seq is a call's place in its session, from 1");
             q["seq"] = seq;
+        }
+        // The row limit the query ran with, so a re-run returns the same rows (097 finding 3: re-run without it, a capped
+        // query read "differs").
+        if (f.TryGetValue("max_rows", out var m))
+        {
+            var rows = Integer(m, $"{at}.max_rows");
+            if (rows < 1) throw new ContributionException($"{at}.max_rows is a row limit, from 1");
+            q["max_rows"] = rows;
         }
         if ((bool)q["observed"]! && !new[] { "catalog_id", "result_sha256", "session_id", "seq" }.All(q.ContainsKey))
             throw new ContributionException(
@@ -837,6 +845,7 @@ public static class Contributions
             Flag(q, "truncated", $"{at}.truncated");
             Whole(q, "row_count", $"{at}.row_count");
             Whole(q, "seq", $"{at}.seq");
+            Whole(q, "max_rows", $"{at}.max_rows");
         }
     }
 

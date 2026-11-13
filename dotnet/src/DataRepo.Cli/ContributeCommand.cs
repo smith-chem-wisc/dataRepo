@@ -12,16 +12,17 @@ internal static class ContributeCommand
     internal const string Summary = "save a result computed from a catalog back into the store (an AI model's or a person's), or list them";
 
     private const string Usage =
-        "usage: datarepo contribute [-h] --store STORE [--catalog CATALOG] [--inbox INBOX] [--reason REASON] [--by BY] [--json] {save,list,inbox,accept,reject} [file]";
+        "usage: datarepo contribute [-h] --store STORE [--catalog CATALOG] [--inbox INBOX] [--reason REASON] [--by BY] [--json] {save,list,show,inbox,accept,reject,verify} [file]";
 
     public static int Run(string[] argv)
     {
         var a = new Args.Spec("datarepo contribute", Cli.Summaries["contribute"])
-            .Positional("action", "save: save the contribution in FILE; list: the store's contributions; inbox: the results the MCP "
-                + "server's save tool is holding; accept ID / reject ID: take one into the store, after checking it, or set it aside")
-            .Positional("file", "the contribution, as JSON (save), or a result's id (accept, reject)", "?")
+            .Positional("action", "save: save the contribution in FILE; list: the store's contributions; show ID: one in full; inbox: "
+                + "the results the MCP server's save tool is holding; accept ID / reject ID: take one into the store, after checking "
+                + "it, or set it aside; verify ID: re-run a saved result's queries on the catalog it was computed from")
+            .Positional("file", "the contribution, as JSON (save), or a result's id (show, accept, reject, verify)", "?")
             .Option("--store", Args.Kind.Value, "the instance's bundle store", required: true)
-            .Option("--catalog", Args.Kind.Value, "the catalog folder (or one catalog file) that holds the catalog the contribution cites (save, accept)")
+            .Option("--catalog", Args.Kind.Value, "the catalog folder (or one catalog file) that holds the catalog the contribution cites (save, accept, verify)")
             .Option("--inbox", Args.Kind.Value, "the inbox the MCP server was started with (mcp --contributions) (inbox, accept, reject)")
             .Option("--reason", Args.Kind.Value, "why a pending result is rejected (reject)")
             .Option("--by", Args.Kind.Value, "the accepting operator's name, recorded with the result only if given (accept)")
@@ -73,6 +74,37 @@ internal static class ContributeCommand
                 Console.WriteLine(json
                     ? PyFormat.Json(new Dictionary<string, object?>(StringComparer.Ordinal) { ["ok"] = true, ["contribution_id"] = saved.Id, ["path"] = saved.Path, ["already_saved"] = saved.AlreadySaved })
                     : $"accepted contribution {saved.Id}  {saved.Path}\n  its observed queries match the public session record; the next catalog build loads it");
+                return 0;
+            }
+            case "verify":
+            {
+                var catalog = a.Value("--catalog") ?? throw new Args.UsageException(Usage, "verify needs --catalog: where the catalog the result was computed from is");
+                var report = DataRepo.Mcp.ContributionVerifier.Verify(store, catalog, Id());
+                if (json)
+                {
+                    var envelope = new Dictionary<string, object?>(report, StringComparer.Ordinal) { ["ok"] = true };
+                    Console.WriteLine(PyFormat.Json(envelope));
+                }
+                else
+                {
+                    // What is checked, and only that: each query's rows against the hash recorded when it ran.
+                    Console.WriteLine($"contribution {report["contribution_id"]} on catalog {report["catalog_id"]}: "
+                        + ((bool)report["queries_reproduced"]! ? "every query returned the rows it returned before" : "NOT every query returned the rows it returned before"));
+                    foreach (var q in ((List<object?>)report["queries"]!).Cast<Dictionary<string, object?>>())
+                        Console.WriteLine($"  {q["ordinal"],3}  {q["outcome"],-21} {(q.GetValueOrDefault("observed") is true ? "observed" : "stated  ")}  {q["sql"]}");
+                    if (report.GetValueOrDefault("basis_note") is string gone) Console.WriteLine($"  {gone}");
+                    Console.WriteLine($"  {report["result"]}");
+                }
+                return (bool)report["queries_reproduced"]! ? 0 : 1;
+            }
+            case "show":
+            {
+                var id = Id();
+                var c = Contributions.Discover(store).FirstOrDefault(x => x.Id == id)
+                    ?? throw new ContributionException($"{BundleWriter.PathText(store)} holds no contribution {id}");
+                Console.WriteLine(PyFormat.Json(json
+                    ? new Dictionary<string, object?>(StringComparer.Ordinal) { ["ok"] = true, ["contribution"] = c.Record, ["path"] = c.Path }
+                    : c.Record));
                 return 0;
             }
             case "reject":
@@ -136,7 +168,7 @@ internal static class ContributeCommand
                 return 0;
             }
             default:
-                throw new Args.UsageException(Usage, $"argument action: invalid choice: '{a.Positional("action")}' (choose from 'save', 'list', 'inbox', 'accept', 'reject')");
+                throw new Args.UsageException(Usage, $"argument action: invalid choice: '{a.Positional("action")}' (choose from 'save', 'list', 'show', 'inbox', 'accept', 'reject', 'verify')");
         }
     }
 }

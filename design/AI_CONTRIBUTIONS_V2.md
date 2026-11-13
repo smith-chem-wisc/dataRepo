@@ -54,7 +54,7 @@ user says.
 | V2 | build tables (A9-A12), every file checked alone (6); the guard (A13) on every `--release` (8) | the branch's carry-forward tests, plus 8's drop and edit cases | **done** (`647a2b7`) |
 | V3 | the session record redone: per MCP session, outside the catalog id, no person, a failed line never loses the answer (5, 9, 10) | 5's `unchanged` rebuild; 9 simulated; 10's notice | **done** (below) |
 | V4 | the save tool and the inbox: cited calls copied from the record, narrow meanings, `accept` records the operator (2, 3, 10) | 3's forged cases all refused; `max_rows`, CRLF | **done** (below); `max_rows` is V5's, in `verify` |
-| V5 | `verify`, `show`, discovery (S9, S11) | a judgement never reproduced; a missing catalog reported |
+| V5 | `verify`, `show`, discovery (S9, S11) | a judgement never reproduced; a missing catalog reported | **done** (below) |
 | V6 | docs (`docs/mcp.md`, `docs/cli.md`, a contributions page), CHANGELOG, a scratch run on a copy of aging's catalog | a stranger agent saves, the operator accepts, the next catalog serves it |
 
 ## How V3 keeps the record (2026-11-13)
@@ -87,6 +87,18 @@ user says.
   everywhere as "this query ran on that catalog and returned rows with that hash", never as support for the result.
 - **`accept`** checks each observed query against the record on disk again, comparing SQL with line ends made LF (3: a CRLF
   query was refused). `datarepo contribute save|list|inbox|accept|reject`; `inbox` names unreadable files with the reason.
+
+## How V5 checks and finds results (2026-11-13)
+
+- **`contribute verify ID`** re-runs a result's queries on the catalog file it was computed from, never the latest, through
+  the server's sandbox, with the row limit each ran with (3: a capped query read "differs"). The report says
+  `queries_reproduced`, never that the result reproduced: `result` says what can be said (a judgement is never re-runnable;
+  a stochastic one reproduces within its tolerance; a query result's rows match, and nothing checks that the result follows).
+- **Data no longer in the store** (open item 1): `basis_in_store`, `basis_missing`, and outcome `basis_gone` for a query that
+  cannot run because its bundles are gone, apart from `failed`.
+- **`contribute show ID`** prints one record. **Discovery** (S9) as PXReprise built it: `describe` names saved results and the
+  public record when a catalog has them; `mcp --show-prior` adds `prior_work` to each SQL answer (earlier public queries on the
+  same tables and the results built from them). Both run inside the server's sandbox over the live session views.
 
 ## Open for the user (asked when we reach it, one at a time)
 

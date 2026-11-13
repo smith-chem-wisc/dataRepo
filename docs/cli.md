@@ -196,13 +196,13 @@ usage: datarepo contribute [-h] --store STORE [--catalog CATALOG] [--inbox INBOX
 save a result computed from a catalog back into the store (an AI model's or a person's), or list them
 
 positional arguments:
-  action                 save: save the contribution in FILE; list: the store's contributions; inbox: the results the MCP server's save tool is holding; accept ID / reject ID: take one into the store, after checking it, or set it aside
-  file                   the contribution, as JSON (save), or a result's id (accept, reject)
+  action                 save: save the contribution in FILE; list: the store's contributions; show ID: one in full; inbox: the results the MCP server's save tool is holding; accept ID / reject ID: take one into the store, after checking it, or set it aside; verify ID: re-run a saved result's queries on the catalog it was computed from
+  file                   the contribution, as JSON (save), or a result's id (show, accept, reject, verify)
 
 options:
   -h, --help             show this help message and exit
   --store STORE          the instance's bundle store (required)
-  --catalog CATALOG      the catalog folder (or one catalog file) that holds the catalog the contribution cites (save, accept)
+  --catalog CATALOG      the catalog folder (or one catalog file) that holds the catalog the contribution cites (save, accept, verify)
   --inbox INBOX          the inbox the MCP server was started with (mcp --contributions) (inbox, accept, reject)
   --reason REASON        why a pending result is rejected (reject)
   --by BY                the accepting operator's name, recorded with the result only if given (accept)
@@ -344,6 +344,7 @@ Serve one catalog to an agent over stdio (MCP).
 usage: datarepo mcp [-h] [--catalog CATALOG] [--install] [--list] [--check]
                     [--name NAME] [--config CONFIG] [--force]
                     [--sessions SESSIONS] [--contributions CONTRIBUTIONS]
+                    [--show-prior]
 
 serve one catalog to an agent over stdio (MCP)
 
@@ -365,4 +366,7 @@ options:
                      an inbox folder: also serve datarepo_save_result, which
                      puts a result there for the operator to accept
                      (datarepo contribute accept); off without it
+  --show-prior       show earlier work: each SQL answer names the earlier
+                     public queries on the same tables and the results
+                     built from them (the user's choice; off by default)
 ```

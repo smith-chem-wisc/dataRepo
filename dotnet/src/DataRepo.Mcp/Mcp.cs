@@ -221,6 +221,7 @@ public static class Mcp
                 };
                 if (call.GetValueOrDefault("row_count") is long rows) query["row_count"] = rows;
                 if (call.GetValueOrDefault("truncated") is bool truncated) query["truncated"] = truncated;
+                if (ran?.GetValueOrDefault("max_rows") is long limit) query["max_rows"] = limit;
                 return (object?)query;
             }).ToList();
             method["queries"] = observed.Concat(stated).ToList();
@@ -273,9 +274,9 @@ public static class Mcp
     /// <param name="contributions">The inbox saved results go to (A15); null serves no save tool.</param>
     /// <exception cref="CatalogException">An inbox was named and there is no session record to cite queries from.</exception>
     public static async Task ServeAsync(string catalog, string name = "datarepo", TextWriter? stderr = null, CancellationToken cancellation = default,
-        string? sessions = null, string? contributions = null)
+        string? sessions = null, string? contributions = null, bool showPrior = false)
     {
-        using var server = new CatalogServer(catalog);
+        using var server = new CatalogServer(catalog) { ShowPrior = showPrior };
         var root = sessions ?? DefaultSessionRoot(server);
         SessionLog? log = null;
         string recordNote;

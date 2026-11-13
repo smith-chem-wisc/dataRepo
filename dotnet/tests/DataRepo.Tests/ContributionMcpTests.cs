@@ -234,6 +234,174 @@ public class ContributionMcpTests
         Assert.That(File.ReadAllText(Path.Combine(Inbox, "rejected", $"{id}.reason.txt")), Does.Contain("duplicates"));
     }
 
+    // --- S9: the next researcher or model finds earlier work -------------------------------------------
+
+    /// <summary>One session that queried protein_groups and saved a result from it, accepted and built into a catalog.</summary>
+    private string EarlierWork()
+    {
+        var (server, log) = Serve();
+        string id;
+        using (server)
+        using (log)
+        {
+            var seq = Structured(Mcp.Mcp.CallTool(server, "datarepo_sql", Args(new { query = "SELECT count(*) AS n FROM protein_groups" }), log))
+                .GetProperty("session_call").GetProperty("seq").GetInt64();
+            id = Structured(Mcp.Mcp.CallTool(server, Mcp.Mcp.SaveTool, Args(new { contribution = Result(), cites = new[] { seq } }), log, Inbox))
+                .GetProperty("contribution_id").GetString()!;
+        }
+        Contributions.Accept(Inbox, id, Store, Folder);
+        Build();
+        return id;
+    }
+
+    [Test]
+    public void TheRecordNotesWhichTablesEachQueryTouched()
+    {
+        var (server, log) = Serve();
+        using (server)
+        using (log)
+            Mcp.Mcp.CallTool(server, "datarepo_sql", Args(new { query = "SELECT count(*) AS n FROM protein_groups" }), log);
+        var call = Sessions.Read(Store).Single().Entries.Single(e => (string?)e["type"] == "call");
+        Assert.That(((List<object?>)call["tables_touched"]!).Cast<string>(), Does.Contain("protein_groups"));
+    }
+
+    [Test]
+    public void DescribeTellsTheNextModelThatEarlierWorkExists()
+    {
+        using (var before = new CatalogServer(Folder))
+        {
+            var overview = before.Describe();
+            Assert.That(overview.ContainsKey("contributions") || overview.ContainsKey("public_sessions"), Is.False,
+                "a catalog without them describes itself exactly as before");
+        }
+        EarlierWork();
+        using var after = new CatalogServer(Folder);
+        var described = after.Describe();
+        var contributions = (Dictionary<string, object?>)described["contributions"]!;
+        Assert.That(contributions["active"], Is.EqualTo(1L));
+        Assert.That(((Dictionary<string, object?>)described["public_sessions"]!)["calls"], Is.EqualTo(2L));
+    }
+
+    [Test]
+    public void AUserWhoAsksIsShownEarlierWorkOnTheSameTables()
+    {
+        var id = EarlierWork();
+        using var server = new CatalogServer(Folder);
+        var plain = server.Sql("SELECT count(*) AS n FROM protein_groups");
+        Assert.That(plain.ContainsKey("prior_work"), Is.False, "shown only to a user who opted in");
+        server.ShowPrior = true;
+        var shown = server.Sql("SELECT count(*) AS n FROM protein_groups");
+        var prior = (Dictionary<string, object?>)shown["prior_work"]!;
+        Assert.That(prior["calls"], Is.EqualTo(1L));
+        Assert.That(((List<object?>)prior["contributions"]!).Cast<Dictionary<string, object?>>().Select(c => c["contribution_id"]),
+            Is.EqualTo(new[] { id }));
+        var elsewhere = server.Sql("SELECT count(*) AS n FROM catalog_meta");
+        Assert.That(elsewhere.ContainsKey("prior_work"), Is.False, "no earlier work touched that table");
+    }
+
+    // --- S11: a saved result's queries re-run on the frozen catalog they were computed from --------------
+
+    /// <summary>A result whose one query names the catalog it ran on, so its answer differs on any other catalog.</summary>
+    private string ResultOn(string query, long? maxRows = null)
+    {
+        var (server, log) = Serve();
+        string id;
+        using (server)
+        using (log)
+        {
+            var asked = maxRows is null ? Args(new { query }) : Args(new { query, max_rows = maxRows });
+            var answer = Mcp.Mcp.CallTool(server, "datarepo_sql", asked, log);
+            Assert.That(Structured(answer).TryGetProperty("error", out _), Is.False, Structured(answer).ToString());
+            var seq = Structured(answer).GetProperty("session_call").GetProperty("seq").GetInt64();
+            var saved = Structured(Mcp.Mcp.CallTool(server, Mcp.Mcp.SaveTool, Args(new { contribution = Result(), cites = new[] { seq } }), log, Inbox));
+            Assert.That(saved.TryGetProperty("error", out _), Is.False, saved.ToString());
+            id = saved.GetProperty("contribution_id").GetString()!;
+        }
+        Contributions.Accept(Inbox, id, Store, Folder);
+        return id;
+    }
+
+    private string ResultOnA() => ResultOn("SELECT catalog_id FROM catalog_meta");
+
+    [Test]
+    public void ASavedResultsQueriesReproduceOnTheCatalogItWasComputedFromNotTheLatest()
+    {
+        var id = ResultOnA();
+        var b = Build();
+        Assert.That(b.CatalogId, Is.Not.EqualTo(_a.CatalogId), "the latest catalog is another one, and answers that query differently");
+        var report = ContributionVerifier.Verify(Store, Folder, id);
+        Assert.Multiple(() =>
+        {
+            Assert.That(report["catalog_id"], Is.EqualTo(_a.CatalogId));
+            Assert.That(report["queries_reproduced"], Is.True);
+            var query = ((List<object?>)report["queries"]!).Cast<Dictionary<string, object?>>().Single();
+            Assert.That(query["outcome"], Is.EqualTo("reproduced"));
+            Assert.That(query["rows_sha256"], Is.EqualTo(query["recorded_rows_sha256"]));
+        });
+    }
+
+    [Test]
+    public void AMissingCatalogIsReportedNeverRunOnTheLatest()
+    {
+        var id = ResultOnA();
+        Build();
+        File.Delete(Path.Combine(Folder, CatalogPointer.FileOf(_a.CatalogId)));
+        Assert.That(() => ContributionVerifier.Verify(Store, Folder, id),
+            Throws.TypeOf<ContributionException>().With.Message.Contains(_a.CatalogId).And.Message.Contains("not"));
+    }
+
+    /// <summary>097 finding 3: <c>verify</c> said <c>reproduced: true</c> for a judgement. Only its queries are ever
+    /// called reproduced, and a judgement is said to be beyond re-running.</summary>
+    [Test]
+    public void AStatedQueryRunsButCannotBeCheckedAndAJudgementIsNeverCalledReproduced()
+    {
+        var submission = Submission(_a.CatalogId, "PXD999999", _bundle);
+        submission["reproducibility"] = "judgement";
+        var saved = Contributions.Save(Store, Folder, submission);
+        var report = ContributionVerifier.Verify(Store, Folder, saved.Id);
+        var query = ((List<object?>)report["queries"]!).Cast<Dictionary<string, object?>>().Single();
+        Assert.Multiple(() =>
+        {
+            Assert.That(query["outcome"], Is.EqualTo("ran_no_recorded_hash"));
+            Assert.That(report["queries_reproduced"], Is.False, "nothing recorded to compare against is not a reproduction");
+            Assert.That(report.ContainsKey("reproduced"), Is.False, "no word in the report says the result itself reproduced");
+            Assert.That((string)report["result"]!, Does.Contain("never re-runnable"));
+        });
+    }
+
+    /// <summary>097 finding 3: a query run with <c>max_rows</c> was re-run without it, and read "differs".</summary>
+    [Test]
+    public void ACappedQueryReproducesWithItsRowLimit()
+    {
+        var id = ResultOn("SELECT protein_accession FROM proteins ORDER BY protein_accession", maxRows: 5);
+        var report = ContributionVerifier.Verify(Store, Folder, id);
+        var query = ((List<object?>)report["queries"]!).Cast<Dictionary<string, object?>>().Single();
+        Assert.Multiple(() =>
+        {
+            Assert.That(query["max_rows"], Is.EqualTo(5L));
+            Assert.That(query["truncated"], Is.True);
+            Assert.That(query["outcome"], Is.EqualTo("reproduced"));
+        });
+    }
+
+    /// <summary>Open item 1 of the plan: once the bundles a result was computed from leave the store, its catalog file
+    /// is still there and its queries cannot run. That is said as such, apart from a query that fails.</summary>
+    [Test]
+    public void DataNoLongerInTheStoreIsSaidApartFromAFailure()
+    {
+        var id = ResultOn("SELECT count(*) AS n FROM protein_groups");
+        Directory.Delete(Path.Combine(Store, "PXD999999", _bundle), true);
+        var report = ContributionVerifier.Verify(Store, Folder, id);
+        var query = ((List<object?>)report["queries"]!).Cast<Dictionary<string, object?>>().Single();
+        Assert.Multiple(() =>
+        {
+            Assert.That(report["basis_in_store"], Is.False);
+            Assert.That(report["basis_missing"], Is.EqualTo(new object?[] { $"PXD999999 {_bundle}" }));
+            Assert.That(query["outcome"], Is.EqualTo("basis_gone"));
+            Assert.That(report["queries_reproduced"], Is.False);
+        });
+    }
+
     // --- v2 (design/AI_CONTRIBUTIONS_V2.md V4) ------------------------------------------------------------------
 
     /// <summary>097 finding 10: a name and an ORCID went into the public record through the save tool. 097 finding 3: an
