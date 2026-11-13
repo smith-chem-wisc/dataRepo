@@ -145,12 +145,26 @@ public static class Contributions
         JsonValueKind.Object => PlainObject(e, path),
         JsonValueKind.Array => e.EnumerateArray().Select((x, i) => Plain(x, $"{path}[{i}]")).ToList(),
         JsonValueKind.String => e.GetString(),
-        // Boxed apart: `? l : e.GetDouble()` would make every integer a double, and a stored record would hash differently.
-        JsonValueKind.Number => e.TryGetInt64(out var l) ? (object)l : e.GetDouble(),
+        JsonValueKind.Number => JsonNumber(e, path),
         JsonValueKind.True => true,
         JsonValueKind.False => false,
         _ => null,
     };
+
+    /// <summary>A JSON number: a long when it is a whole number that fits, else a finite double.</summary>
+    /// <remarks>Boxed apart: <c>? l : d</c> would make every integer a double, and a stored record would hash differently.
+    /// A number too large for a double (<c>1e999</c>) was read as Infinity, which no JSON reader can read back, so one
+    /// value in a free-form field stopped every later build, list and save, naming no file (097 finding 6). It is refused
+    /// here, with its place named, before anything is written.</remarks>
+    /// <exception cref="ContributionException">The number is not finite.</exception>
+    private static object JsonNumber(JsonElement e, string path)
+    {
+        if (e.TryGetInt64(out var l)) return l;
+        if (e.TryGetDouble(out var d) && double.IsFinite(d)) return d;
+        throw new ContributionException(
+            $"{(path.Length == 0 ? "the contribution" : path)} is {e.GetRawText()}, which is not a finite number: refused, since no "
+            + "JSON reader could read it back");
+    }
 
     private static Dictionary<string, object?> PlainObject(JsonElement e, string path)
     {
@@ -171,8 +185,8 @@ public static class Contributions
         foreach (var key in submission.Keys.Where(Written.Contains))
             throw new ContributionException($"{key} is written by the store when it saves a contribution, never sent by the submitter");
         var top = Fields(submission, "",
-            ["contribution_version", "kind", "title", "model", "submitted_by", "licence", "reproducibility", "basis", "method"],
-            ["summary", "client", "items", "edges", "target", "supersedes", "reason"]);
+            ["contribution_version", "kind", "title", "model", "licence", "reproducibility", "basis", "method"],
+            ["summary", "client", "submitted_by", "items", "edges", "target", "supersedes", "reason"]);
         var n = new Dictionary<string, object?>(StringComparer.Ordinal);
         var version = Text(top["contribution_version"], "contribution_version");
         if (version != SubmissionVersion)
@@ -190,15 +204,20 @@ public static class Contributions
             if (c.TryGetValue("version", out var v)) observed["version"] = Text(v, "client.version");
             n["client"] = observed;
         }
-        var person = Fields(top["submitted_by"], "submitted_by", ["name"], ["orcid"]);
-        var by = new Dictionary<string, object?>(StringComparer.Ordinal) { ["name"] = Text(person["name"], "submitted_by.name") };
-        if (person.TryGetValue("orcid", out var orcid))
+        // D57 (the user, 2026-11-07): saving asks nobody to fill anything in, so no person need be named here. A person is
+        // accountable through the operator who accepts the contribution. One who chooses to be named still may be.
+        if (top.TryGetValue("submitted_by", out var submittedBy))
         {
-            var o = Text(orcid, "submitted_by.orcid");
-            if (!Orcid.IsMatch(o)) throw new ContributionException($"submitted_by.orcid must look like 0000-0002-1825-0097, got \"{o}\"");
-            by["orcid"] = o;
+            var person = Fields(submittedBy, "submitted_by", ["name"], ["orcid"]);
+            var by = new Dictionary<string, object?>(StringComparer.Ordinal) { ["name"] = Text(person["name"], "submitted_by.name") };
+            if (person.TryGetValue("orcid", out var orcid))
+            {
+                var o = Text(orcid, "submitted_by.orcid");
+                if (!Orcid.IsMatch(o)) throw new ContributionException($"submitted_by.orcid must look like 0000-0002-1825-0097, got \"{o}\"");
+                by["orcid"] = o;
+            }
+            n["submitted_by"] = by;
         }
-        n["submitted_by"] = by;
         n["licence"] = OneOf(top["licence"], "licence", Licences);
         n["reproducibility"] = OneOf(top["reproducibility"], "reproducibility", Reproducibility);
         n["basis"] = Basis(top["basis"]);
@@ -557,54 +576,80 @@ public static class Contributions
         return new PendingContribution(sha[..16], sha, BundleWriter.PathText(path), normalised, sessionId);
     }
 
-    /// <summary>The requests waiting in <paramref name="inbox"/>, by id.</summary>
-    public static List<PendingContribution> Pending(string inbox)
+    /// <summary>A file in an inbox that is not a request anyone can read, and why.</summary>
+    public sealed record UnreadableRequest(string Path, string Reason);
+
+    /// <summary>The requests waiting in <paramref name="inbox"/>, by id. A file that cannot be read is left out here and
+    /// listed by <see cref="Unreadable"/>, so one bad request never hides the others (097 finding 6).</summary>
+    public static List<PendingContribution> Pending(string inbox) =>
+        Requests(inbox).Where(r => r.Request is not null).Select(r => r.Request!).OrderBy(p => p.Id, StringComparer.Ordinal).ToList();
+
+    /// <summary>The files in <paramref name="inbox"/> that are not readable requests, each with the reason.</summary>
+    public static List<UnreadableRequest> Unreadable(string inbox) =>
+        Requests(inbox).Where(r => r.Error is not null).Select(r => new UnreadableRequest(r.Path, r.Error!))
+            .OrderBy(u => u.Path, StringComparer.Ordinal).ToList();
+
+    private static IEnumerable<(string Path, PendingContribution? Request, string? Error)> Requests(string inbox)
     {
-        if (!Directory.Exists(inbox)) return [];
-        return Directory.EnumerateFiles(inbox, "*.json")
-            .Select(file =>
-            {
-                var request = Parse(File.ReadAllText(file, Encoding.UTF8));
-                var submission = request.GetValueOrDefault("submission") as IReadOnlyDictionary<string, object?>
-                    ?? throw new ContributionException($"{BundleWriter.PathText(file)} holds no submission");
-                var id = System.IO.Path.GetFileNameWithoutExtension(file);
-                return new PendingContribution(id, request.GetValueOrDefault("contribution_sha256") as string ?? "", BundleWriter.PathText(file),
-                    submission, request.GetValueOrDefault("session_id") as string);
-            })
-            .OrderBy(p => p.Id, StringComparer.Ordinal)
-            .ToList();
+        if (!Directory.Exists(inbox)) yield break;
+        foreach (var file in Directory.EnumerateFiles(inbox, "*.json"))
+        {
+            PendingContribution? request = null;
+            string? error = null;
+            try { request = ReadRequest(file); }
+            catch (Exception e) when (e is ContributionException or IOException) { error = e.Message; }
+            yield return (BundleWriter.PathText(file), request, error);
+        }
+    }
+
+    private static PendingContribution ReadRequest(string file)
+    {
+        var request = Parse(File.ReadAllText(file, Encoding.UTF8));
+        var submission = request.GetValueOrDefault("submission") as IReadOnlyDictionary<string, object?>
+            ?? throw new ContributionException($"{BundleWriter.PathText(file)} holds no submission");
+        var id = System.IO.Path.GetFileNameWithoutExtension(file);
+        return new PendingContribution(id, request.GetValueOrDefault("contribution_sha256") as string ?? "", BundleWriter.PathText(file),
+            submission, request.GetValueOrDefault("session_id") as string);
+    }
+
+    /// <summary>The request file for <paramref name="id"/>, or an exception naming the inbox.</summary>
+    private static string RequestFile(string inbox, string id)
+    {
+        if (!Hex16.IsMatch(id)) throw new ContributionException($"{id} is not a request id: 16 lowercase hex characters");
+        var file = System.IO.Path.Combine(inbox, $"{id}.json");
+        return File.Exists(file) ? file : throw new ContributionException($"{BundleWriter.PathText(inbox)} holds no pending request {id}");
     }
 
     /// <summary>The operator accepts a request: it is checked again in full, including every observed query against the
     /// public session record on disk, and saved into the store; the request moves to <c>accepted/</c>.</summary>
+    /// <remarks>Only the one request is read, so a bad file beside it cannot stop it.</remarks>
     /// <exception cref="ContributionException">No such request, or it does not check out; nothing is written.</exception>
     public static ContributionSaved Accept(string inbox, string id, string store, string catalog)
     {
-        var request = Pending(inbox).FirstOrDefault(p => p.Id == id)
-            ?? throw new ContributionException($"{BundleWriter.PathText(inbox)} holds no pending request {id}");
+        var request = ReadRequest(RequestFile(inbox, id));
         var saved = Save(store, catalog, request.Submission, allowObserved: true);
-        Shelve(inbox, request, "accepted", null);
+        Shelve(inbox, id, "accepted", null);
         return saved;
     }
 
     /// <summary>The operator rejects a request: it moves to <c>rejected/</c> with the reason beside it. Nothing is deleted.</summary>
+    /// <remarks>A request that cannot be read can be rejected too, so the operator can always clear the inbox.</remarks>
     public static void Reject(string inbox, string id, string reason)
     {
-        var request = Pending(inbox).FirstOrDefault(p => p.Id == id)
-            ?? throw new ContributionException($"{BundleWriter.PathText(inbox)} holds no pending request {id}");
+        RequestFile(inbox, id);
         if (string.IsNullOrWhiteSpace(reason)) throw new ContributionException("a rejection gives its reason");
-        Shelve(inbox, request, "rejected", reason);
+        Shelve(inbox, id, "rejected", reason);
     }
 
-    private static void Shelve(string inbox, PendingContribution request, string folder, string? reason)
+    private static void Shelve(string inbox, string id, string folder, string? reason)
     {
         var to = System.IO.Path.Combine(inbox, folder);
         Directory.CreateDirectory(to);
-        var target = System.IO.Path.Combine(to, $"{request.Id}.json");
-        if (File.Exists(target)) File.Delete(System.IO.Path.Combine(inbox, $"{request.Id}.json"));
-        else File.Move(System.IO.Path.Combine(inbox, $"{request.Id}.json"), target);
+        var target = System.IO.Path.Combine(to, $"{id}.json");
+        if (File.Exists(target)) File.Delete(System.IO.Path.Combine(inbox, $"{id}.json"));
+        else File.Move(System.IO.Path.Combine(inbox, $"{id}.json"), target);
         if (reason is not null)
-            File.WriteAllText(System.IO.Path.Combine(to, $"{request.Id}.reason.txt"),
+            File.WriteAllText(System.IO.Path.Combine(to, $"{id}.reason.txt"),
                 $"{DateTime.UtcNow.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'", CultureInfo.InvariantCulture)}\t{reason}\n", new UTF8Encoding(false));
     }
 
@@ -650,8 +695,17 @@ public static class Contributions
     public static ContributionRef Load(string directory)
     {
         var path = System.IO.Path.Combine(directory, RecordFile);
-        var record = Parse(File.ReadAllText(path, Encoding.UTF8));
         var shown = BundleWriter.PathText(directory);
+        Dictionary<string, object?> record;
+        try
+        {
+            record = Parse(File.ReadAllText(path, Encoding.UTF8));
+        }
+        catch (ContributionException e)
+        {
+            // 097 finding 6: a record no reader can parse stopped every build naming no file. It names the file now.
+            throw new ContributionException($"{BundleWriter.PathText(path)} cannot be read as a saved contribution: {e.Message}");
+        }
         if (record.GetValueOrDefault("contribution_sha256") is not string sha || !Hex64.IsMatch(sha))
             throw new ContributionException($"{shown} has no contribution_sha256, so it is not a saved contribution");
         var c = new ContributionRef(BundleWriter.PathText(directory), record);
@@ -662,7 +716,112 @@ public static class Contributions
                 + $"{sha}. A contribution is never edited; save a new one that supersedes it.");
         if (System.IO.Path.GetFileName(directory) != c.Id)
             throw new ContributionException($"{shown} holds contribution {c.Id}, so it is in the wrong folder");
+        CheckShape(record, shown);
         return c;
+    }
+
+    /// <summary>Every field a catalog build reads has the type it reads (097 finding 6: a record whose hash was valid and
+    /// whose <c>kind</c> was a number crashed the process). Only the shape is checked, never today's rules, so a rule added
+    /// later still never makes an earlier contribution unreadable.</summary>
+    /// <exception cref="ContributionException">A field has the wrong type; the message names the folder and the field.</exception>
+    private static void CheckShape(IReadOnlyDictionary<string, object?> record, string shown)
+    {
+        void Fail(string field, string what) => throw new ContributionException(
+            $"{shown}: {field} {what}, so no catalog can read this contribution and nothing was built. The store holds a "
+            + "record no save writes; restore the one that was saved.");
+        IReadOnlyDictionary<string, object?>? Map(IReadOnlyDictionary<string, object?>? parent, string key, string at, bool required = false)
+        {
+            if (parent is null || !parent.TryGetValue(key, out var v) || v is null)
+            {
+                if (required) Fail(at, "is missing");
+                return null;
+            }
+            if (v is not IReadOnlyDictionary<string, object?> m) { Fail(at, "is not an object"); return null; }
+            return m;
+        }
+        List<object?> List(IReadOnlyDictionary<string, object?>? parent, string key, string at, bool required = false)
+        {
+            if (parent is null || !parent.TryGetValue(key, out var v) || v is null)
+            {
+                if (required) Fail(at, "is missing");
+                return [];
+            }
+            if (v is not IEnumerable<object?> list || v is string) { Fail(at, "is not a list"); return []; }
+            return list.ToList();
+        }
+        void Str(IReadOnlyDictionary<string, object?>? m, string key, string at, bool required = false)
+        {
+            if (m is null || !m.TryGetValue(key, out var v) || v is null) { if (required) Fail(at, "is missing"); return; }
+            if (v is not string) Fail(at, "is not text");
+        }
+        void Whole(IReadOnlyDictionary<string, object?>? m, string key, string at)
+        {
+            if (m is not null && m.TryGetValue(key, out var v) && v is not null and not long) Fail(at, "is not a whole number");
+        }
+        void Num(IReadOnlyDictionary<string, object?>? m, string key, string at)
+        {
+            if (m is not null && m.TryGetValue(key, out var v) && v is not null and not long and not double) Fail(at, "is not a number");
+        }
+        void Flag(IReadOnlyDictionary<string, object?>? m, string key, string at)
+        {
+            if (m is not null && m.TryGetValue(key, out var v) && v is not null and not bool) Fail(at, "is not true or false");
+        }
+        IReadOnlyDictionary<string, object?> Row(object? v, string at)
+        {
+            if (v is not IReadOnlyDictionary<string, object?> m) { Fail(at, "is not an object"); return null!; }
+            return m;
+        }
+
+        Str(record, "kind", "kind", required: true);
+        foreach (var key in new[] { "title", "summary", "licence", "reproducibility", "reason", "target", "supersedes", "submitted_utc", "datarepo_version" })
+            Str(record, key, key);
+        foreach (var (key, fields) in new[] { ("model", new[] { "provider", "id", "stated_by", "evidence" }), ("client", ["name", "version"]), ("submitted_by", ["name", "orcid"]) })
+        {
+            var m = Map(record, key, key);
+            foreach (var f in fields) Str(m, f, $"{key}.{f}");
+        }
+        var basis = Map(record, "basis", "basis", required: true);
+        Str(basis, "catalog_id", "basis.catalog_id", required: true);
+        var bundles = List(basis, "bundles", "basis.bundles", required: true);
+        for (var i = 0; i < bundles.Count; i++)
+        {
+            var b = Row(bundles[i], $"basis.bundles[{i}]");
+            Str(b, "dataset_id", $"basis.bundles[{i}].dataset_id", required: true);
+            Str(b, "bundle_id", $"basis.bundles[{i}].bundle_id", required: true);
+        }
+        var on = List(basis, "contributions", "basis.contributions");
+        for (var i = 0; i < on.Count; i++)
+            if (on[i] is not string) Fail($"basis.contributions[{i}]", "is not text");
+        var items = List(record, "items", "items");
+        for (var i = 0; i < items.Count; i++)
+        {
+            var at = $"items[{i}]";
+            var item = Row(items[i], at);
+            foreach (var f in new[] { "subject_type", "subject_id", "label" }) Str(item, f, $"{at}.{f}");
+            Num(item, "value", $"{at}.value");
+            Whole(item, "rank", $"{at}.rank");
+            Map(item, "attributes", $"{at}.attributes");
+        }
+        var edges = List(record, "edges", "edges");
+        for (var i = 0; i < edges.Count; i++)
+        {
+            var at = $"edges[{i}]";
+            var edge = Row(edges[i], at);
+            foreach (var f in new[] { "source_type", "source_id", "target_type", "target_id", "label" }) Str(edge, f, $"{at}.{f}");
+            Num(edge, "weight", $"{at}.weight");
+        }
+        var method = Map(record, "method", "method");
+        var queries = List(method, "queries", "method.queries");
+        for (var i = 0; i < queries.Count; i++)
+        {
+            var at = $"method.queries[{i}]";
+            var q = Row(queries[i], at);
+            foreach (var f in new[] { "sql", "catalog_id", "result_sha256", "session_id" }) Str(q, f, $"{at}.{f}");
+            Flag(q, "observed", $"{at}.observed");
+            Flag(q, "truncated", $"{at}.truncated");
+            Whole(q, "row_count", $"{at}.row_count");
+            Whole(q, "seq", $"{at}.seq");
+        }
     }
 
     private static object? SortKeys(object? value) => value switch

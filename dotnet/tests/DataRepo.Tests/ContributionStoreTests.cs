@@ -331,4 +331,67 @@ public class ContributionStoreTests
         Assert.That(() => Save(Retraction(saved.Id, "another reason")),
             Throws.TypeOf<ContributionException>().With.Message.Contains(first.Id));
     }
+
+    // --- v2: 097 finding 6, one bad file stopped everything -------------------------------------------------
+
+    /// <summary>Rewrites a saved record as <paramref name="change"/> makes it, with a hash that matches the new content
+    /// and the folder renamed to match, as a record written by hand would be: only its shape is wrong.</summary>
+    private string Forge(ContributionSaved saved, Action<Dictionary<string, object?>> change)
+    {
+        var record = Contributions.Discover(Store).Single(c => c.Id == saved.Id);
+        var submission = record.Submission.ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.Ordinal);
+        change(submission);
+        var sha = Contributions.Sha256Of(submission);
+        var written = new SortedDictionary<string, object?>(StringComparer.Ordinal);
+        foreach (var (k, v) in submission) written[k] = v;
+        written["contribution_sha256"] = sha;
+        written["contribution_id"] = sha[..16];
+        Directory.Delete(Path.Combine(Store, Contributions.Dir, saved.Id), true);
+        var folder = Path.Combine(Store, Contributions.Dir, sha[..16]);
+        Directory.CreateDirectory(folder);
+        File.WriteAllText(Path.Combine(folder, Contributions.RecordFile), PyFormat.Json(written, ensureAscii: true), new UTF8Encoding(false));
+        return folder;
+    }
+
+    [TestCase("kind")]
+    [TestCase("basis")]
+    [TestCase("items")]
+    public void AStoredRecordOfTheWrongShapeIsNamedNotACrash(string field)
+    {
+        var saved = Save(OnA());
+        var folder = Forge(saved, s => s[field] = 5L);
+        Assert.That(() => Contributions.Discover(Store),
+            Throws.TypeOf<ContributionException>().With.Message.Contains(Path.GetFileName(folder)).And.Message.Contains(field));
+        Assert.That(() => Build(), Throws.TypeOf<ContributionException>().With.Message.Contains(Path.GetFileName(folder)),
+            "the build refuses, naming the file, rather than serving a contribution it cannot read or dropping one");
+    }
+
+    [Test]
+    public void AStoredRecordThatIsNotJsonIsNamed()
+    {
+        var saved = Save(OnA());
+        var file = Path.Combine(Store, Contributions.Dir, saved.Id, Contributions.RecordFile);
+        File.WriteAllText(file, "{\"kind\": Infinity}", new UTF8Encoding(false));
+        Assert.That(() => Contributions.Discover(Store),
+            Throws.TypeOf<ContributionException>().With.Message.Contains(saved.Id).And.Message.Contains(Contributions.RecordFile));
+    }
+
+    [Test]
+    public void OneBadRequestDoesNotJamTheInbox()
+    {
+        var inbox = Path.Combine(_root, "inbox");
+        var good = Contributions.Submit(inbox, Contributions.Validate(OnA()), null);
+        var junk = Path.Combine(inbox, "abababababababab.json");
+        File.WriteAllText(junk, "{\"submission\": {\"method\": {\"parameters\": {\"x\": 1e999}}}}", new UTF8Encoding(false));
+        Assert.Multiple(() =>
+        {
+            Assert.That(Contributions.Pending(inbox).Select(p => p.Id), Is.EqualTo(new[] { good.Id }), "the readable request is listed");
+            Assert.That(Contributions.Unreadable(inbox).Select(u => Path.GetFileName(u.Path)), Is.EqualTo(new[] { "abababababababab.json" }));
+            Assert.That(Contributions.Unreadable(inbox).Single().Reason, Does.Contain("finite"));
+        });
+        Assert.That(Contributions.Accept(inbox, good.Id, Store, Folder).AlreadySaved, Is.False, "the good one is accepted beside the junk");
+        Assert.That(() => Contributions.Reject(inbox, "abababababababab", "not JSON a build can read"), Throws.Nothing,
+            "the operator can clear a request that cannot be read");
+        Assert.That(File.Exists(Path.Combine(inbox, "rejected", "abababababababab.json")), Is.True);
+    }
 }

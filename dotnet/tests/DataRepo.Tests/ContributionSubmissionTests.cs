@@ -57,7 +57,6 @@ public class ContributionSubmissionTests
     [TestCase("kind")]
     [TestCase("title")]
     [TestCase("model")]
-    [TestCase("submitted_by")]
     [TestCase("licence")]
     [TestCase("reproducibility")]
     [TestCase("basis")]
@@ -280,5 +279,29 @@ public class ContributionSubmissionTests
         Sub(submission, "submitted_by")["orcid"] = "12345";
         Assert.That(() => Contributions.Validate(submission),
             Throws.TypeOf<ContributionException>().With.Message.Contains("submitted_by.orcid"));
+    }
+
+    // --- v2 (design/AI_CONTRIBUTIONS_V2.md) --------------------------------------------------------------
+
+    /// <summary>D57 (the user, 2026-11-07): saving asks nobody to fill anything in. A person is accountable for a
+    /// contribution through the operator who accepts it, not through a name the client must send.</summary>
+    [Test]
+    public void NoPersonNeedBeNamed()
+    {
+        var submission = Submission();
+        submission.Remove("submitted_by");
+        Assert.That(() => Contributions.Validate(submission), Throws.Nothing);
+    }
+
+    /// <summary>097 finding 6: `1e999` was read as Infinity, written into the record as no JSON can read it, and every
+    /// later build, list and save failed naming no file. A number that is not finite is refused where it stands, with
+    /// its place in the submission named, before anything is written.</summary>
+    [TestCase("""{"method": {"parameters": {"alpha": 1e999}}}""", "method.parameters.alpha")]
+    [TestCase("""{"items": [{"value": -1e999}]}""", "items[0].value")]
+    [TestCase("""{"items": [{"attributes": {"x": [1, 2e400]}}]}""", "items[0].attributes.x[1]")]
+    public void ANumberThatIsNotFiniteIsRefusedWhereverItIs(string json, string where)
+    {
+        Assert.That(() => Contributions.Parse(json),
+            Throws.TypeOf<ContributionException>().With.Message.Contains(where).And.Message.Contains("finite"));
     }
 }
