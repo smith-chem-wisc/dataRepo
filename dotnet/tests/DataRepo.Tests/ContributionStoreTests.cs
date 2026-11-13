@@ -332,6 +332,24 @@ public class ContributionStoreTests
             Throws.TypeOf<ContributionException>().With.Message.Contains(first.Id));
     }
 
+    // --- v2: 097 finding 8, the release guard -------------------------------------------------------------------
+
+    /// <summary>097 finding 8: a <c>--release</c> build of a catalog already in the folder was "unchanged" and recorded
+    /// nothing, so the release was not marked, its contributions were not listed, and a later build could lose one.</summary>
+    [Test]
+    public void AReleaseOfAnUnchangedCatalogStillRecordsWhatItCarries()
+    {
+        var saved = Save(OnA());
+        var working = Build();
+        Assert.That((string?)Rows(Folder, "SELECT notes FROM catalog_meta")[0][0] ?? "", Does.Not.Contain(saved.Id), "a working build lists nothing");
+        var released = Build(release: "v1");
+        Assert.That(released.CatalogId, Is.EqualTo(working.CatalogId), "the same contents are the same catalog");
+        Assert.That((string)Rows(Folder, "SELECT notes FROM catalog_meta")[0][0]!, Does.Contain(saved.Id).And.Contain("v1"),
+            "the release is recorded on the catalog it names, though nothing else changed");
+        Directory.Delete(Path.Combine(Store, Contributions.Dir, saved.Id), true);
+        Assert.That(() => Build(), Throws.TypeOf<CatalogException>().With.Message.Contains(saved.Id));
+    }
+
     // --- v2: 097 finding 6, one bad file stopped everything -------------------------------------------------
 
     /// <summary>Rewrites a saved record as <paramref name="change"/> makes it, with a hash that matches the new content

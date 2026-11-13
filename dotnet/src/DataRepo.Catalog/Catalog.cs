@@ -1746,7 +1746,11 @@ public static partial class CatalogBuilder
         // DATAREPO-83 a: a killed build cannot remove what it staged, so every build removes what dead builds left.
         // In a folder every catalog id stages its own file, so the sweep covers them all.
         var (stagedRemoved, stagedKept) = StagedCatalogs.Sweep(full, staging, views ? ".catalog-" : null);
-        if (!overwrite && ReadCatalogId(full) == cid)
+        // A release build of a catalog already in the folder, not yet marked as any release, is written again so the release
+        // is recorded on it: else it stays unmarked, --keep may prune it, and the contributions it carries are listed nowhere
+        // a later build checks (097 finding 8, A13).
+        var unmarkedRelease = notes?.GetValueOrDefault("release") is string && File.Exists(full) && ReleaseOf(full) is null;
+        if (!overwrite && !unmarkedRelease && ReadCatalogId(full) == cid)
         {
             // An unchanged folder catalog becomes the current one again (a rebuild after a rollback, say).
             var current = views ? WritePointer(folder!, full, cid, rid) : null;
