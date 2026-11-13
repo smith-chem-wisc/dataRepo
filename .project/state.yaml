@@ -734,6 +734,15 @@ decisions:
       also ties to the move into PXReprise (D62, U33) and to PXReprise's G61 (Alzheimer's inside aging or its own question).
       PXReprise's stopgap stays: filter by their membership list (our 095, PXR-R36). Logged as U36; tell PXReprise R33 is
       pinned, not owed.
+  - id: D71
+    date: 2026-11-13
+    text: >-
+      PXR-R38 (which release carries AI contributions): their own release, right after 1.5.0 is live. The user: "answer that way
+      and start the work (after we get through all the questions)". The rework starts on a fresh branch from 1.5.0, not from
+      PXReprise's `feat/ai-contributions` (2026-10-28, 239 commits behind master), carrying our 097 review's fixes, D57's rule
+      (results arrive in the operator's inbox and a person reviews them; nobody fills anything in; no host for now) and the
+      narrow meanings of observed/reproduced. No re-ingest, so it cannot collide with the 1.5.0 swap; built on 1.5.0, no result
+      points at bundles the swap replaces (097 finding 8). Released only on the user's word.
 gaps:
   - >-
     G135 NEW 2026-11-12: an operator's `--mm-settings` reaches rows and not the bundle id. A scratch ingest of PXD027232 (MetaMorpheus
