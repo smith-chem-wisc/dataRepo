@@ -43,19 +43,23 @@ public static class Sessions
         + "catalog, so anyone can see which questions were asked of which data. It does not hold your prompt, the "
         + "model's own text, or who you are. Each answer names its place in the record (session_call).";
 
-    /// <summary>The catalog tables a build creates when the store holds at least one session record.</summary>
+    /// <summary>The views a folder catalog serves once its store holds at least one session record (read live, never in
+    /// the catalog id).</summary>
     public static readonly IReadOnlyList<string> Tables = ["sessions", "session_calls"];
 
     public static readonly IReadOnlyDictionary<string, string> TableDocs = new Dictionary<string, string>(StringComparer.Ordinal)
     {
-        ["sessions"] = "One row per MCP session the server recorded: when it started, the catalog it served, the client "
-            + "application as the client reported it (never the model: no server can see one), how many calls it made, "
-            + "and whether its hash chain is intact (`chain_ok`; `broken_at_seq` is the first entry that does not "
-            + "verify). Every session is public (`visibility`).",
+        ["sessions"] = "One row per MCP session the server recorded, read live from the record files beside the bundles, so "
+            + "it shows every session up to the moment it is queried: when it started, the catalog it served, the client "
+            + "application as the client reported it (never the model or a person: no server can see either), and how "
+            + "many calls it made. Every session is public (`visibility`). Each record is a hash chain "
+            + "(`session_calls.prev_sha256`, `entry_sha256`); a release records how far each one had got, and a later "
+            + "build refuses a record changed since.",
         ["session_calls"] = "Every call of every recorded session, in order: the tool, its arguments, the catalog it ran on, "
             + "the outcome (ok, error, or invalid arguments), and hashes of the answer (`answer_sha256`) and of its rows "
-            + "regardless of order (`rows_sha256`), and the catalog tables a query read (`tables_touched`, a JSON list). A "
-            + "contribution's query marked `observed` is one of these.",
+            + "regardless of order (`rows_sha256`), and the catalog tables a query read (`tables_touched`, a JSON list). "
+            + "`observed` on a contribution's query means only that the query is one of these: it ran, on that catalog, "
+            + "and returned rows with that hash. It does not mean the result follows from them.",
     };
 
     /// <summary>The hash of a SQL answer's rows, whatever their order: the columns, then each row's JSON, sorted.</summary>

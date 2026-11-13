@@ -35,45 +35,136 @@ public static partial class CatalogBuilder
     /// carried is no longer in the store. A release is frozen once published; this is what keeps that true of its
     /// contributions in every release after it.</summary>
     /// <exception cref="CatalogException">One is missing.</exception>
-    private static void CheckReleasedContributionsKept(string folder, IReadOnlyList<ContributionRef> contributions)
+    private static void CheckReleasedContributionsKept(string folder, IReadOnlyList<ContributionRef> contributions, IReadOnlyList<SessionRef> sessions)
     {
         if (!Directory.Exists(folder)) return;
         var have = contributions.Select(c => c.Id).ToHashSet(StringComparer.Ordinal);
+        var records = sessions.GroupBy(s => s.SessionId, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.First(), StringComparer.Ordinal);
         var lost = new List<string>();
+        var changed = new List<string>();
         foreach (var file in Directory.EnumerateFiles(folder, "catalog-*.duckdb").Order(StringComparer.Ordinal))
         {
-            var (release, carried) = ReleasedContributions(file);
+            var (release, carried, anchors) = ReleasedContributions(file);
             if (release is null) continue;
-            lost.AddRange(carried.Where(id => !have.Contains(id)).Select(id => $"{id} (release {release}, {System.IO.Path.GetFileName(file)})"));
+            var where = $"release {release}, {System.IO.Path.GetFileName(file)}";
+            lost.AddRange(carried.Where(id => !have.Contains(id)).Select(id => $"{id} ({where})"));
+            foreach (var (id, lines, head) in anchors)
+            {
+                if (!records.TryGetValue(id, out var s)) changed.Add($"{id} is gone ({where})");
+                else if (s.Entries.Count < lines || s.Entries[(int)lines - 1].GetValueOrDefault("entry_sha256") as string != head
+                         || (!s.ChainOk && s.BrokenAtSeq is { } at && at < lines))
+                    changed.Add($"{id} ({s.Path}) no longer holds the {lines} line(s) the release recorded ({where})");
+            }
         }
         if (lost.Count > 0)
             throw new CatalogException(
                 "the store no longer holds contribution(s) an earlier release carried, so nothing was built: "
                 + string.Join(", ", lost) + ". A released contribution is carried into every later catalog; restore its "
                 + $"folder under {Contributions.Dir}/ (it is retracted by a new contribution, never deleted).");
+        if (changed.Count > 0)
+            throw new CatalogException(
+                "the public session record an earlier release carried has changed, so nothing was built: " + string.Join("; ", changed)
+                + $". A released session is never edited, re-chained or removed; restore the file under {Sessions.Dir}/.");
     }
 
-    /// <summary>The release a catalog file was built for, and the contribution ids it recorded.</summary>
-    private static (string? Release, List<string> Contributions) ReleasedContributions(string path)
+    /// <summary>The release a catalog file was built for, the contribution ids it recorded, and each session it carried
+    /// as (id, how many lines, the last line's hash).</summary>
+    private static (string? Release, List<string> Contributions, List<(string Id, long Lines, string Head)> Sessions) ReleasedContributions(string path)
     {
         try
         {
             using var con = Open(path, readOnly: true);
-            if (Query(con, "SELECT notes FROM catalog_meta").SingleOrDefault()?[0] is not string notes) return (null, []);
+            if (Query(con, "SELECT notes FROM catalog_meta").SingleOrDefault()?[0] is not string notes) return (null, [], []);
             using var doc = System.Text.Json.JsonDocument.Parse(notes);
             var root = doc.RootElement;
             if (root.ValueKind != System.Text.Json.JsonValueKind.Object
                 || !root.TryGetProperty("release", out var release) || release.ValueKind != System.Text.Json.JsonValueKind.String)
-                return (null, []);
+                return (null, [], []);
             var ids = root.TryGetProperty("contributions", out var list) && list.ValueKind == System.Text.Json.JsonValueKind.Array
                 ? list.EnumerateArray().Where(e => e.ValueKind == System.Text.Json.JsonValueKind.String).Select(e => e.GetString()!).ToList()
                 : [];
-            return (release.GetString(), ids);
+            var anchors = new List<(string, long, string)>();
+            if (root.TryGetProperty("sessions", out var held) && held.ValueKind == System.Text.Json.JsonValueKind.Array)
+                foreach (var s in held.EnumerateArray())
+                    if (s.ValueKind == System.Text.Json.JsonValueKind.Object
+                        && s.TryGetProperty("session_id", out var id) && id.ValueKind == System.Text.Json.JsonValueKind.String
+                        && s.TryGetProperty("lines", out var n) && n.TryGetInt64(out var lines) && lines > 0
+                        && s.TryGetProperty("head_sha256", out var h) && h.ValueKind == System.Text.Json.JsonValueKind.String)
+                        anchors.Add((id.GetString()!, lines, h.GetString()!));
+            return (release.GetString(), ids, anchors);
         }
         catch (Exception e) when (e is DuckDBException or IOException or System.Text.Json.JsonException)
         {
-            return (null, []);
+            return (null, [], []);
         }
+    }
+
+    /// <summary>The stores <paramref name="bundles"/> come from.</summary>
+    private static List<string> StoresOf(IReadOnlyList<BundleRef> bundles) =>
+        bundles.Select(b => System.IO.Path.GetDirectoryName(System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(b.Path))!)!)
+            .Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+
+    /// <summary>Every public session record in the stores <paramref name="bundles"/> come from (A18). None in a Python
+    /// 0.32.0 parity scope.</summary>
+    public static List<SessionRef> SessionsFor(IReadOnlyList<BundleRef> bundles) =>
+        SchemaContract.IsPython0320 ? [] : StoresOf(bundles).SelectMany(Sessions.Read).ToList();
+
+    /// <summary>Whether <paramref name="store"/> holds a session record file where the views read them
+    /// (<c>_sessions/&lt;date&gt;/&lt;id&gt;.jsonl</c>).</summary>
+    private static bool HasSessionRecord(string store)
+    {
+        var root = System.IO.Path.Combine(store, Sessions.Dir);
+        return Directory.Exists(root) && Directory.EnumerateDirectories(root).Any(d => Directory.EnumerateFiles(d, "*.jsonl").Any());
+    }
+
+    /// <summary>Whether any of <paramref name="stores"/> holds a session record, so a folder catalog serves the views.</summary>
+    private static bool HasSessionRecords(IReadOnlyList<string> stores) => stores.Any(HasSessionRecord);
+
+    /// <summary>What a release records of each session it carries: its id, how many lines it then held, and the last
+    /// line's hash. A later build holds the record to that (097 finding 8: re-chained lines used to build as intact).</summary>
+    private static List<object?> SessionAnchors(IReadOnlyList<SessionRef> sessions) =>
+        sessions.Where(s => s.Entries.Count > 0).OrderBy(s => s.SessionId, StringComparer.Ordinal).Select(s => (object?)new Dictionary<string, object?>(StringComparer.Ordinal)
+        {
+            ["session_id"] = s.SessionId,
+            ["lines"] = (long)s.Entries.Count,
+            ["head_sha256"] = s.Entries[^1].GetValueOrDefault("entry_sha256") as string,
+        }).ToList();
+
+    /// <summary>The views <c>sessions</c> and <c>session_calls</c> over the record files of a folder catalog's stores
+    /// (A18, design/AI_CONTRIBUTIONS_V2.md V3).</summary>
+    /// <remarks>Views, read when they are queried, and not in the catalog id (097 finding 5): a store whose server
+    /// answered a question still rebuilds as unchanged, and a catalog shows every session up to the moment it is read.
+    /// Made only when a store holds at least one record file, since DuckDB refuses a file pattern that matches nothing;
+    /// a server writes its record's first line when it starts, so any agent asking through one has a file to read. A
+    /// half-written last line (a server stopped mid-write) is left out. Whether each record's hash chain holds is checked
+    /// in C# (<see cref="Sessions.Read"/>), and a release holds the record to what it carried.</remarks>
+    private static void CreateSessionViews(DuckDBConnection con, IReadOnlyList<string> stores)
+    {
+        var patterns = stores.Where(HasSessionRecord)
+            .Select(s => $"'{AsPosix(System.IO.Path.Combine(s, Sessions.Dir)).Replace("'", "''", StringComparison.Ordinal)}/*/*.jsonl'")
+            .ToList();
+        if (patterns.Count == 0) return;
+        var lines = $@"read_json([{string.Join(", ", patterns)}], format = 'newline_delimited', ignore_errors = true, filename = true, columns = {{
+            'type': 'VARCHAR', 'seq': 'BIGINT', 'session_id': 'VARCHAR', 'started_utc': 'VARCHAR', 'datarepo_version': 'VARCHAR',
+            'catalog_id': 'VARCHAR', 'visibility': 'VARCHAR', 'utc': 'VARCHAR', 'name': 'VARCHAR', 'version': 'VARCHAR',
+            'tool': 'VARCHAR', 'arguments': 'JSON', 'outcome': 'VARCHAR', 'error': 'VARCHAR', 'row_count': 'BIGINT',
+            'truncated': 'BOOLEAN', 'answer_sha256': 'VARCHAR', 'rows_sha256': 'VARCHAR', 'tables_touched': 'JSON',
+            'prev_sha256': 'VARCHAR', 'entry_sha256': 'VARCHAR'}})";
+        // The session id of a call line is its file's name, as the server writes it.
+        var line = $"SELECT *, regexp_extract(filename, '([0-9a-f]{{16}})\\.jsonl$', 1) AS record_id FROM {lines} WHERE type IS NOT NULL";
+        Exec(con, $@"
+        CREATE VIEW sessions AS
+        WITH l AS ({line})
+        SELECT s.record_id AS session_id, s.started_utc, s.datarepo_version, s.catalog_id, s.visibility,
+               c.name AS client_name, c.version AS client_version,
+               (SELECT count(*) FROM l x WHERE x.record_id = s.record_id AND x.type = 'call') AS n_calls
+        FROM l s LEFT JOIN l c ON c.record_id = s.record_id AND c.type = 'client'
+        WHERE s.type = 'session'");
+        Exec(con, $@"
+        CREATE VIEW session_calls AS
+        SELECT record_id AS session_id, seq, utc, tool, arguments, catalog_id, outcome, error, row_count, truncated,
+               answer_sha256, rows_sha256, tables_touched, prev_sha256, entry_sha256
+        FROM ({line}) WHERE type = 'call'");
     }
 
     /// <summary>The catalog ids contributions were computed from: <c>--keep</c> never prunes those files (A14).</summary>

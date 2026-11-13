@@ -48,14 +48,32 @@ user says.
 
 ## Slices, in order
 
-| slice | what | test first |
-|---|---|---|
-| V1 | port A1-A4 (submission, id, save, basis check) from the branch onto 1.5.0; non-finite numbers and wrong types refused (6) | the branch's `ContributionSubmissionTests` and `ContributionStoreTests`, plus 6's cases |
-| V2 | build tables (A9-A12), every file checked alone (6); the guard (A13) on every `--release` (8) | the branch's carry-forward tests, plus 8's drop and edit cases |
-| V3 | the session record redone: per MCP session, outside the catalog id, no person, a failed line never loses the answer (5, 9, 10) | 5's `unchanged` rebuild; 9 simulated; 10's notice |
+| slice | what | test first | state |
+|---|---|---|---|
+| V1 | port A1-A4 (submission, id, save, basis check) from the branch onto 1.5.0; non-finite numbers and wrong types refused (6) | the branch's `ContributionSubmissionTests` and `ContributionStoreTests`, plus 6's cases | **done** (`ea539c8`, `2dbe460`) |
+| V2 | build tables (A9-A12), every file checked alone (6); the guard (A13) on every `--release` (8) | the branch's carry-forward tests, plus 8's drop and edit cases | **done** (`647a2b7`) |
+| V3 | the session record redone: per MCP session, outside the catalog id, no person, a failed line never loses the answer (5, 9, 10) | 5's `unchanged` rebuild; 9 simulated; 10's notice | **done** (below) |
 | V4 | the save tool and the inbox: cited calls copied from the record, narrow meanings, `accept` records the operator (2, 3, 10) | 3's forged cases all refused; `max_rows`, CRLF |
 | V5 | `verify`, `show`, discovery (S9, S11) | a judgement never reproduced; a missing catalog reported |
 | V6 | docs (`docs/mcp.md`, `docs/cli.md`, a contributions page), CHANGELOG, a scratch run on a copy of aging's catalog | a stranger agent saves, the operator accepts, the next catalog serves it |
+
+## How V3 keeps the record (2026-11-13)
+
+- **Written** by `datarepo mcp` itself, one file per MCP session, `<store>/_sessions/<date>/<id>.jsonl`, a hash chain, as
+  PXReprise built it. A folder catalog's server writes beside the bundles of the store it reads; `--sessions <folder>` names
+  another place; a one-file catalog names no store, so it serves with no record and says so on stderr.
+- **A record that cannot be written never loses an answer** (9): the answer goes back with `session_call.recorded = false` and
+  the reason, and a server whose record cannot be opened at all still serves, unrecorded, and says why.
+- **Served** by two views, `sessions` and `session_calls`, over the record files, read when queried. They are not in the
+  catalog id (5). One constant line, `sessions/views`, enters the id from the store's first record on, since DuckDB refuses a
+  file pattern that matches nothing: the catalog that first shows sessions is a new one, and every later session leaves the id
+  alone, so a served store rebuilds as `unchanged`. Measured on DuckDB 1.5.5: an empty pattern is an error in every form tried
+  (a list, a macro, a subquery), and a half-written last line reads as a null row, which the views leave out.
+- **Held** by a release (8): `--release` records each session's id, line count and last hash in `catalog_meta.notes.sessions`,
+  and every later build in that folder refuses a record that no longer holds those lines, whether edited, re-chained or removed.
+  A session recorded after the release is free.
+- **No person** (10): the record holds the client application as the client reported it, never a model or a person; the save
+  tool (V4) takes no name.
 
 ## Open for the user (asked when we reach it, one at a time)
 

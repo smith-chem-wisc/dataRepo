@@ -319,6 +319,7 @@ Serve one catalog to an agent over stdio (MCP).
 ```text
 usage: datarepo mcp [-h] [--catalog CATALOG] [--install] [--list] [--check]
                     [--name NAME] [--config CONFIG] [--force]
+                    [--sessions SESSIONS]
 
 serve one catalog to an agent over stdio (MCP)
 
@@ -332,4 +333,8 @@ options:
   --config CONFIG    MCP config to write; default is the Claude Code user
                      config
   --force            repoint an entry of that name at this catalog
+  --sessions SESSIONS
+                     where the PUBLIC record of every call is kept; default
+                     the _sessions folder of the store a catalog folder
+                     reads (a one-file catalog keeps none unless named)
 ```

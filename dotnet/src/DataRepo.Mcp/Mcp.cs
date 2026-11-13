@@ -132,23 +132,65 @@ public static class Mcp
     // --- the stdio server -------------------------------------------------------------------------------
 
     /// <summary>Run the stdio MCP server over one catalog until the client disconnects.</summary>
+    /// <param name="sessions">Where the public session record is kept (design/AI_CONTRIBUTIONS_V2.md, A18); null means
+    /// beside the bundles of the store a catalog folder serves (<see cref="DefaultSessionRoot"/>). A one-file catalog names
+    /// no store, so without this it serves with no record, and says so.</param>
     /// <exception cref="CatalogException">There is no catalog at <paramref name="catalog"/>.</exception>
-    public static async Task ServeAsync(string catalog, string name = "datarepo", TextWriter? stderr = null, CancellationToken cancellation = default)
+    public static async Task ServeAsync(string catalog, string name = "datarepo", TextWriter? stderr = null, CancellationToken cancellation = default,
+        string? sessions = null)
     {
         using var server = new CatalogServer(catalog);
-        var options = ServerOptions(server, name);
+        var root = sessions ?? DefaultSessionRoot(server);
+        SessionLog? log = null;
+        string recordNote;
+        if (root is null)
+            recordNote = "no public session record (a one-file catalog names no store; --sessions <folder> keeps one)";
+        else
+        {
+            try
+            {
+                log = SessionLog.Open(root, PyValues.Str(server.Identity.CatalogId));
+                recordNote = $"public session record {log.Path}";
+            }
+            catch (Exception e) when (e is IOException or UnauthorizedAccessException)
+            {
+                // 097 finding 9: a record that cannot be kept never takes the read down. The catalog is served, unrecorded,
+                // and the operator is told why.
+                recordNote = $"NO public session record: {BundleWriter.PathText(root)} cannot be written ({e.Message})";
+            }
+        }
+        using var _ = log;
+        var options = ServerOptions(server, name, log);
         // stderr, never stdout: stdout IS the protocol channel, and a banner printed there would be read as a
         // malformed JSON-RPC message and close the connection.
         (stderr ?? Console.Error).WriteLine(
-            $"datarepo {CatalogBuilder.PackageVersion} mcp: serving catalog {PyValues.Str(server.Identity.CatalogId)} ({server.Box.Path}) over stdio");
+            $"datarepo {CatalogBuilder.PackageVersion} mcp: serving catalog {PyValues.Str(server.Identity.CatalogId)} ({server.Box.Path}) over stdio; "
+            + recordNote);
         await using var transport = new StdioServerTransport(options, null);
         await using var mcp = McpServer.Create(transport, options);
         await mcp.RunAsync(cancellation).ConfigureAwait(false);
     }
 
+    /// <summary>Where a catalog folder's server keeps its session record: the <c>_sessions</c> folder of the store its
+    /// views read (<c>catalog_meta.data_root</c>), so the store holds it beside the bundles. Null for a one-file catalog.</summary>
+    public static string? DefaultSessionRoot(CatalogServer server)
+    {
+        try
+        {
+            var root = server.Box.Dicts("SELECT data_root FROM catalog_meta").FirstOrDefault()?.GetValueOrDefault("data_root") as string;
+            return string.IsNullOrEmpty(root) ? null : System.IO.Path.Combine(root, Sessions.Dir);
+        }
+        catch (Exception e) when (e is DataRepoException or DuckDB.NET.Data.DuckDBException)
+        {
+            return null;  // a catalog from before D48 step 1 has no data_root
+        }
+    }
+
     /// <summary>The SDK server's options for one open catalog: its name, the three tools with the Python server's
     /// schemas, and the handlers that answer them. Exposed so a test can serve over any transport.</summary>
-    public static McpServerOptions ServerOptions(CatalogServer server, string name = "datarepo")
+    /// <param name="log">The public session record (A18): every call is written to it, and every client is told so at
+    /// <c>initialize</c>. Null keeps no record and leaves every answer byte for byte as before.</param>
+    public static McpServerOptions ServerOptions(CatalogServer server, string name = "datarepo", SessionLog? log = null)
     {
         var gate = new SemaphoreSlim(1, 1);  // the catalog connection serves one call at a time
         var tools = ToolSpecs.Select(spec => new Tool
@@ -162,6 +204,8 @@ public static class Mcp
         var options = new McpServerOptions
         {
             ServerInfo = new Implementation { Name = name, Version = CatalogBuilder.PackageVersion },
+            // Every client is told its calls are public, when they are (A18); a server keeping no record says nothing.
+            ServerInstructions = log is null ? null : Sessions.Notice,
             Capabilities = new ServerCapabilities { Tools = new ToolsCapability() },
             Handlers = new McpServerHandlers
             {
@@ -171,7 +215,8 @@ public static class Mcp
                     await gate.WaitAsync(ct).ConfigureAwait(false);
                     try
                     {
-                        return CallTool(server, request.Params?.Name ?? "", request.Params?.Arguments);
+                        if (log is not null) TryRecord(() => log.SetClient(request.Server.ClientInfo?.Name, request.Server.ClientInfo?.Version));
+                        return CallTool(server, request.Params?.Name ?? "", request.Params?.Arguments, log);
                     }
                     finally
                     {
@@ -185,8 +230,99 @@ public static class Mcp
 
     /// <summary>One <c>tools/call</c>: validate the arguments as the Python SDK's argument model does, call the tool,
     /// and answer with the text an agent reads and the same value as structured content.</summary>
-    public static CallToolResult CallTool(CatalogServer server, string toolName, IDictionary<string, JsonElement>? arguments)
+    /// <param name="log">The public session record (A18). When given, the call is recorded whatever its outcome, and a
+    /// tool's answer gains <c>session_call</c>: its place in the record. Null leaves the answer as it was.</param>
+    public static CallToolResult CallTool(CatalogServer server, string toolName, IDictionary<string, JsonElement>? arguments, SessionLog? log = null)
     {
+        var answer = Answer(server, toolName, arguments, out var result);
+        return log is null ? answer : Recorded(server, toolName, arguments, answer, result, log);
+    }
+
+    /// <summary>Runs a recording step; a failure to write is reported, never thrown (097 finding 9).</summary>
+    /// <returns>Null when it was written, else why not.</returns>
+    private static string? TryRecord(Action write)
+    {
+        try
+        {
+            write();
+            return null;
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException)
+        {
+            return e.Message;
+        }
+    }
+
+    /// <summary>Records one call, then names its place in the answer. The hashes cover the answer as it was before
+    /// <c>session_call</c> was added, so a reader can recompute them from the answer alone.</summary>
+    /// <remarks>097 finding 9: the query has already run, so a record that cannot be written never loses the answer. It
+    /// goes back with <c>session_call.recorded = false</c> and the reason, and the next call tries again.</remarks>
+    private static CallToolResult Recorded(CatalogServer server, string toolName, IDictionary<string, JsonElement>? arguments,
+        CallToolResult answer, Dictionary<string, object?>? result, SessionLog log)
+    {
+        var plain = (arguments ?? new Dictionary<string, JsonElement>())
+            .ToDictionary(kv => kv.Key, kv => JsonPlain(kv.Value), StringComparer.Ordinal);
+        var text = answer.Content.OfType<TextContentBlock>().FirstOrDefault()?.Text ?? "";
+        var outcome = result is null ? "invalid" : result.ContainsKey("error") && result.ContainsKey("hint") ? "error" : "ok";
+        var rowsSha = outcome == "ok" ? RowsHash(result!) : null;
+        SessionEntry? entry = null;
+        var failure = TryRecord(() => entry = log.Record(toolName, plain, server.Identity.CatalogId, outcome,
+            outcome == "error" ? result!["error"] as string : null,
+            result?.GetValueOrDefault("row_count") as long?, result?.GetValueOrDefault("truncated") as bool?,
+            Sessions.Sha(text), rowsSha,
+            result?.GetValueOrDefault("tables_touched") is IEnumerable<Dictionary<string, object?>> touched
+                ? touched.Select(t => PyValues.Str(t.GetValueOrDefault("table"))).Distinct(StringComparer.Ordinal).ToList()
+                : null));
+        if (result is null) return answer;
+        result["session_call"] = entry is not null
+            ? new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["session_id"] = entry.SessionId,
+                ["seq"] = entry.Seq,
+                ["entry_sha256"] = entry.EntrySha256,
+                ["record"] = "public",
+            }
+            : new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["session_id"] = log.SessionId,
+                ["recorded"] = false,
+                ["error"] = $"the public session record could not be written ({failure}); this answer stands, and is not in the record",
+            };
+        using var structured = JsonDocument.Parse(PydanticJson.Serialize(result, indent: null, nanAsNull: true));
+        return new CallToolResult
+        {
+            Content = [new TextContentBlock { Text = PydanticJson.Serialize(result) }],
+            StructuredContent = structured.RootElement.Clone(),
+            IsError = false,
+        };
+    }
+
+    /// <summary>A tool argument as a plain value for the record. A number that is not a finite double is kept as its JSON
+    /// text, so a recorded call can always be read back (097 finding 6).</summary>
+    private static object? JsonPlain(JsonElement e)
+    {
+        try
+        {
+            return Contributions.FromJson(e);
+        }
+        catch (ContributionException)
+        {
+            return e.GetRawText();
+        }
+    }
+
+    /// <summary>The hash of a <c>sql</c> answer's rows whatever their order, each row as the agent read it; null for an
+    /// answer with no rows. The record and a later verification both use it, so a re-run compares like with like.</summary>
+    public static string? RowsHash(IReadOnlyDictionary<string, object?> result) =>
+        result.GetValueOrDefault("columns") is IEnumerable<string> columns && result.GetValueOrDefault("rows") is IEnumerable<object?> rows
+            ? Sessions.RowsSha256(columns, rows.Select(r => PydanticJson.Serialize(r, indent: null, nanAsNull: true)))
+            : null;
+
+    /// <summary>The answer, and the tool's result when a tool ran (null when the call never reached one).</summary>
+    private static CallToolResult Answer(CatalogServer server, string toolName, IDictionary<string, JsonElement>? arguments,
+        out Dictionary<string, object?>? ran)
+    {
+        ran = null;
         var spec = ToolSpecs.FirstOrDefault(s => s.Name == toolName);
         if (spec is null) return ErrorResult($"Unknown tool: {toolName}");
         arguments ??= new Dictionary<string, JsonElement>();
@@ -227,6 +363,7 @@ public static class Mcp
         {
             return ErrorResult($"Error executing tool {toolName}: {exc.Message}");
         }
+        ran = result;
         var text = PydanticJson.Serialize(result);
         using var structured = JsonDocument.Parse(PydanticJson.Serialize(result, indent: null, nanAsNull: true));
         return new CallToolResult

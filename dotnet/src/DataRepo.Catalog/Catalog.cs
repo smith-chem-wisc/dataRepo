@@ -1237,7 +1237,8 @@ public static partial class CatalogBuilder
         string? dataRoot = null,
         string? derivedRoot = null,
         IReadOnlyList<PrideRecordRef>? prideRecords = null,
-        IReadOnlyList<ContributionRef>? contributions = null)
+        IReadOnlyList<ContributionRef>? contributions = null,
+        bool sessionViews = false)
     {
         var text = new StringBuilder();
         text.Append($"datarepo/{packageVersion ?? PackageVersion}\ncatalog/{CatalogVersion}\nschema/{SchemaContract.Version}\n");
@@ -1288,6 +1289,10 @@ public static partial class CatalogBuilder
         // And the results saved back into the store (design/AI_CONTRIBUTIONS.md A10), on the same rule: no line without
         // one, so a store holding none keeps every catalog id it had. Not the release id, which names the measured data.
         if (ContributionLine(contributions ?? []) is { } contributionLine) text.Append(contributionLine);
+        // And whether it serves the public session record's views (A18): one constant line, there from the store's first
+        // record on, so the catalog that first shows sessions is a new one, and every later session leaves the id alone
+        // (097 finding 5: the record itself is read live and is never in the id).
+        if (sessionViews) text.Append("sessions/views\n");
         return Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(text.ToString())))[..16];
     }
 
@@ -1711,17 +1716,23 @@ public static partial class CatalogBuilder
         var derivedRoot = views ? DerivedRootOf(System.IO.Path.GetFullPath(@out)) : null;
         // Every contribution in the store, always (A9), and never fewer than an earlier release in this folder carried (A13).
         var contributions = ContributionsFor(bundles);
-        if (views) CheckReleasedContributionsKept(System.IO.Path.GetFullPath(@out), contributions);
+        // The public session record (A18): served by a folder catalog's views, never in its id (097 finding 5).
+        var sessions = views ? SessionsFor(bundles) : new List<SessionRef>();
+        var sessionViews = views && !SchemaContract.IsPython0320 && HasSessionRecords(StoresOf(bundles));
+        if (views) CheckReleasedContributionsKept(System.IO.Path.GetFullPath(@out), contributions, sessions);
         var cited = CitedCatalogs(contributions);
-        var cid = CatalogIdOf(bundles, study, engines, null, annotations, exclusions, restrictions, census, dataRoot, derivedRoot, pride, contributions);
+        var cid = CatalogIdOf(bundles, study, engines, null, annotations, exclusions, restrictions, census, dataRoot, derivedRoot, pride, contributions,
+            sessionViews);
         // Not in the release id: that names the measured data, so "computed on the same data" stays an equality (A10).
         var rid = ReleaseId(bundles, study, engines);
-        if (contributions.Count > 0 && notes is not null && notes.ContainsKey("release"))
+        if ((contributions.Count > 0 || sessions.Count > 0) && notes is not null && notes.ContainsKey("release"))
         {
-            // A release records exactly which contributions it carries, so every later build can be held to them (A13).
+            // A release records exactly which contributions it carries and how far each session's record had got, so every
+            // later build can be held to them (A13; 097 finding 8).
             var withContributions = new Dictionary<string, object?>(StringComparer.Ordinal);
             foreach (var (k, v) in notes) withContributions[k] = v;
-            withContributions["contributions"] = contributions.Select(c => (object?)c.Id).ToList();
+            if (contributions.Count > 0) withContributions["contributions"] = contributions.Select(c => (object?)c.Id).ToList();
+            if (sessions.Count > 0) withContributions["sessions"] = SessionAnchors(sessions);
             notes = withContributions;
         }
         if (census is not null)
@@ -1809,6 +1820,7 @@ public static partial class CatalogBuilder
                     contributionCounts = CreateContributionTables(con, contributions, bundles);
                     Lap("contributions");
                 }
+                if (sessionViews) CreateSessionViews(con, StoresOf(bundles));
                 checks = [
                     .. CheckRowCounts(con, bundles),
                     .. views ? [IntegrityCheckedAtIngest()] : CheckIntegrity(con),
