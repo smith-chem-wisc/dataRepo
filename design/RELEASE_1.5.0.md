@@ -286,4 +286,22 @@ A split key already ingests and builds on 1.4.3 (`results/split_trial_2026-11-06
 2. Build on `feat/1.5.0`; measure a whole-store scratch re-ingest; predict ids.
 3. Release on the user's word; PXReprise swaps the pin and re-ingests.
 
+**Done (2026-11-13):** the measurement (`results/reingest_150_2026-11-12/`, `7788bc9`, `e34a554`); notices to PXReprise 116
+(no earlier than 2026-11-20; asks PXR-R63, the swap day), aging 138/139, ptmQtl 066, sdrf 038, logs 036, QuantProject 094, go
+033 (GO-D14). **Release prep, on the user's "prepare it":** the CHANGELOG entry (undated), docs naming 1.5.0, the tutorial rerun
+with a local build stamped 1.5.0 (bundle `4ccf36a955a1e57d`, catalog `88a2166ec0d33563`, 64 checks; `ca73563`), and both example
+bundles carrying `confidence_rule` (`7f4fca5`: CI's schema job had been red since item 2). Local tests 847 passed, 1 skipped;
+`dotnet-binaries` run by hand on the branch built and ran all four platforms (run 43433329016).
+
+**On the user's word, in order:**
+1. Date the CHANGELOG (`## [1.5.0] - <date>`). Merge `feat/1.5.0` into master (no fast path: master holds threads and notes).
+2. Push master; CI and `dotnet-binaries` green (rerun macOS arm64 if it is not acquired).
+3. Tag `v1.5.0` and push it; the tag's run makes a draft release.
+4. Download the draft's win-x64 zip; record its sha256. With it: the tutorial reproduces `4ccf36a955a1e57d` and
+   `88a2166ec0d33563`; a scratch re-ingest of PXD011740 gives `f9c3d0f04e13dc66` and of PXD012307 `e3ea05e7e7f20957`
+   (`compare_deposits.tsv`); a refused 1.1.13 TMT deposit is still refused.
+5. Publish the draft. Tell PXReprise (tag, sha256, the check), then aging, ptmQtl, QuantProject, sdrf, logs.
+6. Re-ingest the 39 isobaric deposits on a copy once PXReprise's payload rebuild is in, and send their ids (promised in 116).
+7. After the swap, repoint our own MCP entry to the 1.5.0 install.
+
 GO per target set (G111, unblocked by mzLib 1.0.597) gets its own plan.
