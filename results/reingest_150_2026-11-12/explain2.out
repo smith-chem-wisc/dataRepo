@@ -1,0 +1,148 @@
+== 1. peptidoform keys
+  PXD018999: keys gone 1401, keys new 1400
+     new: KTPAAAAK[UNIMOD:64]MATK | decoy n= 1
+     old keys sharing an engine sequence: ['KTPAAAAK[+100.016044]MATK n=1']
+     new: TGTY[UNIMOD:354]RQLFHPE[UNIMOD:951]QLITGK | target n= 2
+     old keys sharing an engine sequence: ['TGTY[+44.985078]RQLFHPE[UNIMOD:951]QLITGK n=2']
+     gone keys with no new key on their engine sequence: 1 ; new keys with no gone one: 0
+  PXD025240: keys gone 3515, keys new 3514
+     new: ADLAEVPK[UNIMOD:64]DLRTGK | decoy n= 2
+     old keys sharing an engine sequence: ['ADLAEVPK[+100.016044]DLRTGK n=2']
+     new: ERAEK[UNIMOD:64]QVM[UNIMOD:35]ERIDESLGK | decoy n= 1
+     old keys sharing an engine sequence: ['ERAEK[+100.016044]QVM[UNIMOD:35]ERIDESLGK n=1']
+     gone keys with no new key on their engine sequence: 1 ; new keys with no gone one: 0
+  PXD057545: keys gone 1143, keys new 1142
+     new: AEPPIMWGGPK[UNIMOD:64]GQIATVN[UNIMOD:7]K | decoy n= 1
+     old keys sharing an engine sequence: ['AEPPIMWGGPK[+100.016044]GQIATVN[UNIMOD:7]K n=1']
+     new: DSRFTGISK[UNIMOD:64]GEMR | decoy n= 1
+     old keys sharing an engine sequence: ['DSRFTGISK[+100.016044]GEMR n=1']
+     gone keys with no new key on their engine sequence: 1 ; new keys with no gone one: 0
+  PXD077298: keys gone 379, keys new 378
+     new: ALQIDK[UNIMOD:1848]PMIT[UNIMOD:43]VRR | decoy n= 1
+     old keys sharing an engine sequence: ['ALQIDK[+114.031694]PMIT[UNIMOD:43]VRR n=1']
+     new: K[UNIMOD:64]TILESVPPGTAK[+68.026210] | decoy n= 1
+     old keys sharing an engine sequence: ['K[+100.016044]TILESVPPGTAK[+68.026210] n=1']
+     gone keys with no new key on their engine sequence: 1 ; new keys with no gone one: 0
+
+== 2. unresolved_modifications that go
+  PXD006463 1.1.14: 7 modification(s) could not be mapped to a UNIMOD accession or a mass, and are carried in ProForma as [Info:...] tags: UniProt:(3S)-3-hydroxyasparagine on N, UniProt:(3S)-3-hydroxyhistidine on H, UniProt:3'-nitrotyrosine on Y, UniProt:N6-crotonyllysine on K, U
+  PXD006743 1.1.14: 7 modification(s) could not be mapped to a UNIMOD accession or a mass, and are carried in ProForma as [Info:...] tags: UniProt:(3S)-3-hydroxyasparagine on N, UniProt:(3S)-3-hydroxyhistidine on H, UniProt:3'-nitrotyrosine on Y, UniProt:N6-crotonyllysine on K, U
+  PXD010383 1.1.14: 5 modification(s) could not be mapped to a UNIMOD accession or a mass, and are carried in ProForma as [Info:...] tags: UniProt:(3S)-3-hydroxyasparagine on N, UniProt:3'-nitrotyrosine on Y, UniProt:N6-crotonyllysine on K, UniProt:N6-malonyllysine on K, UniProt:
+  PXD014929 1.1.14: 5 modification(s) could not be mapped to a UNIMOD accession or a mass, and are carried in ProForma as [Info:...] tags: UniProt:(3S)-3-hydroxyasparagine on N, UniProt:(3S)-3-hydroxyhistidine on H, UniProt:3'-nitrotyrosine on Y, UniProt:N6-crotonyllysine on K, U
+  PXD021447 1.1.14: 5 modification(s) could not be mapped to a UNIMOD accession or a mass, and are carried in ProForma as [Info:...] tags: UniProt:(3S)-3-hydroxyasparagine on N, UniProt:(3S)-3-hydroxyhistidine on H, UniProt:N6-crotonyllysine on K, UniProt:N6-malonyllysine on K, U
+  PXD021757 1.1.14: 2 modification(s) could not be mapped to a UNIMOD accession or a mass, and are carried in ProForma as [Info:...] tags: UniProt:N6-crotonyllysine on K, UniProt:N6-succinyllysine on K. Their ptm_sites rows exist and carry modification_name, with modification nul
+  PXD023435 1.1.14: 5 modification(s) could not be mapped to a UNIMOD accession or a mass, and are carried in ProForma as [Info:...] tags: UniProt:(3S)-3-hydroxyhistidine on H, UniProt:3'-nitrotyrosine on Y, UniProt:N6-crotonyllysine on K, UniProt:N6-malonyllysine on K, UniProt:N
+  PXD023647 1.1.14: 3 modification(s) could not be mapped to a UNIMOD accession or a mass, and are carried in ProForma as [Info:...] tags: UniProt:N6-crotonyllysine on K, UniProt:N6-malonyllysine on K, UniProt:N6-succinyllysine on K. Their ptm_sites rows exist and carry modificat
+  PXD026773 1.1.14: 5 modification(s) could not be mapped to a UNIMOD accession or a mass, and are carried in ProForma as [Info:...] tags: UniProt:(3S)-3-hydroxyhistidine on H, UniProt:3'-nitrotyrosine on Y, UniProt:N6-crotonyllysine on K, UniProt:N6-malonyllysine on K, UniProt:N
+  PXD027232 1.1.14: 5 modification(s) could not be mapped to a UNIMOD accession or a mass, and are carried in ProForma as [Info:...] tags: UniProt:3'-nitrotyrosine on Y, UniProt:5-glutamyl serotonin on Q, UniProt:N6-crotonyllysine on K, UniProt:N6-malonyllysine on K, UniProt:N6-s
+  PXD027464 1.1.14: 8 modification(s) could not be mapped to a UNIMOD accession or a mass, and are carried in ProForma as [Info:...] tags: UniProt:(3S)-3-hydroxyasparagine on N, UniProt:(3S)-3-hydroxyhistidine on H, UniProt:3'-nitrotyrosine on Y, UniProt:5-glutamyl serotonin on Q
+  PXD028531 1.1.14: 7 modification(s) could not be mapped to a UNIMOD accession or a mass, and are carried in ProForma as [Info:...] tags: UniProt:(3S)-3-hydroxyasparagine on N, UniProt:(3S)-3-hydroxyhistidine on H, UniProt:3'-nitrotyrosine on Y, UniProt:N6-crotonyllysine on K, U
+  PXD031270 1.1.14: 5 modification(s) could not be mapped to a UNIMOD accession or a mass, and are carried in ProForma as [Info:...] tags: UniProt:(3S)-3-hydroxyhistidine on H, UniProt:3'-nitrotyrosine on Y, UniProt:N6-crotonyllysine on K, UniProt:N6-malonyllysine on K, UniProt:N
+  PXD032900-tmt 1.1.14: 2 modification(s) could not be mapped to a UNIMOD accession or a mass, and are carried in ProForma as [Info:...] tags: UniProt:N6-crotonyllysine on K, UniProt:N6-succinyllysine on K. Their ptm_sites rows exist and carry modification_name, with modification nul
+  PXD048895 1.1.14: 6 modification(s) could not be mapped to a UNIMOD accession or a mass, and are carried in ProForma as [Info:...] tags: UniProt:(3S)-3-hydroxyasparagine on N, UniProt:(3S)-3-hydroxyhistidine on H, UniProt:3'-nitrotyrosine on Y, UniProt:N6-crotonyllysine on K, U
+
+== 3. confidence_rule_fewer_peptides / fallback
+  PXD005184 1.1.14 confidence_rule_fewer_peptides: This search's confidence rule (`pep_q_value`, strictly below 0.01) passes 23488 target peptidoform(s); the q-value rule `peptidoforms_1pct` held up to datarepo 1.4.5 (`best_q_value`, and `best_q_value_notch` where there 
+  PXD007758 1.1.13 confidence_rule_fewer_peptides: This search's confidence rule (`pep_q_value`, strictly below 0.01) passes 1846 target peptidoform(s); the q-value rule `peptidoforms_1pct` held up to datarepo 1.4.5 (`best_q_value`, and `best_q_value_notch` where there i
+  PXD016199 1.1.14 confidence_rule_fewer_peptides: This search's confidence rule (`pep_q_value`, strictly below 0.01) passes 3245 target peptidoform(s); the q-value rule `peptidoforms_1pct` held up to datarepo 1.4.5 (`best_q_value`, and `best_q_value_notch` where there i
+  PXD017505 1.1.12 confidence_rule_fewer_peptides: This search's confidence rule (`pep_q_value`, strictly below 0.01) passes 2781 target peptidoform(s); the q-value rule `peptidoforms_1pct` held up to datarepo 1.4.5 (`best_q_value`, and `best_q_value_notch` where there i
+  PXD018545 1.1.12 confidence_rule_fewer_peptides: This search's confidence rule (`pep_q_value`, strictly below 0.01) passes 2773 target peptidoform(s); the q-value rule `peptidoforms_1pct` held up to datarepo 1.4.5 (`best_q_value`, and `best_q_value_notch` where there i
+  PXD021069 1.1.12 confidence_rule_fewer_peptides: This search's confidence rule (`pep_q_value`, strictly below 0.01) passes 999 target peptidoform(s); the q-value rule `peptidoforms_1pct` held up to datarepo 1.4.5 (`best_q_value`, and `best_q_value_notch` where there is
+  PXD024216 1.1.12 confidence_rule_fewer_peptides: This search's confidence rule (`pep_q_value`, strictly below 0.01) passes 2410 target peptidoform(s); the q-value rule `peptidoforms_1pct` held up to datarepo 1.4.5 (`best_q_value`, and `best_q_value_notch` where there i
+  PXD027754 1.1.12 confidence_rule_fewer_peptides: This search's confidence rule (`pep_q_value`, strictly below 0.01) passes 1994 target peptidoform(s); the q-value rule `peptidoforms_1pct` held up to datarepo 1.4.5 (`best_q_value`, and `best_q_value_notch` where there i
+  PXD027971 1.1.12 confidence_rule_fewer_peptides: This search's confidence rule (`pep_q_value`, strictly below 0.01) passes 14596 target peptidoform(s); the q-value rule `peptidoforms_1pct` held up to datarepo 1.4.5 (`best_q_value`, and `best_q_value_notch` where there 
+  PXD033430 1.1.12 confidence_rule_fewer_peptides: This search's confidence rule (`pep_q_value`, strictly below 0.01) passes 575 target peptidoform(s); the q-value rule `peptidoforms_1pct` held up to datarepo 1.4.5 (`best_q_value`, and `best_q_value_notch` where there is
+  PXD037230 1.1.12 confidence_rule_fewer_peptides: This search's confidence rule (`pep_q_value`, strictly below 0.01) passes 1222 target peptidoform(s); the q-value rule `peptidoforms_1pct` held up to datarepo 1.4.5 (`best_q_value`, and `best_q_value_notch` where there i
+  PXD038718 1.1.13 confidence_rule_fewer_peptides: This search's confidence rule (`pep_q_value`, strictly below 0.01) passes 586 target peptidoform(s); the q-value rule `peptidoforms_1pct` held up to datarepo 1.4.5 (`best_q_value`, and `best_q_value_notch` where there is
+  PXD043644 1.1.12 confidence_rule_fewer_peptides: This search's confidence rule (`pep_q_value`, strictly below 0.01) passes 849 target peptidoform(s); the q-value rule `peptidoforms_1pct` held up to datarepo 1.4.5 (`best_q_value`, and `best_q_value_notch` where there is
+  PXD045861 1.1.13 confidence_rule_fewer_peptides: This search's confidence rule (`pep_q_value`, strictly below 0.01) passes 1071 target peptidoform(s); the q-value rule `peptidoforms_1pct` held up to datarepo 1.4.5 (`best_q_value`, and `best_q_value_notch` where there i
+  PXD052189 1.1.11 confidence_rule_fewer_peptides: This search's confidence rule (`pep_q_value`, strictly below 0.01) passes 818 target peptidoform(s); the q-value rule `peptidoforms_1pct` held up to datarepo 1.4.5 (`best_q_value`, and `best_q_value_notch` where there is
+  PXD052631 1.1.12 confidence_rule_fewer_peptides: This search's confidence rule (`pep_q_value`, strictly below 0.01) passes 533 target peptidoform(s); the q-value rule `peptidoforms_1pct` held up to datarepo 1.4.5 (`best_q_value`, and `best_q_value_notch` where there is
+  PXD053611 1.1.14 confidence_rule_fewer_peptides: This search's confidence rule (`pep_q_value`, strictly below 0.01) passes 18473 target peptidoform(s); the q-value rule `peptidoforms_1pct` held up to datarepo 1.4.5 (`best_q_value`, and `best_q_value_notch` where there 
+  PXD057502 1.1.12 confidence_rule_fewer_peptides: This search's confidence rule (`pep_q_value`, strictly below 0.01) passes 0 target peptidoform(s); the q-value rule `peptidoforms_1pct` held up to datarepo 1.4.5 (`best_q_value`, and `best_q_value_notch` where there is o
+  PXD057544 1.1.12 confidence_rule_fewer_peptides: This search's confidence rule (`pep_q_value`, strictly below 0.01) passes 667 target peptidoform(s); the q-value rule `peptidoforms_1pct` held up to datarepo 1.4.5 (`best_q_value`, and `best_q_value_notch` where there is
+  PXD057554 1.1.12 confidence_rule_fewer_peptides: This search's confidence rule (`pep_q_value`, strictly below 0.01) passes 977 target peptidoform(s); the q-value rule `peptidoforms_1pct` held up to datarepo 1.4.5 (`best_q_value`, and `best_q_value_notch` where there is
+  PXD058775 1.1.11 confidence_rule_fallback: PEP was not trained for this search: all 10479 target PSMs carry one PEP value (0.0), as MetaMorpheus leaves them when PEP training fails, so they cannot show that it trained (mzLib's `QuantifiedPsmRule.ChooseTier`, over
+  PXD059520 1.1.12 confidence_rule_fewer_peptides: This search's confidence rule (`pep_q_value`, strictly below 0.01) passes 1512 target peptidoform(s); the q-value rule `peptidoforms_1pct` held up to datarepo 1.4.5 (`best_q_value`, and `best_q_value_notch` where there i
+  PXD060832 1.1.12 confidence_rule_fewer_peptides: This search's confidence rule (`pep_q_value`, strictly below 0.01) passes 1971 target peptidoform(s); the q-value rule `peptidoforms_1pct` held up to datarepo 1.4.5 (`best_q_value`, and `best_q_value_notch` where there i
+
+== 4. qc_payload metric names, isobaric vs label-free
+  PXD002528 TMT: {'peptides_1pct_whole_search': 20, 'psms_1pct_whole_search': 20}
+  PXD003111 TMT: {'peptides_1pct_whole_search': 15, 'psms_1pct_whole_search': 15}
+  PXD005035 label-free: {'peptides_1pct_whole_search': 141, 'protein_groups_1pct_whole_search': 141, 'psms_1pct_whole_search': 141}
+  PXD005123 label-free: {'peptides_1pct_whole_search': 20, 'protein_groups_1pct_whole_search': 20, 'psms_1pct_whole_search': 20}
+  PXD005184 iTRAQ: {'peptides_1pct_whole_search': 48, 'psms_1pct_whole_search': 48}
+  PXD005953 TMT: {'peptides_1pct_whole_search': 27, 'psms_1pct_whole_search': 27}
+  PXD006463 TMT: {'peptides_1pct_whole_search': 20, 'psms_1pct_whole_search': 20}
+  PXD006570 label-free: {'peptides_1pct_whole_search': 6, 'protein_groups_1pct_whole_search': 6, 'psms_1pct_whole_search': 6}
+  PXD006571 label-free: {'peptides_1pct_whole_search': 6, 'protein_groups_1pct_whole_search': 6, 'psms_1pct_whole_search': 6}
+  PXD006572 label-free: {'peptides_1pct_whole_search': 6, 'protein_groups_1pct_whole_search': 6, 'psms_1pct_whole_search': 6}
+  PXD006576 label-free: {'peptides_1pct_whole_search': 6, 'protein_groups_1pct_whole_search': 6, 'psms_1pct_whole_search': 6}
+  PXD006578 label-free: {'peptides_1pct_whole_search': 18, 'protein_groups_1pct_whole_search': 18, 'psms_1pct_whole_search': 18}
+  PXD006589 label-free: {'peptides_1pct_whole_search': 18, 'protein_groups_1pct_whole_search': 18, 'psms_1pct_whole_search': 18}
+  PXD006743 TMT: {'peptides_1pct_whole_search': 37, 'psms_1pct_whole_search': 37}
+  PXD007229 TMT: {'peptides_1pct_whole_search': 60, 'psms_1pct_whole_search': 60}
+  PXD007758 label-free: {'peptides_1pct_whole_search': 9, 'protein_groups_1pct_whole_search': 9, 'psms_1pct_whole_search': 9}
+  PXD010383 TMT: {'peptides_1pct_whole_search': 72, 'psms_1pct_whole_search': 72}
+  PXD013172 TMT: {'peptides_1pct_whole_search': 48, 'psms_1pct_whole_search': 48}
+  PXD014929 TMT: {'peptides_1pct_whole_search': 13, 'psms_1pct_whole_search': 13}
+  PXD016199 TMT: {'peptides_1pct_whole_search': 90, 'psms_1pct_whole_search': 90}
+  PXD017385 TMT: {'peptides_1pct_whole_search': 108, 'psms_1pct_whole_search': 108}
+  PXD017786 TMT: {'peptides_1pct_whole_search': 24, 'psms_1pct_whole_search': 24}
+  PXD018352 TMT: {'peptides_1pct_whole_search': 9, 'psms_1pct_whole_search': 9}
+  PXD019533 iTRAQ: {'peptides_1pct_whole_search': 9, 'psms_1pct_whole_search': 9}
+  PXD020051 TMT: {'peptides_1pct_whole_search': 24, 'psms_1pct_whole_search': 24}
+  PXD020871 TMT: {'peptides_1pct_whole_search': 16, 'psms_1pct_whole_search': 16}
+  PXD021194 label-free: {'peptides_1pct_whole_search': 28, 'protein_groups_1pct_whole_search': 28, 'psms_1pct_whole_search': 28}
+  PXD021447 TMT: {'peptides_1pct_whole_search': 30, 'psms_1pct_whole_search': 30}
+  PXD021757 TMT: {'peptides_1pct_whole_search': 8, 'psms_1pct_whole_search': 8}
+  PXD023435 TMT: {'peptides_1pct_whole_search': 16, 'psms_1pct_whole_search': 16}
+  PXD023647 TMT: {'peptides_1pct_whole_search': 11, 'psms_1pct_whole_search': 11}
+  PXD024633 label-free: {'peptides_1pct_whole_search': 10, 'protein_groups_1pct_whole_search': 10, 'psms_1pct_whole_search': 10}
+  PXD025240 label-free: {'peptides_1pct_whole_search': 32, 'protein_groups_1pct_whole_search': 32, 'psms_1pct_whole_search': 32}
+  PXD025315 label-free: {'peptides_1pct_whole_search': 126, 'protein_groups_1pct_whole_search': 126, 'psms_1pct_whole_search': 126}
+  PXD025618 TMT: {'peptides_1pct_whole_search': 48, 'psms_1pct_whole_search': 48}
+  PXD026222 TMT: {'peptides_1pct_whole_search': 24, 'psms_1pct_whole_search': 24}
+  PXD026773 TMT: {'peptides_1pct_whole_search': 20, 'psms_1pct_whole_search': 20}
+  PXD027232 TMT: {'peptides_1pct_whole_search': 1, 'psms_1pct_whole_search': 1}
+  PXD027464 TMT: {'peptides_1pct_whole_search': 40, 'psms_1pct_whole_search': 40}
+  PXD027490 TMT: {'peptides_1pct_whole_search': 49, 'psms_1pct_whole_search': 49}
+  PXD027526-human label-free: {'peptides_1pct_whole_search': 18, 'protein_groups_1pct_whole_search': 18, 'psms_1pct_whole_search': 18}
+  PXD027526-mouse label-free: {'peptides_1pct_whole_search': 135, 'protein_groups_1pct_whole_search': 135, 'psms_1pct_whole_search': 135}
+  PXD027895 label-free: {'peptides_1pct_whole_search': 64, 'protein_groups_1pct_whole_search': 64, 'psms_1pct_whole_search': 64}
+  PXD028531 TMT: {'peptides_1pct_whole_search': 36, 'psms_1pct_whole_search': 36}
+  PXD028799 TMT: {'peptides_1pct_whole_search': 48, 'psms_1pct_whole_search': 48}
+  PXD029587 TMT: {'peptides_1pct_whole_search': 69, 'psms_1pct_whole_search': 69}
+  PXD030499 TMT: {'peptides_1pct_whole_search': 12, 'psms_1pct_whole_search': 12}
+  PXD031223 label-free: {'peptides_1pct_whole_search': 8, 'protein_groups_1pct_whole_search': 8, 'psms_1pct_whole_search': 8}
+  PXD031270 iTRAQ: {'peptides_1pct_whole_search': 10, 'psms_1pct_whole_search': 10}
+  PXD031604 label-free: {'peptides_1pct_whole_search': 15, 'protein_groups_1pct_whole_search': 15, 'psms_1pct_whole_search': 15}
+  PXD031710 label-free: {'peptides_1pct_whole_search': 18, 'protein_groups_1pct_whole_search': 18, 'psms_1pct_whole_search': 18}
+  PXD032900-tmt TMT: {'peptides_1pct_whole_search': 3, 'psms_1pct_whole_search': 3}
+  PXD033518 TMT: {'peptides_1pct_whole_search': 15, 'psms_1pct_whole_search': 15}
+  PXD034029 TMT: {'peptides_1pct_whole_search': 240, 'psms_1pct_whole_search': 240}
+  PXD034590 label-free: {'peptides_1pct_whole_search': 81, 'protein_groups_1pct_whole_search': 81, 'psms_1pct_whole_search': 81}
+  PXD035577 TMT: {'peptides_1pct_whole_search': 103, 'psms_1pct_whole_search': 103}
+  PXD038718 label-free: {'peptides_1pct_whole_search': 14, 'protein_groups_1pct_whole_search': 14, 'psms_1pct_whole_search': 14}
+  PXD041766 label-free: {'peptides_1pct_whole_search': 8, 'protein_groups_1pct_whole_search': 8, 'psms_1pct_whole_search': 8}
+  PXD045806 label-free: {'peptides_1pct_whole_search': 24, 'protein_groups_1pct_whole_search': 24, 'psms_1pct_whole_search': 24}
+  PXD045861 label-free: {'peptides_1pct_whole_search': 20, 'protein_groups_1pct_whole_search': 20, 'psms_1pct_whole_search': 20}
+  PXD048079 label-free: {'peptides_1pct_whole_search': 26, 'protein_groups_1pct_whole_search': 26, 'psms_1pct_whole_search': 26}
+  PXD048877 label-free: {'peptides_1pct_whole_search': 30, 'protein_groups_1pct_whole_search': 30, 'psms_1pct_whole_search': 30}
+  PXD048895 TMT: {'peptides_1pct_whole_search': 25, 'psms_1pct_whole_search': 25}
+  PXD053611 TMT: {'peptides_1pct_whole_search': 26, 'psms_1pct_whole_search': 26}
+  PXD057677 label-free: {'peptides_1pct_whole_search': 32, 'protein_groups_1pct_whole_search': 32, 'psms_1pct_whole_search': 32}
+  PXD059562 TMT: {'peptides_1pct_whole_search': 74, 'psms_1pct_whole_search': 74}
+  PXD059591 label-free: {'peptides_1pct_whole_search': 72, 'protein_groups_1pct_whole_search': 72, 'psms_1pct_whole_search': 72}
+  PXD061069 label-free: {'peptides_1pct_whole_search': 120, 'protein_groups_1pct_whole_search': 120, 'psms_1pct_whole_search': 120}
+  PXD061654 label-free: {'peptides_1pct_whole_search': 30, 'protein_groups_1pct_whole_search': 30, 'psms_1pct_whole_search': 30}
+
+== 5. PXD057502 findings (new)
+   ('confidence_rule_fewer_peptides', 'warning', "This search's confidence rule (`pep_q_value`, strictly below 0.01) passes 0 target peptidoform(s); the q-value rule `peptidoforms_1pct` held up to datarepo 1.4.5 (`best_q_value`, and `best_q_value_not")
+   ('count_mismatch', 'warning', "The bundle holds 82421 where the producer reported 82424 (results.txt: All target PSMs with q-value <= 0.01 (pxreprise:DEF-PSM-1PCT v1)). Both numbers are kept; treat the producer's as canonical until")
+   ('low_core_use', 'warning', '7.23 avg cores of 32 allowed (S5)')
+   ('low_id_rate', 'warning', "The search identified an unusually small fraction of the MS2 spectra. Treat absence of a protein in this dataset as weak evidence. Producer's note: 82424/583268 = 14.13% of MS2 identified (S3)")
+   ('no_sdrf', 'warning', 'No SDRF was found for this dataset, so each run was given a synthetic sample of its own. There is no sample metadata: treat every sample as unannotated.')
+   ('occupancy_decoy_groups', 'info', '66 occupancy entries on decoy protein groups were not stored: MetaMorpheus computes them, and they are FDR machinery, not biology.')
+   ('occupancy_not_stored', 'warning', "Of 51246 occupancy entries MetaMorpheus wrote, some are not in ptm_stoichiometry: 1643 site not in ptm_sites. 'site not in ptm_sites' means the entry's site has no ptm_sites row to key on; 'not determ")
+   ('unplaced_ptm_sites', 'warning', "Some modifications on peptides shared between proteins were not written to ptm_sites for one or more of those proteins, because the peptide could not be located in that protein's sequence and the prod")

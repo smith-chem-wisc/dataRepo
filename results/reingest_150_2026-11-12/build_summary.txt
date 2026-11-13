@@ -1,0 +1,28 @@
+== pass 1 06:22:05
+catalog  F:\datarepo_scratch_150\reingest150\catalogs\catalog-628f875ae887a130.duckdb
+  id       628f875ae887a130
+  release  228f67b33c236874
+  latest   F:\datarepo_scratch_150\reingest150\catalogs\latest.json names it
+  note     logs.resolve_genes coverage (databases with an artefact): 39 of 41; no artefact for 23470872c8b2 (PXD005035, PXD025315, PXD027895); b87d37b574ff (PXD005123, PXD006578, PXD006589)
+  note     go.annotate_groups coverage (bundles with an artefact): 153 of 192; no artefact for PXD002528 (48d62c47bcc4ea9e); PXD003111 (e5681af2c9bd94d3); PXD005184 (9177a65b9280dc02); PXD005953 (d6fe48b801c29513); PXD006463 (08d04de6dc48495d); PXD006743 (26ecae346b726387); PXD007229 (d00bd14aeac4c277); PXD010383 (725efbbf832669ca); PXD013172 (8f5d51a7e1611081); PXD014929 (cb7006b449da179b); PXD016199 (6f80b4128b3c4790); PXD017385 (5c9974798f156061); PXD017786 (1f9078a6e91074b3); PXD018352 (54bf1ead13fc07d4); PXD019533 (4db5832852cd4a29); PXD020051 (2935a673fd176e74); PXD020871 (56e5628f1c0a55
+  note     ptmqtl.site_pairs coverage (bundles with an artefact): 0 of 192; no artefact for PXD001054, PXD002467, PXD002528, PXD003111, PXD004916, PXD005014, PXD005035, PXD005123, PXD005184, PXD005953, PXD006463, PXD006570, PXD006571, PXD006572, PXD006576, PXD006578, PXD006589, PXD006743, PXD006815, PXD007035, PXD007049, PXD007229, PXD007758, PXD007999, PXD008050, PXD008344, PXD008934, PXD008990, PXD009212, PXD010091, PXD010383, PXD011314, PXD011740, PXD012213, PXD012307, PXD012753, PXD012754, PXD013172, PXD013240, PXD013640, PXD014274, PXD014416, PXD014929, PXD015079, PXD015170, PXD015239, PX
+  checks   3979 run, all passed
+  timing   tables 6.2 s, derived: sample names 0.9 s, derived: deposits (192 computed, 0 reused) 260.1 s, derived: per-deposit tables 0.4 s, derived: protein_index 10.2 s, derived: peptide_index 13.6 s, study and engines 23.9 s, manifest 8.4 s, checks: bundles 0.7 s, checks: study 0.0 s, checks: engines 2.5 s, checks: manifest 0.2 s, indexes 2.6 s, catalog tables 45.8 s, move 0.1 s
+== pass 1 rc=0 secs=377
+== pass 2 06:28:22
+catalog  F:\datarepo_scratch_150\reingest150\catalogs\catalog-628f875ae887a130.duckdb
+  id       628f875ae887a130
+  release  228f67b33c236874
+  latest   F:\datarepo_scratch_150\reingest150\catalogs\latest.json names it
+  unchanged: these bundles are already the catalog's contents; --overwrite to rebuild
+== pass 2 rc=0 secs=1
+== pass 3 (after the gene fix) 06:32:18
+catalog  F:\datarepo_scratch_150\reingest150\catalogs\catalog-9e936aa4e7e255d0.duckdb
+  id       9e936aa4e7e255d0
+  release  fe86c87399cfe502
+  latest   F:\datarepo_scratch_150\reingest150\catalogs\latest.json names it
+  note     go.annotate_groups coverage (bundles with an artefact): 153 of 192; no artefact for PXD002528 (48d62c47bcc4ea9e); PXD003111 (e5681af2c9bd94d3); PXD005184 (9177a65b9280dc02); PXD005953 (d6fe48b801c29513); PXD006463 (08d04de6dc48495d); PXD006743 (26ecae346b726387); PXD007229 (d00bd14aeac4c277); PXD010383 (725efbbf832669ca); PXD013172 (8f5d51a7e1611081); PXD014929 (cb7006b449da179b); PXD016199 (6f80b4128b3c4790); PXD017385 (5c9974798f156061); PXD017786 (1f9078a6e91074b3); PXD018352 (54bf1ead13fc07d4); PXD019533 (4db5832852cd4a29); PXD020051 (2935a673fd176e74); PXD020871 (56e5628f1c0a55
+  note     ptmqtl.site_pairs coverage (bundles with an artefact): 0 of 192; no artefact for PXD001054, PXD002467, PXD002528, PXD003111, PXD004916, PXD005014, PXD005035, PXD005123, PXD005184, PXD005953, PXD006463, PXD006570, PXD006571, PXD006572, PXD006576, PXD006578, PXD006589, PXD006743, PXD006815, PXD007035, PXD007049, PXD007229, PXD007758, PXD007999, PXD008050, PXD008344, PXD008934, PXD008990, PXD009212, PXD010091, PXD010383, PXD011314, PXD011740, PXD012213, PXD012307, PXD012753, PXD012754, PXD013172, PXD013240, PXD013640, PXD014274, PXD014416, PXD014929, PXD015079, PXD015170, PXD015239, PX
+  checks   3981 run, all passed
+  timing   tables 4.1 s, derived: sample names 0.7 s, derived: deposits (0 computed, 192 reused) 1.7 s, derived: per-deposit tables 0.4 s, derived: protein_index 8.9 s, derived: peptide_index 13.7 s, study and engines 24.8 s, manifest 8.5 s, checks: bundles 0.6 s, checks: study 0.0 s, checks: engines 2.3 s, checks: manifest 0.2 s, indexes 2.6 s, catalog tables 48.7 s, move 0.1 s
+== pass 3 rc=0 secs=118

@@ -1,0 +1,42 @@
+== a. merges
+  PXD018999: new GGIMLPEKSQGK[UNIMOD:747]VLQ[UNIMOD:7]ATVVAVGSGGK n=2 target <- ['GGIMLPEKSQGK[+86.000394]VLQ[UNIMOD:7]ATVVAVGSGGK n=1', 'GGIMLPEKSQGK[UNIMOD:747]VLQ[UNIMOD:7]ATVVAVGSGGK n=1']
+  PXD025240: new SQGK[UNIMOD:747]VLQATVVAVGSGGK n=2 target <- ['SQGK[UNIMOD:747]VLQATVVAVGSGGK n=1', 'SQGK[+86.000394]VLQATVVAVGSGGK n=1']
+  PXD057545: new GGIMLPEKSQGK[UNIMOD:747]VLQATVVAVGSGGK n=6 target <- ['GGIMLPEKSQGK[+86.000394]VLQATVVAVGSGGK n=3', 'GGIMLPEKSQGK[UNIMOD:747]VLQATVVAVGSGGK n=3']
+  PXD077298: new GGIMLPEKSQ[UNIMOD:7]GK[UNIMOD:747]VLQATVVAVGSGGK n=4 target <- ['GGIMLPEKSQ[UNIMOD:7]GK[+86.000394]VLQATVVAVGSGGK n=2', 'GGIMLPEKSQ[UNIMOD:7]GK[UNIMOD:747]VLQATVVAVGSGGK n=2']
+
+== b. finding codes whose count moves (code: deposits, total change)
+  confidence_rule_fallback: 1 deposits, +1 rows
+  confidence_rule_fewer_peptides: 22 deposits, +22 rows
+  run_counts_missing: 53 deposits, +53 rows
+  unresolved_modifications: 15 deposits, -15 rows
+
+== c. metrics
+  deposits whose metrics move outside qc_payload.json rows: 0
+  deposits whose non-payload metrics cite new definition ids: {('aging:DEF-PEPTIDE-1PCT-RUN', 'aging:DEF-PROTEINGROUP-1PCT-RUN', 'aging:DEF-PSM-1PCT-RUN'): 139}
+
+== d. samples
+  PXD002528: 200->84, 116 gone, their assays now typed {'empty': 116}; empty assays still with a sample: 0
+  PXD003111: 150->89, 61 gone, their assays now typed {'empty': 61}; empty assays still with a sample: 0
+  PXD006463: 200->138, 62 gone, their assays now typed {'empty': 62}; empty assays still with a sample: 0
+  PXD006743: 370->222, 148 gone, their assays now typed {'empty': 148}; empty assays still with a sample: 0
+  PXD014929: 130->104, 26 gone, their assays now typed {'empty': 26}; empty assays still with a sample: 0
+  PXD017786: 144->111, 33 gone, their assays now typed {'empty': 33}; empty assays still with a sample: 0
+  PXD018352: 90->72, 18 gone, their assays now typed {'empty': 18}; empty assays still with a sample: 0
+  PXD023435: 96->80, 16 gone, their assays now typed {'empty': 16}; empty assays still with a sample: 0
+  PXD023647: 198->176, 22 gone, their assays now typed {'empty': 22}; empty assays still with a sample: 0
+  PXD025618: 528->475, 53 gone, their assays now typed {'empty': 53}; empty assays still with a sample: 0
+  PXD026222: 264->256, 8 gone, their assays now typed {'empty': 8}; empty assays still with a sample: 0
+  PXD027490: 882->784, 98 gone, their assays now typed {'empty': 98}; empty assays still with a sample: 0
+  PXD028531: 63->27, 36 gone, their assays now typed {'empty': 36}; empty assays still with a sample: 0
+  PXD028799: 528->516, 12 gone, their assays now typed {'empty': 12}; empty assays still with a sample: 0
+  PXD029587: 690->552, 138 gone, their assays now typed {'empty': 138}; empty assays still with a sample: 0
+  PXD030499: 120->96, 24 gone, their assays now typed {'empty': 24}; empty assays still with a sample: 0
+  PXD032900-tmt: 54->27, 27 gone, their assays now typed {'empty': 27}; empty assays still with a sample: 0
+  PXD033518: 150->135, 15 gone, their assays now typed {'empty': 15}; empty assays still with a sample: 0
+  PXD035577: 1030->824, 206 gone, their assays now typed {'empty': 206}; empty assays still with a sample: 0
+  PXD048895: 450->400, 50 gone, their assays now typed {'empty': 50}; empty assays still with a sample: 0
+  PXD053611: 468->416, 52 gone, their assays now typed {'empty': 52}; empty assays still with a sample: 0
+
+== e. bytes and seconds
+  old bundles 33.2 GB, new 36.3 GB (+3.1); peptidoform_ions files 2.7 GB
+  serial seconds 67318 = 18.7 h; per GB of source 0 s (743228315366 GB)

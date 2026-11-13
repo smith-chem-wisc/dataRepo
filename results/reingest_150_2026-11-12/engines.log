@@ -1,0 +1,276 @@
+== 05:54:13 logs.register_orthology 0 deposits; not re-ingested: []
+written  logs.register_orthology artefact 53618fead1317848  F:\datarepo_scratch_150\reingest150\store\_engine\logs.register_orthology\53618fead1317848
+  snapshot orthology-compara-116-b63a3331  id b63a3331eb87c93eee02d7ec26c9bdcc7a1479e0003b041bb33382d6810bc3c7
+  read it  F:\datarepo_scratch_150\reingest150\store\_engine\logs.register_orthology\53618fead1317848\snapshot through its views.sql
+
+== done logs.register_orthology rc=0 secs=3
+
+== 05:54:16 logs.resolve_genes 74 deposits; not re-ingested: ['PXD006216', 'PXD014097', 'PXD014098', 'PXD017944', 'PXD018097', 'PXD018315', 'PXD019849', 'PXD021762', 'PXD022227', 'PXD022363', 'PXD022393', 'PXD022678', 'PXD025503', 'PXD026934', 'PXD032240', 'PXD042428', 'PXD043779', 'PXD044227', 'PXD049957', 'PXD055228', 'PXD058082', 'PXD059818', 'PXD060982', 'PXD064236', 'PXD082596']
+written  logs.resolve_genes artefact c1a1a3cbb277339b  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\c1a1a3cbb277339b
+  rows     {'gene_resolutions': 17}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 0, 'not_in_source': 6, 'off_primary_only': 0, 'resolved': 5, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact 911838b0acf587e5  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\911838b0acf587e5
+  rows     {'gene_resolutions': 72}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 0, 'not_in_source': 17, 'off_primary_only': 0, 'resolved': 39, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact dd663145147cc5f4  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\dd663145147cc5f4
+  rows     {'gene_resolutions': 22}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 0, 'not_in_source': 5, 'off_primary_only': 0, 'resolved': 13, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact 77b8ed07a1336c35  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\77b8ed07a1336c35
+  rows     {'gene_resolutions': 17556}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 124, 'not_in_source': 1679, 'off_primary_only': 0, 'resolved': 15474, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact 8a080b380401f5cc  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\8a080b380401f5cc
+  rows     {'gene_resolutions': 22383}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 273, 'not_in_source': 1645, 'off_primary_only': 0, 'resolved': 19942, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact 24d2e5d5088b4958  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\24d2e5d5088b4958
+  rows     {'gene_resolutions': 72}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 0, 'not_in_source': 17, 'off_primary_only': 0, 'resolved': 39, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact 7017678f987260c5  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\7017678f987260c5
+  rows     {'gene_resolutions': 1}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 0, 'not_in_source': 0, 'off_primary_only': 0, 'resolved': 1, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact 7471a3ceee8aa722  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\7471a3ceee8aa722
+  rows     {'gene_resolutions': 72}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 0, 'not_in_source': 17, 'off_primary_only': 0, 'resolved': 39, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact 019f43a553cd1843  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\019f43a553cd1843
+  rows     {'gene_resolutions': 22383}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 273, 'not_in_source': 1645, 'off_primary_only': 0, 'resolved': 19942, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact 421d05d396b4c972  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\421d05d396b4c972
+  rows     {'gene_resolutions': 17}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 0, 'not_in_source': 6, 'off_primary_only': 0, 'resolved': 5, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact 6dfc7dea2c4e4ff7  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\6dfc7dea2c4e4ff7
+  rows     {'gene_resolutions': 22}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 0, 'not_in_source': 5, 'off_primary_only': 0, 'resolved': 13, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact a2f92189a6122b88  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\a2f92189a6122b88
+  rows     {'gene_resolutions': 22383}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 273, 'not_in_source': 1645, 'off_primary_only': 0, 'resolved': 19942, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact 7d0c3a9acf0c857e  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\7d0c3a9acf0c857e
+  rows     {'gene_resolutions': 22383}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 273, 'not_in_source': 1645, 'off_primary_only': 0, 'resolved': 19942, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact e82b35a62c763309  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\e82b35a62c763309
+  rows     {'gene_resolutions': 22}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 0, 'not_in_source': 5, 'off_primary_only': 0, 'resolved': 13, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact 393df3091d621178  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\393df3091d621178
+  rows     {'gene_resolutions': 72}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 0, 'not_in_source': 17, 'off_primary_only': 0, 'resolved': 39, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact 6f0de085cef695ea  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\6f0de085cef695ea
+  rows     {'gene_resolutions': 22383}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 273, 'not_in_source': 1645, 'off_primary_only': 0, 'resolved': 19942, 'unrecognized_accession': 0}
+skipped  MetaMorpheusContaminants.minus-contaminant_panel_exclude_v1.130830b4a0d0.xml: a contaminant database is never resolved
+skipped  MetaMorpheusContaminants_NoUPS.xml: a contaminant database is never resolved
+
+== done logs.resolve_genes rc=0 secs=41
+
+== 05:54:58 logs.resolve_genes 26 deposits; not re-ingested: ['PXD016793', 'PXD027548']
+written  logs.resolve_genes artefact 0af7d9ff9cf9cbef  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\0af7d9ff9cf9cbef
+  rows     {'gene_resolutions': 22464}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 153, 'not_in_source': 3042, 'off_primary_only': 955, 'resolved': 17321, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact f70a1ced5dabb901  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\f70a1ced5dabb901
+  rows     {'gene_resolutions': 17}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 0, 'not_in_source': 12, 'off_primary_only': 0, 'resolved': 3, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact f0dafaa7b77172c8  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\f0dafaa7b77172c8
+  rows     {'gene_resolutions': 17}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 0, 'not_in_source': 12, 'off_primary_only': 0, 'resolved': 3, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact d0dbb1a8f7d7d42f  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\d0dbb1a8f7d7d42f
+  rows     {'gene_resolutions': 22464}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 153, 'not_in_source': 3042, 'off_primary_only': 955, 'resolved': 17321, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact 0243c0db137890d0  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\0243c0db137890d0
+  rows     {'gene_resolutions': 1}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 0, 'not_in_source': 0, 'off_primary_only': 0, 'resolved': 1, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact 20c3aebf3812befd  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\20c3aebf3812befd
+  rows     {'gene_resolutions': 22464}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 153, 'not_in_source': 3042, 'off_primary_only': 955, 'resolved': 17321, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact 52f03bb38dd213be  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\52f03bb38dd213be
+  rows     {'gene_resolutions': 12}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 0, 'not_in_source': 6, 'off_primary_only': 0, 'resolved': 2, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact 23e1bf9c09befc9e  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\23e1bf9c09befc9e
+  rows     {'gene_resolutions': 43}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 0, 'not_in_source': 22, 'off_primary_only': 0, 'resolved': 12, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact f54e13e66ecb9e06  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\f54e13e66ecb9e06
+  rows     {'gene_resolutions': 43}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 0, 'not_in_source': 22, 'off_primary_only': 0, 'resolved': 12, 'unrecognized_accession': 0}
+skipped  MetaMorpheusContaminants_NoUPS.xml: a contaminant database is never resolved
+
+== done logs.resolve_genes rc=0 secs=16
+
+== 05:55:14 logs.resolve_genes 34 deposits; not re-ingested: ['PXD006898', 'PXD007188', 'PXD007906', 'PXD009430', 'PXD010115', 'PXD010820', 'PXD018655', 'PXD022128', 'PXD022180', 'PXD027734', 'PXD028852', 'PXD028975', 'PXD030773', 'PXD030776', 'PXD030939', 'PXD032040', 'PXD032046', 'PXD035412', 'PXD044773', 'PXD049018', 'PXD050351', 'PXD058156', 'PXD069093', 'PXD073999']
+written  logs.resolve_genes artefact 13048465ff835ae8  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\13048465ff835ae8
+  rows     {'gene_resolutions': 53}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 0, 'not_in_source': 4, 'off_primary_only': 0, 'resolved': 45, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact 1e472a92ecba503a  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\1e472a92ecba503a
+  rows     {'gene_resolutions': 35}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 0, 'not_in_source': 7, 'off_primary_only': 0, 'resolved': 21, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact fabfc60811774908  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\fabfc60811774908
+  rows     {'gene_resolutions': 1}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 0, 'not_in_source': 0, 'off_primary_only': 0, 'resolved': 1, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact eb3208d8c2c35269  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\eb3208d8c2c35269
+  rows     {'gene_resolutions': 35}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 0, 'not_in_source': 7, 'off_primary_only': 0, 'resolved': 21, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact 72edc8cbdfad3be0  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\72edc8cbdfad3be0
+  rows     {'gene_resolutions': 116}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 0, 'not_in_source': 12, 'off_primary_only': 0, 'resolved': 92, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact b310d4b6da85561c  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\b310d4b6da85561c
+  rows     {'gene_resolutions': 20899}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 350, 'not_in_source': 1016, 'off_primary_only': 62, 'resolved': 18988, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact 921cea527c7512b9  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\921cea527c7512b9
+  rows     {'gene_resolutions': 116}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 0, 'not_in_source': 12, 'off_primary_only': 0, 'resolved': 92, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact 593e5851cf081b19  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\593e5851cf081b19
+  rows     {'gene_resolutions': 53}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 0, 'not_in_source': 4, 'off_primary_only': 0, 'resolved': 45, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact 91758cc68ef966ea  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\91758cc68ef966ea
+  rows     {'gene_resolutions': 21139}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 352, 'not_in_source': 964, 'off_primary_only': 162, 'resolved': 19174, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact 1b2ee314f677fe99  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\1b2ee314f677fe99
+  rows     {'gene_resolutions': 21139}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 352, 'not_in_source': 964, 'off_primary_only': 162, 'resolved': 19174, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact 519416a532202b3f  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\519416a532202b3f
+  rows     {'gene_resolutions': 116}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 0, 'not_in_source': 12, 'off_primary_only': 0, 'resolved': 92, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact dfb8069801112a5c  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\dfb8069801112a5c
+  rows     {'gene_resolutions': 53}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 0, 'not_in_source': 4, 'off_primary_only': 0, 'resolved': 45, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact 5fc9bdba38f07094  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\5fc9bdba38f07094
+  rows     {'gene_resolutions': 20899}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 350, 'not_in_source': 1016, 'off_primary_only': 62, 'resolved': 18988, 'unrecognized_accession': 0}
+written  logs.resolve_genes artefact 368bb52ad817eee8  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\368bb52ad817eee8
+  rows     {'gene_resolutions': 21139}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 352, 'not_in_source': 964, 'off_primary_only': 162, 'resolved': 19174, 'unrecognized_accession': 0}
+skipped  MetaMorpheusContaminants.minus-contaminant_panel_exclude_v1.130830b4a0d0.xml: a contaminant database is never resolved
+skipped  MetaMorpheusContaminants.xml: a contaminant database is never resolved
+skipped  MetaMorpheusContaminants_NoUPS.xml: a contaminant database is never resolved
+
+== done logs.resolve_genes rc=0 secs=56
+
+== 05:56:10 go.annotate_groups 153 deposits; not re-ingested: []
+calizations': 75023}
+  groups   {'annotated': 3036, 'contaminant': 23, 'no_entry': 0, 'no_go_terms': 73}
+  unresolved GO ids (skipped, go D35) 0
+written  go.annotate_groups artefact d2776bd8f24ca46a  F:\datarepo_scratch_150\reingest150\store\_engine\go.annotate_groups\d2776bd8f24ca46a
+  rows     {'annotation_sources': 1, 'organelle_term_categories': 260, 'protein_localizations': 7400}
+  groups   {'annotated': 187, 'contaminant': 18, 'no_entry': 0, 'no_go_terms': 1}
+  unresolved GO ids (skipped, go D35) 0
+written  go.annotate_groups artefact 6a3867d5e51694b4  F:\datarepo_scratch_150\reingest150\store\_engine\go.annotate_groups\6a3867d5e51694b4
+  rows     {'annotation_sources': 1, 'organelle_term_categories': 622, 'protein_localizations': 48660}
+  groups   {'annotated': 1646, 'contaminant': 37, 'no_entry': 0, 'no_go_terms': 17}
+  unresolved GO ids (skipped, go D35) 0
+written  go.annotate_groups artefact fce164447ac25bc0  F:\datarepo_scratch_150\reingest150\store\_engine\go.annotate_groups\fce164447ac25bc0
+  rows     {'annotation_sources': 1, 'organelle_term_categories': 1060, 'protein_localizations': 253881}
+  groups   {'annotated': 11557, 'contaminant': 69, 'no_entry': 0, 'no_go_terms': 457}
+  unresolved GO ids (skipped, go D35) 0
+written  go.annotate_groups artefact 43ad64d31cf360af  F:\datarepo_scratch_150\reingest150\store\_engine\go.annotate_groups\43ad64d31cf360af
+  rows     {'annotation_sources': 1, 'organelle_term_categories': 676, 'protein_localizations': 61447}
+  groups   {'annotated': 2522, 'contaminant': 25, 'no_entry': 0, 'no_go_terms': 96}
+  unresolved GO ids (skipped, go D35) 0
+written  go.annotate_groups artefact 6b2547d181d23b43  F:\datarepo_scratch_150\reingest150\store\_engine\go.annotate_groups\6b2547d181d23b43
+  rows     {'annotation_sources': 1, 'organelle_term_categories': 966, 'protein_localizations': 149214}
+  groups   {'annotated': 6465, 'contaminant': 119, 'no_entry': 1, 'no_go_terms': 278}
+  unresolved GO ids (skipped, go D35) 0
+written  go.annotate_groups artefact 3d4a2b6f83750703  F:\datarepo_scratch_150\reingest150\store\_engine\go.annotate_groups\3d4a2b6f83750703
+  rows     {'annotation_sources': 1, 'organelle_term_categories': 745, 'protein_localizations': 68173}
+  groups   {'annotated': 2645, 'contaminant': 26, 'no_entry': 0, 'no_go_terms': 68}
+  unresolved GO ids (skipped, go D35) 0
+written  go.annotate_groups artefact 36dea1cd1f99362d  F:\datarepo_scratch_150\reingest150\store\_engine\go.annotate_groups\36dea1cd1f99362d
+  rows     {'annotation_sources': 1, 'organelle_term_categories': 915, 'protein_localizations': 128739}
+  groups   {'annotated': 5148, 'contaminant': 79, 'no_entry': 0, 'no_go_terms': 167}
+  unresolved GO ids (skipped, go D35) 0
+written  go.annotate_groups artefact d936982d3c8aeb1c  F:\datarepo_scratch_150\reingest150\store\_engine\go.annotate_groups\d936982d3c8aeb1c
+  rows     {'annotation_sources': 1, 'organelle_term_categories': 1016, 'protein_localizations': 183378}
+  groups   {'annotated': 8366, 'contaminant': 55, 'no_entry': 0, 'no_go_terms': 396}
+  unresolved GO ids (skipped, go D35) 0
+written  go.annotate_groups artefact c32823f70c88249f  F:\datarepo_scratch_150\reingest150\store\_engine\go.annotate_groups\c32823f70c88249f
+  rows     {'annotation_sources': 1, 'organelle_term_categories': 1008, 'protein_localizations': 190195}
+  groups   {'annotated': 8552, 'contaminant': 119, 'no_entry': 0, 'no_go_terms': 399}
+  unresolved GO ids (skipped, go D35) 0
+written  go.annotate_groups artefact 1096a066abc3d0db  F:\datarepo_scratch_150\reingest150\store\_engine\go.annotate_groups\1096a066abc3d0db
+  rows     {'annotation_sources': 1, 'organelle_term_categories': 908, 'protein_localizations': 142578}
+  groups   {'annotated': 5605, 'contaminant': 29, 'no_entry': 0, 'no_go_terms': 72}
+  unresolved GO ids (skipped, go D35) 0
+written  go.annotate_groups artefact fceaef94389ca549  F:\datarepo_scratch_150\reingest150\store\_engine\go.annotate_groups\fceaef94389ca549
+  rows     {'annotation_sources': 1, 'organelle_term_categories': 901, 'protein_localizations': 154592}
+  groups   {'annotated': 7128, 'contaminant': 45, 'no_entry': 0, 'no_go_terms': 419}
+  unresolved GO ids (skipped, go D35) 0
+written  go.annotate_groups artefact 3ef2f52e4a1d70d0  F:\datarepo_scratch_150\reingest150\store\_engine\go.annotate_groups\3ef2f52e4a1d70d0
+  rows     {'annotation_sources': 1, 'organelle_term_categories': 1022, 'protein_localizations': 207492}
+  groups   {'annotated': 9232, 'contaminant': 48, 'no_entry': 0, 'no_go_terms': 347}
+  unresolved GO ids (skipped, go D35) 0
+written  go.annotate_groups artefact a8eafa66ec8cb80f  F:\datarepo_scratch_150\reingest150\store\_engine\go.annotate_groups\a8eafa66ec8cb80f
+  rows     {'annotation_sources': 1, 'organelle_term_categories': 786, 'protein_localizations': 82077}
+  groups   {'annotated': 3167, 'contaminant': 38, 'no_entry': 0, 'no_go_terms': 53}
+  unresolved GO ids (skipped, go D35) 0
+written  go.annotate_groups artefact 8ec1092b9aadcccb  F:\datarepo_scratch_150\reingest150\store\_engine\go.annotate_groups\8ec1092b9aadcccb
+  rows     {'annotation_sources': 1, 'organelle_term_categories': 993, 'protein_localizations': 208303}
+  groups   {'annotated': 9000, 'contaminant': 71, 'no_entry': 0, 'no_go_terms': 204}
+  unresolved GO ids (skipped, go D35) 0
+written  go.annotate_groups artefact 3b18b3ea5cf0e23b  F:\datarepo_scratch_150\reingest150\store\_engine\go.annotate_groups\3b18b3ea5cf0e23b
+  rows     {'annotation_sources': 1, 'organelle_term_categories': 907, 'protein_localizations': 142097}
+  groups   {'annotated': 5655, 'contaminant': 61, 'no_entry': 0, 'no_go_terms': 161}
+  unresolved GO ids (skipped, go D35) 0
+skipped  MetaMorpheusContaminants.minus-contaminant_panel_exclude_v1.130830b4a0d0.xml: a contaminant database is not annotation input
+skipped  MetaMorpheusContaminants.xml: a contaminant database is not annotation input
+skipped  MetaMorpheusContaminants_NoUPS.xml: a contaminant database is not annotation input
+
+== done go.annotate_groups rc=0 secs=1538
+
+== fix: deposits of no listed species (not run): []
+== 06:31:49 fix logs.resolve_genes NCBITaxon:9606 55 deposits
+written  logs.resolve_genes artefact 42659048f199d9ab  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\42659048f199d9ab
+  rows     {'gene_resolutions': 21139}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 352, 'not_in_source': 964, 'off_primary_only': 162, 'resolved': 19174, 'unrecognized_accession': 0}
+done     logs.resolve_genes artefact 13048465ff835ae8 already exists; nothing re-run
+done     logs.resolve_genes artefact 1e472a92ecba503a already exists; nothing re-run
+done     logs.resolve_genes artefact fabfc60811774908 already exists; nothing re-run
+done     logs.resolve_genes artefact eb3208d8c2c35269 already exists; nothing re-run
+done     logs.resolve_genes artefact 72edc8cbdfad3be0 already exists; nothing re-run
+done     logs.resolve_genes artefact b310d4b6da85561c already exists; nothing re-run
+done     logs.resolve_genes artefact 921cea527c7512b9 already exists; nothing re-run
+done     logs.resolve_genes artefact 593e5851cf081b19 already exists; nothing re-run
+done     logs.resolve_genes artefact 91758cc68ef966ea already exists; nothing re-run
+done     logs.resolve_genes artefact 1b2ee314f677fe99 already exists; nothing re-run
+done     logs.resolve_genes artefact 519416a532202b3f already exists; nothing re-run
+done     logs.resolve_genes artefact dfb8069801112a5c already exists; nothing re-run
+done     logs.resolve_genes artefact 5fc9bdba38f07094 already exists; nothing re-run
+done     logs.resolve_genes artefact 368bb52ad817eee8 already exists; nothing re-run
+skipped  MetaMorpheusContaminants.minus-contaminant_panel_exclude_v1.130830b4a0d0.xml: a contaminant database is never resolved
+skipped  MetaMorpheusContaminants.xml: a contaminant database is never resolved
+skipped  MetaMorpheusContaminants_NoUPS.xml: a contaminant database is never resolved
+
+== done fix NCBITaxon:9606 rc=0 secs=12
+
+== 06:32:02 fix logs.resolve_genes NCBITaxon:10090 105 deposits
+written  logs.resolve_genes artefact 523e69f5d4388735  F:\datarepo_scratch_150\reingest150\store\_engine\logs.resolve_genes\523e69f5d4388735
+  rows     {'gene_resolutions': 22383}
+  outcomes {'contaminant_not_mapped': 0, 'multi_gene': 273, 'not_in_source': 1645, 'off_primary_only': 0, 'resolved': 19942, 'unrecognized_accession': 0}
+done     logs.resolve_genes artefact c1a1a3cbb277339b already exists; nothing re-run
+done     logs.resolve_genes artefact 911838b0acf587e5 already exists; nothing re-run
+done     logs.resolve_genes artefact dd663145147cc5f4 already exists; nothing re-run
+done     logs.resolve_genes artefact 77b8ed07a1336c35 already exists; nothing re-run
+done     logs.resolve_genes artefact 8a080b380401f5cc already exists; nothing re-run
+done     logs.resolve_genes artefact 24d2e5d5088b4958 already exists; nothing re-run
+done     logs.resolve_genes artefact 7017678f987260c5 already exists; nothing re-run
+done     logs.resolve_genes artefact 7471a3ceee8aa722 already exists; nothing re-run
+done     logs.resolve_genes artefact 019f43a553cd1843 already exists; nothing re-run
+done     logs.resolve_genes artefact 421d05d396b4c972 already exists; nothing re-run
+done     logs.resolve_genes artefact 6dfc7dea2c4e4ff7 already exists; nothing re-run
+done     logs.resolve_genes artefact a2f92189a6122b88 already exists; nothing re-run
+done     logs.resolve_genes artefact 7d0c3a9acf0c857e already exists; nothing re-run
+done     logs.resolve_genes artefact e82b35a62c763309 already exists; nothing re-run
+done     logs.resolve_genes artefact 393df3091d621178 already exists; nothing re-run
+done     logs.resolve_genes artefact 6f0de085cef695ea already exists; nothing re-run
+skipped  MetaMorpheusContaminants.minus-contaminant_panel_exclude_v1.130830b4a0d0.xml: a contaminant database is never resolved
+skipped  MetaMorpheusContaminants_NoUPS.xml: a contaminant database is never resolved
+
+== done fix NCBITaxon:10090 rc=0 secs=9
+
+== 06:32:10 fix logs.resolve_genes NCBITaxon:10116 32 deposits
+done     logs.resolve_genes artefact 0af7d9ff9cf9cbef already exists; nothing re-run
+done     logs.resolve_genes artefact f70a1ced5dabb901 already exists; nothing re-run
+done     logs.resolve_genes artefact f0dafaa7b77172c8 already exists; nothing re-run
+done     logs.resolve_genes artefact d0dbb1a8f7d7d42f already exists; nothing re-run
+done     logs.resolve_genes artefact 0243c0db137890d0 already exists; nothing re-run
+done     logs.resolve_genes artefact 20c3aebf3812befd already exists; nothing re-run
+done     logs.resolve_genes artefact 52f03bb38dd213be already exists; nothing re-run
+done     logs.resolve_genes artefact 23e1bf9c09befc9e already exists; nothing re-run
+done     logs.resolve_genes artefact f54e13e66ecb9e06 already exists; nothing re-run
+skipped  MetaMorpheusContaminants_NoUPS.xml: a contaminant database is never resolved
+
+== done fix NCBITaxon:10116 rc=0 secs=0
+

@@ -1,0 +1,35 @@
+scratch catalog 9e936aa4e7e255d0 release fe86c87399cfe502 format 17 builder 1.5.0-scratch.aa9ad4b
+
+== checks: kind, ok, count (old | new)
+ old: [('derived', True, 196), ('engine-consistency', True, 1), ('engine-coverage', True, 4), ('engine-unique', True, 1), ('integrity', True, 1), ('manifest', True, 2), ('row_count', True, 3649), ('split', True, 1), ('study-design', True, 1), ('study-reference', True, 8), ('study-unique', True, 10)]
+ new: [('derived', True, 192), ('engine-consistency', True, 1), ('engine-coverage', True, 4), ('engine-unique', True, 1), ('integrity', True, 1), ('manifest', True, 2), ('row_count', True, 3779), ('split', True, 1)]
+
+== engine artefacts (old | new)
+ old: [('go.annotate_groups', 153), ('logs.register_orthology', 1), ('logs.resolve_genes', 42)]
+ new: [('go.annotate_groups', 153), ('logs.register_orthology', 1), ('logs.resolve_genes', 41)]
+
+== deposits in both: 192
+  protein_genes rows: deposits differing 0 of 192; old total 3314410, new total 3314410
+  protein_localizations rows: deposits differing 0 of 192; old total 17295199, new total 17295199
+  peptidoforms_1pct rows: deposits differing 192 of 192; old total 6714143, new total 8407134
+      ('PXD001054', 8164, 9959)
+      ('PXD002467', 44050, 57792)
+      ('PXD002528', 57050, 61745)
+      ('PXD003111', 105441, 116405)
+      ('PXD004916', 16301, 22136)
+      ('PXD005014', 11015, 13887)
+      ('PXD005035', 57067, 69421)
+      ('PXD005123', 86630, 106407)
+  protein_groups_1pct rows: deposits differing 0 of 192; old total 696304, new total 696304
+
+== dataset_overview columns only in new: ['confidence_rule', 'quant_scale']
+== tables only in new: ['age_effect_method_terms', 'deposit_contacts', 'deposit_records', 'deposit_references', 'isobaric_channels', 'peptidoform_ions', 'shared_raw_files']
+== tables only in old: []
+== confidence rules: [('pep_q_value', 191), ('q_value_notch', 1)]
+== quant_scale: [('label_free_apex', 153), ('reporter_ms2', 29), ('reporter_ms3', 10)]
+== deposit_records: 190
+== deposit_contacts: 380
+== deposit_references: 170
+== shared_raw_files: 8
+== isobaric_channels: 15758
+== peptidoform_ions: 8407167

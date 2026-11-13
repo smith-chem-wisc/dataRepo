@@ -1,0 +1,198 @@
+accession	old_bundle	new_bundle	tables_that_differ	sources_changed	findings_gone	findings_new	metamorpheus	quant_method	secs
+PXD002467	48508b7393e3ae36	44433defa40ddc34	definitions 17->20; peptidoform_ions None->57792				1.1.12	label-free	2941
+PXD034029	545b7acccbf03dd5	827b1689cf309c50	definitions 14->16; findings 7->8; metrics 974->1454; peptidoform_ions None->134681; provenance_records 3->4	isobaric_reader provenance:05_qc qc_payload		run_counts_missing	1.1.14	TMT	3262
+PXD017505	beec269b016c36a9	6a1c006920a41912	definitions 17->20; findings 8->9; peptidoform_ions None->2781			confidence_rule_fewer_peptides	1.1.12	label-free	2077
+PXD057677	da9268426fb49189	49d2b62aaa533b61	definitions 17->20; findings 7->8; metrics 116->212; peptidoform_ions None->44585; provenance_records 3->4	provenance:05_qc qc_payload		run_counts_missing	1.1.13	label-free	1504
+PXD018545	a68620f1dcff66c8	8765b966a30b5925	definitions 17->20; findings 6->7; peptidoform_ions None->2773			confidence_rule_fewer_peptides	1.1.12	label-free	858
+PXD017385	429b2cabe337bea6	5c9974798f156061	definitions 14->16; findings 7->8; metrics 446->662; peptidoform_ions None->130315; provenance_records 3->4	isobaric_reader provenance:05_qc qc_payload		run_counts_missing	1.1.14	TMT	914
+PXD005035	537dbcb5434b983f	0dd30b36e0a39c27	definitions 17->20; findings 8->9; metrics 443->866; peptidoform_ions None->69422; provenance_records 3->4	provenance:05_qc qc_payload		run_counts_missing	1.1.13	label-free	1176
+PXD037230	e0f58944531b149f	65fb5149ebf18a68	definitions 17->20; findings 6->7; peptidoform_ions None->1223			confidence_rule_fewer_peptides	1.1.12	label-free	708
+PXD048079	a8cef09bb6014186	5ef8e035bc4a987a	definitions 17->20; findings 8->9; metrics 98->176; peptidoform_ions None->25971; provenance_records 3->4	provenance:05_qc qc_payload		run_counts_missing	1.1.13	label-free	1904
+PXD045806	4f14e5aa107a95ff	cbc1673e8a08b1e5	definitions 17->20; findings 9->10; metrics 92->164; peptidoform_ions None->32513; provenance_records 3->4	provenance:05_qc qc_payload		run_counts_missing	1.1.13	label-free	1817
+PXD035577	a898e9611a698a57	dc52f74babf23c25	definitions 14->16; findings 9->10; metrics 426->632; peptidoform_ions None->122623; provenance_records 3->4; samples 1030->824	isobaric_reader provenance:05_qc qc_payload		run_counts_missing	1.1.14	TMT	1485
+PXD028799	a3357595c5e416f2	005185e6bc1e9655	definitions 14->16; findings 8->9; metrics 206->302; peptidoform_ions None->137810; provenance_records 3->4; samples 528->516	isobaric_reader provenance:05_qc qc_payload		run_counts_missing	1.1.14	TMT	1317
+PXD025240	dfbc07a90c6bd91b	c2e1d9e5f9bb476e	definitions 17->23; metrics 276->372; peptidoform_ions None->121405; peptidoforms 1079502->1079501; provenance_records 3->4	provenance:05_qc qc_payload			1.1.13	label-free	1256
+PXD013172	d55e840132b872db	8f5d51a7e1611081	definitions 14->16; findings 7->8; metrics 206->302; peptidoform_ions None->143588; provenance_records 3->4	isobaric_reader provenance:05_qc qc_payload		run_counts_missing	1.1.14	TMT	1037
+PXD061654	cd8c7dea288dba6e	bbc9f473f5e85224	definitions 17->23; metrics 260->350; peptidoform_ions None->87411; provenance_records 3->4	provenance:05_qc qc_payload			1.1.13	label-free	1261
+PXD012307	63a2859fd47fa0e9	e3ea05e7e7f20957	definitions 17->20; peptidoform_ions None->148496				1.1.12	label-free	1129
+PXD031710	d9158c3d408ff801	33c5e11dadb7c1e3	definitions 17->20; findings 7->8; metrics 74->128; peptidoform_ions None->51765; provenance_records 3->4	provenance:05_qc qc_payload		run_counts_missing	1.1.13	label-free	1146
+PXD043001	583f589cee2a0ce8	631ce7cf1655323d	definitions 17->20; peptidoform_ions None->120612				1.1.12	label-free	815
+PXD045861	377c9f3a53bfca01	cbbfe689972e1327	definitions 17->23; findings 10->11; metrics 180->240; peptidoform_ions None->1071; provenance_records 3->4	provenance:05_qc qc_payload		confidence_rule_fewer_peptides	1.1.13	label-free	815
+PXD034590	0f4c6af19fa68ab7	17bb804b8bf8b929	definitions 17->23; metrics 668->911; peptidoform_ions None->121681; provenance_records 3->4	provenance:05_qc qc_payload			1.1.12	label-free	852
+PXD027526-mouse	6db477fa9fd2b917	66f9d5b3fafeb8ca	definitions 17->20; findings 7->8; metrics 425->830; peptidoform_ions None->65828; provenance_records 3->4	provenance:05_qc qc_payload		run_counts_missing	1.1.13	label-free	699
+PXD004916	098a802d4a9ce90c	9dc51fa106e62f05	definitions 17->20; peptidoform_ions None->22137				1.1.12	label-free	447
+PXD025315	3d76e6ec83ecc5a1	bc56edbdb36c673e	definitions 17->23; metrics 1028->1406; peptidoform_ions None->150529; provenance_records 3->4	provenance:05_qc qc_payload			1.1.13	label-free	679
+PXD024216	1f95608e4a32f9b3	c2e2f4ee05ea9bce	definitions 17->20; findings 6->7; peptidoform_ions None->2410			confidence_rule_fewer_peptides	1.1.12	label-free	549
+PXD057407	920efa52d6850a0e	36cc28355485f565	definitions 17->20; peptidoform_ions None->38445				1.1.12	label-free	812
+PXD057502	7f2a7f357e3b8713	7a9b7c7a33af3651	definitions 17->20; findings 7->8			confidence_rule_fewer_peptides	1.1.12	label-free	490
+PXD027754	2799534125b81db3	9e923f172fbf32fc	definitions 17->20; findings 7->8; peptidoform_ions None->1994			confidence_rule_fewer_peptides	1.1.12	label-free	480
+PXD026222	0aff9ef9138a9256	bd392143d0ab9424	definitions 14->16; findings 8->9; metrics 110->158; peptidoform_ions None->65848; provenance_records 3->4; samples 264->256	isobaric_reader provenance:05_qc qc_payload		run_counts_missing	1.1.14	TMT	513
+PXD059562	7f8be3696a578989	f3b32ecf19807e52	definitions 14->16; findings 7->8; metrics 310->458; peptidoform_ions None->69963; provenance_records 3->4	isobaric_reader provenance:05_qc qc_payload		run_counts_missing	1.1.14	TMT	574
+PXD008934	1a400620c1bb4e90	baa066e6375515a1	definitions 17->20; peptidoform_ions None->82931				1.1.12	label-free	580
+PXD060832	6cdb400fda01dc1c	1ccd99af975c0cef	definitions 17->20; findings 7->8; peptidoform_ions None->1971			confidence_rule_fewer_peptides	1.1.12	label-free	347
+PXD056276	a6da235a1392e6d0	59e7999344955a5c	definitions 17->20; peptidoform_ions None->31818				1.1.12	label-free	492
+PXD019279	638e9bdfb7324294	b4de53312ce238aa	definitions 17->20; peptidoform_ions None->69875				1.1.12	label-free	539
+PXD067102	557d43f225491daa	4d2219e5c6b08586	definitions 17->20; peptidoform_ions None->79835				1.1.12	label-free	562
+PXD021069	c5fb91aef6101dd7	eda1ffd0d10a6ba2	definitions 17->20; findings 7->8; peptidoform_ions None->999			confidence_rule_fewer_peptides	1.1.12	label-free	313
+PXD041376	e293b4f93002772b	6db7bb9744675b51	definitions 17->20; peptidoform_ions None->73293				1.1.12	label-free	514
+PXD059591	93146b263e4d7e7f	3a6dfac2aa57a005	definitions 17->23; metrics 596->812; peptidoform_ions None->44783; provenance_records 3->4	provenance:05_qc qc_payload			1.1.13	label-free	548
+PXD016430	459b628801e0f192	8c3b59cd0691a4c2	definitions 17->20; peptidoform_ions None->31111				1.1.12	label-free	447
+PXD048877	68765efe61f0e920	947ca602cec3f76d	definitions 17->23; metrics 260->350; peptidoform_ions None->78835; provenance_records 3->4	provenance:05_qc qc_payload			1.1.13	label-free	478
+PXD030499	895197f896976046	7457104052ef79df	definitions 14->16; findings 7->8; metrics 62->86; peptidoform_ions None->105636; provenance_records 3->4; samples 120->96	isobaric_reader provenance:05_qc qc_payload		run_counts_missing	1.1.14	TMT	476
+PXD058971	f3d04e481348705d	163e3b698bd92a5e	definitions 17->20; peptidoform_ions None->141648				1.1.12	label-free	456
+PXD059520	90e9324979e1e90b	14484938e1f4ed25	definitions 17->20; findings 6->7; peptidoform_ions None->1512			confidence_rule_fewer_peptides	1.1.12	label-free	275
+PXD038718	f2868d880e2bef54	d1d943e72c3c3e1a	definitions 17->23; findings 9->10; metrics 132->174; peptidoform_ions None->586; provenance_records 3->4	provenance:05_qc qc_payload		confidence_rule_fewer_peptides	1.1.13	label-free	293
+PXD007035	1db7bc04e237098d	375356e4ebb93cf6	definitions 17->20; peptidoform_ions None->38161				1.1.12	label-free	313
+PXD006815	712d0d04e45dc132	27c8a4573a746648	definitions 17->20; peptidoform_ions None->124906				1.1.12	label-free	426
+PXD054290	a05fbea863dba7de	ff213a2883bd6d60	definitions 17->20; peptidoform_ions None->67867				1.1.12	label-free	412
+PXD051715	c75bed1c3adeb677	1d0c6d375e85f28d	definitions 17->20; peptidoform_ions None->71257				1.1.12	label-free	385
+PXD031604	7953d0d268b6080e	5d2130f8efb71a51	definitions 17->23; metrics 140->185; peptidoform_ions None->121875; provenance_records 3->4	provenance:05_qc qc_payload			1.1.13	label-free	389
+PXD035299	c34482064a766fdf	0b3908b0db635314	definitions 17->20; peptidoform_ions None->113781				1.1.12	label-free	350
+PXD051031	fccf50e5513f38f7		not re-ingested (rc=1): failed   PXD051031: this is a multiplex (TMT) search by MetaMorpheus 1.1.13. Up to and including 1.1.13, such a search writes its AllPeptides.psmtsv with each peptide's best PSM's PSM-level q-values, not peptide-level ones (MetaMorpheus #2941), so its peptide confidence cannot be stored as what it c				1.1.13	TMT	2
+PXD005953	888e20975cf0fee9	d6fe48b801c29513	definitions 14->16; findings 9->10; metrics 122->176; peptidoform_ions None->35013; provenance_records 3->4	isobaric_reader provenance:05_qc qc_payload		run_counts_missing	1.1.14	TMT	273
+PXD068498	d3ce4e0d4a6f0d5a	d735c849ff45f6ca	definitions 17->20; peptidoform_ions None->65511				1.1.12	label-free	389
+PXD007758	1f7530ad6a043323	61b79edd1c53f5d6	definitions 17->20; findings 7->9; metrics 47->74; peptidoform_ions None->1846; provenance_records 3->4	provenance:05_qc qc_payload		confidence_rule_fewer_peptides run_counts_missing	1.1.13	label-free	364
+PXD005184	fc7a259348b0f27a	9177a65b9280dc02	definitions 14->16; findings 7->9; metrics 206->302; peptidoform_ions None->23488; provenance_records 3->4	isobaric_reader provenance:05_qc qc_payload		confidence_rule_fewer_peptides run_counts_missing	1.1.14	iTRAQ	291
+PXD038328	a2f27d063aed8c5a	a12af09286b83790	definitions 17->20; peptidoform_ions None->80472				1.1.12	label-free	373
+PXD027490	dbf4c1712d1d49a8	848b083ba54426a4	definitions 14->16; findings 9->10; metrics 210->308; peptidoform_ions None->51269; provenance_records 3->4; samples 882->784	isobaric_reader provenance:05_qc qc_payload		run_counts_missing	1.1.14	TMT	397
+PXD043644	74efd58d3f1d36aa	8e78189921990126	definitions 17->20; findings 6->7; peptidoform_ions None->849			confidence_rule_fewer_peptides	1.1.12	label-free	397
+PXD048393	81243eb2e491fcc3	6ec667b6cb36b189	definitions 17->20; peptidoform_ions None->91652				1.1.12	label-free	477
+PXD035149	d9523efb88e5d43f	a673b0533cb3383a	definitions 17->20; peptidoform_ions None->49738				1.1.12	label-free	509
+PXD018999	151af8dac684a432	f947388c0d14deed	definitions 17->20; peptidoform_ions None->97277; peptidoforms 515843->515842				1.1.12	label-free	466
+PXD057554	67b01d35db14198e	b9b013733a538542	definitions 17->20; findings 8->9; peptidoform_ions None->977			confidence_rule_fewer_peptides	1.1.12	label-free	238
+PXD075372	9e58f7b2a83da02c	4dfea1cfd5072d59	definitions 17->20; peptidoform_ions None->97241				1.1.12	label-free	258
+PXD008344	a378e8596ad8918b	cacf7b9637139071	definitions 17->20; peptidoform_ions None->163466				1.1.12	label-free	259
+PXD003111	64b9a873c144894b	e5681af2c9bd94d3	definitions 14->16; findings 8->9; metrics 74->104; peptidoform_ions None->116405; provenance_records 3->4; samples 150->89	isobaric_reader provenance:05_qc qc_payload		run_counts_missing	1.1.14	TMT	268
+PXD026335	24f3d62867f22860	e0e9555a7c669f47	definitions 17->20; peptidoform_ions None->73726				1.1.12	label-free	271
+PXD048720	ea1fac3cf3d72f0a	21e327ecbbc55d48	definitions 17->20; peptidoform_ions None->53776				1.1.12	label-free	311
+PXD005123	7872bc32a7efe7f6	bca387a2984ac28f	definitions 17->23; metrics 180->240; peptidoform_ions None->106407; provenance_records 3->4	provenance:05_qc qc_payload			1.1.13	label-free	236
+PXD039172	9907759b57189b7a	fb60787084e98359	definitions 17->20; peptidoform_ions None->67851				1.1.12	label-free	238
+PXD027895	26a93ff2be230c70	53caf675a56ea691	definitions 17->20; findings 6->7; metrics 212->404; peptidoform_ions None->37864; provenance_records 3->4	provenance:05_qc qc_payload		run_counts_missing	1.1.13	label-free	250
+PXD028531	f5300e8df9ee7583	cf3d3f78e4e8a05e	definitions 14->16; metrics 158->230; peptidoform_ions None->112942; provenance_records 3->4; samples 63->27	isobaric_reader provenance:05_qc qc_payload	unresolved_modifications	run_counts_missing	1.1.14	TMT	322
+PXD008050	92b316ca74569432	2ef9b2435dd1f80d	definitions 17->20; peptidoform_ions None->81473				1.1.12	label-free	228
+PXD071171	dfd5f024c31eb888	3dd5126aa488b075	definitions 17->20; peptidoform_ions None->97170				1.1.12	label-free	298
+PXD032044	db49fdc46ebec6b7	acac10460f06702f	definitions 17->20; peptidoform_ions None->54659				1.1.12	label-free	303
+PXD028157	76713d68856fcd47	8d841d49bebfd917	definitions 17->20; peptidoform_ions None->72177				1.1.12	label-free	306
+PXD016199	e69d1a039d7ed8f2	6f80b4128b3c4790	definitions 14->16; findings 8->10; metrics 374->554; peptidoform_ions None->3246; provenance_records 3->4	isobaric_reader provenance:05_qc qc_payload		confidence_rule_fewer_peptides run_counts_missing	1.1.14	TMT	199
+PXD061069	aa28004db6dc8c3b	2feb7befd88b6751	definitions 17->23; metrics 980->1340; peptidoform_ions None->56368; provenance_records 3->4	provenance:05_qc qc_payload			1.1.13	label-free	291
+PXD020871	cd0ee388862a8a52	56e5628f1c0a55bd	definitions 14->16; findings 7->8; metrics 78->110; peptidoform_ions None->45760; provenance_records 3->4	isobaric_reader provenance:05_qc qc_payload		run_counts_missing	1.1.14	TMT	277
+PXD029587	1b470ab369f22db4	337a695bb3c8481d	definitions 14->16; findings 8->9; metrics 290->428; peptidoform_ions None->53598; provenance_records 3->4; samples 690->552	isobaric_reader provenance:05_qc qc_payload		run_counts_missing	1.1.14	TMT	364
+PXD033518	cbdf5e726e8a074d	4cf02105a741bff6	definitions 14->16; findings 9->10; metrics 74->104; peptidoform_ions None->37786; provenance_records 3->4; samples 150->135	isobaric_reader provenance:05_qc qc_payload		run_counts_missing	1.1.14	TMT	290
+PXD024478	c1108f19cba7fd3f	ff58f7d5d7eeb809	definitions 17->20; peptidoform_ions None->96218				1.1.12	label-free	309
+PXD024685	3a0d44815d25b5da	614df1a52a2e7ac0	definitions 17->20; peptidoform_ions None->66264				1.1.12	label-free	372
+PXD028865	901bafe9fa5d4c55	a3ff71cf0f905538	definitions 17->20; peptidoform_ions None->43350				1.1.12	label-free	400
+PXD028590	6760c6468208b830	e4fa2b16641cdb2f	definitions 17->20; peptidoform_ions None->43382				1.1.12	label-free	405
+PXD024633	1e9e0279bff99a53	189d3ad6e9a20d1d	definitions 17->23; metrics 100->130; peptidoform_ions None->47548; provenance_records 3->4	provenance:05_qc qc_payload			1.1.13	label-free	472
+PXD041139	b68e502cff1a1bf9	2b0b46a6bfc5c754	definitions 17->20; peptidoform_ions None->10959				1.1.12	label-free	418
+PXD007229	bf6548af4ded395d	d00bd14aeac4c277	definitions 14->16; findings 7->8; metrics 254->374; peptidoform_ions None->26500; provenance_records 3->4	isobaric_reader provenance:05_qc qc_payload		run_counts_missing	1.1.14	TMT	600
+PXD018352	27757f831d1c7867	54bf1ead13fc07d4	definitions 14->16; findings 9->10; metrics 50->68; peptidoform_ions None->25079; provenance_records 3->4; samples 90->72	isobaric_reader provenance:05_qc qc_payload		run_counts_missing	1.1.14	TMT	374
+PXD006578	17c2c2f917127598	f07e5887b29b2506	definitions 17->23; metrics 164->218; peptidoform_ions None->78834; provenance_records 3->4	provenance:05_qc qc_payload			1.1.13	label-free	795
+PXD027526-human	0bdd30f79115a8b1	9d82aac208f631a9	definitions 17->20; findings 7->8; metrics 74->128; peptidoform_ions None->32610; provenance_records 3->4	provenance:05_qc qc_payload		run_counts_missing	1.1.13	label-free	761
+PXD067622	c09d6ab903e44d12	b08c687929fa8692	definitions 17->20; peptidoform_ions None->53205				1.1.12	label-free	704
+PXD034465	94e5d5caf900551a	71d6bab32cd392df	definitions 17->20; peptidoform_ions None->64067				1.1.12	label-free	381
+PXD010383	38e190c40d856ce8	725efbbf832669ca	definitions 14->16; metrics 302->446; peptidoform_ions None->122345; provenance_records 3->4	isobaric_reader provenance:05_qc qc_payload	unresolved_modifications	run_counts_missing	1.1.14	TMT	314
+PXD033430	6903b042e7e4466c	45db9ed524b719dc	definitions 17->20; findings 6->7; peptidoform_ions None->575			confidence_rule_fewer_peptides	1.1.12	label-free	198
+PXD052797	ee32aa97b8585fc9	ac75215fcf67c74c	definitions 17->20; peptidoform_ions None->19907				1.1.12	label-free	341
+PXD057545	7187abc1ec5a09d4	92ce76679ac333ef	definitions 17->20; peptidoform_ions None->56599; peptidoforms 334270->334269				1.1.12	label-free	309
+PXD053611	b5401af555d5a6ea	b1a1a6ea615b09ce	definitions 14->16; findings 9->11; metrics 118->170; peptidoform_ions None->18474; provenance_records 3->4; samples 468->416	isobaric_reader provenance:05_qc qc_payload		confidence_rule_fewer_peptides run_counts_missing	1.1.14	TMT	171
+PXD045821	43cc92093e51092c	3e55b764fda923bb	definitions 17->20; peptidoform_ions None->25647				1.1.12	label-free	259
+PXD027548	a0f8c8a9c9c2deef		not re-ingested (rc=1): failed   PXD027548: this is a multiplex (TMT) search by MetaMorpheus 1.1.13. Up to and including 1.1.13, such a search writes its AllPeptides.psmtsv with each peptide's best PSM's PSM-level q-values, not peptide-level ones (MetaMorpheus #2941), so its peptide confidence cannot be stored as what it c				1.1.13	TMT	1
+PXD014416	60f78102d6f4c207	8429aaf04e0ab606	definitions 17->20; peptidoform_ions None->61646				1.1.12	label-free	228
+PXD020051	5d898a710fbba971	2935a673fd176e74	definitions 14->16; findings 7->8; metrics 110->158; peptidoform_ions None->54714; provenance_records 3->4	isobaric_reader provenance:05_qc qc_payload		run_counts_missing	1.1.14	TMT	228
+PXD022737	eadd237ac086fee7	3235f73d72863a50	definitions 17->20; peptidoform_ions None->58482				1.1.12	label-free	194
+PXD057544	00b7d9c490b115d5	aa30446906ec0ff8	definitions 17->20; findings 6->7; peptidoform_ions None->667			confidence_rule_fewer_peptides	1.1.12	label-free	126
+PXD002528	5ca828db8870d011	48d62c47bcc4ea9e	definitions 14->16; findings 8->9; metrics 94->134; peptidoform_ions None->61745; provenance_records 3->4; samples 200->84	isobaric_reader provenance:05_qc qc_payload		run_counts_missing	1.1.14	TMT	144
+PXD006589	89ff40bd1316f31d	a698821e352802d2	definitions 17->23; metrics 164->218; peptidoform_ions None->61664; provenance_records 3->4	provenance:05_qc qc_payload			1.1.13	label-free	140
+PXD053288	ff52ec0c4aca854f	e568e7490a713b3a	definitions 17->20; peptidoform_ions None->73244				1.1.12	label-free	163
+PXD034564	ff841cc55ccccb31		not re-ingested (rc=1): failed   PXD034564: this is a multiplex (TMT) search by MetaMorpheus 1.1.13. Up to and including 1.1.13, such a search writes its AllPeptides.psmtsv with each peptide's best PSM's PSM-level q-values, not peptide-level ones (MetaMorpheus #2941), so its peptide confidence cannot be stored as what it c				1.1.13	TMT	1
+PXD026219	3a567692da5260f1	6eec329a73c4a25a	definitions 17->20; peptidoform_ions None->37687				1.1.12	label-free	138
+PXD019533	f4b93ffa1bdce775	4db5832852cd4a29	definitions 14->16; findings 7->8; metrics 50->68; peptidoform_ions None->43456; provenance_records 3->4	isobaric_reader provenance:05_qc qc_payload		run_counts_missing	1.1.14	iTRAQ	159
+PXD025321	418b321081347dd4	7b25c9a00b601081	definitions 17->20; peptidoform_ions None->65082				1.1.12	label-free	164
+PXD021194	0bd8a92c4818c69b	7f733b20989eefbb	definitions 17->20; findings 7->8; metrics 104->188; peptidoform_ions None->30345; provenance_records 3->4	provenance:05_qc qc_payload		run_counts_missing	1.1.13	label-free	157
+PXD018399	880cd2444991cac9	b138c947de64bcb2	definitions 17->20; peptidoform_ions None->26739				1.1.12	label-free	151
+PXD041660	d4c54e0b813669ef	41bca1379eac8392	definitions 17->20; peptidoform_ions None->18743				1.1.12	label-free	186
+PXD031223	7fdb5b195d2a76e9	9bef90e3506d827e	definitions 17->23; metrics 84->108; peptidoform_ions None->23846; provenance_records 3->4	provenance:05_qc qc_payload			1.1.13	label-free	195
+PXD025618	9c3909f85ecfa772	ca1f351d10c8a01f	definitions 14->16; findings 7->8; metrics 206->302; peptidoform_ions None->39024; provenance_records 3->4; samples 528->475	isobaric_reader provenance:05_qc qc_payload		run_counts_missing	1.1.14	TMT	147
+PXD006743	75d928694162266f	26ecae346b726387	definitions 14->16; metrics 162->236; peptidoform_ions None->55213; provenance_records 3->4; samples 370->222	isobaric_reader provenance:05_qc qc_payload	unresolved_modifications	run_counts_missing	1.1.14	TMT	170
+PXD048895	5429b78d68eea23e	1b00dd0df134a65d	definitions 14->16; metrics 114->164; peptidoform_ions None->81781; provenance_records 3->4; samples 450->400	isobaric_reader provenance:05_qc qc_payload	unresolved_modifications	run_counts_missing	1.1.14	TMT	170
+PXD027464	fda214727757b986	ab8435dc9775b2ce	definitions 14->16; metrics 174->254; peptidoform_ions None->76087; provenance_records 3->4	isobaric_reader provenance:05_qc qc_payload	unresolved_modifications	run_counts_missing	1.1.14	TMT	162
+PXD024803	1cb852b8e2dcb56c	754401c83608b7d3	definitions 17->20; peptidoform_ions None->47850				1.1.12	label-free	112
+PXD018969	fed05ac2602e3da1	b9811f1a42da157c	definitions 17->20; peptidoform_ions None->25365				1.1.11	label-free	131
+PXD007999	094005f4ee4da7e0	ff476c49ae7a3cbe	definitions 17->20; peptidoform_ions None->44913				1.1.11	label-free	146
+PXD027318	4b75374ba407531d	d5765cd58964f787	definitions 17->20; peptidoform_ions None->53215				1.1.11	label-free	105
+PXD015079	e1c15be2f29acb64	d5ec31fb5870ad85	definitions 17->20; peptidoform_ions None->37426				1.1.12	label-free	105
+PXD017786	ce24006e6609cd9a	1f9078a6e91074b3	definitions 14->16; findings 8->9; metrics 110->158; peptidoform_ions None->24817; provenance_records 3->4; samples 144->111	isobaric_reader provenance:05_qc qc_payload		run_counts_missing	1.1.14	TMT	136
+PXD043296	eb5e98c7e6ccd75c		not re-ingested (rc=1): failed   PXD043296: this is a multiplex (TMT) search by MetaMorpheus 1.1.13. Up to and including 1.1.13, such a search writes its AllPeptides.psmtsv with each peptide's best PSM's PSM-level q-values, not peptide-level ones (MetaMorpheus #2941), so its peptide confidence cannot be stored as what it c				1.1.13	TMT	1
+PXD015170	d306867bc9300942	270f8c1de0de4fa3	definitions 17->20; peptidoform_ions None->21155				1.1.12	label-free	132
+PXD032202	2c73cb35813984d0	03b5f604018fa2a2	definitions 17->20; peptidoform_ions None->23678				1.1.11	label-free	100
+PXD045887	4114856412d41d9a	7957c1e7bf4d45c2	definitions 17->20; peptidoform_ions None->12142				1.1.12	label-free	92
+PXD008990	058f4416abe7b18b	cc542a4572e60139	definitions 17->20; peptidoform_ions None->24331				1.1.12	label-free	151
+PXD006570	4fef6b1fa6abfb24	a4fd18284837cef5	definitions 17->20; findings 8->9; metrics 38->56; peptidoform_ions None->53055; provenance_records 3->4	provenance:05_qc qc_payload		run_counts_missing	1.1.13	label-free	143
+PXD021447	a1b39c16a5b29308	dc103e6a03423a04	definitions 14->16; metrics 134->194; peptidoform_ions None->39281; provenance_records 3->4	isobaric_reader provenance:05_qc qc_payload	unresolved_modifications	run_counts_missing	1.1.14	TMT	134
+PXD058855	319e7d516631aaa0	534fe4949837f8eb	definitions 17->20; peptidoform_ions None->14279				1.1.12	label-free	92
+PXD023435	d5cc7ea59d66e805	9461084c8a7fdd70	definitions 14->16; metrics 78->110; peptidoform_ions None->82544; provenance_records 3->4; samples 96->80	isobaric_reader provenance:05_qc qc_payload	unresolved_modifications	run_counts_missing	1.1.14	TMT	100
+PXD057409	ede774f706324229	2588aa9d1d6cd9c5	definitions 17->20; peptidoform_ions None->51485				1.1.12	label-free	112
+PXD026773	9f719d196ab64257	7126a0a223188fdb	definitions 14->16; metrics 94->134; peptidoform_ions None->56781; provenance_records 3->4	isobaric_reader provenance:05_qc qc_payload	unresolved_modifications	run_counts_missing	1.1.14	TMT	153
+PXD025280	d35be1b4df2cf457	248102a8610ff75b	definitions 17->20; peptidoform_ions None->28064				1.1.12	label-free	82
+PXD015239	5deec457676bdd22	a115fdfed2510803	definitions 17->20; peptidoform_ions None->25898				1.1.12	label-free	72
+PXD017475	65cf99f613971fa0	983a0073cb7a3fda	definitions 17->20; peptidoform_ions None->31444				1.1.12	label-free	76
+PXD042301	f5c6cb1d792766da	768257ee4b7980a7	definitions 17->20; peptidoform_ions None->35081				1.1.11	label-free	106
+PXD006571	7ee2cd9a286d292a	f9f30d3073935e0d	definitions 17->20; findings 8->9; metrics 38->56; peptidoform_ions None->41340; provenance_records 3->4	provenance:05_qc qc_payload		run_counts_missing	1.1.13	label-free	82
+PXD006463	786ae3c74987fb78	08d04de6dc48495d	definitions 14->16; metrics 94->134; peptidoform_ions None->13915; provenance_records 3->4; samples 200->138	isobaric_reader provenance:05_qc qc_payload	unresolved_modifications	run_counts_missing	1.1.14	TMT	76
+PXD052631	f2e398f48a25d809	82e4af81e72065af	definitions 17->20; findings 8->9; peptidoform_ions None->533			confidence_rule_fewer_peptides	1.1.12	label-free	102
+PXD013240	a21e4f11590eb3b0	9316410ca6035b07	definitions 17->20; peptidoform_ions None->27629				1.1.12	label-free	72
+PXD012213	c43d19b1b11dd220	697e9e71f4486ab5	definitions 17->20; peptidoform_ions None->5533				1.1.12	label-free	60
+PXD006572	f96ec10f4f6c3b6d	6162d6121d3ecbfb	definitions 17->20; findings 8->9; metrics 38->56; peptidoform_ions None->33189; provenance_records 3->4	provenance:05_qc qc_payload		run_counts_missing	1.1.13	label-free	109
+PXD014929	77815b68252db9c9	cb7006b449da179b	definitions 14->16; metrics 66->92; peptidoform_ions None->51750; provenance_records 3->4; samples 130->104	isobaric_reader provenance:05_qc qc_payload	unresolved_modifications	run_counts_missing	1.1.14	TMT	117
+PXD006576	bfa7094543f1b97f	aacc4b1c8be43969	definitions 17->20; findings 7->8; metrics 38->56; peptidoform_ions None->31933; provenance_records 3->4	provenance:05_qc qc_payload		run_counts_missing	1.1.13	label-free	85
+PXD026608	d895ac474a7c704e	4510a46ca323ebbb	definitions 17->20; peptidoform_ions None->14515				1.1.12	label-free	104
+PXD077298	9e53e14e120e8541	0101eab80c0c7f6e	definitions 17->20; peptidoform_ions None->46298; peptidoforms 147345->147344				1.1.12	label-free	87
+PXD044453	afd56c163a4092b0	1ad364667cd23edf	definitions 17->20; peptidoform_ions None->5712				1.1.12	label-free	88
+PXD044996	438d6b12218fecb1	e7d9bf346ef8e66b	definitions 17->20; peptidoform_ions None->55288				1.1.12	label-free	78
+PXD041766	1722a8f50296647b	a92507eebb88fe03	definitions 17->23; metrics 84->108; peptidoform_ions None->47382; provenance_records 3->4	provenance:05_qc qc_payload			1.1.13	label-free	78
+PXD015729	cd7e0250ab14893a	bfc6e4975380d6e7	definitions 17->20; peptidoform_ions None->37680				1.1.12	label-free	76
+PXD027971	551535c718e006bd	5585c1b3e38dbf3d	definitions 17->20; findings 8->9; peptidoform_ions None->14596			confidence_rule_fewer_peptides	1.1.12	label-free	85
+PXD011740	b7dbca088aa5c165	f9c3d0f04e13dc66	definitions 17->20; peptidoform_ions None->22358				1.1.12	label-free	49
+PXD021757	6e5263d10f9655b9	c01939829e4429a8	definitions 14->16; metrics 46->62; peptidoform_ions None->24409; provenance_records 3->4	isobaric_reader provenance:05_qc qc_payload	unresolved_modifications	run_counts_missing	1.1.14	TMT	59
+PXD031270	a06959d2ad486a14	3ea7203c7adf3ca9	definitions 14->16; metrics 54->74; peptidoform_ions None->13283; provenance_records 3->4	isobaric_reader provenance:05_qc qc_payload	unresolved_modifications	run_counts_missing	1.1.14	iTRAQ	87
+PXD022196	487e71045925c9d9	cbebecbb3acdacad	definitions 17->20; peptidoform_ions None->34245				1.1.12	label-free	71
+PXD032757	a0b99fd306651503	d5568a047a69aa7d	definitions 17->20; peptidoform_ions None->12598				1.1.12	label-free	41
+PXD029116	84728de07f4ad4e4	140a503079c71c32	definitions 17->20; peptidoform_ions None->5130				1.1.12	label-free	38
+PXD023647	94cfcbbc557b89b5	0afc523ea02c4a73	definitions 14->16; metrics 58->80; peptidoform_ions None->16312; provenance_records 3->4; samples 198->176	isobaric_reader provenance:05_qc qc_payload	unresolved_modifications	run_counts_missing	1.1.14	TMT	105
+PXD013640	558be41f3850e1f7	db218ae261c87e10	definitions 17->20; peptidoform_ions None->5675				1.1.12	label-free	36
+PXD023381	4719624a5135112c	f3ef28d36db6a6d0	definitions 17->20; peptidoform_ions None->13410				1.1.12	label-free	37
+PXD010091	416b68e7c2f68c93	4a28ede9d291d087	definitions 17->20; peptidoform_ions None->17588				1.1.12	label-free	66
+PXD007049	cfe59305da5a5ecd	3a3283eceb88f8fc	definitions 17->20; peptidoform_ions None->5382				1.1.12	label-free	32
+PXD011314	227665124db6f3b5	ee3d09e498536cbe	definitions 17->20; peptidoform_ions None->818				1.1.12	label-free	33
+PXD052189	aac992ee3b6a6560	0f96c67e02b5a626	definitions 17->20; findings 9->10; peptidoform_ions None->818			confidence_rule_fewer_peptides	1.1.11	label-free	79
+PXD017058	cf165a78fa2d35d2	8bb7324d2cd8e197	definitions 17->20; peptidoform_ions None->33802				1.1.12	label-free	64
+PXD073846	cb91c24a2aafdca8	8d214dbf07e00337	definitions 17->20; peptidoform_ions None->29233				1.1.12	label-free	54
+PXD035171	bad44eb5f7e360eb	96a1be77226a2a12	definitions 17->20; peptidoform_ions None->26448				1.1.12	label-free	55
+PXD036557	0955c951b61e80ba	3f0ea5b59e71e6d6	definitions 17->20; peptidoform_ions None->7507				1.1.11	label-free	26
+PXD027232	7b4d666260695258	b33d8bcbd9af59b4	definitions 14->16; metrics 16->18; peptidoform_ions None->638; provenance_records 3->4	isobaric_reader provenance:05_qc qc_payload	unresolved_modifications	run_counts_missing	1.1.14	TMT	24
+PXD014274	554d3bb13e935f75	610cb3c006b2da3b	definitions 17->20; peptidoform_ions None->7637				1.1.12	label-free	50
+PXD005014	c4603fc4e4fa267c	07f2216d0529d31b	definitions 17->20; peptidoform_ions None->13887				1.1.12	label-free	54
+PXD058248	0d7759b6e42795cd	c45125a9783ef365	definitions 17->20; peptidoform_ions None->1912				1.1.12	label-free	58
+PXD058611	7afca9a77f663576	d915c2b0a17f72ca	definitions 17->20; peptidoform_ions None->16965				1.1.12	label-free	39
+PXD057499	39886c12675d36ea	2cf4d46d39cf237b	definitions 17->20; peptidoform_ions None->29788				1.1.12	label-free	60
+PXD058253	18e54e88b81662d8	97731e24eaf15943	definitions 17->20; peptidoform_ions None->835				1.1.12	label-free	55
+PXD047288	3fb04088ea35c6e5	2953a9fd5db51ba1	definitions 17->20; peptidoform_ions None->1488				1.1.12	label-free	54
+PXD056458	671c8bddecceb3fc	89a2bb3508bc62fa	definitions 17->20; peptidoform_ions None->3021				1.1.12	label-free	51
+PXD001054	836a36ff2e21d338	9e29e01d0522ff35	definitions 17->20; peptidoform_ions None->9959				1.1.12	label-free	33
+PXD009212	f70e9d7850ed82d6	0f3c8200436ef2a5	definitions 17->20; peptidoform_ions None->18219				1.1.12	label-free	40
+PXD043964	c7828658cd397bbc	c261e96799342740	definitions 17->20; peptidoform_ions None->13522				1.1.12	label-free	36
+PXD035107	c882c9b253d4b1bb	7afe2464abb8515e	definitions 17->20; peptidoform_ions None->13611				1.1.12	label-free	33
+PXD056433	e9eee20a0f8fd141	93f0e8f16df4f94e	definitions 17->20; peptidoform_ions None->1695				1.1.12	label-free	39
+PXD012753	4abf7e9b06265cc9	8c884db58e7605a3	definitions 17->20; peptidoform_ions None->7564				1.1.12	label-free	24
+PXD032900-tmt	19864a2fd1c4845b	8399f1bc05dfb4d1	definitions 14->16; metrics 26->32; peptidoform_ions None->4951; provenance_records 3->4; samples 54->27	isobaric_reader provenance:05_qc qc_payload	unresolved_modifications	run_counts_missing	1.1.14	TMT	26
+PXD012754	7e23bcb799d1bbb7	40162f5cb7efed67	definitions 17->20; peptidoform_ions None->6518				1.1.12	label-free	20
+PXD051203	d4f30604e10ff8a1	e79168d823689a19	definitions 17->20; peptidoform_ions None->5651				1.1.12	label-free	38
+PXD035446	aa681d662efb361e	10c1f0b261831026	definitions 17->20; peptidoform_ions None->1894				1.1.12	label-free	19
+PXD047292	233f8e542c1ba555	e12e4f60b2b95679	definitions 17->20; peptidoform_ions None->1324				1.1.12	label-free	35
+PXD047289	ee6cfbd52cb09a8d	a8013e81d5fed02c	definitions 17->20; peptidoform_ions None->5886				1.1.12	label-free	34
+PXD047293	bcd862892400a6d0	c720cb726e4d6e55	definitions 17->20; peptidoform_ions None->2827				1.1.12	label-free	30
+PXD057490	5fce5c0a8ef888bc	f4ba002400f131c0	definitions 17->20; peptidoform_ions None->9254				1.1.12	label-free	28
+PXD051644	9efdf90d01505e5f	f3db0247f383a9a3	definitions 17->20; peptidoform_ions None->3629				1.1.12	label-free	30
+PXD058775	f973337f70227e3d	0b92797364a7e76f	definitions 17->20; findings 6->7; peptidoform_ions None->252			confidence_rule_fallback	1.1.11	label-free	16
+PXD034432	24368f638148b497	3113259d4b177105	definitions 17->20; peptidoform_ions None->5040				1.1.12	label-free	21
+PXD060120	-		not re-ingested (rc=1): failed   PXD060120: PeptideQuantification.tsv has the column '20220827_HF2_01_PK_1_TMT12-calib_132C', which no row of the search's TmtDesign.txt labels. A column is placed by its file and channel, never by its position, so it is not stored.				1.1.14	TMT	24
