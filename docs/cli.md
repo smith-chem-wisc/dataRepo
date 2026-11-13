@@ -16,6 +16,7 @@ New here? Start with [getting-started.md](getting-started.md), which runs the ma
 | [`study`](#datarepo-study) | write a study layer's delivered rows as a study bundle |
 | [`run`](#datarepo-run) | run a released engine on stored data (the instance operator's step) |
 | [`pride`](#datarepo-pride) | fetch each deposit's PRIDE record into the store, beside its bundles (the instance operator's step) |
+| [`contribute`](#datarepo-contribute) | save a result computed from a catalog back into the store (an AI model's or a person's), or list them |
 | [`publish`](#datarepo-publish) | build the catalog from every ingested dataset, then write the static site |
 | [`build`](#datarepo-build) | load bundles into one DuckDB catalog |
 | [`site`](#datarepo-site) | write the public static site for one catalog |
@@ -185,6 +186,29 @@ options:
 
 The only command that reaches PRIDE: `build` reads the records it kept and fetches nothing. Each record is kept under `<store>/_companion/pride/<accession>/<record id>/` (`record.json`, `fetch.json`), never in a bundle, and a record unchanged since the last fetch writes nothing. Every value PRIDE publishes is kept, e-mail included. A deposit PRIDE has no record of is kept as `found = false`; a failed fetch keeps nothing, is printed as `failed`, and makes the command exit `1` after the rest are fetched.
 
+### `datarepo contribute`
+
+Save a result computed from a catalog back into the store (an AI model's or a person's), or list them.
+
+```text
+usage: datarepo contribute [-h] --store STORE [--catalog CATALOG] [--inbox INBOX] [--reason REASON] [--by BY] [--json] action file
+
+save a result computed from a catalog back into the store (an AI model's or a person's), or list them
+
+positional arguments:
+  action                 save: save the contribution in FILE; list: the store's contributions; inbox: the results the MCP server's save tool is holding; accept ID / reject ID: take one into the store, after checking it, or set it aside
+  file                   the contribution, as JSON (save), or a result's id (accept, reject)
+
+options:
+  -h, --help             show this help message and exit
+  --store STORE          the instance's bundle store (required)
+  --catalog CATALOG      the catalog folder (or one catalog file) that holds the catalog the contribution cites (save, accept)
+  --inbox INBOX          the inbox the MCP server was started with (mcp --contributions) (inbox, accept, reject)
+  --reason REASON        why a pending result is rejected (reject)
+  --by BY                the accepting operator's name, recorded with the result only if given (accept)
+  --json                 print one JSON object on stdout
+```
+
 ## Build and publish: bundles become a catalog and a site
 
 `publish` is `build` then `site` in one step. See [build.md](build.md), [site.md](site.md) and [operating.md](operating.md).
@@ -319,7 +343,7 @@ Serve one catalog to an agent over stdio (MCP).
 ```text
 usage: datarepo mcp [-h] [--catalog CATALOG] [--install] [--list] [--check]
                     [--name NAME] [--config CONFIG] [--force]
-                    [--sessions SESSIONS]
+                    [--sessions SESSIONS] [--contributions CONTRIBUTIONS]
 
 serve one catalog to an agent over stdio (MCP)
 
@@ -337,4 +361,8 @@ options:
                      where the PUBLIC record of every call is kept; default
                      the _sessions folder of the store a catalog folder
                      reads (a one-file catalog keeps none unless named)
+  --contributions CONTRIBUTIONS
+                     an inbox folder: also serve datarepo_save_result, which
+                     puts a result there for the operator to accept
+                     (datarepo contribute accept); off without it
 ```

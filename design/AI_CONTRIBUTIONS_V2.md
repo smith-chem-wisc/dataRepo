@@ -53,7 +53,7 @@ user says.
 | V1 | port A1-A4 (submission, id, save, basis check) from the branch onto 1.5.0; non-finite numbers and wrong types refused (6) | the branch's `ContributionSubmissionTests` and `ContributionStoreTests`, plus 6's cases | **done** (`ea539c8`, `2dbe460`) |
 | V2 | build tables (A9-A12), every file checked alone (6); the guard (A13) on every `--release` (8) | the branch's carry-forward tests, plus 8's drop and edit cases | **done** (`647a2b7`) |
 | V3 | the session record redone: per MCP session, outside the catalog id, no person, a failed line never loses the answer (5, 9, 10) | 5's `unchanged` rebuild; 9 simulated; 10's notice | **done** (below) |
-| V4 | the save tool and the inbox: cited calls copied from the record, narrow meanings, `accept` records the operator (2, 3, 10) | 3's forged cases all refused; `max_rows`, CRLF |
+| V4 | the save tool and the inbox: cited calls copied from the record, narrow meanings, `accept` records the operator (2, 3, 10) | 3's forged cases all refused; `max_rows`, CRLF | **done** (below); `max_rows` is V5's, in `verify` |
 | V5 | `verify`, `show`, discovery (S9, S11) | a judgement never reproduced; a missing catalog reported |
 | V6 | docs (`docs/mcp.md`, `docs/cli.md`, a contributions page), CHANGELOG, a scratch run on a copy of aging's catalog | a stranger agent saves, the operator accepts, the next catalog serves it |
 
@@ -74,6 +74,19 @@ user says.
   A session recorded after the release is free.
 - **No person** (10): the record holds the client application as the client reported it, never a model or a person; the save
   tool (V4) takes no name.
+
+## How V4 takes a result (2026-11-13)
+
+- **`datarepo mcp --contributions <inbox>`** lists a fourth tool, `datarepo_save_result`, and only then; a server that takes
+  results must keep a record, since a result cites its queries from it. The result goes to the inbox, never the store (2).
+- **The tool takes no person** (10): `submitted_by` is refused, and withheld from the record even on a refused call. The
+  person accountable is the operator who accepts (D57); `contribute accept --by NAME` records a name only if given, and
+  `accepted_utc` always. Neither is hashed, so accepting moves no id.
+- **It passes on only what its client states** (3): `model.stated_by` must be `client`, `client` is taken from the
+  connection, and a query is observed only when the tool copies it from this session's record. `observed` is described
+  everywhere as "this query ran on that catalog and returned rows with that hash", never as support for the result.
+- **`accept`** checks each observed query against the record on disk again, comparing SQL with line ends made LF (3: a CRLF
+  query was refused). `datarepo contribute save|list|inbox|accept|reject`; `inbox` names unreadable files with the reason.
 
 ## Open for the user (asked when we reach it, one at a time)
 

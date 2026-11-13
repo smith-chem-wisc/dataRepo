@@ -85,7 +85,8 @@ public static class Contributions
 
     /// <summary>The fields the save adds. A submitter may not send them: the store, not the client, says when and what.</summary>
     internal static readonly HashSet<string> Written =
-        new(["contribution_sha256", "contribution_id", "submitted_utc", "datarepo_version", "record_version"], StringComparer.Ordinal);
+        new(["contribution_sha256", "contribution_id", "submitted_utc", "datarepo_version", "record_version", "accepted_utc", "accepted_by"],
+            StringComparer.Ordinal);
 
     public const int MaxRows = 100_000;
     public const int MaxSqlChars = 65_536;
@@ -99,9 +100,11 @@ public static class Contributions
     public static readonly IReadOnlyDictionary<string, string> TableDocs = new Dictionary<string, string>(StringComparer.Ordinal)
     {
         ["contributions"] = "One row per result an AI model or a person computed from a catalog and saved back into the store, "
-            + "with which model made it (as STATED by the client or the operator: no server can observe a model), who is "
-            + "accountable for it, its licence, and the catalog it was computed from (`basis_catalog_id`). These rows are "
-            + "claims made from the data, not measurements: read `reproducibility` and `status` before building on one.",
+            + "with which model made it (as STATED by the client or the operator: no server can observe a model), its "
+            + "licence, and the catalog it was computed from (`basis_catalog_id`). A result that came through the MCP "
+            + "server's inbox was accepted by the operator at `accepted_utc`, who is accountable for it (named in "
+            + "`accepted_by` only if they chose to be); `submitted_by` is set only when a person chose to be named. These "
+            + "rows are claims made from the data, not measurements: read `reproducibility` and `status` before building on one.",
         ["contribution_basis"] = "The exact (dataset, bundle) pairs each contribution was computed from. `in_this_catalog` is "
             + "false when this catalog serves another bundle of that dataset (it was searched again); `catalog_bundle_id` "
             + "is the bundle served now. The contribution still names the frozen catalog it used.",
@@ -111,7 +114,9 @@ public static class Contributions
         ["contribution_queries"] = "The SQL each contribution recorded. `observed` is true only for a query the MCP server "
             + "itself ran and hashed (`result_sha256`, on `catalog_id`), checked against the public session record "
             + "(`session_id`, `seq`, the row of `session_calls` that ran it) when the contribution was accepted; a stated "
-            + "query is what the submitter says it ran.",
+            + "query is what the submitter says it ran. `observed` means only that this query ran on that catalog and "
+            + "returned rows with that hash. It does not mean the contribution's items follow from those rows: nothing "
+            + "checks that, and a query such as `SELECT 1` can be cited beside any result.",
         ["contributions_current"] = "Contributions that are neither retracted nor superseded, and are not themselves retractions.",
     };
 
@@ -468,7 +473,10 @@ public static class Contributions
     /// <param name="allowObserved">Only the MCP server that ran a query and hashed its answer may mark it observed (A16).</param>
     /// <exception cref="ContributionException">The submission is invalid, the cited catalog or a bundle, contribution or
     /// target is not there, the target is already retracted, or another contribution holds the id's folder.</exception>
-    public static ContributionSaved Save(string store, string catalog, IReadOnlyDictionary<string, object?> submission, bool allowObserved = false)
+    /// <param name="accepted">Saved by the operator's <c>accept</c> from an inbox: the time is recorded, and
+    /// <paramref name="acceptedBy"/> when the operator chooses to give a name. Neither is hashed (A2).</param>
+    public static ContributionSaved Save(string store, string catalog, IReadOnlyDictionary<string, object?> submission, bool allowObserved = false,
+        bool accepted = false, string? acceptedBy = null)
     {
         var normalised = Validate(submission);
         var method = (Dictionary<string, object?>)normalised["method"]!;
@@ -508,6 +516,9 @@ public static class Contributions
         record["record_version"] = SubmissionVersion;
         record["datarepo_version"] = BundleWriter.PackageVersion;
         record["submitted_utc"] = DateTime.UtcNow.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'", CultureInfo.InvariantCulture);
+        // D57: the person accountable for a result is the operator who accepts it, named only if they choose to be.
+        if (accepted) record["accepted_utc"] = record["submitted_utc"];
+        if (accepted && !string.IsNullOrWhiteSpace(acceptedBy)) record["accepted_by"] = acceptedBy.Trim();
 
         // Written into a staging directory, then renamed: a failure leaves nothing a build would read (EngineRunner).
         var staging = System.IO.Path.Combine(store, Dir, $".{id}.writing");
@@ -542,8 +553,11 @@ public static class Contributions
                 throw new ContributionException($"{where}: that session's public session record does not verify (its hash chain breaks at {session.BrokenAtSeq})");
             var call = session.Entries.FirstOrDefault(e => e.GetValueOrDefault("type") as string == "call" && e.GetValueOrDefault("seq") as long? == (long)q["seq"]!);
             var arguments = call?.GetValueOrDefault("arguments") as IReadOnlyDictionary<string, object?>;
+            // The submission's SQL has its line ends made LF (Text, since they are hashed); the record keeps what the client
+            // sent. 097 finding 3: a genuine query with CRLF line ends was refused here, so both are compared as LF.
+            static string? Lf(string? s) => s?.Replace("\r\n", "\n", StringComparison.Ordinal).Replace('\r', '\n');
             if (call is null || call.GetValueOrDefault("tool") as string != "datarepo_sql" || call.GetValueOrDefault("outcome") as string != "ok"
-                || arguments?.GetValueOrDefault("query") as string != (string)q["sql"]!
+                || Lf(arguments?.GetValueOrDefault("query") as string) != Lf((string)q["sql"]!)
                 || call.GetValueOrDefault("catalog_id") as string != (string)q["catalog_id"]!
                 || call.GetValueOrDefault("rows_sha256") as string != (string)q["result_sha256"]!)
                 throw new ContributionException(
@@ -624,10 +638,11 @@ public static class Contributions
     /// public session record on disk, and saved into the store; the request moves to <c>accepted/</c>.</summary>
     /// <remarks>Only the one request is read, so a bad file beside it cannot stop it.</remarks>
     /// <exception cref="ContributionException">No such request, or it does not check out; nothing is written.</exception>
-    public static ContributionSaved Accept(string inbox, string id, string store, string catalog)
+    /// <param name="acceptedBy">The operator's name, recorded only when they choose to give one (D57).</param>
+    public static ContributionSaved Accept(string inbox, string id, string store, string catalog, string? acceptedBy = null)
     {
         var request = ReadRequest(RequestFile(inbox, id));
-        var saved = Save(store, catalog, request.Submission, allowObserved: true);
+        var saved = Save(store, catalog, request.Submission, allowObserved: true, accepted: true, acceptedBy: acceptedBy);
         Shelve(inbox, id, "accepted", null);
         return saved;
     }
@@ -773,7 +788,8 @@ public static class Contributions
         }
 
         Str(record, "kind", "kind", required: true);
-        foreach (var key in new[] { "title", "summary", "licence", "reproducibility", "reason", "target", "supersedes", "submitted_utc", "datarepo_version" })
+        foreach (var key in new[] { "title", "summary", "licence", "reproducibility", "reason", "target", "supersedes", "submitted_utc", "datarepo_version",
+                     "accepted_utc", "accepted_by" })
             Str(record, key, key);
         foreach (var (key, fields) in new[] { ("model", new[] { "provider", "id", "stated_by", "evidence" }), ("client", ["name", "version"]), ("submitted_by", ["name", "orcid"]) })
         {

@@ -34,7 +34,7 @@ namespace DataRepo.Cli
     {
         private const string Prog = "datarepo";
 
-        private static readonly string[] Commands = ["ingest", "study", "manifest", "inspect", "verify", "build", "catalog", "query", "site", "publish", "run", "pride", "mcp", "doctor"];
+        private static readonly string[] Commands = ["ingest", "study", "manifest", "inspect", "verify", "build", "catalog", "query", "site", "publish", "run", "pride", "contribute", "mcp", "doctor"];
         private static readonly string[] Pending = [];
 
         /// <summary>Each command's one line, as <c>datarepo -h</c> lists it and as its own <c>-h</c> prints it
@@ -52,6 +52,7 @@ namespace DataRepo.Cli
             ["site"] = DataRepo.Site.SiteCommand.Summary,
             ["publish"] = "build the catalog from every ingested dataset, then write the static site",
             ["run"] = "run a released engine on stored data (the instance operator's step)",
+            ["contribute"] = ContributeCommand.Summary,
             ["pride"] = "fetch each deposit's PRIDE record into the store, beside its bundles (the instance operator's step)",
             ["mcp"] = DataRepo.Mcp.McpCommand.Summary,
             ["doctor"] = "report this build's version, schema and components, and any registered MCP servers",
@@ -113,6 +114,7 @@ namespace DataRepo.Cli
                     "query" => CatalogCommands.Query(rest),
                     "publish" => CatalogCommands.Publish(rest),
                     "run" => RunCommand.Run(rest),
+                    "contribute" => ContributeCommand.Run(rest),
                     "pride" => Pride(rest, Console.Out),
                     "mcp" => DataRepo.Mcp.McpCommand.Run(rest, Console.Out, Console.Error),
                     "site" => DataRepo.Site.SiteCommand.Run(rest, Console.Out, Console.Error),

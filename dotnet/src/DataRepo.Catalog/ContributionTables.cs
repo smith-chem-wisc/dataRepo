@@ -198,7 +198,7 @@ public static partial class CatalogBuilder
             client_name VARCHAR, client_version VARCHAR, submitted_by VARCHAR, submitted_by_orcid VARCHAR,
             licence VARCHAR, reproducibility VARCHAR, basis_catalog_id VARCHAR, supersedes VARCHAR, target VARCHAR,
             reason VARCHAR, status VARCHAR, superseded_by VARCHAR, retracted_by VARCHAR,
-            submitted_utc VARCHAR, datarepo_version VARCHAR, path VARCHAR, record JSON
+            submitted_utc VARCHAR, datarepo_version VARCHAR, accepted_utc VARCHAR, accepted_by VARCHAR, path VARCHAR, record JSON
         )");
         Exec(con, "CREATE TABLE contribution_basis (contribution_id VARCHAR, dataset_id VARCHAR, bundle_id VARCHAR, in_this_catalog BOOLEAN, catalog_bundle_id VARCHAR, bundle_in_store BOOLEAN)");
         Exec(con, "CREATE TABLE contribution_builds_on (contribution_id VARCHAR, builds_on_id VARCHAR)");
@@ -237,6 +237,7 @@ public static partial class CatalogBuilder
                     .AppendValue(c.Supersedes).AppendValue(c.Target).AppendValue((string?)Get(r, "reason"))
                     .AppendValue(status).AppendValue(supersededBy.GetValueOrDefault(c.Id)).AppendValue(retractedBy.GetValueOrDefault(c.Id))
                     .AppendValue((string?)Get(r, "submitted_utc")).AppendValue((string?)Get(r, "datarepo_version"))
+                    .AppendValue((string?)Get(r, "accepted_utc")).AppendValue((string?)Get(r, "accepted_by"))
                     .AppendValue(AsPosix(c.Path)).AppendValue(PyFormat.Json(r, sortKeys: true, ensureAscii: true))
                     .EndRow();
                 foreach (var (dataset, bundle) in c.BasisBundles)

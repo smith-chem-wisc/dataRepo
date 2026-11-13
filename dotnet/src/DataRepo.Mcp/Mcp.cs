@@ -129,6 +129,140 @@ public static class Mcp
         }
     }
 
+    // --- the save tool (design/AI_CONTRIBUTIONS_V2.md V4) ------------------------------------------------
+
+    /// <summary>The save tool's name. It is listed only when the server is started with an inbox (A15), so a read-only
+    /// server's tool list stays exactly <see cref="ToolSpecs"/>.</summary>
+    public const string SaveTool = $"{ToolPrefix}save_result";
+
+    /// <summary>The save tool as an agent sees it.</summary>
+    public static readonly ToolSpec SaveToolSpec = new(
+        SaveTool,
+        "save_result",
+        "Save a result you computed from this catalog, for review",
+        "Save a result you computed from this catalog (a list of sites or proteins, a table, a relation graph, or a "
+        + "finding) so the next researcher or AI model can find and build on it instead of redoing the work. Give the "
+        + "contribution (contribution_version \"1\", kind, title, model {provider, id: your EXACT model id, stated_by: "
+        + "\"client\"}, licence, reproducibility, basis {catalog_id: this catalog's, bundles: the (dataset_id, bundle_id) "
+        + "pairs you used}, method {description, queries}, and items or edges or summary). Name no person: everything sent "
+        + "here is in the public session record, and the operator who accepts the result is accountable for it. Cite the "
+        + "datarepo_sql calls you used by their session_call.seq: the server copies each from its public record as an "
+        + "OBSERVED query, which means only that it ran on this catalog and returned rows with that hash, not that your "
+        + "result follows from them. Put any query the server did not run in method.queries, with observed false. The "
+        + "result goes to an inbox for an operator to check, not straight into the catalog. Before computing something, "
+        + "look for an earlier result (contributions_current) and build on it.",
+        """{"properties":{"contribution":{"additionalProperties":true,"title":"Contribution","type":"object"},"cites":{"default":[],"items":{"type":"integer"},"title":"Cites","type":"array"}},"required":["contribution"],"type":"object","title":"datarepo_save_resultArguments"}""",
+        """{"type":"object","additionalProperties":true,"title":"datarepo_save_resultDictOutput"}""");
+
+    /// <summary>The tools a server lists: the three read tools, and the save tool when it has an inbox.</summary>
+    public static IEnumerable<string> ToolNames(string? inbox) =>
+        ToolSpecs.Select(s => s.Name).Concat(inbox is null ? [] : [SaveTool]);
+
+    /// <summary>The save tool: the agent's result, with every query it cites copied from the public session record as
+    /// observed, checked against the served catalog and put in the inbox for the operator.</summary>
+    /// <returns>The request's id and status, or an error payload the agent can act on.</returns>
+    private static Dictionary<string, object?> SaveResult(CatalogServer server, IDictionary<string, JsonElement> arguments, SessionLog log, string inbox)
+    {
+        try
+        {
+            if (!arguments.TryGetValue("contribution", out var given) || given.ValueKind != JsonValueKind.Object)
+                throw new ToolException("contribution must be an object: the result and how it was made (see the tool's description)");
+            var known = new HashSet<string>(["contribution", "cites"], StringComparer.Ordinal);
+            if (arguments.Keys.FirstOrDefault(k => !known.Contains(k)) is { } extra) throw new ToolException($"unknown argument {extra}");
+            Dictionary<string, object?> submission;
+            try
+            {
+                submission = (Dictionary<string, object?>)Contributions.FromJson(given)!;
+            }
+            catch (ContributionException e)
+            {
+                throw new ToolException(e.Message);
+            }
+            if (submission.ContainsKey("client"))
+                throw new ToolException("client is recorded by the server from the connection, never stated: remove it");
+            // D57 and 097 finding 10: everything sent here is in the public record, so no person is named through it. The
+            // operator who accepts the result is accountable for it.
+            if (submission.ContainsKey("submitted_by"))
+                throw new ToolException(
+                    "submitted_by names a person, and everything sent here is in the public session record: remove it. The "
+                    + "operator who accepts the result is accountable for it");
+            // 097 finding 3: an agent sent stated_by "operator". The server can only pass on what its client states.
+            if (submission.GetValueOrDefault("model") is Dictionary<string, object?> model && model.GetValueOrDefault("stated_by") is not "client")
+                throw new ToolException("model.stated_by is \"client\" here: the server passes on what its client states, and nothing else");
+            var cites = new List<long>();
+            if (arguments.TryGetValue("cites", out var c) && c.ValueKind != JsonValueKind.Null)
+            {
+                if (c.ValueKind != JsonValueKind.Array) throw new ToolException("cites must be a list of session_call.seq numbers");
+                foreach (var e in c.EnumerateArray())
+                    cites.Add(e.ValueKind == JsonValueKind.Number && e.TryGetInt64(out var seq) ? seq
+                        : throw new ToolException("cites must be a list of session_call.seq numbers"));
+            }
+            if (submission.GetValueOrDefault("method") is not Dictionary<string, object?> method)
+                throw new ToolException("method is required: {description, queries}");
+            var stated = method.GetValueOrDefault("queries") as List<object?> ?? [];
+            if (stated.OfType<Dictionary<string, object?>>().Any(q => q.GetValueOrDefault("observed") is true))
+                throw new ToolException(
+                    "a query cannot be stated as observed: cite the datarepo_sql call by its session_call.seq instead, and the "
+                    + "server copies it from its public record");
+            var observed = cites.Distinct().Order().Select(seq =>
+            {
+                var call = log.Call(seq) ?? throw new ToolException($"seq {seq} is not a call of this session");
+                if (call.GetValueOrDefault("tool") as string != "datarepo_sql" || call.GetValueOrDefault("outcome") as string != "ok")
+                    throw new ToolException($"seq {seq} is a {call.GetValueOrDefault("tool")} call that ended {call.GetValueOrDefault("outcome")}: only a datarepo_sql call that answered can be cited");
+                var ran = call["arguments"] as IReadOnlyDictionary<string, object?>;
+                var query = new Dictionary<string, object?>(StringComparer.Ordinal)
+                {
+                    ["sql"] = ran?.GetValueOrDefault("query"),
+                    ["observed"] = true,
+                    ["catalog_id"] = call.GetValueOrDefault("catalog_id"),
+                    ["result_sha256"] = call.GetValueOrDefault("rows_sha256"),
+                    ["session_id"] = log.SessionId,
+                    ["seq"] = seq,
+                };
+                if (call.GetValueOrDefault("row_count") is long rows) query["row_count"] = rows;
+                if (call.GetValueOrDefault("truncated") is bool truncated) query["truncated"] = truncated;
+                return (object?)query;
+            }).ToList();
+            method["queries"] = observed.Concat(stated).ToList();
+            if (log.Client is { } client)
+                submission["client"] = new Dictionary<string, object?>(StringComparer.Ordinal) { ["name"] = client.Name, ["version"] = client.Version };
+            Dictionary<string, object?> normalised;
+            try
+            {
+                normalised = Contributions.Validate(submission);
+            }
+            catch (ContributionException e)
+            {
+                throw new ToolException(e.Message);
+            }
+
+            var basis = (Dictionary<string, object?>)normalised["basis"]!;
+            var served = PyValues.Str(server.Identity.CatalogId);
+            if ((string)basis["catalog_id"]! != served)
+                throw new ToolException($"basis.catalog_id is {basis["catalog_id"]}, and this server serves catalog {served}: a result names the catalog it was computed from");
+            var held = server.Identity.Bundles.Select(b => (PyValues.Str(b.GetValueOrDefault("dataset_id")), PyValues.Str(b.GetValueOrDefault("bundle_id")))).ToHashSet();
+            foreach (var b in ((List<object?>)basis["bundles"]!).Cast<Dictionary<string, object?>>())
+                if (!held.Contains(((string)b["dataset_id"]!, (string)b["bundle_id"]!)))
+                    throw new ToolException($"catalog {served} does not hold {b["dataset_id"]} bundle {b["bundle_id"]}");
+
+            var pending = Contributions.Submit(inbox, normalised, log.SessionId);
+            return new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["contribution_id"] = pending.Id,
+                ["contribution_sha256"] = pending.Sha256,
+                ["status"] = "pending_review",
+                ["observed_queries"] = (long)observed.Count,
+                ["stated_queries"] = (long)stated.Count,
+                ["next"] = "An operator checks it against the public session record and accepts or rejects it. Once accepted, "
+                    + "every later catalog and release carries it, with the model, the queries and the data it came from.",
+            };
+        }
+        catch (DataRepoException exc)
+        {
+            return ErrorPayload(exc);
+        }
+    }
+
     // --- the stdio server -------------------------------------------------------------------------------
 
     /// <summary>Run the stdio MCP server over one catalog until the client disconnects.</summary>
@@ -136,8 +270,10 @@ public static class Mcp
     /// beside the bundles of the store a catalog folder serves (<see cref="DefaultSessionRoot"/>). A one-file catalog names
     /// no store, so without this it serves with no record, and says so.</param>
     /// <exception cref="CatalogException">There is no catalog at <paramref name="catalog"/>.</exception>
+    /// <param name="contributions">The inbox saved results go to (A15); null serves no save tool.</param>
+    /// <exception cref="CatalogException">An inbox was named and there is no session record to cite queries from.</exception>
     public static async Task ServeAsync(string catalog, string name = "datarepo", TextWriter? stderr = null, CancellationToken cancellation = default,
-        string? sessions = null)
+        string? sessions = null, string? contributions = null)
     {
         using var server = new CatalogServer(catalog);
         var root = sessions ?? DefaultSessionRoot(server);
@@ -160,12 +296,16 @@ public static class Mcp
             }
         }
         using var _ = log;
-        var options = ServerOptions(server, name, log);
+        if (contributions is not null && log is null)
+            throw new CatalogException(
+                $"--contributions needs the public session record, since a saved result cites its queries from it, and this "
+                + $"server keeps none: {recordNote}");
+        var options = ServerOptions(server, name, log, contributions);
         // stderr, never stdout: stdout IS the protocol channel, and a banner printed there would be read as a
         // malformed JSON-RPC message and close the connection.
         (stderr ?? Console.Error).WriteLine(
             $"datarepo {CatalogBuilder.PackageVersion} mcp: serving catalog {PyValues.Str(server.Identity.CatalogId)} ({server.Box.Path}) over stdio; "
-            + recordNote);
+            + recordNote + (contributions is null ? "" : $"; saved results go to the inbox {BundleWriter.PathText(contributions)}"));
         await using var transport = new StdioServerTransport(options, null);
         await using var mcp = McpServer.Create(transport, options);
         await mcp.RunAsync(cancellation).ConfigureAwait(false);
@@ -190,10 +330,14 @@ public static class Mcp
     /// schemas, and the handlers that answer them. Exposed so a test can serve over any transport.</summary>
     /// <param name="log">The public session record (A18): every call is written to it, and every client is told so at
     /// <c>initialize</c>. Null keeps no record and leaves every answer byte for byte as before.</param>
-    public static McpServerOptions ServerOptions(CatalogServer server, string name = "datarepo", SessionLog? log = null)
+    /// <param name="inbox">Where saved results wait for the operator (A15). Null lists no save tool. A save needs the
+    /// session record, because a result cites its queries from it.</param>
+    public static McpServerOptions ServerOptions(CatalogServer server, string name = "datarepo", SessionLog? log = null, string? inbox = null)
     {
+        if (inbox is not null && log is null)
+            throw new ArgumentException("a server that takes results keeps a session record: results cite their queries from it", nameof(log));
         var gate = new SemaphoreSlim(1, 1);  // the catalog connection serves one call at a time
-        var tools = ToolSpecs.Select(spec => new Tool
+        var tools = ToolSpecs.Concat(inbox is null ? [] : [SaveToolSpec]).Select(spec => new Tool
         {
             Name = spec.Name,
             Title = spec.Title,
@@ -216,7 +360,7 @@ public static class Mcp
                     try
                     {
                         if (log is not null) TryRecord(() => log.SetClient(request.Server.ClientInfo?.Name, request.Server.ClientInfo?.Version));
-                        return CallTool(server, request.Params?.Name ?? "", request.Params?.Arguments, log);
+                        return CallTool(server, request.Params?.Name ?? "", request.Params?.Arguments, log, inbox);
                     }
                     finally
                     {
@@ -232,9 +376,24 @@ public static class Mcp
     /// and answer with the text an agent reads and the same value as structured content.</summary>
     /// <param name="log">The public session record (A18). When given, the call is recorded whatever its outcome, and a
     /// tool's answer gains <c>session_call</c>: its place in the record. Null leaves the answer as it was.</param>
-    public static CallToolResult CallTool(CatalogServer server, string toolName, IDictionary<string, JsonElement>? arguments, SessionLog? log = null)
+    /// <param name="inbox">Where a saved result goes (A15); null makes the save tool unknown, as on a read-only server.</param>
+    public static CallToolResult CallTool(CatalogServer server, string toolName, IDictionary<string, JsonElement>? arguments, SessionLog? log = null,
+        string? inbox = null)
     {
-        var answer = Answer(server, toolName, arguments, out var result);
+        CallToolResult answer;
+        Dictionary<string, object?>? result;
+        if (toolName == SaveTool && inbox is not null && log is not null)
+        {
+            result = SaveResult(server, arguments ?? new Dictionary<string, JsonElement>(), log, inbox);
+            using var structured = JsonDocument.Parse(PydanticJson.Serialize(result, indent: null, nanAsNull: true));
+            answer = new CallToolResult
+            {
+                Content = [new TextContentBlock { Text = PydanticJson.Serialize(result) }],
+                StructuredContent = structured.RootElement.Clone(),
+                IsError = false,
+            };
+        }
+        else answer = Answer(server, toolName, arguments, out result);
         return log is null ? answer : Recorded(server, toolName, arguments, answer, result, log);
     }
 
@@ -262,6 +421,10 @@ public static class Mcp
     {
         var plain = (arguments ?? new Dictionary<string, JsonElement>())
             .ToDictionary(kv => kv.Key, kv => JsonPlain(kv.Value), StringComparer.Ordinal);
+        // 097 finding 10: the record is public and keeps no person. A save that names one is refused, and the name it sent
+        // is withheld here too, so a refused call cannot put it in the record either.
+        if (toolName == SaveTool && plain.GetValueOrDefault("contribution") is Dictionary<string, object?> sent && sent.ContainsKey("submitted_by"))
+            sent["submitted_by"] = "(withheld: the public record keeps no person)";
         var text = answer.Content.OfType<TextContentBlock>().FirstOrDefault()?.Text ?? "";
         var outcome = result is null ? "invalid" : result.ContainsKey("error") && result.ContainsKey("hint") ? "error" : "ok";
         var rowsSha = outcome == "ok" ? RowsHash(result!) : null;

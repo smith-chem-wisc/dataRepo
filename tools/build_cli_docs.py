@@ -39,7 +39,7 @@ GROUPS: list[tuple[str, str, list[str]]] = [
         "Ingest: a producer's run becomes a bundle",
         "An instance operator runs these once per dataset, after the search. See "
         "[ingest.md](ingest.md) and [study.md](study.md).",
-        ["manifest", "ingest", "inspect", "verify", "study", "run", "pride"],
+        ["manifest", "ingest", "inspect", "verify", "study", "run", "pride", "contribute"],
     ),
     (
         "Build and publish: bundles become a catalog and a site",
