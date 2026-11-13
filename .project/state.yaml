@@ -713,6 +713,17 @@ decisions:
       re-searches would drop four served deposits, and before the payload rebuild would move 39 isobaric ids twice. This is a
       notice, not a release: 1.5.0 is released only on the user's word, and the swap needs the released binary. aging's study
       bundle must be written again with 1.5.0 before the first publish (measured: it builds, every curated row lands).
+  - id: D69
+    date: 2026-11-13
+    text: >-
+      U35 / QuantProject's DATAREPO-D15 answered with its default: go's organelle annotation will read an isobaric bundle's
+      `protein_groups` source when it has no `protein_group_quant`, in the release after 1.5.0, go's definition first and our
+      `GoEngine.cs:97/:111` after it. The user: "yes", on the agent's recommendation. Why: the annotation needs only group
+      membership, which every isobaric bundle stores (`AllProteinGroups.tsv`, read by mzLib's `ProteinGroupFromTsvFile`);
+      QuantProject's user ruled out renaming MetaMorpheus's output (their 088), and MetaMorpheus #2964 names that file the same
+      way however the search was set up. It brings the 39 served isobaric deposits (43 with PXR-R61's four) into
+      `protein_localizations`; pooling across `quant_scale` stays aging's rule. This replaces the route of our aging 137 (a
+      MetaMorpheus rename, QUANTPROJECT-Q3). Asked go GO-D14; told QuantProject and aging.
 gaps:
   - >-
     G135 NEW 2026-11-12: an operator's `--mm-settings` reaches rows and not the bundle id. A scratch ingest of PXD027232 (MetaMorpheus
