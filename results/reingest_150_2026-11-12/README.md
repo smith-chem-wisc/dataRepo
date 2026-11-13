@@ -62,6 +62,13 @@ bundles. Then they build. Both were run on the scratch store with the same binar
 - **So the whole window is about 7 h:** 6 h 14 min of ingest, then 28 min of engines, then 6 min of build. This assumes
   three ingests at a time, as here. aging's study bundle must also be delivered again at layer 0.7.0 (its rows are not
   re-derived), and that is aging's step.
+- **aging's study layer, measured 2026-11-13.** A build that names a 0.6.0 study bundle is refused ("re-run `datarepo
+  study`"), and aging's publish passes `--study-latest aging`, so the study bundle must be written again with 1.5.0 before
+  the first 1.5.0 publish. `datarepo study` on aging's unchanged `instance/ages/delivery/study.yaml` wrote it at 0.7.0
+  (`b0ec2a43a400d76b`, in seconds), and pass 4 of the build with it took 139 s: 4,002 checks passed, catalog
+  `6a2ef2f30b57cf03` (release `caea29bf984b3372`). Every curated row lands, as in the serving catalog: `curated_run_design`
+  1,165, `curated_design_factors` 1,624, `curated_sample_characteristics` 7,528, `sample_ages` 192. None of them names a run
+  of the four refused deposits.
 - **Against the serving catalog, on the 192 deposits both hold** (`compare_catalog.py` + `.out`):
   - Equal in every deposit: `protein_genes` (3,314,410 rows), `protein_localizations` (17,295,199) and
     `protein_groups_1pct` (696,304).
