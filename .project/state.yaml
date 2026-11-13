@@ -724,6 +724,16 @@ decisions:
       way however the search was set up. It brings the 39 served isobaric deposits (43 with PXR-R61's four) into
       `protein_localizations`; pooling across `quant_scale` stays aging's rule. This replaces the route of our aging 137 (a
       MetaMorpheus rename, QUANTPROJECT-Q3). Asked go GO-D14; told QuantProject and aging.
+  - id: D70
+    date: 2026-11-13
+    text: >-
+      PXR-R33 (one store and catalog serving several questions) is pinned. The user: "Long term I would like search results to
+      be available to address multiple questions. how we will do that yet is unknown and unplanned. i will do this with alex
+      but not today. put a pin in this topic and we will come back to it". So the goal stands (one corpus of search results,
+      several questions), the design does not: nothing is built or proposed toward it until the user and Alex plan it, which
+      also ties to the move into PXReprise (D62, U33) and to PXReprise's G61 (Alzheimer's inside aging or its own question).
+      PXReprise's stopgap stays: filter by their membership list (our 095, PXR-R36). Logged as U36; tell PXReprise R33 is
+      pinned, not owed.
 gaps:
   - >-
     G135 NEW 2026-11-12: an operator's `--mm-settings` reaches rows and not the bundle id. A scratch ingest of PXD027232 (MetaMorpheus
