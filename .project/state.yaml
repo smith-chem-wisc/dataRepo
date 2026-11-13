@@ -703,6 +703,16 @@ decisions:
       Nothing is lost by waiting: a bundle keeps exactly what it holds today until item 10 ships, and its in-bundle half and its
       beside-the-bundle half still ship together (D63). Next: measure 1.5.0's whole-store scratch re-ingest, predict ids, give
       PXReprise the date with a week's notice, tell aging, ptmQtl, QuantProject and sdrf, then release on the user's word.
+  - id: D68
+    date: 2026-11-13
+    text: >-
+      U34 is answered with its default: PXReprise gets notice that aging's store can move to 1.5.0 no earlier than 2026-11-20,
+      once their four MetaMorpheus 1.1.13 TMT re-searches (PXR-R61) and the 39 isobaric QC payload rebuilds (v0.4.47, PXR-R60)
+      are in. The user: "yes send them the notice", on the agent's recommendation. Why: 2026-11-20 is the week's notice PXReprise
+      098 asked for after the whole-store measurement (`results/reingest_150_2026-11-12/` on `feat/1.5.0`); swapping before the
+      re-searches would drop four served deposits, and before the payload rebuild would move 39 isobaric ids twice. This is a
+      notice, not a release: 1.5.0 is released only on the user's word, and the swap needs the released binary. aging's study
+      bundle must be written again with 1.5.0 before the first publish (measured: it builds, every curated row lands).
 gaps:
   - >-
     G135 NEW 2026-11-12: an operator's `--mm-settings` reaches rows and not the bundle id. A scratch ingest of PXD027232 (MetaMorpheus
