@@ -18,8 +18,9 @@ This folder is a `/project`-managed research project. **You are de facto working
   released from there (what of `feat/1.5.0` reached PXReprise: 118 says Alex replayed 16 1.5.0 commits; our release prep `ca73563` and
   example fix `7f4fca5` came later) and port `feat/ai-contributions-v2` (`c9d17c3`) as PRs. Also unread: QuantProject 095-097 (FYI;
   097: MetaMorpheus #2964 merged).
-  **Also in flight (G137):** a stranger agent was testing the AI contributions server at the close; read its runs in
-  `F:\datarepo_scratch_150\stranger\runs\` and its saves in `...\stranger\inbox\` as the operator, then report to the user.
+  **G137: the stranger agent's report is in** (`feat/ai-contributions-v2` `e591829`, `results/ai_contributions_stranger_2026-11-14/`):
+  five holes to fix on that branch before its release, the worst a NUL byte that makes an observed query's recorded SQL differ from
+  what DuckDB ran (re-checked), and a person reaching the public record through a refused save's other fields and `clientInfo`.
   **1.5.0 is built, measured and release-prepped, NOT released** (`feat/1.5.0` @ `91901d0`, pushed; `design/RELEASE_1.5.0.md` has the
   release-day steps). PXReprise has the notice (our 116, D68): swap no earlier than 2026-11-20, once their four 1.1.13 TMT re-searches
   (PXR-R61) and 39 isobaric payload rebuilds (PXR-R60) are in; they name the day (PXR-R63). aging (138) writes its study bundle again

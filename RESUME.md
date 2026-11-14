@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Commits | 966 |
+| Commits | 967 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
 | Locked decisions | 72 |
 | Open gaps | 133 |
@@ -21,7 +21,7 @@
 | `code/_wt_tmt` | feat/tmt | `9e18c4dc` | `9e18c4d` | at pin |
 | `code/_wt_142` | feat/1.4.2 | `3447228b` | `3447228` | at pin |
 | `code/_wt_150` | feat/1.5.0 | `91901d0a` | `91901d0` | at pin |
-| `code/_wt_ai` | feat/ai-contributions-v2 | `c9d17c3a` | `c9d17c3` | at pin |
+| `code/_wt_ai` | feat/ai-contributions-v2 | `e5918297` | `c9d17c3` | **off pin** -- `git -C code/_wt_ai checkout --detach c9d17c3` |
 | `code/_wt_ai_contrib` | feat/ai-contributions | `1db8a535` | `1db8a535` | at pin |
 | `code/_wt_mzlib_sumo` | fix/sumo-remnant-target-lysine | `6974a4d4` | `6974a4d4` | at pin |
 
@@ -47,13 +47,16 @@ with age.
   than 2026-11-20; asks the day, PXR-R63), aging 138/139, ptmQtl 066, sdrf 038, logs 036, QuantProject 094, go 033 (GO-D14).
 - **AI contributions v2** (D71; `feat/ai-contributions-v2` @ `c9d17c3`, pushed; `design/AI_CONTRIBUTIONS_V2.md`): PXReprise's design
   reworked on 1.5.0 against our 097 review, six slices, 951 tests, an end-to-end run on the copy of aging's store
-  (`results/ai_contributions_e2e_2026-11-14/`). A stranger-agent test was running at the close (G137).
+  (`results/ai_contributions_e2e_2026-11-14/`). A stranger agent then found five holes to fix before its release (G137,
+  `results/ai_contributions_stranger_2026-11-14/` on the branch): a NUL byte makes an observed query lie, and a person reaches the
+  public record through a refused save's other fields and `clientInfo`; also unrecorded protocol errors, a NaN closing the
+  session, and no length limit on `summary`.
 - **The user's rulings:** D68 (the 1.5.0 notice), D69 (go reads isobaric protein groups, go's definition first), D70 (R33 pinned),
   D71 (AI contributions after 1.5.0), D72 (the grant's three corrections; the PIs write it). Held: U36, U37 (both with Alex), U38.
 - **Pick up at:**
   1. `threads.py inbox`; read **PXReprise 118 and 119 in full**, then QuantProject 095-097.
   2. Do PXR-R64 (the hello-world PR from `E:\GitClones\PXReprise-dataRepo`, branch `datarepo/hello-world`) and answer PXR-R65.
-  3. Read the stranger agent's runs (`F:\datarepo_scratch_150\stranger\runs\`) and inbox as the operator; report to the user (G137).
+  3. Fix G137's five holes on `feat/ai-contributions-v2` (the NUL byte first), each with a test from the stranger's runs.
   4. With the user: how 1.5.0 is released from PXReprise, and porting `feat/ai-contributions-v2` there (G136).
 
 ## Latest (2026-11-09, later): the SDRF after the last search, and the database a search read (G131, U30, U32)

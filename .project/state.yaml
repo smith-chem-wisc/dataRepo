@@ -756,13 +756,18 @@ decisions:
       (feat/ai-contributions, design-integrity.md section 4), brought up to what feat/ai-contributions-v2 builds.
 gaps:
   - >-
-    G137 NEW 2026-11-14: a stranger agent (given only docs/mcp.md, docs/contributions.md and a driver script, no source) was
-    still testing the AI contributions server when the session closed. Its calls and answers are in
-    F:\datarepo_scratch_150\stranger\runs\ (each <name>.json and <name>.json.out.json), its saves in
-    F:\datarepo_scratch_150\stranger\inbox\, its sessions in F:\datarepo_scratch_150\reingest150\store\_sessions\. Next: read
-    them as the operator (any person's name in the record or a saved result; any false "observed" or "reproduced" claim; any
-    jammed inbox), then report to the user. Server: the scratch build 1.6.0-scratch.7054ba1 at F:\datarepo_scratch_150\ai_e2e\bin
-    over the catalog folder F:\datarepo_scratch_150\ai_e2e\catalogs.
+    G137 NEW 2026-11-14: the stranger agent's test of the AI contributions server is IN (feat/ai-contributions-v2 `e591829`,
+    results/ai_contributions_stranger_2026-11-14/README.md; its runs in F:\datarepo_scratch_150\stranger\runs\). Five holes to
+    fix on that branch before its release: (1) a person reaches the public record through a refused save's other fields
+    (submitted_by_orcid, accepted_by, client.name, a top-level submitted_by) and through clientInfo.name; (2) a NUL byte makes
+    an observed query lie: DuckDB runs the text before it, the record keeps all of it (`SELECT 42 AS n\x00 FROM no_such_table`
+    returned [[42]], re-checked by us); refuse NUL and C0 controls before a query runs; (3) a JSON-RPC-level failure is not
+    recorded and takes no seq, so a client counting its own calls mis-cites; say "cite the returned session_call.seq" in the
+    docs; (4) a bare NaN token closed the connection and lost the session; (5) no length limit on summary (1 MB accepted).
+    Smaller: isError false on refusals is undocumented; a stated query's error index counts the prepended observed ones;
+    contribution tables lack column docs; contributions.path shows a local path; the save's argument shape is in no doc.
+    What held: forged observed queries, foreign or bad seqs, writes and file reads, a fake basis, stated_by other than client,
+    and nothing reaching the store without the operator. Not yet reported to the user in a turn of their own.
   - >-
     G136 NEW 2026-11-14: dataRepo's code has MOVED to smith-chem-wisc/PXReprise (PXReprise 118 and 119, read in summary only at
     the close; their PR #4 merged 2026-11-13 as e3424af on the user's word: "we want to integrate dataRepo into pxreprise. so one
