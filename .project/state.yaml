@@ -743,6 +743,17 @@ decisions:
       (results arrive in the operator's inbox and a person reviews them; nobody fills anything in; no host for now) and the
       narrow meanings of observed/reproduced. No re-ingest, so it cannot collide with the 1.5.0 swap; built on 1.5.0, no result
       points at bundles the swap replaces (097 finding 8). Released only on the user's word.
+  - id: D72
+    date: 2026-11-13
+    text: >-
+      The grant's AI paragraph (SCP renewal Task 3.3, paragraph 3) takes all three fact corrections. The user: "adopt all
+      three". (1) Not "every answer is calculated from the actual data": numbers come from queries it runs, and each answer
+      shows the query and the catalog release. (2) Not "saved back into the catalog": a saved result goes to a review queue,
+      and once a person accepts it every later catalog and release carries it, labelled with the model as stated, the exact
+      data and the observed queries. (3) Not "reproduced exactly": every result can be cited; query results can be re-run on
+      the frozen catalog while that data is kept (U38 held); a model's judgement is kept with its data and queries, never
+      re-run. The PIs write the prose (NOT-OD-25-132); dataRepo edits no grant text. From PXReprise's integrity review
+      (feat/ai-contributions, design-integrity.md section 4), brought up to what feat/ai-contributions-v2 builds.
 gaps:
   - >-
     G135 NEW 2026-11-12: an operator's `--mm-settings` reaches rows and not the bundle id. A scratch ingest of PXD027232 (MetaMorpheus
