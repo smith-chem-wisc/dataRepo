@@ -7,13 +7,28 @@ This folder is a `/project`-managed research project. **You are de facto working
 - **Phase:** INCEPTION
 - **Goal:** An AI-ready, API-accessible repository for the search + quant results of the many PRIDE datasets the `aging` pipeline reanalyzes. Humans can use it, but AI agents are the main users. The question it serves is how organelle proteomes change with age.
 - **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`).
-  **2026-11-12: dataRepo moves into PXReprise (D62).** The user confirmed PXReprise's diabetes 004 (2026-11-11): "alex and i agreed to move
-  datarepo into pxreprise. but I don't know how that will transpire yet." How and when are open (U33). 004's account (after 1.5.0; preparation
-  as PRs the user reviews; one shared store, reversing PXReprise D64; `datarepo push`/`pull` on a `feat/storage-push-pull` branch not in our
-  repo) is a proposal, not a ruling. **1.5.0's build list stands; build nothing toward the move until the user says how.**
-  **1.5.0 is being built (D60)** on local `feat/1.5.0` (`code/_wt_150`): items 1-7 done, only item 1 pushed; schema 0.0.17 stays unpushed until
-  the build list is closed (`design/RELEASE_1.5.0.md` on that branch). PXReprise 111 answered PXR-R60: their v0.4.47 (`9fcc209`, unreleased)
-  reads `AllProteinGroups.tsv`, and they rebuild the 43 isobaric payloads before our 1.5.0 re-ingest. **Tell them the re-ingest date.**
+  **2026-11-14 (the close): THE CODE HAS MOVED. Read PXReprise 118 and 119 in full before anything else (G136).** On the user's word
+  ("we want to integrate dataRepo into pxreprise. so one github repo and not two"), smith-chem-wisc/PXReprise#4 merged 2026-11-13
+  (`e3424af`): dataRepo's C# with its history now lives in smith-chem-wisc/PXReprise (`src/PXReprise.*`, `tests/PXReprise.Data.Tests`,
+  `schemas/datarepo/`, `docs/data/`; tags `datarepo-v<version>`), and smith-chem-wisc/dataRepo becomes the PROJECT repository (design,
+  threads, results, `.project`; all Python stays here). This carries out D62 and answers U33. **Code work now:** in
+  `E:\GitClones\PXReprise-dataRepo` (origin `trishorts/PXReprise-dev`, upstream smith-chem-wisc/PXReprise), one branch
+  `datarepo/<topic>` from `upstream/master` per change, a PR to smith, merge commits only, check "build and offline tests (required)".
+  Owed to PXReprise: **PXR-R64** (a hello-world PR, cleared in 119) and **PXR-R65** (in 118). Then settle with the user how 1.5.0 is
+  released from there (what of `feat/1.5.0` reached PXReprise: 118 says Alex replayed 16 1.5.0 commits; our release prep `ca73563` and
+  example fix `7f4fca5` came later) and port `feat/ai-contributions-v2` (`c9d17c3`) as PRs. Also unread: QuantProject 095-097 (FYI;
+  097: MetaMorpheus #2964 merged).
+  **Also in flight (G137):** a stranger agent was testing the AI contributions server at the close; read its runs in
+  `F:\datarepo_scratch_150\stranger\runs\` and its saves in `...\stranger\inbox\` as the operator, then report to the user.
+  **1.5.0 is built, measured and release-prepped, NOT released** (`feat/1.5.0` @ `91901d0`, pushed; `design/RELEASE_1.5.0.md` has the
+  release-day steps). PXReprise has the notice (our 116, D68): swap no earlier than 2026-11-20, once their four 1.1.13 TMT re-searches
+  (PXR-R61) and 39 isobaric payload rebuilds (PXR-R60) are in; they name the day (PXR-R63). aging (138) writes its study bundle again
+  with 1.5.0 before its first publish. Predicted ids: `results/reingest_150_2026-11-12/compare_deposits.tsv` on that branch. Release
+  only on the user's word. **AI contributions v2** (D71) is built on `feat/ai-contributions-v2` (`code/_wt_ai`, `c9d17c3`, pushed;
+  `design/AI_CONTRIBUTIONS_V2.md`): its own release after 1.5.0. Decided 2026-11-13: D68-D72; held by the user: U36 (R33, results for
+  several questions, with Alex), U37 (R55, modification class, with Alex), U38 (a result's bundles deleted; do not re-raise).
+  Scratch: `F:\datarepo_scratch_150\reingest150` (37 GB) stays until the swap confirms the predicted ids; `ai_e2e` and `stranger` go
+  with it. Deleting is the user's.
   **D63 (2026-11-12): every sample sheet is kept and labelled; only the search's grouping is decided.** A bundle keeps its search's own
   SDRFs and design WITH factor values; every other SDRF (community, sdrf drafts, PXReprise's checked one, authors') goes beside the bundle,
   dated and hashed, served together with a column naming the sheet. Build item 8 shrinks to two descriptions; item 10 carries the rest and
@@ -862,6 +877,21 @@ This folder is a `/project`-managed research project. **You are de facto working
   sending). Use `-Recurse` or a `**` glob before claiming anything is missing.
 - **aging's `latest.json` moves while you work.** A comparison of a scratch rebuild against "the serving catalog" first read an older 204-bundle catalog
   (2026-11-09). Read the catalog id `latest.json` names when you start, and compare against that id, not the file name.
+- **Re-run every engine on every deposit after a re-ingest, and read the build's `note` lines.** Replaying each old gene artefact for the
+  deposits it was first requested for left two databases unresolved and six deposits with almost no gene names (PXD005035 21,791 -> 70),
+  and the build passed all 3,979 checks; only a `logs.resolve_genes coverage ... 39 of 41` note said so (2026-11-13).
+- **A build refuses a study bundle of another layer version, and aging's publish names one (`--study-latest aging`).** At a layer bump
+  aging must run `datarepo study` with the new binary before its first publish.
+- **DuckDB refuses a file pattern that matches nothing, in every form** (a list of patterns, a table macro, a subquery as the argument;
+  1.5.5). A view over files that may not exist yet must be created only when one does. A half-written last NDJSON line reads as a null
+  row under `ignore_errors = true`.
+- **A `--release` build of a catalog already in the folder returned "unchanged" and recorded nothing**, so the file was never marked a
+  release and `--keep` could prune it. Fixed on `feat/ai-contributions-v2` (`647a2b7`); 1.5.0 still has it.
+- **A required schema field breaks CI's `schema` job, not the C# tests:** `examples/minimal_bundle.yaml` takes it by hand and
+  `examples/ingested_bundle.yaml` is exported from a C# ingest with `tools/build_example_bundle.py --bundle`. It was red for a day
+  unnoticed (1.5.0, `7f4fca5`). A new CLI command must also be listed in `tools/build_cli_docs.py`'s `GROUPS`.
+- **A thread helper in the session scratchpad dies with the session.** `send_thread.py` took `--asks NONE` literally; rebuild it with
+  optional `--asks`/`--answers`, and read a message's front matter before committing it.
 
 **Sibling project: `E:\CodeReview\aging`** (the NCEMS pipeline). aging *produces* results under
 `F:\aging_data\<run>\<PXD>\` with `provenance.json` (schema `aging-provenance/2`). dataRepo *ingests and serves*

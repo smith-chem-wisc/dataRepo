@@ -2,14 +2,14 @@
 
 <!-- BEGIN GENERATED -- render_resume.py owns this block; edit state.yaml, not here -->
 
-**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-11-13
+**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-11-14
 
 | | |
 |---|---|
-| Commits | 955 |
+| Commits | 966 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
-| Locked decisions | 69 |
-| Open gaps | 131 |
+| Locked decisions | 72 |
+| Open gaps | 133 |
 | Gate items skipped | 5 |
 
 **Worktrees** -- details in `code/PINNED.md`
@@ -20,6 +20,8 @@
 | `code/_wt_141` | feat/1.4.1 | `e41c4af8` | `e41c4af` | at pin |
 | `code/_wt_tmt` | feat/tmt | `9e18c4dc` | `9e18c4d` | at pin |
 | `code/_wt_142` | feat/1.4.2 | `3447228b` | `3447228` | at pin |
+| `code/_wt_150` | feat/1.5.0 | `91901d0a` | `91901d0` | at pin |
+| `code/_wt_ai` | feat/ai-contributions-v2 | `c9d17c3a` | `c9d17c3` | at pin |
 | `code/_wt_ai_contrib` | feat/ai-contributions | `1db8a535` | `1db8a535` | at pin |
 | `code/_wt_mzlib_sumo` | fix/sumo-remnant-target-lysine | `6974a4d4` | `6974a4d4` | at pin |
 
@@ -32,6 +34,27 @@ Build an AI-ready, API-accessible repository for the results of the `aging` pipe
 reanalyses. The results cover search, quant, provenance, design and organelle annotation. Humans can
 use it, but AI agents are the main users. The question it serves is how organelle proteomes change
 with age.
+
+## Latest (2026-11-14): the code moved to PXReprise; 1.5.0 ready, not released; AI contributions v2 built
+
+- **The code has moved (PXReprise 118, 119; G136).** On the user's word, smith-chem-wisc/PXReprise#4 (merged 2026-11-13, `e3424af`)
+  carries dataRepo's C# with its history into smith-chem-wisc/PXReprise; this repository becomes the project's record (design,
+  threads, results, `.project`). Code work now goes in as `datarepo/<topic>` PRs from `E:\GitClones\PXReprise-dataRepo`. Read only
+  in summary at the close; nothing acted on. PXReprise asks PXR-R64 (a hello-world PR) and PXR-R65.
+- **1.5.0 is built, measured on a copy of the whole store, announced and release-prepped** (`feat/1.5.0` @ `91901d0`, pushed):
+  192 of 197 deposits in 6 h 14 min, every difference explained (`results/reingest_150_2026-11-12/`); the tutorial rerun
+  (`88a2166ec0d33563`, 64 checks); CI green; four platforms built. Not merged or released. Notices sent: PXReprise 116 (swap no earlier
+  than 2026-11-20; asks the day, PXR-R63), aging 138/139, ptmQtl 066, sdrf 038, logs 036, QuantProject 094, go 033 (GO-D14).
+- **AI contributions v2** (D71; `feat/ai-contributions-v2` @ `c9d17c3`, pushed; `design/AI_CONTRIBUTIONS_V2.md`): PXReprise's design
+  reworked on 1.5.0 against our 097 review, six slices, 951 tests, an end-to-end run on the copy of aging's store
+  (`results/ai_contributions_e2e_2026-11-14/`). A stranger-agent test was running at the close (G137).
+- **The user's rulings:** D68 (the 1.5.0 notice), D69 (go reads isobaric protein groups, go's definition first), D70 (R33 pinned),
+  D71 (AI contributions after 1.5.0), D72 (the grant's three corrections; the PIs write it). Held: U36, U37 (both with Alex), U38.
+- **Pick up at:**
+  1. `threads.py inbox`; read **PXReprise 118 and 119 in full**, then QuantProject 095-097.
+  2. Do PXR-R64 (the hello-world PR from `E:\GitClones\PXReprise-dataRepo`, branch `datarepo/hello-world`) and answer PXR-R65.
+  3. Read the stranger agent's runs (`F:\datarepo_scratch_150\stranger\runs\`) and inbox as the operator; report to the user (G137).
+  4. With the user: how 1.5.0 is released from PXReprise, and porting `feat/ai-contributions-v2` there (G136).
 
 ## Latest (2026-11-09, later): the SDRF after the last search, and the database a search read (G131, U30, U32)
 

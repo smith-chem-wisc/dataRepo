@@ -756,6 +756,24 @@ decisions:
       (feat/ai-contributions, design-integrity.md section 4), brought up to what feat/ai-contributions-v2 builds.
 gaps:
   - >-
+    G137 NEW 2026-11-14: a stranger agent (given only docs/mcp.md, docs/contributions.md and a driver script, no source) was
+    still testing the AI contributions server when the session closed. Its calls and answers are in
+    F:\datarepo_scratch_150\stranger\runs\ (each <name>.json and <name>.json.out.json), its saves in
+    F:\datarepo_scratch_150\stranger\inbox\, its sessions in F:\datarepo_scratch_150\reingest150\store\_sessions\. Next: read
+    them as the operator (any person's name in the record or a saved result; any false "observed" or "reproduced" claim; any
+    jammed inbox), then report to the user. Server: the scratch build 1.6.0-scratch.7054ba1 at F:\datarepo_scratch_150\ai_e2e\bin
+    over the catalog folder F:\datarepo_scratch_150\ai_e2e\catalogs.
+  - >-
+    G136 NEW 2026-11-14: dataRepo's code has MOVED to smith-chem-wisc/PXReprise (PXReprise 118 and 119, read in summary only at
+    the close; their PR #4 merged 2026-11-13 as e3424af on the user's word: "we want to integrate dataRepo into pxreprise. so one
+    github repo and not two"). It carries out D62 and answers U33. smith-chem-wisc/dataRepo becomes the PROJECT repository
+    (design, threads, results, .project); all Python stays behind. Code work now happens in E:\GitClones\PXReprise-dataRepo
+    (origin trishorts/PXReprise-dev, upstream smith-chem-wisc/PXReprise), one branch datarepo/<topic> from upstream/master per
+    change, PRs only, merge commits only, the required check "build and offline tests (required)"; release tags datarepo-v<version>.
+    Owed: PXR-R64 (a hello-world PR, cleared to start in 119) and PXR-R65 (read 118 for it). Open: what of feat/1.5.0 reached
+    PXReprise (118 says Alex replayed 16 1.5.0 commits; our release-prep ca73563 and the example fix 7f4fca5 came later), how
+    1.5.0 is released from there, and porting feat/ai-contributions-v2 (9 commits, c9d17c3) as datarepo/<topic> PRs.
+  - >-
     G135 NEW 2026-11-12: an operator's `--mm-settings` reaches rows and not the bundle id. A scratch ingest of PXD027232 (MetaMorpheus
     1.1.14) with 1.1.11's settings keyed 4 peptidoforms `K[+114.042927]` in place of `K[UNIMOD:121]` and got the same id,
     b33d8bcbd9af59b4, as with 1.1.14's (feat/1.5.0 results/isobaric_refusal_2026-11-12/). The default folder,
@@ -2195,6 +2213,19 @@ repos:  # PR D and PR E worktrees retired 2026-09-24: both merged, in mzLib 1.0.
     # 1.4.2 (DEF-TMT v3.22, #2941 finding and verdict, matched_ion descriptions). Merged as 1248c17 and released
     # 2026-11-03 (tag v1.4.2); can be retired.
     pinned: 3447228
+  - name: dataRepo
+    worktree: code/_wt_150
+    branch: feat/1.5.0
+    base_clone: "E:/CodeReview/dataRepo (origin = smith-chem-wisc/dataRepo)"
+    # 1.5.0, built, measured and release-prepped (CHANGELOG undated; tutorial 88a2166ec0d33563); NOT merged or released.
+    # Since PXReprise#4 (2026-11-13) the code lives in smith-chem-wisc/PXReprise: what of this branch reached it is to be checked.
+    pinned: 91901d0
+  - name: dataRepo
+    worktree: code/_wt_ai
+    branch: feat/ai-contributions-v2
+    base_clone: "E:/CodeReview/dataRepo (origin = smith-chem-wisc/dataRepo)"
+    # AI contributions reworked on 1.5.0 (D71), V1-V6 done, pushed. Not merged; to be ported to PXReprise as datarepo/<topic> PRs.
+    pinned: c9d17c3
   - name: dataRepo
     worktree: code/_wt_ai_contrib
     branch: feat/ai-contributions
