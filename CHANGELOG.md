@@ -4,6 +4,43 @@ All notable changes to the dataRepo **software and schema**. Data releases are v
 each instance. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions follow
 [Semantic Versioning](https://semver.org/). Until 1.0, minor versions may break the schema.
 
+## [1.6.0] - unreleased
+
+**Results saved back, and a public record of every call (AI contributions).** No re-ingest, no schema change, and no
+bundle id moves. A store holding no saved result and no session record builds exactly the catalog 1.5.0 does, but for the
+version line every release changes. From PXReprise's design (their `feat/ai-contributions`, 2026-10-28), reworked after
+our review (PXReprise 097) and on our user's rulings (D57, D71): see `design/AI_CONTRIBUTIONS_V2.md` and
+[contributions.md](docs/contributions.md).
+
+### Added (MCP server)
+- **The public session record.** `datarepo mcp` records every call itself, one hash-chained file per session under
+  `<store>/_sessions/`: the tool, its arguments, the catalog, the outcome and hashes of the answer. No prompt, model text or
+  person. Every client is told so when it connects, and each answer names its place (`session_call`). `--sessions <folder>`
+  names another place; a one-file catalog keeps none unless one is named. A record that cannot be written never loses an
+  answer (`session_call.recorded = false`).
+- **`datarepo_save_result`**, listed only with `--contributions <inbox>`: an agent saves a result, citing its own
+  `datarepo_sql` calls, which the server copies from its record as observed. It goes to the inbox, never the store. It takes
+  no person's name, and only a model identity stated by the client.
+- **`--show-prior`**: each SQL answer also names earlier public queries on the same tables and the results built from them.
+  `describe` names saved results and the public record when a catalog has them.
+
+### Added (catalog)
+- **Saved results** in `contributions`, `contributions_current`, `contribution_basis`, `contribution_queries`,
+  `contribution_items`, `contribution_edges` and `contribution_builds_on`, from `<store>/_contributions/`, only when the store
+  holds one. Their set is a line of the catalog id, not of the release id.
+- **The record's views**, `sessions` and `session_calls`, in a folder catalog, read from the files when queried and never in
+  the catalog id: one constant line marks that a store has a record, so another session changes nothing.
+- **A release keeps both:** `build --release` records the results it carries and how far each session's record had got;
+  every later build in that folder refuses a result that is gone or a record that has changed. `--keep` never prunes a
+  catalog a result was computed from. A release build of an unchanged catalog is now recorded too.
+
+### Added (CLI)
+- **`datarepo contribute save|list|show|inbox|accept|reject|verify`.** `accept` re-checks a result in full, including every
+  observed query against the record on disk; `--by NAME` records the accepting operator's name only if given. `inbox` names
+  any file it cannot read without hiding the rest. `verify` re-runs a result's queries on the catalog it came from, with
+  each query's row limit, and says whether each returned the same rows; it never calls a result reproduced, and says when
+  the data a result was computed from has left the store.
+
 ## [1.5.0] - unreleased
 
 **One new ingest path, `cs-1.3.0`, and schema 0.0.17, so an instance re-ingests once.** Fragment ions are in every

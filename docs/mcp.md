@@ -63,7 +63,8 @@ datarepo mcp --catalog .../catalog.duckdb                --name datarepo      --
 
 ## Three tools
 
-Three, and a fourth only when a benchmark shows the agent getting a specific answer wrong. The
+Three, and a fourth read tool only when a benchmark shows the agent getting a specific answer wrong. (The save tool,
+`datarepo_save_result`, writes rather than reads and is listed only when the server is given an inbox; see below.) The
 eight curated tools in FRAMEWORK section 4 are a menu, not a build list: most are thin wrappers
 over SQL the agent would write anyway, and several answer questions no measurement has asked yet.
 
@@ -129,6 +130,34 @@ a 1% rule once so no caller restates it. Each one states the rule it applies in 
 From catalog format 17, `peptidoforms_1pct` reads each search's own confidence rule
 (`dataset_overview.confidence_rule`), so its counts are not the search engine's own peptide count. PSMs are not in the catalog (format 13): `dataset_overview` has each
 dataset's PSM counts, and a query or `describe` that names `psms` or `psms_1pct` is told so.
+
+## The public session record
+
+The server keeps a record of every call made to it, itself, whether or not an agent saves anything: the tool, its arguments
+(the SQL or search text), the catalog it ran on, the outcome, and hashes of the answer. It holds no prompt, no model text
+and no person: the server sees none of them. Every client is told so when it connects. The record is public, as the
+repository is.
+
+- **Where:** one file per session, `<store>/_sessions/<date>/<session id>.jsonl`, beside the bundles of the store a catalog
+  folder reads. `--sessions <folder>` names another place. A one-file catalog names no store, so it serves with no record
+  unless one is named, and says so when it starts.
+- **Each answer names its place in the record** (`session_call`: the session, the call's number, its hash). If the record
+  cannot be written, the answer still goes back, with `session_call.recorded = false` and the reason: a query that ran is
+  never lost because recording it failed.
+- **A catalog folder shows the record** in two views, `sessions` and `session_calls`, read from the files when they are
+  queried, so they show every session up to that moment. They are not part of the catalog id: another session never
+  changes the catalog, and the store rebuilds as unchanged. The catalog id moves once, when the store's first record appears.
+- **Each record is a hash chain**, and a release (`build --release`) records how far each session had got. Every later build
+  in that folder refuses a record that has changed since, whether a line was edited, removed, or the whole file re-chained.
+
+## A fourth tool, only with an inbox: saving a result
+
+`datarepo mcp --contributions <inbox>` also lists `datarepo_save_result`, and only then: a server started without it lists
+exactly the three tools above. An agent saves a result it computed, citing the `datarepo_sql` calls it used by their
+`session_call.seq`; the server copies each cited query from its own record as **observed**, which means only that the query
+ran on that catalog and returned rows with that hash. The result goes to the inbox for the operator to accept or reject,
+never straight into the catalog. The tool takes no person's name, since everything sent to it is in the public record.
+See [contributions.md](contributions.md).
 
 ## Every answer carries its provenance — and it is a fact about the server
 

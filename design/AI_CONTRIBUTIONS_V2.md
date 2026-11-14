@@ -55,7 +55,7 @@ user says.
 | V3 | the session record redone: per MCP session, outside the catalog id, no person, a failed line never loses the answer (5, 9, 10) | 5's `unchanged` rebuild; 9 simulated; 10's notice | **done** (below) |
 | V4 | the save tool and the inbox: cited calls copied from the record, narrow meanings, `accept` records the operator (2, 3, 10) | 3's forged cases all refused; `max_rows`, CRLF | **done** (below); `max_rows` is V5's, in `verify` |
 | V5 | `verify`, `show`, discovery (S9, S11) | a judgement never reproduced; a missing catalog reported | **done** (below) |
-| V6 | docs (`docs/mcp.md`, `docs/cli.md`, a contributions page), CHANGELOG, a scratch run on a copy of aging's catalog | a stranger agent saves, the operator accepts, the next catalog serves it |
+| V6 | docs (`docs/mcp.md`, `docs/cli.md`, a contributions page), CHANGELOG, a scratch run on a copy of aging's catalog | a stranger agent saves, the operator accepts, the next catalog serves it | **done**: `docs/contributions.md`, `docs/mcp.md`, CHANGELOG 1.6.0 (unreleased); the run is `results/ai_contributions_e2e_2026-11-14/` (a scripted agent; a stranger agent given only the tools is still to do) |
 
 ## How V3 keeps the record (2026-11-13)
 
@@ -102,9 +102,9 @@ user says.
 
 ## Open for the user (asked when we reach it, one at a time)
 
-1. **A result's basis after its bundles are deleted** (finding 8, A14). After the 1.5.0 swap the old bundles are removed, so a result
+1. **HELD by the user (2026-11-13, our U38: "i will hold of on this decision. keep for now."); `pins` is not built.** A result's basis after its bundles are deleted (finding 8, A14). After the 1.5.0 swap the old bundles are removed, so a result
    computed on 1.4.5 data can be read but not re-verified. Proposed: `verify` says "basis no longer in the store", distinct from
    "differs", and `datarepo contribute pins` lists the bundles results rest on, so the operator sees them before deleting. Keeping
    such bundles is the operator's call.
-2. **The grant wording** (the branch's open item 1): "reproduced exactly" holds for query and code results, not a model's judgement.
+2. **SETTLED (D72, 2026-11-13: "adopt all three"); the PIs write the prose.** The grant wording (the branch's open item 1): "reproduced exactly" holds for query and code results, not a model's judgement.
    The PIs write the prose.

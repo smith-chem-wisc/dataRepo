@@ -20,6 +20,8 @@ question the data cannot answer and getting a confident empty result.
 does and does not do.
 → [**limitations.md**](limitations.md) again, harder. An agent cannot tell an empty table from a
 missing fact unless you tell it.
+→ [**contributions.md**](contributions.md) if agents should save their results back: the inbox, what the operator
+accepts, and what a saved result does and does not claim.
 
 **"I produce data and want it ingested."**
 → [**ingest.md**](ingest.md) — the manifest contract, what the ingester reads, what it writes, and
