@@ -754,6 +754,22 @@ decisions:
       the frozen catalog while that data is kept (U38 held); a model's judgement is kept with its data and queries, never
       re-run. The PIs write the prose (NOT-OD-25-132); dataRepo edits no grant text. From PXReprise's integrity review
       (feat/ai-contributions, design-integrity.md section 4), brought up to what feat/ai-contributions-v2 builds.
+  - id: D73
+    date: 2026-11-17
+    text: >-
+      ONE release covering both the PXReprise engine and datarepo, and no drift between them. The user, 2026-11-17, after
+      we found they already disagree (engine 0.4.48 writes `split_reason: tissue`, which released datarepo 1.4.5 refuses):
+      "i do not want them to drift apart. we put them into one github repo because of how intamately they work together. I
+      want to prevent any drift. changes to either pxreprise or datarepo must work in both directions and benefit the whole.
+      I think moving forward, we need one release covering both and we need to start pinning behavior. I guess aging will
+      have to decide to adopt new releases because that means a long ingest." So: one version and one release for both
+      programs; a change on either side must work with the other, tested across the seam (manifest, search output folder,
+      datarepo's command line and JSON reply, the shared PXReprise.Storage code); behaviour is pinned; aging, as the
+      instance's owner, decides when to adopt a release. It supersedes the two release lines that smith-chem-wisc/PXReprise#4
+      carried (`src/Data.Build.props`, `datarepo-v*` tags), which were never put to the user. A release is not a re-ingest
+      by itself: only one that changes the ingest rules or the schema is (bundle ids never hash the version), and each
+      release must say which. The how (the version number, the workflows, what the behaviour pins are) is agreed with
+      PXReprise and Alex: U39, U40.
 gaps:
   - >-
     G137 NEW 2026-11-14: the stranger agent's test of the AI contributions server is IN (feat/ai-contributions-v2 `e591829`,

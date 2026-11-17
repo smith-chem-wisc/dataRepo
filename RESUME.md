@@ -2,13 +2,13 @@
 
 <!-- BEGIN GENERATED -- render_resume.py owns this block; edit state.yaml, not here -->
 
-**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-11-14
+**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-11-17
 
 | | |
 |---|---|
-| Commits | 967 |
+| Commits | 982 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
-| Locked decisions | 72 |
+| Locked decisions | 73 |
 | Open gaps | 133 |
 | Gate items skipped | 5 |
 
@@ -24,6 +24,10 @@
 | `code/_wt_ai` | feat/ai-contributions-v2 | `e5918297` | `c9d17c3` | **off pin** -- `git -C code/_wt_ai checkout --detach c9d17c3` |
 | `code/_wt_ai_contrib` | feat/ai-contributions | `1db8a535` | `1db8a535` | at pin |
 | `code/_wt_mzlib_sumo` | fix/sumo-remnant-target-lysine | `6974a4d4` | `6974a4d4` | at pin |
+
+> **`CLAUDE.md` is 92 KB, over its 25 KB budget** (it loads into every session); it carries 7 dated entries. Keep standing rules and traps; move dated status entries word for word to `.project/status-log_<from>_to_<to>.md` (close-the-chat, step 5).
+
+> **`RESUME.md` stacks its status: 1 "Where it stands" section(s), 25 pick-up line(s); one of each is the shape.** Replace the current one at each close; move the older ones word for word to the status log (close-the-chat, step 4).
 
 <!-- END GENERATED -->
 
