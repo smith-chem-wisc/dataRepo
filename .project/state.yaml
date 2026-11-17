@@ -770,7 +770,79 @@ decisions:
       by itself: only one that changes the ingest rules or the schema is (bundle ids never hash the version), and each
       release must say which. The how (the version number, the workflows, what the behaviour pins are) is agreed with
       PXReprise and Alex: U39, U40.
+  - id: D74
+    date: 2026-11-17
+    text: >-
+      The joint release (D73) is PXReprise 1.0.0; datarepo has no version of its own; releases are never held for aging; every
+      release opens with an `**Adopting:**` line. The user's rulings in PXReprise's session the same day, reported in PXReprise
+      122 and 124: "this will be a release of pxreprise. i suggess 1.0.0 for that"; "data repo no longer has a version."; "i
+      don't agree that we have to wait for aging. it will be aging's choice when to adopt a new release. they have to understand
+      what a new release costs."; "i agree with the 4th opening line". So 1.4.5 is datarepo's last released number of its own,
+      and 1.5.0 (master's `src/Data.Build.props`) is never released under that name: its content ships in PXReprise 1.0.0.
+      `datarepo-v*` tags end; datarepo reports the PXReprise release it was built from. Releases are cut from master when
+      ready, with no branch release for aging by default. aging adopts when it chooses, and the batch stays on the engine-only
+      pin (0.4.50, the last engine-only release) until then, so the old 1.5.0 swap (our 116, PXR-R63) is now aging's adoption of
+      1.0.0, timed by aging. Each CHANGELOG section opens with a fourth lead line, `**Adopting:**` (a swap only, a swap and a
+      catalog rebuild, or a full re-ingest, with its cost), and the release workflow refuses a release without it. The pins
+      (U40): (a) the test across the seam is ours (G139); (b) the engine refuses a datarepo built from another PXReprise release,
+      PXReprise's; (c) is the Adopting line. Answers U39 and U40.
 gaps:
+  - >-
+    G142 NEW 2026-11-17: CLAUDE.md is about 58 KB against its 25 KB budget, and it loads into every turn. At the 2026-11-17 close
+    its dated pick-up block (40 KB) and RESUME's 40 stacked status sections moved word for word to
+    `.project/status-log_2026-09-19_to_2026-11-17.md`. What is left is the "Things that will bite you here" list, about 51 KB of
+    standing rules. Consolidate it in a working session, not a close: retire the Python-era traps (pyMzLib windows, `build_tables.py`,
+    editable installs, `INGESTER_VERSION`), re-point paths that moved to smith-chem-wisc/PXReprise (`dotnet/src/DataRepo.*` ->
+    `src/PXReprise.*`), and shorten the incident stories to the rule each one taught. Move removed text word for word to a log;
+    do not delete it.
+  - >-
+    G141 NEW 2026-11-17: D63's item 10 (every sample sheet kept and labelled beside the bundle) is unblocked: sdrf 039 answered
+    SDRF-D14/D15 and pride 008 answered PRIDE-D1. sdrf: with an input SDRF (MetaMorpheus 1.1.14 `InputSdrfPath`) the search's
+    `experiment.sdrf.tsv` carries the sample half cell for cell, while the assay half is rebuilt from the search (their G77 fixes
+    it, and the 51 of 1,236 curated SDRFs that write no SDRF at all); only the search task writes an SDRF, and a corrected fact
+    is a new search, never an edit; the SDRF has no database column and will not get one, so our bundle's database record is the
+    home (G131); keep NONE of the 2026-11-04 drafts (`F:\aging_data\incoming\evidence\aging-2026-11-04\<PXD>\`), keep
+    PXReprise's rerun on mzLib 1.0.598, and keep no isobaric draft until PXR-F15 lands; use `community sdrf`, not `community`;
+    keep the evidence files beside the draft. pride: PRIDE still describes only the project; PRIDE rewrites community SDRFs in
+    place (PXD008934's on 2026-10-19: `characteristics[biological replicate]` renumbered, five columns added), so key each copy by
+    the MD5 in PRIDE's checksum list (`GetFileChecksumsAsync`, `verifyMd5: true`), never REST dates. In our store, PXD008934's
+    bundles `d1e3ad801dad7879` and `1a400620c1bb4e90` hold the old SDRF, and PXD021762's `8a6aada5fd969b01` (and
+    `store_0.32.0`'s `c24593acf7f16a3a`) hold an 843-byte web page as their SDRF. Drop `Submitters`/`LabPIs` e-mails on write.
+    Do not ingest pride's altered Spectronaut test folder. Next: take U30 back to the user, one plain question at a time.
+  - >-
+    G140 NEW 2026-11-17: owed to PXReprise, PXR-R68 (2) and (3) (their 122, 124; (1), the Adopting line, the user decided). (2)
+    PXReprise told aging (their 267) that adopting 1.0.0 costs about 5 to 6 h of re-ingest (from 1.4.0's 3.6 h for 178 deposits;
+    the store now holds 273, their count) plus a catalog rebuild that reuses nothing. Our measurement of master's ingest is
+    slower per deposit: 1.5.0's whole-store scratch re-ingest took 6 h 14 min for 192 of 197 deposits at three at a time
+    (`results/reingest_150_2026-11-12/` on feat/1.5.0), about 1.95 min each against 1.4.0's 1.2, so 273 would be about 9 h. A
+    first build with nothing reused took 686 s on 205 bundles (1.4.5, `results/split_145_2026-11-09/`). Check the store's count
+    and the parallelism before correcting them. (3) List everything in datarepo that reads or compares its own version, and what
+    each reads from now on: read it in the code (BundleWriter.PackageVersion and every reader of it: bundle.json, catalog_id,
+    latest.json, the site's generator, the MCP's built_by, doctor; `datarepo run` refusing a -dev build and the tests assuming
+    one; DocsTests' tutorial version), not from this list.
+  - >-
+    G139 NEW 2026-11-17: ours under D73/D74 (our PXReprise 121, their 122), when the user says go: (a) the behaviour pin across
+    the seam, a CI test in smith-chem-wisc/PXReprise: the engine runs on its fake MetaMorpheus search (`tests/FakeMetaMorpheus`),
+    datarepo ingests and builds what it wrote, and the bundle ids and key row counts are checked against committed values, so a
+    change on either side that moves them fails until the same PR updates them and says why; (b) the tutorial still clones and
+    downloads `v1.5.0` from smith-chem-wisc/dataRepo (`docs/data/getting-started.md:35,44,47`; `DocsTests.cs:87-88` enforces
+    it): point it at PXReprise 1.0.0's release. What we found (2026-11-17): no test crosses the seam (`PXReprise.Tests`
+    references only the engine; `PXReprise.Data.Tests` ingests the fixed `tests/datarepo-instance`); engine 0.4.48 already writes
+    `split_reason: tissue`, which production datarepo 1.4.5 refuses; `PXReprise.Storage` is compiled into both programs (not
+    examined); the engine reads `datarepo --version` only to choose the JSON reply; `datarepo-binaries.yml` runs on no pull
+    request (a push to master on datarepo's paths, a `datarepo-v*` tag, or by hand), and our default is that the merged
+    workflow builds both programs on four platforms on every PR; a release tag runs no test suite, only one end-to-end run per
+    platform; the 18 `RealData` tests skip on GitHub and must be run on this machine before a release.
+  - >-
+    G138 NEW 2026-11-17: DIA, one answer owed to three asks. QuantProject DATAREPO-D16 (their 101): a DIA mode chosen by
+    `AllDiaPrecursors.tsv` the way isobaric is chosen by its files (`Isobaric.Wrote`), reading `AllDiaPrecursors.tsv`,
+    `AllDiaPeptides.tsv` and `AllDiaProteinGroups.tsv` under `DEF-DIA-*` (their 105, DATA-DEFINITIONS v3.29; `quant_style`
+    `dia`; never `DEF-PEP-INT`/`DEF-PROT-INT`, never pooled with DDA; a DIA 0 written before dia's Q1 writer is no value), or
+    should DIA write `AllPSMs.psmtsv`? dia DATAREPO-Q2..Q5 (their 006, 007): the precursor table's columns (both quantities, run
+    and global q, iRT/apex, `ApexScanNumber`, the T/D/ET/ED/C label), `confidence_rule` and a `precursor` FeatureType for DIA,
+    the read of dia 004's folder (G82), and the DIA mode. Read PXReprise's decision record 0072 first ("a DIA search mode keyed on
+    the DIA task's own tables", smith-chem-wisc/PXReprise#12, merged 2026-11-17). A DIA path is code in PXReprise, shipped in a
+    joint release (D74).
   - >-
     G137 NEW 2026-11-14: the stranger agent's test of the AI contributions server is IN (feat/ai-contributions-v2 `e591829`,
     results/ai_contributions_stranger_2026-11-14/README.md; its runs in F:\datarepo_scratch_150\stranger\runs\). Five holes to
@@ -794,6 +866,12 @@ gaps:
     Owed: PXR-R64 (a hello-world PR, cleared to start in 119) and PXR-R65 (read 118 for it). Open: what of feat/1.5.0 reached
     PXReprise (118 says Alex replayed 16 1.5.0 commits; our release-prep ca73563 and the example fix 7f4fca5 came later), how
     1.5.0 is released from there, and porting feat/ai-contributions-v2 (9 commits, c9d17c3) as datarepo/<topic> PRs.
+    UPDATE 2026-11-17: PXR-R64 done (smith-chem-wisc/PXReprise#14, hello world, merged 18:41 UTC). PXR-R65 answered (our 121):
+    NOTHING of feat/1.5.0 is left to bring over: all 17 code commits, ca73563 and 7f4fca5 included, are on PXReprise master with
+    equal files and line counts (04b20c5 is 5 lines shorter: their DataPaths adaptation); the other 8 touch only design/ and
+    results/. 1.5.0 is not released under its own name (D74). Left: port feat/ai-contributions-v2 (2dfb734..e591829) after G137's
+    five fixes, onto the new layout, released in a joint PXReprise release. Removing the moved code from smith-chem-wisc/dataRepo
+    is the user's, not decided.
   - >-
     G135 NEW 2026-11-12: an operator's `--mm-settings` reaches rows and not the bundle id. A scratch ingest of PXD027232 (MetaMorpheus
     1.1.14) with 1.1.11's settings keyed 4 peptidoforms `K[+114.042927]` in place of `K[UNIMOD:121]` and got the same id,
@@ -2239,14 +2317,16 @@ repos:  # PR D and PR E worktrees retired 2026-09-24: both merged, in mzLib 1.0.
     branch: feat/1.5.0
     base_clone: "E:/CodeReview/dataRepo (origin = smith-chem-wisc/dataRepo)"
     # 1.5.0, built, measured and release-prepped (CHANGELOG undated; tutorial 88a2166ec0d33563); NOT merged or released.
-    # Since PXReprise#4 (2026-11-13) the code lives in smith-chem-wisc/PXReprise: what of this branch reached it is to be checked.
+    # Since PXReprise#4 (2026-11-13) the code lives in smith-chem-wisc/PXReprise. Checked 2026-11-17: every code commit of this
+    # branch is on PXReprise master (G136). Never released as 1.5.0: its content ships in PXReprise 1.0.0 (D74).
     pinned: 91901d0
   - name: dataRepo
     worktree: code/_wt_ai
     branch: feat/ai-contributions-v2
     base_clone: "E:/CodeReview/dataRepo (origin = smith-chem-wisc/dataRepo)"
-    # AI contributions reworked on 1.5.0 (D71), V1-V6 done, pushed. Not merged; to be ported to PXReprise as datarepo/<topic> PRs.
-    pinned: c9d17c3
+    # AI contributions reworked on 1.5.0 (D71), V1-V6 done (c9d17c3), then the stranger agent's report (e591829, G137), pushed.
+    # Not merged; to be ported to PXReprise as datarepo/<topic> PRs after G137's five fixes (G136).
+    pinned: e591829
   - name: dataRepo
     worktree: code/_wt_ai_contrib
     branch: feat/ai-contributions

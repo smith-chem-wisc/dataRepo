@@ -6,365 +6,31 @@ This folder is a `/project`-managed research project. **You are de facto working
 
 - **Phase:** INCEPTION
 - **Goal:** An AI-ready, API-accessible repository for the search + quant results of the many PRIDE datasets the `aging` pipeline reanalyzes. Humans can use it, but AI agents are the main users. The question it serves is how organelle proteomes change with age.
-- **Pick up at:** **First thing: run the thread checker** (`threads.py inbox`).
-  **2026-11-14 (the close): THE CODE HAS MOVED. Read PXReprise 118 and 119 in full before anything else (G136).** On the user's word
-  ("we want to integrate dataRepo into pxreprise. so one github repo and not two"), smith-chem-wisc/PXReprise#4 merged 2026-11-13
-  (`e3424af`): dataRepo's C# with its history now lives in smith-chem-wisc/PXReprise (`src/PXReprise.*`, `tests/PXReprise.Data.Tests`,
-  `schemas/datarepo/`, `docs/data/`; tags `datarepo-v<version>`), and smith-chem-wisc/dataRepo becomes the PROJECT repository (design,
-  threads, results, `.project`; all Python stays here). This carries out D62 and answers U33. **Code work now:** in
-  `E:\GitClones\PXReprise-dataRepo` (origin `trishorts/PXReprise-dev`, upstream smith-chem-wisc/PXReprise), one branch
-  `datarepo/<topic>` from `upstream/master` per change, a PR to smith, merge commits only, check "build and offline tests (required)".
-  Owed to PXReprise: **PXR-R64** (a hello-world PR, cleared in 119) and **PXR-R65** (in 118). Then settle with the user how 1.5.0 is
-  released from there (what of `feat/1.5.0` reached PXReprise: 118 says Alex replayed 16 1.5.0 commits; our release prep `ca73563` and
-  example fix `7f4fca5` came later) and port `feat/ai-contributions-v2` (`c9d17c3`) as PRs. Also unread: QuantProject 095-097 (FYI;
-  097: MetaMorpheus #2964 merged).
-  **G137: the stranger agent's report is in** (`feat/ai-contributions-v2` `e591829`, `results/ai_contributions_stranger_2026-11-14/`):
-  five holes to fix on that branch before its release, the worst a NUL byte that makes an observed query's recorded SQL differ from
-  what DuckDB ran (re-checked), and a person reaching the public record through a refused save's other fields and `clientInfo`.
-  **1.5.0 is built, measured and release-prepped, NOT released** (`feat/1.5.0` @ `91901d0`, pushed; `design/RELEASE_1.5.0.md` has the
-  release-day steps). PXReprise has the notice (our 116, D68): swap no earlier than 2026-11-20, once their four 1.1.13 TMT re-searches
-  (PXR-R61) and 39 isobaric payload rebuilds (PXR-R60) are in; they name the day (PXR-R63). aging (138) writes its study bundle again
-  with 1.5.0 before its first publish. Predicted ids: `results/reingest_150_2026-11-12/compare_deposits.tsv` on that branch. Release
-  only on the user's word. **AI contributions v2** (D71) is built on `feat/ai-contributions-v2` (`code/_wt_ai`, `c9d17c3`, pushed;
-  `design/AI_CONTRIBUTIONS_V2.md`): its own release after 1.5.0. Decided 2026-11-13: D68-D72; held by the user: U36 (R33, results for
-  several questions, with Alex), U37 (R55, modification class, with Alex), U38 (a result's bundles deleted; do not re-raise).
-  Scratch: `F:\datarepo_scratch_150\reingest150` (37 GB) stays until the swap confirms the predicted ids; `ai_e2e` and `stranger` go
-  with it. Deleting is the user's.
-  **D63 (2026-11-12): every sample sheet is kept and labelled; only the search's grouping is decided.** A bundle keeps its search's own
-  SDRFs and design WITH factor values; every other SDRF (community, sdrf drafts, PXReprise's checked one, authors') goes beside the bundle,
-  dated and hashed, served together with a column naming the sheet. Build item 8 shrinks to two descriptions; item 10 carries the rest and
-  waits on sdrf SDRF-D14 + SDRF-D15 (our 037) and pride PRIDE-D1 (our 007).
-  **D64 (2026-11-12): a TMT/iTRAQ search by MetaMorpheus <= 1.1.13 is refused, not warned about** (item 9, `08da6c5`). PXReprise 112 asks
-  PXR-R61: re-search PXD027548, PXD034564, PXD043296, PXD051031 on 1.1.14 before the re-ingest. Items 8 and 9 are built (local). At the
-  1.5.0 notice tell QuantProject that such searches are refused (their DEF-TMT text is untouched; only our bracketed note changed) and
-  aging that the four are re-searched. G135 (new): an explicit `--mm-settings` reaches rows, not the bundle id.
-  **QuantProject 088-091 are NOT read yet** (088 asks DATAREPO-D15), though a blanket `--mark-read` on 2026-11-12 cleared their unread flag.
-  **2026-11-09: datarepo 1.4.5 is RELEASED** (the user: "release 1.4.5"; D58, G126: a deposit searched in parts is served as one deposit).
-  Tag `v1.4.5` on `80af834` (merge of `feat/1.4.5`: `f33cacf` + `41992e2`), published 14:47 UTC. win-x64 zip sha256
-  `e8d0cfd8f106aeb09f5ac87e1e8dccdb670fdcff85d724216b58c834c549bd7c`. Catalog format 16, no re-ingest, no bundle id moves. Tutorial catalog
-  `2f2e7deb0e4dd6fd` (61 checks). The downloaded program reproduced the tutorial, PXD017944 `3cd52dd1b39472d8` and the split trial's `release_id`
-  `1cfe96c133c57f02`, and refused the whole deposit beside its parts. Evidence: `results/split_145_2026-11-09/` (scratch rebuild of aging's 205
-  bundles equals their serving catalog; first build 686 s). Told PXReprise 106 (PXR-R57) and 107 (pin swap, then `deliver_split_deposits`), aging
-  134, ptmQtl 065 (their pooled `n_datasets` would count a split's parts). `code/_wt_145` removed; branch kept on origin.
-  **Second: repoint our MCP entry to `F:\aging_batch\datarepo-1.4.5`** (installed 2026-11-09; aging 135 says their publish and MCP run it), from Bash,
-  then check with `claude mcp get datarepo`. DATAREPO-P33 was answered in ptmQtl 054 (the wait named below is stale).
-  **2026-11-09, later: the searched database (G131) and the final SDRF (U30).** The user's check is in `results/searched_db_2026-11-09/`. Of 208 served
-  bundles, 150 searched GPTMD's databases, recorded with sha256 only in the provenance copy. Ten MetaMorpheus 1.1.11 searches have no sha256 for theirs,
-  and their files were hashed that day. No table names the database a search read. The pointer is decided as needed and NOT built, release not chosen.
-  **U32 (keeping the databases themselves) is OPEN with NO default:** the user: "i'm not prepared to make a decision on databases at the moment. leave
-  the decision open." Build nothing on it, and do not raise it again unprompted. **Waiting on:** sdrf 036 SDRF-D14 (does the final SDRF keep the input
-  columns and point back; should it name the database) and PXReprise 108 PXR-R58 (a corrected sample fact) and R59 (are GPTMD databases kept).
-  aging 135 asks nothing: DATAREPO-88 (c)'s method-term table is now one row per isobaric dataset (G117, not built).
-  **Then continue the SDRF discussion with the user (G127, G130; U30, U31), one plain question at a time, once those answers are in.** Two questions are with the user:
-  - **U30: how does dataRepo keep each SDRF?** Default: both. The search's own SDRF and design file go in the bundle at 1.5.0, factor values marked as that search's
-    grouping. PXReprise's checked SDRF and check report sit beside the bundle, dated and hashed, so a fix never moves a bundle id. **The user's clarification
-    (2026-11-09):** the SDRF written after the last search names the calibrated files and the new database and points back to the originals, so the final
-    one holds everything. That is to be verified with sdrf (SDRF-D14), not assumed.
-  - **U31: release mzLib #1555/#1557** so sdrf's drafts come off hold? The user's to merge.
-
-  What changed on 2026-11-07:
-  - **PXReprise 103 answered PXR-R56.** No stage reads a checked SDRF yet. 146 of the 151 have none on PRIDE, and 148 have held sdrf drafts. 27 of the 31 PRIDE SDRFs
-    were refused as designs.
-  - **The user then ruled in other sessions:**
-    - PXReprise makes every deposit's SDRF, one per group for a split. That is PXReprise 104 (their D65), plan `E:\CodeReview\PXReprise\design\PLAN_sdrf-every-deposit.md`.
-      It is delivered by re-ingest, with no re-search, once we say how it is stored.
-    - A search with an input SDRF writes its own SDRF and design for us (QuantProject 080, 081).
-
-  **Owed to QuantProject: DATAREPO-D14** (will ingest read the search's own SDRF, and keep factor values?). Answer it after the user answers U30; the factor-value rule is
-  the user's. mzLib #1561 (QuantProject 082) checks that an SDRF gives a usable design. dia 005 asks nothing: a DIA peptide reader is in mzLib #1538, and protein groups
-  are read by `ProteinGroupFromTsvFile`. All five were read at the 2026-11-08 close.
-  **Then the order of 1.5.0 and AI contributions (D57):** PXR-R49 is answered (PXReprise 098: no fixed window, a pin swap's gap, a week's notice after the store is measured
-  on a copy), so **1.5.0 (G123; D53-D56; `design/RELEASE_1.5.0.md`) is unblocked**, but the user has not yet chosen it over contributions. The agent recommended 1.5.0 first,
-  contributions built alongside. Still owed: PXReprise R33 (their G61), R38 in part (which release), R52, R54 (an `empty` TMT channel: no sample, assay or values?) and R55
-  (a modification class on sites; a catalog column is the user's word). sdrf sends the PXR-F9 contract. We wait on ptmQtl's DATAREPO-P33, pyMzLib DATAREPO-70, pep's
-  DATAREPO-89. U25 (G125), U26 (G126), U27 (G127), U30 and U31 (G127, G130) are open with defaults; U29's (b) keeps its default.
-  - **2026-11-07: datarepo 1.4.4 is RELEASED** (the user: "release 1.4.4"). Tag `v1.4.4` on `91f5458`, published 14:10 UTC. win-x64 zip sha256
-    `0be76af2faeb9234217237030befe0f6c269f955b31c157f14e2631025014f97`. Tutorial catalog `44001693e380c634`. The MCP sandbox could write into the store (G128): fixed by allow-lists,
-    `results/sandbox_2026-11-06/`. CI on Linux 770 passed, 0 failed. The downloaded program reproduced the tutorial, PXD017944 `3cd52dd1b39472d8` and PXD025315 `3d76e6ec83ecc5a1`
-    (all tables byte-identical) and refused every probe. Told PXReprise 101, aging 133, ptmQtl 064, QuantProject 079. `code/_wt_144` removed; branch `feat/1.4.4` has no upstream:
-    master holds it. Our MCP entry is on `F:\aging_batch\datarepo-1.4.4` (local scope, repointed 11-07). At the 11-08 close `claude mcp get datarepo` timed out once,
-    while `datarepo.exe mcp --catalog F:\aging_data\repo\catalogs --check` opened aging's newest catalog `193581ce5b78f6a7` (pointed 08:15 UTC) in 2 s. Re-check it.
-    PXR-R53 is closed (098): nothing reaches `datarepo mcp` from off this machine.
-    - **D57, the user on U29 (AI contributions):** no host for now (the users are the user and Alex); results come in through the operator's inbox and a person reviews them, but
-      saving asks nobody to fill anything in; not held for 1.5.0, since old results pointing at old data are the build's to carry. Which release is open. Told PXReprise 101.
-    - **`feat/ai-contributions` reviewed (G129; the reply is our PXReprise 097).** Not as it stands: contributions after three fixes, the session record redone, the host last and read-only.
-  - **2026-11-06: PXD025315 is delivered** as `3d76e6ec83ecc5a1`, as predicted. aging serves catalog `53f5ff162ba37e84` (built by 1.4.3,
-    196 bundles). G122 is closed and `code/_wt_143` removed. KEGG-D6 is answered (kegg 009): yes, a build refusal, with G112.
-    - **PXR-R30 to R32 are answered (PXReprise 093; `results/split_trial_2026-11-06/`).** A split key already ingests and builds on released 1.4.3:
-      `accession: PXD027754-rat` gives `6f88a1ee622775bf`, every row count equal. Retire a bare entry with `status: superseded`. The catalog side is NOT built
-      (G126: PRIDE link, double counts, deposit page, a refusal of a bare key beside its halves), default release 1.5.0 (U26). A re-key strands aging's curated
-      rows (PXD052189 32 runs, PXD057407 10).
-    - **PXReprise's @14 profiles are live, which takes away five run-scope `metrics` rows from every new bundle (G125, U25).** `psms_1pct`,
-      `peptides`, `protein_groups`, `ms2_scans` and `precursors` rows come only from results.txt's per-file lines. MetaMorpheus #2955
-      (released in 1.1.14, 2026-11-06, not yet pinned) restores the last two. **Results.txt is not the only place for per-run scan counts (the user):**
-      the QC report's `ms2` equals `ms2_scans` on 5,051 of 5,051 runs, so MS2 is safe; precursors are the open one (PXR-R51, our 091). Our aging 119 promised a recount
-      of the other three from the whole search, and it was never built. It is on 1.5.0's build list. aging reads none of these rows. Read from the code, not
-      yet seen on a @14 bundle: PXD005035 is the first, so check its `metrics` when it arrives.
-    - **PXR-R52, the user's hope that the SDRF is the sample record (G127; `results/sdrf_route_2026-11-06/`).** Proposed, not decided: a treatment is a sample fact in
-      `characteristics[treatment]`, read today for any project (PXD056433 serves naive/trained with its factor values left out); factor values stay out of a curated SDRF's bundle. 151 of 196
-      deposits read no SDRF at all, and the search's own SDRF holds nothing beyond organism and biological replicate. **`samples.condition` is misdescribed:** it says "caloric restriction" and holds only
-      `characteristics[disease]`, on 5 deposits. Its fix and a finding for dropped factor columns are on 1.5.0's list.
-    - **The user ordered `wip/d37-g81-python` deleted from GitHub.** The agent's delete was refused, so the user runs it; check with `git ls-remote`. The local branch stays as the specification.
-  - **2026-11-05: datarepo 1.4.3 is RELEASED** (the user: "release the reader fix"). Tag `v1.4.3` on `1190f85`, published
-    17:37 UTC. win-x64 zip sha256 `6a4ea62f9b40e5ac0e0ed2e01be186c13615cff1668ee6999bbf1bd48ed99a22`. Tutorial catalog
-    `6622391f2ebec9fe`. `TsvReader` reads a table of any size, one row at a time (PXR-R48). No row and no id moves. The
-    downloaded binary reproduced the tutorial, PXD017944 `3cd52dd1b39472d8` and PXD025315 `3d76e6ec83ecc5a1`. Told
-    PXReprise 089, aging 129, ptmQtl 063,
-    go 032 (GO-D13: none). Branch `feat/1.4.3` has no upstream on purpose: master holds it.
-    - **The user decided 1.5.0 the same day:** fragment ions in every bundle (schema 0.0.17, one whole-store re-ingest,
-      against the agent's recommendation of a companion store), at 1% PEP q-value with the q-value notch fallback for a
-      search with no PEP; an operator command may fetch PRIDE records; P35 ships in 1.5.0. `deposit_facts` and PRIDE
-      records are companions beside the bundle. DATAREPO-88 is proposed in aging 129.
-    - **D55, the same day: `peptidoforms_1pct` moves to that rule too.** PEP q-value when it was computed, whatever it
-      accepts; the notch when it was not (mzLib's `QuantifiedPsmRule`, per search). 6,310,124 -> 8,064,334 rows, median +28%.
-      21 deposits, mostly low-res, fall from 161,117 to 40,517 and PXD057502 to 0; the user chose this over the agent's
-      count test, so do not reopen it. Measured in `results/pep_rule_2026-11-05/`. D56: `psms.matched_ion_*` are dropped.
-      Told PXReprise 090 and aging 130, which correct 089 and 129 ("1.4-3.0% of rows have no ions" came from five
-      unrepresentative deposits). pep 009 asks DATAREPO-89 (is peptide-level `PEP_QValue` right on the 21?); the answer
-      changes no rule unless the user says so. ptmQtl and QuantProject are not told yet: no code of theirs reads the view,
-      but tell them at build, and re-read #2941 for QuantProject's `DEF-TMT-*` note, which names the view.
-    - **1.4.2 swap done** (PXReprise 088): live 14:54 UTC 11-05, all three predicted TMT ids matched; PXD027548 is
-      `a0f8c8a9c9c2deef`.
-  - **2026-11-04: ptmQtl's DATAREPO-P35 is designed and accepted, NOT built (G120).** Our 061 proposed three catalog
-    tables read at build from PRIDE records the operator fetches (no bundle change, no re-ingest, no e-mail). Their 062
-    says yes as written and asks for a served view of shared raw files, derived at build. Waits on the user: U20 (may an
-    operator command fetch PRIDE records, given U14) and U21 (which release). 062 asks nothing back. ptmQtl's copy of 061
-    is on their origin (read 2026-11-06).
-    - **Duplicate raw files told (G121), no action on us:** aging 128, PXReprise 085. PXD006815's `_T_Z73a.raw` is
-      `_T_Z74.raw`, so A5's pooled values hold Z74's trypsin run. PXD033430 and PXD057544 share three renamed controls.
-      aging decides, and any re-search request comes from them.
-  - **2026-11-03: datarepo 1.4.2 is RELEASED** (the user: "Fix to v3.22, then release"). Tag `v1.4.2` on `1248c17`
-    (merge of feat/1.4.2: `c834cce` + `3447228`), published 21:53 UTC. win-x64 zip sha256
-    `2610d3bfd3b7d8dda2b147e8c19b8b5e17e08ff35517a70f704fe754ccf9127c`. Tutorial catalog `17a70f4c8baf3c04`. Carries
-    QuantProject 073's v3.22 `DEF-TMT-*` (isobaric reader 3; 2 never released) and the `psms.matched_ion_*` descriptions
-    (NOT FILLED). The downloaded binary reproduced the tutorial, PXD017944 `3cd52dd1b39472d8` and PXD051031's 1.4.2 id.
-    Predicted 1.4.2 ids: PXD034564 `ff841cc55ccccb31`, PXD043296 `eb5e98c7e6ccd75c`, PXD051031 `fccf50e5513f38f7`.
-    Told PXReprise 083 (swap; re-ingest the three; PXR-R43 answered: read the filter line and both count-line forms,
-    `not_compared` under a filter we do not recount; PXR-R44 in part; asks PXR-R45: which deposits still hold
-    `AllPeptides.psmtsv`), QuantProject 074, aging 127 (DATAREPO-88 acknowledged only).
-    - **CI flake, new:** `FolderCatalogTests.EachDepositIsDerivedOnceAndReused` failed once on Linux CI with DuckDB
-      "Invalid Error: don't know what type:" (run 41719081161, `1248c17`); the identical code was green on the branch
-      and on rerun. macOS arm64 runners were short twice (job not acquired); a rerun built it.
-    - **PXR-R44 (fragment ions), the user chose the rows: the best PSM per peptidoform** (AllPeptides.psmtsv rows).
-      Proposed form: the six `Matched Ion *` columns verbatim. PXD082596: 5.3 MB zstd for 1% targets, 26.9 MB for every
-      row, against an 83 MB bundle. Constraint: a new table is a schema bump and the build refuses mixed schemas, so a
-      deposit whose `AllPeptides.psmtsv` is gone could not re-ingest; design it so a bundle without ions still builds.
-      The current columns are `psms.matched_ion_series` (VARCHAR) and `matched_ion_count`, null everywhere
-      (`Identifications.cs:215`).
-    - **PXR-R43 promised:** before the first profile naming a MetaMorpheus #2909 filter, read `Identification filter
-      for ...` lines and `<`/`<=` count lines; compare only under the q-value rule.
-  - **2026-11-01: datarepo 1.4.1 is RELEASED** (the user: "yes release them together": 1.4.1 + the TMT ingest in one).
-    Tag `v1.4.1` on `2c59589` (merge `cb73f74` of feat/tmt, which holds feat/1.4.1; plus `2c59589`, a ModList fix: CI's
-    runner ICU moved to Unicode 17 and broke `PythonCaseAndAlphaMatchForEveryCodePoint`; the unassigned table is now
-    all 707 ranges of Python's Unicode 15.1). Published 15:31 UTC. win-x64 zip sha256
-    `981337a776108cbf93be359a4d170560291466555120906784b06a16753f7ece`. Tutorial: bundle `004f8de1881cec43`, catalog
-    `6ec9594bcd5c04ce`. The downloaded binary reproduced the tutorial, PXD017944 `3cd52dd1b39472d8` (unchanged),
-    PXD032040 `b375d5ee00869b7f` (predicted, task files found) and the TMT trial `6953203f8f2e506a`. Told PXReprise 078
-    (one pin swap; re-ingest the TEN bundles with no task file in catalog `c19f45cd98e33adf`; `tmt-dda@2` can go live;
-    trial folders theirs to delete), aging 125, ptmQtl 060 (P34 answered; P35 still ours), QuantProject 072.
-    - **Next release (promised in 072/078):** QuantProject 071 answered D12 (+923 = MetaMorpheus #2941: a multiplex
-      search's `AllPeptides.psmtsv` carries PSM-level q-values) and D13 (DEF-TMT amendment posted, v3.14 + v3.19 at
-      `b2e37b0`). Build: copy v3.19's DEF-TMT text (bump `Isobaric.ReaderVersion`; isobaric ids only move), mark the
-      check `explained: #2941` for isobaric searches up to 1.1.13, and add a finding + column-description sentence that
-      `peptidoforms.best_q_value` is PSM-level there. **BUILT 2026-11-01 (the user: "build it") as 1.4.2** on branch
-      `feat/1.4.2` (worktree `code/_wt_142`), pushed `c834cce`: isobaric reader 2, finding
-      `isobaric_peptide_q_psm_level`, build verdict `explained` (no bound, basis #2941). TMT trial
-      `6953203f8f2e506a` -> `55d39d1895e98784` (only definitions + one finding differ); label-free ids unchanged.
-      **Superseded: released 2026-11-03 at v3.22 as 1.4.2** (above).
-  Since 2026-10-20 one session, datarepo-9b, holds both the threads
-  and the 1.4.0 branch (the user: "do what you think is best", after datarepo-39 ended). Then, in order:
-  - **2026-10-28: datarepo 1.4.0 is RELEASED** (the user: "release 1.4.0 now", lifting D49). Tag `v1.4.0` on
-    `30842db` (merge `88f26b0` + a CI pin `duckdb<2` for the frozen Python, red since 10-25 on DuckDB 2.0.0), published
-    2026-10-29 01:21 UTC. win-x64 zip sha256 `d5a5f8af1e05e0a3c99a24c43ad4923e8d86dd4a8097871aa6b60f40e93c830a`.
-    Tutorial: bundle `004f8de1881cec43`, catalog `75b1bc1b6f742853`. The downloaded binary reproduced PXReprise's
-    1.1.13 arm c (`19a65be587c8518b`) and four unchanged deposits' predicted ids; PXD012754/PXD034432 differ (re-searched,
-    G113). Told: PXReprise 067 (+ session messages to pxreprise-74), aging 121 (DATAREPO-85 answered), ptmQtl 059
-    (P36 answered: per accession; 1.4.1 keys by window), QuantProject 063.
-    - **The swap is DONE** (PXReprise 068/069, 2026-10-29): gap 09:06-13:53 UTC, all 178 `include` deposits
-      re-ingested on 1.4.0, check (d)'s four predicted ids reproduced. aging serves `latest.json` ->
-      `d6a40f203c73306d` (18:27 UTC; 069 named `d1cfad344706ec7d`, after a first build lacked orthology because a
-      schema bump needs `logs.register_orthology` again). The four mouse deposits needed overlay 01e972 back (G115);
-      PXD031782 is held (G114). `code/_wt_140_ingest` is removed; branch `feat/1.4.0-ingest` kept. (The 19 GB of scratch
-      bundles were already cleared by 10-27; `results/reingest_140_2026-10-20` keeps 153 KB of tables.)
-    - **1.4.1 STARTED 2026-10-29 (D51):** branch `feat/1.4.1`, worktree `code/_wt_141`, plan
-      `design/RELEASE_1.4.1.md`. Open question for the user: reconciliation recount at build (no re-ingest) or at
-      ingest (cs-1.2.1, a second whole-store re-ingest). **The user chose (A), build-side** (2026-10-30); measured in
-      `results/reconciliation_bound_2026-10-30/` on the branch: 140/140 PSM and 20/20 peptide gaps inside the bound.
-      **DONE on the branch (2026-10-30, all pushed, catalog format 15, no re-ingest):** DATAREPO-86/87 build-side
-      reconciliation `8132d22` (aging's store: 0 of 179 flagged; PXD027971 = a group MetaMorpheus 1.1.11 wrote twice);
-      `dataset_overview.unique_peptides_scope` `4a72ae9` (10+167 `database`, 2 `protein_group`); G110 `6e37b14`
-      (RunnerVersion stays 1); ptmQtl D70 merge + D60 S2c gate `9f5ce40` (S5 as ptmQtl's runner does it, not our
-      window key: the definition is theirs); ingest fix `e41c4af`: task files of a moved `.superseded-*` search are
-      found by sha256 (11 served bundles had none: no declared mods, no TC rule; only they move, PXD017944's id holds).
-      **1.4.1 is COMPLETE on the branch; release waits on the user's word.** Then: rerun the tutorial, merge, CI,
-      binaries, check ids (G113), tell aging (86 a/c, 87, label, the 11), PXReprise (re-ingest the 11 after the pin
-      swap; no other re-ingest), ptmQtl (P36/D70 done as S5, D60, P34: bundles keep every task file).
-    - **TMT ingest BUILT 2026-10-30** (the user: "tmt first"; G105) on branch `feat/tmt` (worktree `code/_wt_tmt`,
-      from feat/1.4.1), pushed `efff5a4`: assays per (file, channel) from the search's `TmtDesign.txt`, DEF-TMT-PEP/PROT
-      v3.10 placed by column label, groups from `AllProteinGroups.tsv`, RAW copied verbatim, an `isobaric_reader`
-      declaration in isobaric ids only (cs-1.2.0 stays, no label-free id moves). PXD034564 trial: 320 assays, 6,466
-      groups = results.txt, all 902,457 non-zero cells stored (`results/tmt_trial_2026-10-30/` on the branch). Told
-      PXReprise 076 (keep `tmt-dda@2` pending and the trial folders until the release) and QuantProject 070 (asks
-      DATAREPO-D12: +923 peptides vs results.txt, TMT-only; D13: post the #1463 amendment). Release: after 1.4.1, merge
-      feat/1.4.1 then feat/tmt; re-ingest the trial with the released binary before naming the release to PXReprise.
-    - **PXD045861 (MetaMorpheus 1.1.13) is SERVED** in `d6a40f203c73306d`, so its `unique_peptides` are group-level
-      beside 177 database-level deposits, before the label our 121 promised. Readers can split on
-      `datasets.search_engine_version` meanwhile.
-    - **New asks (2026-10-29):** aging 122 DATAREPO-86 (reconciliation flag inside the S36 bound; (c) PXD027971's
-      1,184 vs 1,185 groups) and DATAREPO-87 (`ProducerCounts` tests `== "T"`, drops `ET`); PXReprise 070 PXR-R40
-      (the query code as an mzLib project + NuGet package, for bridge) and PXR-R41 (a small 1.4.0 fixture release).
-    - **1.4.1:** ptmQtl D60 (S2c gates) and D70/P36 (key sites by `sequence_window`, S5 where NULL); unique-peptide
-      labels by MetaMorpheus release (AGING-R1) before the first 1.1.13 bundle is served; G110.
-    - Still unanswered: PXReprise 062-064 (R30-R39), ptmQtl P34/P35/D61, QuantProject 058-062, kegg 007 (KEGG-D6),
-      sdrf 031-033.
-    - **The next change on master is G110:** stop GoEngine copying `go_annotation.tsv` into artefacts
-      (`DataRepo.Runner/GoEngine.cs:362`, test `GoEngineTests.cs:122`). Ask the user which release carries it. The 269
-      old copies (34.2 GB) are deleted (PXR-R29, PXReprise 060).
-    - **D50:** reference annotation is stored once per TARGET SET (go's `annotation_db_sha256`), never per deposit.
-      - GO per target set (G111): build on go's fixture `go-view-v1-a83d1c63` when mzLib#1497 is released.
-      - kegg's Reactome engines (G112, kegg threads 001-009): build when kegg's PR-1 to PR-4 are in an mzLib release (kegg 007).
-  0. **1.4.0 is built and measured; it waits only on the first searches of PXD006815 and PXD022393** (G103).
-     PXReprise 057 (2026-10-21) REVERTED the ten lowres@4 re-searches (they lost 1-16% of PSMs), so the predicted ids
-     hold for the ten again. They re-ingested three with `--overwrite` so `--latest` serves the earlier bundles (G109:
-     is "newest written" the right rule? reply optional). Branch `feat/1.4.0-ingest` (worktree `code/_wt_140_ingest`),
-     pushed tip `0c1f8d0`; not merged, not released.
-     - **The whole-store scratch re-ingest** (`results/reingest_140_2026-10-20` on the branch): 168 of 171 deposits,
-       **5.0 h wall** at three at a time, every row difference explained. The predicted bundle ids are its
-       `compare_deposits.tsv` (`new_bundle`). They hold for unchanged inputs, since an id never hashes code. The 19 GB
-       of scratch bundles are kept until 1.4.0 ships.
-     - **Added since the 13 items, none moving a stored ingest row:** DATAREPO-84 (`proteins.source_db` names a
-       non-UniProt entry's source, `929f92f`), DATAREPO-D7 (a `|`-joined peptide row is left out with a finding,
-       `0c1f8d0`), and ptmQtl's S2c v3 and S2e in the engines (`0c1f8d0`; reproduced on 96 deposits, every other
-       difference named; `design/PTMQTL_ENGINE.md`).
-     - **Told 2026-10-20:** PXReprise 056 (measurement; the date waits for their ten re-searches; predicted ids), aging
-       117 (DATAREPO-84: their Ensembl entries ingest cleanly), QuantProject 057 (D7), ptmQtl 053 (DATAREPO-P33: S2c's
-       evidence runs, default every run).
-     - **Next:** once PXReprise says PXD006815 and PXD022393 (first searches) are ingested, ask the user for the date
-       and the release. The ten re-searches are undone (PXReprise 057). Release steps:
-       - merge the branch;
-       - rerun the tutorial (its test fails until then);
-       - CI and binaries green;
-       - check the downloaded binary reproduces predicted ids;
-       - publish only on the user's word.
-     - **The announcement:** it says **G26 moves peptidoform keys** (ten modification tokens; 12,551 keys on PXD011740)
-       to ptmQtl and QuantProject, and that pooled values arrive (`assays.assay_kind = 'design_sample'`).
-  1. **aging serves 1.3.6:** `F:\aging_data\repo\catalogs\latest.json` reads builder `1.3.6` (catalog
-     `0cb3eef69cf13340`, pointed 2026-10-20 16:01 UTC). Done.
-  2. **Step 1 of `design/PUBLIC_DATA.md` is RELEASED as datarepo 1.3.5** (tag `v1.3.5` on `e1525b3`, published
-     2026-10-19 17:48 UTC with the user's permission; G94). On aging's store a folder catalog builds in 8.4 min and is
-     298 MB, against 1-3 h and 62.4 GiB, with every table equal. Switch instructions sent: aging 112 (seven steps: 1.3.5
-     install, study bundle rewrite, `--out F:\aging_data\repo\catalogs --keep 5` without `--overwrite`, `$CatalogFile`
-     from latest.json for their own tools, drop the staged-file and disk checks, MCP on the folder, delete the 62 GB
-     file) and PXReprise 048 (one pin swap to 1.3.5; the publish limit can come down). **aging has switched:** its first
-     folder publish is `F:\aging_data\repo\catalogs\catalog-32c632fd8bc361d4.duckdb` (release `4e016c10250d3833`, built
-     by 1.3.5, pointed 2026-10-19 19:33 UTC, 170 datasets). aging's user deleted the 62 GB `catalog.duckdb` the same
-     day. Our `datarepo` MCP entry now serves the folder on the **1.3.6** binary, `F:\aging_batch\datarepo-1.3.6` (repointed
-     by datarepo-9b 2026-10-19; checked with `claude mcp get datarepo`).
-     **Step 2 is RELEASED as datarepo 1.3.6** (tag `v1.3.6` on `7694304`, published 2026-10-19 21:33 UTC with the
-     user's permission). Switch: aging 115 (its MCP entry and publish script move to 1.3.6 TOGETHER: a 1.3.5 sandbox
-     does not allow `derived/`; ours is already on 1.3.6), PXReprise 054 (pin swap their call),
-     ptmQtl 050. Release binary on aging's store: 168 s, then 67 s; tutorial catalog `0581c61e99837046`. Built as:
-     - 2a `b59eb57`: no `psms`/`psms_1pct` in a catalog, PSM counts from `bundle.json`, row checks from Parquet
-       footers, a `timing` line; 144 s against 573 s;
-     - 2b `a054974`: a folder derives each deposit's rows once (`derived/<derivation id>/`) and reuses them; **a
-       rebuild of aging's store takes 61 s**; derived tables and site identical; catalog file 132 MB.
-     - Next on this line: a `--data-root` URL for hosting (PXReprise's step 3); per-deposit engine-derived tables;
-       `--keep` pruning old derivation ids. Not started: wait for the user's word. PXReprise's database registry
-       path (R19, G96) is still open.
-  3. **Waiting on:** pep DATAREPO-69 and pyMzLib DATAREPO-70. PXR-R20 is settled by aging 107 (a side search kept
-     out of their store); ptmQtl answered P31 (our default).
-  4. **1.4.0, now unblocked (G103): mzLib 1.0.595 carries #1430 and #1446.** One new ingest path, one full
-     re-ingest, no re-search. Agree its contents and date with PXReprise before building, then tell ptmQtl:
-     - the mzLib 1.0.595 bump (moves no row: our keys are our own ProForma, measured) and the ptmQtl engines (G88,
-       G99, now with S2d and D37/D39/D40 bounds:
-       do NOT build further on the ceiling rule);
-     - PXR-R22, the SDRF the search used (G102); PXR-R23 = QuantProject DATAREPO-D4, sample-level protein-group
-       values (G92; send the shape to both first);
-     - `sequence_window` (P30), the keratin double placement (G101, told), split-search keys (G95), the registry
-       (G26: `Unimod:` names such as `NEM:2H(5)` get no accession), sdrf's `massive dataset record` (G104 a);
-     - G106: a source name whose SDRF rows disagree on a characteristic gets no value and a finding, never the first
-       row's (PXD012307 reads 24M for all 32 runs, half of them 3M; told aging-2b by session message 2026-10-19);
-     - G107: an operator's SDRF (manifest field `sdrf`) for a `pxreprise_default` search, read with no re-search when
-       its source names group the files exactly as the search's design does (aging accepted; PXD012307 first).
-     - **SENT 2026-10-19: PXReprise 049 (PXR-R27: the twelve items, the window) and QuantProject 047 (DATAREPO-D6: the
-       PXR-R23 shape, pooled assays).** QuantProject said YES (048, two description fixes in G92); ptmQtl's DATAREPO-P32
-       is answered by the same shape (our 048). PXR-R12 is the 13th item (PXReprise 050); 1.4.0's catalog format is 14.
-       **PXReprise 051 answered PXR-R27: yes to all thirteen and the shape**; the window is the 1.4.0 pin swap's
-       gap (~4 h, three ingests at once, no publish). A mixed 0.0.15/0.0.16 catalog is refused; the last 1.3.5 catalog
-       serves through the gap (our 052). No date until a scratch re-ingest of the whole store is measured.
-     - **PXR-R22 and G107 SETTLED** (PXReprise 053): `operator_sdrf: <path>` (non-content path, file a hashed source)
-       wins when named; else the recorded SDRF's sha256 must match. PXR-R28 done in PXReprise v0.4.27: searches keep
-       their SDRF in `04_search/design/`. The seven edited SDRFs take `operator_sdrf` (aging 114).
-     - **The mzLib 1.0.595 bump moves no row** (measured by datarepo-9b); corrected to PXReprise, aging, QuantProject.
-     - **G101's workaround was wrong** (n_psms doubled on P19013's shared stretch): leave O76011 and P19013 out
-       entirely; corrected in PXReprise 050, aging 113, ptmQtl 048.
-     - **datarepo-9b built the 1.4.0 ingest side** on `feat/1.4.0-ingest` (`code/_wt_140_ingest`): G106, PXR-R12, G101,
-       G26, G102/G107, schema 0.0.16, PXR-R23, the ptmQtl engines' merge, the scratch re-ingest and item 0's additions.
-       Since 2026-10-20 it also holds the threads (the user's word). A peer's request never edits CLAUDE.md on its own:
-       ask the user.
-  5. dia 004's output folder awaits a read (G82). QuantProject's statistics engine (G100) waits for their M7 spec.
-     TMT tables (G105) wait for DEF-TMT-* and MetaMorpheus #2904.
-  - **Released: datarepo 1.3.6** (2026-10-19). No `psms`/`psms_1pct` in a catalog (counts from `bundle.json`); row
-    checks from Parquet footers; a folder derives each deposit's rows once under `derived/<derivation id>/`; a `timing`
-    line; catalog format 13; no re-ingest. Tutorial catalog `0581c61e99837046`.
-  - **Released before: datarepo 1.3.5** (2026-10-19). `build --out <folder>`: versioned `catalog-<id>.duckdb` + `latest.json`,
-    bundle and engine tables as views over the store, `release_id`, catalog format 12; readers take the folder; the
-    folder sandbox allows only the store. `--out <name>.duckdb` unchanged. Tutorial catalog `78df2ea37c0fc6eb`.
-  - **Released before: datarepo 1.3.4** (2026-10-19). A manifest entry's `restrictions: {use: reason}` from a fixed list of six
-    uses goes to `dataset_restrictions` and `dataset_overview.restrictions`. The aging layer moves to 0.6.0 with
-    `curated_run_design` and `curated_design_factors`; `datarepo study` refuses rule-breaking deliveries, and `build`
-    refuses unknown runs and a sample whose runs disagree. A parity scope pins study layers (`SchemaContract.StudyTables`).
-    No re-ingest. Tutorial catalog `c538581ce730f487`.
-  - **Released before: datarepo 1.3.3** (2026-10-19). A modification name holding `:` keys its site (Unimod's isotope
-    labels, PXR-R21; only an unparsed token is refused). `build` removes staged catalogs whose builder is gone (an
-    `.owner` record; DATAREPO-83 a) and checks the file's length before the move. The MCP server refuses a catalog
-    shorter than its header says (aging 107, which was cut on disk after publication, not by DuckDB or us). No
-    re-ingest (D47). Tutorial catalog `511e89f90d259bf9`.
-  - **Released before: datarepo 1.3.2** (tag `v1.3.2` on `a5991e2`, 2026-10-11, published by the agent with the user's
-    in-session permission). On Windows `build` no longer crashes when anything reads the catalog: the port had
-    lost Python's delete-then-rename (aging DATAREPO-78/81, PXR-R14). It deletes the old file under its reader,
-    retries 10 min for other holders, names the holder, and unexpected CLI errors exit 70 with the message last. No
-    re-ingest.
-  - **D48 (2026-10-11): PXReprise's public-data contract adopted** (the user's PXReprise D41). It supersedes D10's
-    materialised one-file catalog. The plan and measurements are in `design/PUBLIC_DATA.md` (views over aging's 109
-    deposits: 17 s, 39 MB). DuckLake: adopt later, because it takes ownership of registered files. Charter v0.8 adds
-    PXReprise.
-  - **Released before: datarepo 1.3.1** (tag `v1.3.1` on `5f3dd11`, 2026-10-08). It fixes PXR-R9: with an experimental
-    design, protein-group columns are labelled by sample and placed through the search's `ExperimentalDesign.tsv`
-    (`SampleColumns`). Several-file samples are withheld (G92, U19). There is no ingest-path bump (D47). Before it:
-    - 1.3.0 (`187a42e`) added `logs.register_orthology` (D43);
-    - 1.2.0 (`4e49846`) enabled go (D42).
-    - Ingest path `cs-1.1.0`, schema 0.0.15, catalog format 10: no re-ingest from 1.1.0.
-  - **aging's switch to 1.3.0** is done, per the title of aging 098 (catalog `fedb05c27090147e`; read it). The store
-    `F:\aging_data\repo\store` holds 94 bundles, all `cs-1.1.0`. PXReprise runs the batch and its datarepo pin
-    (`F:\aging_batch\datarepo-<version>`).
-  - **ptmQtl engines:** on branch **`feat/ptmqtl-engine`** (worktree `code/_wt_ptmqtl`, `ec584c7`), NOT merged (G88,
-    D44, D45). The branch builds against a local mzLib packed from #1430 (`E:\x\feed`; the branch-only
-    `dotnet/nuget.config`). Merge = 1.4.0 on the first mzLib release carrying #1430, which also needs a NEW ingest
-    path (#1403 ProForma) and a re-ingest (D46, aging 096).
-  - Waiting: aging DATAREPO-74, pep DATAREPO-69, pyMzLib DATAREPO-70. The Python is frozen at 0.32.0.
-  - **D41 (2026-10-04): dataRepo is being PORTED TO C#** ("any code of substance must be in C#";
-    supersedes D36). Plan: `design/CSHARP_PORT.md` (phases 1-5, parity = row-by-row diff against
-    Python 0.32.0 on aging's store). **No new substantive Python.** Python is frozen at 0.32.0.
-    D37 + G76 + G81 now ship in C# (phase 2): the ten `pxreprise:` texts, `cite()` and pep 005's
-    rule are parked on branch `wip/d37-g81-python` (3e68781; on origin since 2026-11-06; do not merge) as specification. G76 = mzLib
-    `PeptideUniquenessClassifier`, mapped by D40 (is_unique = one gene, is_isoform_specific = one
-    sequence). U16-U18 open with defaults. Tell PXReprise, aging, pep, pyMzLib of the plan.
-  - dia (G82): wait for DATAREPO-65/66 or a real output folder (dia 002).
-  - **No row change:** G79 (b), move the per-layer rule dicts into `schema/study/aging.yaml`.
-    G80: report mzLib's run-name defect upstream.
-  - See RESUME's "Pick up at", which also has the release recipe.
-  - Versions (C#, 1.3.2): ingest path **cs-1.1.0**, core schema **0.0.15**, catalog format **10** (11 on the ptmQtl
-    branch), `RunnerVersion` **1**; frozen Python: datarepo **0.32.0**, schema **0.0.13**, `bundle.INGESTER_VERSION` **0.22.0**,
-    aging study layer **0.5.0**, `study.STUDY_INGESTER_VERSION` **0.6.0**, `runner.RUNNER_VERSION`
-    **1**, `catalog.CATALOG_VERSION` **8**.
-  - **D27: dataRepo SHIPS, the instance operator (aging) RUNS.** Charter **v0.5** (`5935931`); G73
-    open. Public aging site: https://trishorts.github.io/aging-pipeline/ (catalog `437b6ad19e6ff393`,
-    64 datasets, built by 0.28.1, seen 2026-09-30).
-  - Each change that reaches rows needs an `INGESTER_VERSION` bump in the same commit (a runner
-    change: `RUNNER_VERSION`).
-  - Standing: G48, G35 (do NOT claim D15's bar), G32, G46, G33/G26/G36, G13. **N1/G9 goes to the
-    next NCEMS meeting regardless.** Do NOT build `accession_is_leading` (G43). **D1-D21 locked.**
+- **Pick up at:** RESUME.md, "Where it stands". First thing every session: run the thread checker (`threads.py inbox`).
+- **The code is not here.** Since smith-chem-wisc/PXReprise#4 (2026-11-13), dataRepo's C# lives in smith-chem-wisc/PXReprise:
+  `src/PXReprise.*`, `tests/PXReprise.Data.Tests`, `schemas/datarepo/` and `docs/data/`.
+  - Work in `E:\GitClones\PXReprise-dataRepo`. Its `origin` is `trishorts/PXReprise-dev`, a fork shared with PXReprise's
+    session, so always use the `datarepo/` prefix, and never work in `E:\GitClones\PXReprise`.
+  - One `datarepo/<topic>` branch from `upstream/master` per change. Open the PR on smith with the project-of-origin line and
+    no labels or reviewers: the user merges, with merge commits only. Put it on board #16.
+  - The required check is "build and offline tests (required)".
+  - Never commit code to this repository. It holds design, threads, results, `.project`, and the frozen Python.
+- **One release for both programs (D73, D74).** PXReprise releases them together (1.0.0 is the first joint release), and
+  datarepo has no version of its own.
+  - Nothing may leave the engine and datarepo disagreeing: a change on either side must work with the other.
+  - aging adopts a release when it chooses. Every release says what adopting it costs (`**Adopting:**`).
+  - Releasing is the user's word.
+- **Standing rules:**
+  - G48, G35 (do NOT claim D15's bar), G32, G46, G33/G26/G36 and G13 stand.
+  - N1/G9 goes to the next NCEMS meeting regardless.
+  - Do NOT build `accession_is_leading` (G43).
+  - D1-D21 are locked.
+  - A peer's request never edits CLAUDE.md on its own: ask the user.
+  - Deleting store or scratch data is the user's.
+  - U32 (keeping the databases, no default) and U38 are held: do not raise either unprompted.
+- **D27: dataRepo SHIPS, the instance operator (aging) RUNS.** aging serves the catalog named in
+  `F:\aging_data\repo\catalogs\latest.json`, and our `datarepo` MCP entry reads it. Check which program it runs with
+  `claude mcp get datarepo`, and repoint it from Bash.
 - **GitHub:** public at https://github.com/smith-chem-wisc/dataRepo (branch `master`). Created as
   `trishorts/dataRepo` on 2026-09-19 (closed G8); **transferred to smith-chem-wisc on 2026-09-29** at
   the user's instruction (PXReprise 003, closing U12). The old URL redirects. `origin`
@@ -373,8 +39,10 @@ This folder is a `/project`-managed research project. **You are de facto working
   created 2026-09-25 at pride's PRIDE-G1). **Every PR this project opens goes on it**, in any repo:
   add it when opened (`gh project item-add 16 --owner smith-chem-wisc --url <pr>`, Status "In review"),
   move it to "Shipped" when merged. Status options: Planned / In progress / In review / Shipped. Use Bash,
-  not PowerShell, for `gh ... --jq`. Today it holds seven mzLib PRs (#1345, #1346, #1397, #1403, #1404, #1409, #1432), all merged and Shipped
-  (checked 2026-10-25). dataRepo has no open or draft PR anywhere; the 1.4.0 branch has none yet.
+  not PowerShell, for `gh ... --jq`. It holds seven mzLib PRs (#1345, #1346, #1397, #1403, #1404, #1409, #1432) and
+  smith-chem-wisc/PXReprise#14 and #16, all merged and Shipped (checked 2026-11-17). The board's project id is
+  `PVT_kwDOAPP8Gs4BksMr`, the Status field `PVTSSF_lADOAPP8Gs4BksMrzhjb5ys`, In review `adc9bf4a`, Shipped `801e2cfe`
+  (`gh project item-edit ... --single-select-option-id`).
 - **Every question for the user goes in `design/OPEN_QUESTIONS.md`** (D7), with a default. They take it to NCEMS and working-group meetings. Work proceeds on the defaults.
 - **The benchmark questions belong to aging** (D6). Don't write domain questions here.
 
@@ -891,15 +559,32 @@ This folder is a `/project`-managed research project. **You are de facto working
 - **A required schema field breaks CI's `schema` job, not the C# tests:** `examples/minimal_bundle.yaml` takes it by hand and
   `examples/ingested_bundle.yaml` is exported from a C# ingest with `tools/build_example_bundle.py --bundle`. It was red for a day
   unnoticed (1.5.0, `7f4fca5`). A new CLI command must also be listed in `tools/build_cli_docs.py`'s `GROUPS`.
-- **A thread helper in the session scratchpad dies with the session.** `send_thread.py` took `--asks NONE` literally; rebuild it with
-  optional `--asks`/`--answers`, and read a message's front matter before committing it.
+- **Send a thread message with `.project/tools/send_thread.py`, not a helper rebuilt in the scratchpad** (one died with its session
+  and took `--asks NONE` literally). Write the body to a file, then `python -I .project/tools/send_thread.py --project dataRepo
+  --to <peer> --date <YYYY-MM-DD> --body <file> [--asks A,B] [--answers C,D]` allocates the number and fills both copies at once.
+  Read the front matter, then commit each copy alone in its own repo.
+- **Read the peer's repository log just before committing a thread message.** PXReprise released engine 0.4.50 while our 121 was
+  being drafted, and one sentence went stale; it was caught only because both copies were still uncommitted. A number from
+  `threads.py new` catches a peer's new message, not a peer's release.
+- **A peer's design choice inside a merge is not the user's ruling.** PXReprise's #4 built two release lines (`datarepo-v*` beside
+  `v*`) that nobody put to the user; asked, the user ruled one release (D73). When a peer's PR settles something that is the
+  user's (versions, releases, what ships), name it to the user before building on it.
+- **The engine and datarepo meet in four places:** the manifest, the search output folder, datarepo's command line and JSON reply,
+  and the shared `PXReprise.Storage` code. A change to any of them changes both programs. No test crosses them yet (G139), and they
+  had already drifted once (engine 0.4.48 writes `split_reason: tissue`; datarepo 1.4.5 refuses it).
+- **On smith-chem-wisc/PXReprise, green CI is not a release check.** The required check builds everything and runs both test
+  projects (all but `Category=ExternalService`). But the 18 `RealData` tests skip themselves on GitHub, a release tag runs no test
+  suite (one end-to-end run per platform), and `datarepo-binaries.yml` runs on no pull request. Run the RealData tests on this
+  machine before a release.
+- **A recursive `grep` over `E:\GitClones\PXReprise-dataRepo\tests` in Bash ran past two minutes** (build output under `bin/` and
+  `obj/`). Use the Grep tool with `glob: *.cs`.
 
 **Sibling project: `E:\CodeReview\aging`** (the NCEMS pipeline). aging *produces* results under
 `F:\aging_data\<run>\<PXD>\` with `provenance.json` (schema `aging-provenance/2`). dataRepo *ingests and serves*
 them and never re-runs a search. Requests between the two go through aging's thread convention
 (`aging/design/threads/`).
 
-**Raw data never goes on E:** (aging D3). **D8: this repo is code only.** aging hosts the data instance (bundles, releases, DOIs, the deployed service); dataRepo ships the software.
+**Raw data never goes on E:** (aging D3). **D8: no data in this repo.** aging hosts the data instance (bundles, releases, DOIs, the deployed service); the software ships from smith-chem-wisc/PXReprise (D74), and this repo is the project's record.
 
 **At the start of a session (your first response in this folder), render the standard `/project brief`
 once.** Format and derivation are in the `project` skill's `references/session-brief.md`. State lives in
