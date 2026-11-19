@@ -543,7 +543,8 @@ This folder is a `/project`-managed research project. **You are de facto working
   `sources/provenance_04_search.json` `outputs[]` (G131). Never answer "which database was searched" from those tables.
 - **A listing that does not recurse will tell you a file is gone.** GPTMD's databases sit in a task subfolder of `04_search`; a wildcard
   `Get-ChildItem` on the search folder found none, and a draft to PXReprise said ten searches' databases were deleted (2026-11-09, caught before
-  sending). Use `-Recurse` or a `**` glob before claiming anything is missing.
+  sending). Use `-Recurse` or a `**` glob before claiming anything is missing. A grep over top-level files is the same trap: a
+  draft to aging said `instance/` never names ptmQtl, and nine files did (2026-11-18, caught before sending).
 - **aging's `latest.json` moves while you work.** A comparison of a scratch rebuild against "the serving catalog" first read an older 204-bundle catalog
   (2026-11-09). Read the catalog id `latest.json` names when you start, and compare against that id, not the file name.
 - **Re-run every engine on every deposit after a re-ingest, and read the build's `note` lines.** Replaying each old gene artefact for the

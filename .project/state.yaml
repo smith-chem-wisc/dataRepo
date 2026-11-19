@@ -786,7 +786,51 @@ decisions:
       catalog rebuild, or a full re-ingest, with its cost), and the release workflow refuses a release without it. The pins
       (U40): (a) the test across the seam is ours (G139); (b) the engine refuses a datarepo built from another PXReprise release,
       PXReprise's; (c) is the Adopting line. Answers U39 and U40.
+  - id: D75
+    date: 2026-11-19
+    text: >-
+      Schema 1.0.0's version rule, and two changes dia asked for, stated publicly on smith-chem-wisc/PXReprise#25 (our 132,
+      issuecomment-7001454691, answering dia's comment 7001405580). Minor: adding a table, a nullable column or an enum value.
+      Major: removing or renaming any of them, changing a column's type, making a column required, or changing what an existing
+      value means (so a value that splits or narrows an existing one is major). The R5 diff classes every change by this rule and
+      CI refuses a major change without a major version. R4's PR adds the condition that makes "minor" safe: a catalog takes
+      bundles of its own major up to its own minor and refuses a newer minor until upgraded, so no reader meets a value newer
+      than its schema (PXReprise had already told qc the same about enum values, their qc 024). Schema 1.0.0 also renames
+      `peptidoform_ions` to `matched_fragment_ions` (in ProForma 2.0 and the USI a peptidoform ion is a peptidoform with a
+      charge, which is what DIA quantifies; our table holds the fragment ions matched by the best spectrum) and rewords
+      `datasets.confidence_rule` as the rule the producer applied, with mzLib's `ChooseTier` as how a DDA search chooses it.
+      Neither costs a stored bundle: both are new in 0.0.17, which no release writes (1.4.5 writes 0.0.16), and 0.0.17 is
+      pushed, so both land in 1.0.0. The rename reaches the catalog's views, MCP descriptions and docs; PR D lists them.
 gaps:
+  - >-
+    G145 NEW 2026-11-19: owed to ptmQtl, DATAREPO-P39 (their 068): can our ptmQtl engines move to v5, ptmQtl's reported method
+    (their D80), before they store any row, and when? Their D79: results are stored beside the repo, each with its record;
+    store no row from the 1.4.0 engines, which compute the October method (`PtmPairEngine.CoVarying(..., excludeCeiling:
+    true)`, `PtmQtlCore.cs` L320; rows labelled `DEF-PTM-PAIR v2` / `DEF-SITE-TRAIT v1`). What v5 needs: bounds at their
+    rank, partial correlation given run depth (mzLib 1.0.596+), covered-zero and count-only cells from the engine's coverage
+    (searches up to MetaMorpheus 1.1.12 only), and the depth-like label (D78), which is in ptmQtl's harness, not mzLib. ptmQtl
+    writes `DEF-PTM-PAIR v3` and a reference case v3 before we move. Their 068 section 4 lists the record each stored result
+    must carry (definitions and list versions, mzLib/engine/.NET versions, inputs by content checksum, parameters, seeds that
+    never come from `HashCode.Combine`, output checksum and counts by status). Our public position (#25, 131): the `ptmqtl`
+    layer is added after 1.0.0, when the engine computes ptmQtl's current method.
+  - >-
+    G144 NEW 2026-11-19: owed to aging, DATAREPO-91 (their 141), and promised publicly on smith-chem-wisc/PXReprise#25 (our
+    comment 7001405174): one table, a row per ptmQtl calculation in ptmQtl's DEFINITIONS (site-trait, pair types P, C, A and
+    B, pooling, the MS/MS-only refit behind `mbr_dependent`, q-value families), saying whether a released engine computes it
+    at ptmQtl's current version (and if not, what it waits on), and its time on aging's largest deposit by MS2 count and on the
+    pooled scope over all of aging's deposits. Start from ptmQtl 068 section 3 (what is in mzLib, what is in their runner or
+    harness only) and 069 (site-trait with bounds: 5,591 s on PXD008934, 34 runs, 64 cores; 0.4 s without bounds; PXD012307
+    has more sites and is untimed). It tells aging and Alex when computing on request becomes practical.
+  - >-
+    G143 NEW 2026-11-19: schema 1.0.0 work that our #25 comments committed to (131, 132; D75), for PR D unless noted: rename
+    `peptidoform_ions` to `matched_fragment_ions` and every reader of the name; reword `datasets.confidence_rule`; fix
+    `ptm_pairs`' stale description ("Nothing writes this table until the engine is released": the engines shipped in 1.4.0 and
+    `CatalogPtmQtl.cs` loads their output); write the version rule into R5's diff; R4's PR (E) refuses a bundle of a newer
+    minor. If the user takes B as amended on #25: one engine layer per engine (`engine/go.yaml`, `engine/logs.yaml`), each
+    table declaring a `reference` or `deposit` key with a test that no reference table has `dataset_id`; GO's reference
+    tables keyed by the target set (202 of 205 deposits in aging's catalog `e8605507a57e58ef` load 2 to 4 target files, all
+    with an isoform file; 32 target sets, 42 files); GO's member table in the GO layer; the GO layer at 0.x with today's
+    tables and the mzLib #1497 shape as its 1.0.0; `trait_effects`/`ptm_pairs` out of the core, the engines idle.
   - >-
     G142 NEW 2026-11-17: CLAUDE.md is about 58 KB against its 25 KB budget, and it loads into every turn. At the 2026-11-17 close
     its dated pick-up block (40 KB) and RESUME's 40 stacked status sections moved word for word to
@@ -810,7 +854,9 @@ gaps:
     `store_0.32.0`'s `c24593acf7f16a3a`) hold an 843-byte web page as their SDRF. Drop `Submitters`/`LabPIs` e-mails on write.
     Do not ingest pride's altered Spectronaut test folder. Next: take U30 back to the user, one plain question at a time.
   - >-
-    G140 NEW 2026-11-17: owed to PXReprise, PXR-R68 (2) and (3) (their 122, 124; (1), the Adopting line, the user decided). (2)
+    G140 CLOSED 2026-11-18: answered in our PXReprise 129 (PXR-R68 (2) and (3)): adopting 1.0.0 costs aging about 7.5 h of
+    re-ingest (205 include entries, not the 274 store folders our 9 h counted; PXReprise's 5 to 6 h was low), and every reader
+    of datarepo's own version reads `BundleWriter.PackageVersion`. Was: owed to PXReprise, PXR-R68 (2) and (3) (their 122, 124; (1), the Adopting line, the user decided). (2)
     PXReprise told aging (their 267) that adopting 1.0.0 costs about 5 to 6 h of re-ingest (from 1.4.0's 3.6 h for 178 deposits;
     the store now holds 273, their count) plus a catalog rebuild that reuses nothing. Our measurement of master's ingest is
     slower per deposit: 1.5.0's whole-store scratch re-ingest took 6 h 14 min for 192 of 197 deposits at three at a time
