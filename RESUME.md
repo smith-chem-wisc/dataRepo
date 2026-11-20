@@ -2,14 +2,14 @@
 
 <!-- BEGIN GENERATED -- render_resume.py owns this block; edit state.yaml, not here -->
 
-**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-11-19
+**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-11-20
 
 | | |
 |---|---|
-| Commits | 1008 |
+| Commits | 1015 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
-| Locked decisions | 75 |
-| Open gaps | 141 |
+| Locked decisions | 76 |
+| Open gaps | 145 |
 | Gate items skipped | 5 |
 
 **Worktrees** -- details in `code/PINNED.md`
@@ -37,16 +37,16 @@ reanalyses. The results cover search, quant, provenance, design and organelle an
 use it, but AI agents are the main users. The question it serves is how organelle proteomes change
 with age.
 
-## Where it stands (2026-11-19)
+## Where it stands (2026-11-20)
 
 - **dataRepo's code lives in smith-chem-wisc/PXReprise** (since #4, 2026-11-13; G136). This repository is the project's record:
   design, threads, results, `.project`, and the frozen Python. Code work happens in `E:\GitClones\PXReprise-dataRepo`, one
   `datarepo/<topic>` branch from `upstream/master` per change, a PR to smith, on board #16 (`code/PINNED.md`). smith master is
-  `65b081f` (#17 to #23 merged 2026-11-18).
+  `4fb0c4c` (#27's merge, 2026-11-20).
 - **One release for the engine and datarepo (D73, D74).** The first joint release is **PXReprise 1.0.0**. datarepo has no
-  version of its own (1.4.5 was its last; 1.5.0's content ships in 1.0.0). aging adopts when it chooses, at about 7.5 h of
-  re-ingest (our 129). Every release opens with an `**Adopting:**` line. Releasing is the user's word.
-- **Schema 1.0.0 is planned (PXReprise D78, our 129) as six PRs:**
+  version of its own; 1.5.0's content, now including #26 and #27, ships in 1.0.0. aging adopts when it chooses, at about 7.5 h
+  of re-ingest (our 129). Every release opens with an `**Adopting:**` line. Releasing is the user's word.
+- **Schema 1.0.0 is planned (PXReprise D78, our 129) as six PRs.** None has a branch yet.
   - A: R5's schema diff;
   - B: retire the Python parity shims;
   - C: SF4's catalog layer;
@@ -54,50 +54,49 @@ with age.
   - E: R4, a catalog takes every bundle of its major up to its own minor;
   - F: a whole-store scratch re-ingest to measure adoption.
 
-  A to C by about 11-25, D and E by about 12-04, F by about 12-08. **D waits on** #24, #25 and PXR-R70 (PXReprise's: the search
-  profile as a recorded field). One shared store (PXReprise D79) supersedes U36.
-- **Two public issues decide D's shape:**
-  - **smith-chem-wisc/PXReprise#24 (U41):** each Parquet file's schema fingerprint. We recommend the column-contract hash. aging
-    agrees (B, for stable citations).
-  - **smith-chem-wisc/PXReprise#25 (U42):** which tables the core keeps. Comments are in from:
-    - Alex: one layer per engine, a `reference` layer, ptmQtl results on request;
-    - aging: B, ptmQtl results stored until every method is available and fast;
-    - dia: DIA as additions;
-    - us, twice (G143, D75).
-
-  ptmQtl's comment waits on the user in PXReprise's session, and the user rules once partners have commented.
-- **How partner comments reach the issues:** PXReprise's session collects them. We reply in our PXReprise thread with a
-  `## Comment for #N` section, written for a public reader (no private paths, thread numbers or private decision ids), and
-  PXReprise posts it word for word under "Project of origin". Ours: 131 is comment 7001405174, and 132 is comment 7001454691.
-- **Committed publicly for 1.0.0 (D75, G143):**
-  - a new enum value is minor, and a catalog refuses a newer minor;
-  - `peptidoform_ions` is renamed `matched_fragment_ions`;
-  - `confidence_rule` is reworded;
-  - `ptm_pairs`' stale description is fixed.
-- **ptmQtl's tables:** everyone agrees they leave the core. Both users of them (aging 141, ptmQtl 068) want results stored
-  with their record. ptmQtl asks that no row be stored from the 1.4.0 engines, which compute the October method, not v5.
+  A to C by about 11-25, D and E by about 12-04, F by about 12-08. **D waits on** #24, #25 and PXR-R70 (PXReprise's, by about
+  12-01: the search profile as a recorded field).
+- **Two public issues decide D's shape, and the user rules on both:** #24 (U41, each Parquet file's schema fingerprint; we
+  recommend the column-contract hash) and #25 (U42, which tables the core keeps; we recommend B as amended in our comment
+  7001405174). Partner comments reach the issues through PXReprise's session: we write a `## Comment for #N` section in our
+  PXReprise thread, for a public reader, and they post it word for word.
+- **Reference data has moved into the catalog, built by PXReprise (2026-11-19 to 11-20):**
+  - **#26, orthology:** merged (`3367d02`). Our 136 (PXR-R72) placed it: the snapshot copies go in logs' layer, the bridge
+    in the catalog's, and the format does not change (D76).
+  - **#27, GO:** merged (`4fb0c4c`) before we answered PXR-R73. It keys GO **per database file**, with isoform inheritance
+    done in the catalog. That stands against D50 and our 131, which keyed GO by target set. Our answer decides any follow-up PR.
+  - **#29, the accession index `protein_peptidoforms`:** draft, built as 136 said. It takes **255 MB** in the catalog file,
+    not the 108 MB our Parquet measurement gave. PXR-R74 asks whether that is acceptable.
+  - **#31, Reactome:** open and out of draft. It is our G112, built on #27's per-file pattern. PXR-R75 asks us to review
+    its shape.
+  - kegg 010: their mzLib PR-1 to PR-4 are in 1.0.598.
 - **Owed by us:**
+  - **G146: PXR-R73, R74 and R75**, the three above.
   - G144: aging's DATAREPO-91, a table of each ptmQtl method (released at ptmQtl's current version? time on aging's largest
     deposit and pooled). It was also promised on #25.
   - G145: ptmQtl's DATAREPO-P39, moving the engines to v5 before they store a row, and when.
-  - G138: QuantProject DATAREPO-D16 (DIA), with dia's #25 comment now in.
-  - G137's five holes, then porting `feat/ai-contributions-v2` (G136).
-  - G141: D63's item 10.
-  - G139: the seam test, when the user says go.
-- **Unread at the close:** QuantProject 106 (eight mzLib quant PRs and MetaMorpheus #2980 merged, none released) and 107
-  (DATA-DEFINITIONS v3.32, `DEF-TMT-READING`; a missing floor is null, never 0). Neither asks anything.
+  - G138: QuantProject DATAREPO-D16, and dia's DATAREPO-Q2 to Q5 (DIA).
+  - G143: the 1.0.0 work our #25 comments committed to. Its target-set clause for GO waits on PXR-R73.
+  - G147: protein sequences (136 §4), after #29.
+  - G137's five holes, then porting `feat/ai-contributions-v2`; G141; G139 when the user says go.
+- **In flight:** smith #28 (Alex's `datarepo-host`, approved by PXReprise), #29 and #31. Check them with
+  `gh pr view <n> --repo smith-chem-wisc/PXReprise`. The #24 and #25 rulings are still to come.
 - **Held by the user, do not re-raise:** U32 (keeping the databases, no default), U37 and PXR-R55 (with Alex), U38.
 - **Pick up at:**
-  1. Run `threads.py inbox`, and read QuantProject 106 and 107.
-  2. Check #24 and #25 for new comments:
+  1. Run `threads.py inbox`. Every message was read at the close.
+  2. **Answer PXR-R73 first** (their 134 and 135), because #27 is merged and any follow-up waits on us:
+     - read the merged diff (`gh pr diff 27 --repo smith-chem-wisc/PXReprise`);
+     - check 135's isoform case against `GoGroupAnnotator`: an isoform in a different file from its entry, with no GO of its
+       own;
+     - say plainly whether D50's target-set rule stands or is superseded;
+     - answer 134's three questions.
+  3. Then answer PXR-R74. Weigh 255 MB against static hosting, and dropping `peptidoform_id` against the re-join it costs.
+     Measure before answering, building the table in a DuckDB file rather than Parquet.
+  4. Then answer PXR-R75: review #31's tables, keys and engine names against #25 option B and G112. R73's answer decides its
+     keying too. The three may go in one message.
+  5. Then G144 (DATAREPO-91) and PR A, as before. Check #24 and #25 for new comments:
      `gh api repos/smith-chem-wisc/PXReprise/issues/25/comments --jq '.[] | "\(.id) \(.user.login) \(.created_at)"'`.
-     Alex comments as `Alexander-Sol`. PXReprise posts partners' comments from `trishorts`, so read the "Project of origin"
-     line.
-  3. Start G144 (DATAREPO-91): build the table from ptmQtl 068 section 3 and 069, mark what our 1.4.0 engines compute (`code/_wt_ptmqtl`,
-     `design/PTMQTL_ENGINE.md`), find aging's largest deposit by MS2 count, and answer aging. Then post the table to #25 through
-     PXReprise as a `## Comment for #25`.
-  4. PR A (R5's `SchemaGen diff`) needs neither ruling. Start it on a `datarepo/` branch from `upstream/master`, classing each
-     change by D75's rule.
+
 
 ## Design documents
 
@@ -117,4 +116,4 @@ with age.
 - `design/NOTE_FROM_CodeReview_2026-10-06_dq2-talk-directly.md` and
   `design/NOTE_FROM_USER_2026-10-21_github-actions-minutes.md`: two notes from the user (settle DATAREPO-Q2 directly with sdrf
   and QuantProject; keep private-repository CI cheap).
-- Older status sections, word for word: `.project/status-log_2026-09-19_to_2026-11-17.md` and `.project/status-log_2026-11-17_to_2026-11-19.md`.
+- Older status sections, word for word: `.project/status-log_2026-09-19_to_2026-11-17.md`, `.project/status-log_2026-11-17_to_2026-11-19.md` and `.project/status-log_2026-11-19_to_2026-11-20.md`.

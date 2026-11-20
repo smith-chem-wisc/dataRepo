@@ -476,7 +476,12 @@ This folder is a `/project`-managed research project. **You are de facto working
 - **Key a reference annotation by the TARGET SET, never by one database file** (D50, kegg 004). aging's proteome XMLs
   hold no isoform entries. Every isoform is in an overlay file loaded beside them, and 173 of 178 datasets load two to
   four target files. A per-file key cuts an isoform from its entry, which breaks go's D37 inheritance. Our kegg 003
-  shipped that mistake and patched over it with a view rule. go's review caught it, not ours.
+  shipped that mistake and patched over it with a view rule. go's review caught it, not ours. **PXReprise's smith #27
+  (merged 2026-11-20) keys GO per file anyway,** doing inheritance in the catalog over all of a search's files. Until our
+  PXR-R73 answer settles whether that reproduces `GoGroupAnnotator`, neither restate this rule to a peer nor call it superseded.
+- **A Parquet file's size is not a DuckDB table's size.** The accession index was 108 MB as zstd Parquet and 255 MB inside
+  the catalog file (PXR-R74). Forcing DuckDB's own zstd made it 344 MB. Measure a catalog table by building it in a DuckDB
+  file.
 - **The auto-mode classifier refuses the agent's delete of store files, even with the user's order** (2026-10-25,
   "Irreversible Local Destruction"). Hand the user the command. **The `!` prefix runs bash here, not PowerShell**: give
   `find ... -delete` rather than `Get-ChildItem | Remove-Item`. Record what is deleted (path, size, the hash run.json

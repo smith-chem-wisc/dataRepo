@@ -801,7 +801,51 @@ decisions:
       `datasets.confidence_rule` as the rule the producer applied, with mzLib's `ChooseTier` as how a DDA search chooses it.
       Neither costs a stored bundle: both are new in 0.0.17, which no release writes (1.4.5 writes 0.0.16), and 0.0.17 is
       pushed, so both land in 1.0.0. The rename reaches the catalog's views, MCP descriptions and docs; PR D lists them.
+  - id: D76
+    date: 2026-11-19
+    text: >-
+      Reference data in the catalog, as we told PXReprise in 136 (answering PXR-R72). (1) A table copied from a reference
+      artefact belongs to the layer of the engine that wrote it, with a `reference` key (orthology's four snapshot tables are
+      logs'). A table that joins artefacts to the catalog's own tables (`protein_orthologs`, GO's `protein_localizations`)
+      belongs to the catalog layer, because only a build can make it. (2) The accession index is materialized in the catalog
+      file and built as `peptide_index` is: per-deposit rows in `derived/`, reused by later builds, sorted by accession at
+      build. It is never one corpus-wide file in `derived/`, which every build would rewrite and which a one-file catalog
+      cannot read in the MCP sandbox. (3) Protein sequences come from an engine run once per database file, keyed by the
+      file's sha256 plus the reader's version, read the way the ingest reads them (mzLib's loader with its defaults adds
+      variant proteins: 264 contaminant entries become 579). Each row carries a `sequence_sha256`. A build checks every
+      `ptm_sites.sequence_window` against them and fails on a mismatch. An accession with two sequences is a row with a reason,
+      not a choice. (4) An addition to an unreleased catalog format joins it (G85's precedent), and format 17 is unreleased.
+      Why: coverage must use the sequences the sites were placed on, and a reference table keyed per deposit would copy the
+      same rows into every deposit. Not a MADR record: PXReprise's `docs/decisions/` numbers by PXReprise's D-numbers.
 gaps:
+  - >-
+    G146 NEW 2026-11-20: three PXReprise asks owed, all on reference data in the catalog. (a) PXR-R73 (their 134, plus the 135
+    addendum): GO as reference data. smith #27 MERGED 2026-11-20 (`4fb0c4c`) before we answered. It keys GO's accession-to-term
+    table per database FILE and does isoform inheritance in the catalog, over all of a search's files. That is not the
+    target-set key of D50, our 131 and G143. Our answer decides any follow-up PR, which PXReprise says it will tell us about
+    first. Say whether per-file keying can reproduce `GoGroupAnnotator` (135's required test: an isoform in a different file
+    from its entry, with no GO of its own). Also answer 134's three questions: the schema of `protein_localizations`,
+    `organelle_term_categories` and `annotation_sources`; the order relative to PRs A to F; and the stale go artefacts.
+    (b) PXR-R74 (their 137): smith #29's `protein_peptidoforms` takes 255 MB in the catalog file (227 -> 483 MB), not the
+    108 MB of our zstd-Parquet estimate. DuckDB's own zstd made it 344 MB; an ART index added 116 MB and was no faster. It
+    holds 9,160,934 rows and 52,946 accessions on the 1.5.0 re-ingest, with lookups of 6 to 7 ms; `list_distinct` drops
+    106 duplicate rows. Options: drop `peptidoform_id`, per-deposit Parquet as views (which fails for a one-file catalog
+    in the sandbox), or something else. (c) PXR-R75 (their 139): review smith #31's shape (Reactome on kegg's
+    DEF-REACTOME-MEMBERSHIP v1, mzLib 1.0.598) against #25 option B and G112. Its engines are `kegg.reactome_membership`
+    (per file) and `kegg.reactome_release`. It has six reference tables and three derived ones (`protein_reactome`,
+    `reactome_group_status`, `reactome_group_pathways`). 139 said draft; #31 was out of draft by the close.
+  - >-
+    G147 NEW 2026-11-20: no table holds protein sequences, so the catalog cannot answer coverage. Our 136 §4 (D76 (3))
+    proposed the engine shape. It comes after #29 and can follow 1.0.0 as an added layer, which is a minor version. Its size
+    is unmeasured; PXReprise is asked to give it in the PR. Whether the ingest's reader and logs' `maxHeterozygousVariants: 0`
+    load give the same sequences is to be measured, not assumed.
+  - >-
+    G112 UPDATED 2026-11-20: kegg 010 says PR-1 to PR-4 are all in mzLib 1.0.598. PXReprise built the engines as smith #31,
+    keyed per database file as #27 keys GO, with kegg's two set-wide rules run in the catalog; the build fails where one file
+    cannot show what the whole set would give. Do not build it ourselves. Our part is the review, PXR-R75 (G146 (c)).
+  - >-
+    G111 UPDATED 2026-11-20: built by PXReprise as smith #27 (merged `4fb0c4c`, datarepo 1.5.0 content, which ships in
+    PXReprise 1.0.0), keyed per database file rather than per target set. Our check of that is PXR-R73 (G146 (a)).
   - >-
     G145 NEW 2026-11-19: owed to ptmQtl, DATAREPO-P39 (their 068): can our ptmQtl engines move to v5, ptmQtl's reported method
     (their D80), before they store any row, and when? Their D79: results are stored beside the repo, each with its record;
