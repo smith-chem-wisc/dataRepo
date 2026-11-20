@@ -1,0 +1,13 @@
+Run 2026-11-19 against aging's catalog 4e486c3dcf0aa01c (folder layout, catalog format 16, datarepo 1.4.5, 210 bundles), read-only.
+python -I index_size.py F:\aging_data\repo\catalogs\catalog-4e486c3dcf0aa01c.duckdb <scratch dir>
+
+catalog_meta: [('4e486c3dcf0aa01c', 'views')]
+build: 41.9 s
+bytes: 108029499
+rows, accessions, (accession, dataset) pairs: [(8325712, 49891, 869905)]
+lookup P14136: 1581 rows in 0.676 s
+lookup P03995: 1190 rows in 0.007 s
+lookup P47819: 448 rows in 0.007 s
+
+Also, through the datarepo MCP on the same catalog: peptidoforms_1pct holds 7,695,287 rows, all target, over 210 datasets,
+and sum(len(protein_accessions)) = 8,325,712. The first lookup includes opening the file cold.
