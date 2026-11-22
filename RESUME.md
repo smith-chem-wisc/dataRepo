@@ -2,14 +2,14 @@
 
 <!-- BEGIN GENERATED -- render_resume.py owns this block; edit state.yaml, not here -->
 
-**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-11-20
+**dataRepo** &middot; phase **INCEPTION** (1/10) &middot; created 2026-09-19 &middot; rendered 2026-11-21
 
 | | |
 |---|---|
-| Commits | 1015 |
+| Commits | 1023 |
 | Sync | [`smith-chem-wisc/dataRepo`](https://github.com/smith-chem-wisc/dataRepo) |
-| Locked decisions | 76 |
-| Open gaps | 145 |
+| Locked decisions | 77 |
+| Open gaps | 148 |
 | Gate items skipped | 5 |
 
 **Worktrees** -- details in `code/PINNED.md`
@@ -82,18 +82,20 @@ with age.
 - **In flight:** smith #28 (Alex's `datarepo-host`, approved by PXReprise), #29 and #31. Check them with
   `gh pr view <n> --repo smith-chem-wisc/PXReprise`. The #24 and #25 rulings are still to come.
 - **Held by the user, do not re-raise:** U32 (keeping the databases, no default), U37 and PXR-R55 (with Alex), U38.
+- **2026-11-21 (mid-session; the next close replaces this section):** our PXReprise 145 answered PXR-R73 to R78 and asked
+  PXR-R79 and R80.
+  - D77: GO is keyed per file, measured equivalent to `GoGroupAnnotator`.
+  - The user said no to smith #28, #29 and #31 (PXReprise D84), which closed R74.
+  - The user's go on PXReprise's G112 (one joint release) is in PXReprise's `9fdb277`. Our part is G139: the seam test
+    and the tutorial.
 - **Pick up at:**
-  1. Run `threads.py inbox`. Every message was read at the close.
-  2. **Answer PXR-R73 first** (their 134 and 135), because #27 is merged and any follow-up waits on us:
-     - read the merged diff (`gh pr diff 27 --repo smith-chem-wisc/PXReprise`);
-     - check 135's isoform case against `GoGroupAnnotator`: an isoform in a different file from its entry, with no GO of its
-       own;
-     - say plainly whether D50's target-set rule stands or is superseded;
-     - answer 134's three questions.
-  3. Then answer PXR-R74. Weigh 255 MB against static hosting, and dropping `peptidoform_id` against the re-join it costs.
-     Measure before answering, building the table in a DuckDB file rather than Parquet.
-  4. Then answer PXR-R75: review #31's tables, keys and engine names against #25 option B and G112. R73's answer decides its
-     keying too. The three may go in one message.
+  1. Run `threads.py inbox`.
+  2. **G148 first:** the #38 follow-up PR `datarepo/pep-filter-per-search`. It decides PEP-trained per search, and keeps
+     the resolved-notch clause to 1.1.14 only. It must land before PXReprise's 1.1.15 pin swap.
+  3. **G139 (a):** the seam test, on `datarepo/seam-test`. G139 (b), the tutorial, waits on PXReprise's workflow PR naming
+     the tag and the asset names.
+  4. Then `datarepo/go-cross-file-tests` (G146's follow-up), and G149's three read-by-id fixes. G150, the differential
+     layer, waits on PXR-R79's real output (about 11-28).
   5. Then G144 (DATAREPO-91) and PR A, as before. Check #24 and #25 for new comments:
      `gh api repos/smith-chem-wisc/PXReprise/issues/25/comments --jq '.[] | "\(.id) \(.user.login) \(.created_at)"'`.
 

@@ -817,9 +817,53 @@ decisions:
       not a choice. (4) An addition to an unreleased catalog format joins it (G85's precedent), and format 17 is unreleased.
       Why: coverage must use the sequences the sites were placed on, and a reference table keyed per deposit would copy the
       same rows into every deposit. Not a MADR record: PXReprise's `docs/decisions/` numbers by PXReprise's D-numbers.
+  - id: D77
+    date: 2026-11-21
+    text: >-
+      GO's accession-to-term table is keyed per database FILE, not per target set: D50's key gives way for GO, on our side.
+      The user ruled it in PXReprise's session on 2026-11-19 ("one set of go tables ... that serve all the proteins and all the
+      bundles simultaneously", their 135), and smith #27 built it (merged `4fb0c4c`), with isoform inheritance redone in the
+      catalog over the union of a search's files. Our 145 (PXR-R73) measured it equivalent to mzLib 1.0.600's
+      `GoGroupAnnotator` over the whole target set. There were nine added cases, aging's overlay shape among them, and all
+      pass; a per-file-inheritance mutation fails seven of 11. The definition's words are go's: GO-D6 still says the combined
+      target-set sha256, and that is go's to change (PXR-G15). Pathways are NOT decided by this: kegg's definition also keys by
+      target set, kegg owes PXR-K4, and the user said no to #31 (PXReprise D84). Not a MADR record (D76's reason).
 gaps:
   - >-
-    G146 NEW 2026-11-20: three PXReprise asks owed, all on reference data in the catalog. (a) PXR-R73 (their 134, plus the 135
+    G148 NEW 2026-11-21: smith #38's datarepo side miscounts under MetaMorpheus 1.1.15 (our 145, PXR-R76), measured on
+    PXD058082's filter trial. Our follow-up PR `datarepo/pep-filter-per-search` must land before PXReprise's pin swap (no pin
+    runs 1.1.15 yet, so nothing is stored). (1) `Identifications.cs:807` decides PEP "trained" per row (pq in [0,1]), while
+    MetaMorpheus decides per search and digestion agent. The f2 peptides come to 6,773 against results.txt's 6,772: a
+    PEP q-value 2 row passes on its notch. A failed training on a large search is judged wrongly as well (from source;
+    PXD058775 shows such rows). Fix: decide per search (PXReprise's provenance fallback field, asked as PXR-R80, else
+    results.txt's sentence), then `pq <= 0.01` alone. (2) `:811` applies the resolved-notch clause under every filter, but
+    1.1.15 counts notch-ambiguous matches. The PSMs come out short under all three arms (42,124/42,391/52,776 against
+    42,125/42,392/52,778). Keep the clause to 1.1.14 only, and fix `IdentificationFilterTests.cs:102,107`. (3) LOW: key
+    "q-value means pooled" on results.txt's FDR-engine line wording, not `Version.TryParse`. Add a count check with a PEP-2
+    row and a notch-ambiguous row. Engine side (`SearchSummary.cs:33`) is PXReprise's (PXR-R80). Scratch evidence:
+    r76_check.py in the 2026-11-21 session scratchpad; redo it from `F:/aging_data/incoming/status/pilots/mm-next-trial/filter`.
+  - >-
+    G149 NEW 2026-11-21: the 1% definitions' v2 under option A (our 145, PXR-R77; QuantProject and PXReprise chose A). Ours:
+    (1) MCP `DescribeDefinition` (`CatalogServer.cs:703-723`) returns the newest version's text for every number, sorted as
+    a string; answer per version and sort numerically; (2) the catalog adds `definition_version` to `metrics`, derived at
+    build from the same bundle's `definitions` row (D32); (3) `datasets.identification_filter`, nullable, in schema 1.0.0's
+    PR D, filled from `Identifications.FilterOf`. The ingest writes v2 text into 1.1.15 PEP bundles in PR D's path
+    `cs-2.0.0`, copying the owners' v2 texts on release day only.
+  - >-
+    G150 NEW 2026-11-21: differential abundance as its own layer beside the bundle (our 145, PXR-R78). There are five
+    proposed tables: `differential_analyses`, `_results`, `_decisions`, `_exclusions`, `_files`. An analysis binds to a
+    bundle only when every input sha256 in `DifferentialResults.metadata.json` equals the bundle's recorded source sha256.
+    It adds no core or bundle schema change, and adopting it needs no re-ingest. Verified: a `05_differential/` folder moves
+    no bundle id (the ingest reads the search's lineage and the `stage: qc` record only). Waits on PXR-R79: real benchmark
+    output (PXD000279, PXD007683), the input-hash naming, the protein-group key, `status` values, and the provenance field
+    names, by about 11-28 for 1.0.0. 289 run folders already hold `05_qc`. The DEF-DIFF* texts are QuantProject's.
+  - >-
+    G146 CLOSED 2026-11-21: answered in our PXReprise 145. (a) PXR-R73: #27 reproduces `GoGroupAnnotator` (D77).
+    Follow-ups: our PR `datarepo/go-cross-file-tests` (the pure overlay cases; #27's required test puts the entry in both
+    files), and nothing refuses one search's GO artefacts from different mzLib builds (reading only). (b) PXR-R74 closed:
+    the user said no to #29 (PXReprise D84, "No to 28 29 and 31"). (c) PXR-R75: reviewed for if #31 returns. The rules match
+    mzLib exactly; kegg's definition keys by target set and kegg owes PXR-K4; the RealData test uses no served set. Was:
+    three PXReprise asks owed, all on reference data in the catalog. (a) PXR-R73 (their 134, plus the 135
     addendum): GO as reference data. smith #27 MERGED 2026-11-20 (`4fb0c4c`) before we answered. It keys GO's accession-to-term
     table per database FILE and does isoform inheritance in the catalog, over all of a search's files. That is not the
     target-set key of D50, our 131 and G143. Our answer decides any follow-up PR, which PXReprise says it will tell us about
@@ -835,16 +879,18 @@ gaps:
     (per file) and `kegg.reactome_release`. It has six reference tables and three derived ones (`protein_reactome`,
     `reactome_group_status`, `reactome_group_pathways`). 139 said draft; #31 was out of draft by the close.
   - >-
-    G147 NEW 2026-11-20: no table holds protein sequences, so the catalog cannot answer coverage. Our 136 §4 (D76 (3))
+    G147 NEW 2026-11-20 (UPDATED 2026-11-21: the user said no to #29, PXReprise D84, so "after #29" now waits on the user):
+    no table holds protein sequences, so the catalog cannot answer coverage. Our 136 §4 (D76 (3))
     proposed the engine shape. It comes after #29 and can follow 1.0.0 as an added layer, which is a minor version. Its size
     is unmeasured; PXReprise is asked to give it in the PR. Whether the ingest's reader and logs' `maxHeterozygousVariants: 0`
     load give the same sequences is to be measured, not assumed.
   - >-
-    G112 UPDATED 2026-11-20: kegg 010 says PR-1 to PR-4 are all in mzLib 1.0.598. PXReprise built the engines as smith #31,
+    G112 UPDATED 2026-11-21: the user said no to #31 (PXReprise D84). Our review is in 145 for if it returns. If it does, G112
+    takes #31's names (`protein_reactome` and querying.md, not three views). UPDATED 2026-11-20: kegg 010 says PR-1 to PR-4 are all in mzLib 1.0.598. PXReprise built the engines as smith #31,
     keyed per database file as #27 keys GO, with kegg's two set-wide rules run in the catalog; the build fails where one file
     cannot show what the whole set would give. Do not build it ourselves. Our part is the review, PXR-R75 (G146 (c)).
   - >-
-    G111 UPDATED 2026-11-20: built by PXReprise as smith #27 (merged `4fb0c4c`, datarepo 1.5.0 content, which ships in
+    G111 UPDATED 2026-11-21: checked equivalent to GoGroupAnnotator in our 145 (D77). UPDATED 2026-11-20: built by PXReprise as smith #27 (merged `4fb0c4c`, datarepo 1.5.0 content, which ships in
     PXReprise 1.0.0), keyed per database file rather than per target set. Our check of that is PXR-R73 (G146 (a)).
   - >-
     G145 NEW 2026-11-19: owed to ptmQtl, DATAREPO-P39 (their 068): can our ptmQtl engines move to v5, ptmQtl's reported method
