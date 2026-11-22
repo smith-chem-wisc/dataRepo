@@ -830,7 +830,16 @@ decisions:
       target set, kegg owes PXR-K4, and the user said no to #31 (PXReprise D84). Not a MADR record (D76's reason).
 gaps:
   - >-
-    G148 UPDATED 2026-11-21: OPENED as smith-chem-wisc/PXReprise#42 (`08e53ec`, branch `datarepo/pep-filter-per-search`,
+    G148 UPDATED 2026-11-22: PXReprise reviewed #42 (comment 7074411441): one Medium finding, fixed in `efff783`. Under
+    1.1.15's notch judgment (the notch filter, and PEP where not trained) a match whose candidates sat at different notches
+    with different full sequences when FDR ran keeps notch q 2 and fails (`FdrAnalysisEngine.cs:433-458`, `FdrInfo.cs:32`,
+    `SpectralMatch.cs:366-376`). In the psmtsv both `Notch` and `Mass Diff (Da)` are multi-valued; that row is left out.
+    A match ambiguous only after parsimony counts. Exact on all three 1.1.15 notch arms (PXD031782 d 64,457, PXD019690 d
+    34,044, PXD007683 b 104,274) and the three PEP arms; ten 1.1.15-style arms give 20/20 PSM and peptide counts. The review's
+    nit (the Some sentence's grammar) is fixed too; its Low (Some per agent) waits on PXR-R80's `pep_trained`. With #38's rule
+    put back, five tests fail. Data.Tests 963/963 offline. PXReprise.Tests ran 809/810 locally with one failure, not yet
+    named (3 h 34 m; a trx re-run is under way); CI decides. The user merges once green (the peer's word). On merge: board
+    #16 to Shipped and a notice in our PXReprise thread. G148 UPDATED 2026-11-21: OPENED as smith-chem-wisc/PXReprise#42 (`08e53ec`, branch `datarepo/pep-filter-per-search`,
     board #16 In review). With it the trial's 1.1.15 arms f1-f4 reproduce results.txt exactly, PSMs and peptides.
     It passes Data.Tests 962/962 offline, PXReprise.Tests 636, and IngestParityTests 6/6. With #38's rule restored, four
     tests fail. The clause is measured right on 1.1.11/1.1.12 (8 of 8 served searches exact); f0 (master before #2982)
@@ -847,6 +856,14 @@ gaps:
     "q-value means pooled" on results.txt's FDR-engine line wording, not `Version.TryParse`. Add a count check with a PEP-2
     row and a notch-ambiguous row. Engine side (`SearchSummary.cs:33`) is PXReprise's (PXR-R80). Scratch evidence:
     r76_check.py in the 2026-11-21 session scratchpad; redo it from `F:/aging_data/incoming/status/pilots/mm-next-trial/filter`.
+  - >-
+    G151 NEW 2026-11-22: the q-value-and-notch clause (up to 1.1.14) may be wrong in the same way as G148's. PXReprise's
+    review of #42 found the old clause (every notch-ambiguous target row left out) short on 4 of 4 sampled 1.1.13/1.1.14
+    searches (PXD022888 -2, PXD031782 -1, PXD035689 -1, PXD031270 -17), and #42's mass-diff rule exact on all four. On 1.1.12
+    neither rule is exact everywhere (PXD012213 -1 vs 0, PXD018655 -6 vs -1, PXD044227 -201 vs -14). Our eight 1.1.11/1.1.12
+    searches are exact under both; f0 (master before #2982) is 42,124 vs 42,125 under the old one. It is reconciliation
+    only (`count_mismatch`, G93), never a metric. Next: measure both rules over every served search, per release, before
+    choosing; change it in 1.0.0's re-ingest path, keeping `IngestRules.Python0320` as it is so parity holds.
   - >-
     G149 NEW 2026-11-21: the 1% definitions' v2 under option A (our 145, PXR-R77; QuantProject and PXReprise chose A). Ours:
     (1) MCP `DescribeDefinition` (`CatalogServer.cs:703-723`) returns the newest version's text for every number, sorted as
