@@ -859,7 +859,13 @@ gaps:
     row and a notch-ambiguous row. Engine side (`SearchSummary.cs:33`) is PXReprise's (PXR-R80). Scratch evidence:
     r76_check.py in the 2026-11-21 session scratchpad; redo it from `F:/aging_data/incoming/status/pilots/mm-next-trial/filter`.
   - >-
-    G152 NEW 2026-11-22: found by G139's seam test (branch `datarepo/seam-test`, not yet a PR). A manifest the engine
+    G152 UPDATED 2026-11-22: PXReprise took the fix as theirs, smith #46 (b581d86): `EnsureExists` takes the machine's
+    work_root, written relative to the manifest where one holds the other, else absolute; their old pinning test is
+    replaced. They found no engine-written manifest in use on this machine (the trial's hand-written one does not bite:
+    absolute database paths, `metamorpheus_settings_root` set). Alex is told in the 1.0.0 notice. On the seam rig, #46
+    restores every table (verified, and green on Linux on the fork). Ours, still open: a missing searched database or
+    settings folder as a finding of its own (1.0.0's ingest path). The docs fix (operating.md:128, ingest.md) goes in the
+    seam PR. G152 NEW 2026-11-22: found by G139's seam test (branch `datarepo/seam-test`, not yet a PR). A manifest the engine
     writes for a NEW question (`ManifestEntry.EnsureExists`, BatchRunner.cs:1906 passes `_runRoot`) names the batch's run
     root as `work_root`. The engine's provenance records inputs relative to the MACHINE's work_root, where the machine
     also keeps `mm_settings` (Machine.cs:71), and datarepo reads databases (ProteinDb.SearchedDatabases), upstream records
@@ -995,6 +1001,20 @@ gaps:
     latest.json, the site's generator, the MCP's built_by, doctor; `datarepo run` refusing a -dev build and the tests assuming
     one; DocsTests' tutorial version), not from this list.
   - >-
+    G139 UPDATED 2026-11-22: (a) BUILT, waiting for smith #46 to merge. `tests/PXReprise.Seam.Tests`:
+    - the engine's SearchStage runs on the fixture's real 1.1.11 search (FakeMetaMorpheus `FAKE_MM_REPLAY`);
+    - `ManifestEntry.EnsureExists`/`Append` write the manifest;
+    - the real datarepo runs via the new public `BatchRunner.IngestCommand`, and the reply is read by `IngestEnvelope.Read`;
+    - then `datarepo build`;
+    - the comparison is against `Expected/PXD999999.txt`, rewritten with `PXREPRISE_SEAM_WRITE_EXPECTED=1`.
+    The bundle id is not pinned (provenance holds clock, node, folder), and `low_core_use` is left out (measured; PXReprise's
+    G121). Branches on trishorts/PXReprise-dev:
+    - `datarepo/seam-test` (on master, with the correctness test Ignored);
+    - `datarepo/seam-test-on-46` (local `seam-on-46`, stacked on #46: enabled, rewritten expected file, docs; fork CI
+      run 45011024922 green on Linux).
+    When #46 merges: merge upstream/master into `datarepo/seam-test`, cherry-pick eff4b1c and c3bfad0, then rerun and
+    open on smith with scratch `pr_seam.md`; board #16. (b) the tutorial: #43 names the tag `v<version>` and the archives
+    `pxreprise-<version>-<rid>`, and leaves getting-started.md and DocsTests to us; do it once #43 merges.
     G139 NEW 2026-11-17: ours under D73/D74 (our PXReprise 121, their 122), when the user says go: (a) the behaviour pin across
     the seam, a CI test in smith-chem-wisc/PXReprise: the engine runs on its fake MetaMorpheus search (`tests/FakeMetaMorpheus`),
     datarepo ingests and builds what it wrote, and the bundle ids and key row counts are checked against committed values, so a
