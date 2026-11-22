@@ -837,8 +837,10 @@ gaps:
     A match ambiguous only after parsimony counts. Exact on all three 1.1.15 notch arms (PXD031782 d 64,457, PXD019690 d
     34,044, PXD007683 b 104,274) and the three PEP arms; ten 1.1.15-style arms give 20/20 PSM and peptide counts. The review's
     nit (the Some sentence's grammar) is fixed too; its Low (Some per agent) waits on PXR-R80's `pep_trained`. With #38's rule
-    put back, five tests fail. Data.Tests 963/963 offline. PXReprise.Tests ran 809/810 locally with one failure, not yet
-    named (3 h 34 m; a trx re-run is under way); CI decides. The user merges once green (the peer's word). On merge: board
+    put back, five tests fail. Data.Tests 963/963 offline. PXReprise.Tests ran 809/810 locally; the one failure is
+    PXReprise's LocalCorpus `EveryAgingSearchsTaskFilesAreReproducedByteForByte` (the trial's task files), as on master.
+    CI GREEN on efff783 (PXReprise.Tests 804, Data.Tests 957); reply posted (issuecomment-7077295909) and PXReprise told.
+    The user merges once green (the peer's word). On merge: board
     #16 to Shipped and a notice in our PXReprise thread. G148 UPDATED 2026-11-21: OPENED as smith-chem-wisc/PXReprise#42 (`08e53ec`, branch `datarepo/pep-filter-per-search`,
     board #16 In review). With it the trial's 1.1.15 arms f1-f4 reproduce results.txt exactly, PSMs and peptides.
     It passes Data.Tests 962/962 offline, PXReprise.Tests 636, and IngestParityTests 6/6. With #38's rule restored, four
@@ -856,6 +858,20 @@ gaps:
     "q-value means pooled" on results.txt's FDR-engine line wording, not `Version.TryParse`. Add a count check with a PEP-2
     row and a notch-ambiguous row. Engine side (`SearchSummary.cs:33`) is PXReprise's (PXR-R80). Scratch evidence:
     r76_check.py in the 2026-11-21 session scratchpad; redo it from `F:/aging_data/incoming/status/pilots/mm-next-trial/filter`.
+  - >-
+    G152 NEW 2026-11-22: found by G139's seam test (branch `datarepo/seam-test`, not yet a PR). A manifest the engine
+    writes for a NEW question (`ManifestEntry.EnsureExists`, BatchRunner.cs:1906 passes `_runRoot`) names the batch's run
+    root as `work_root`. The engine's provenance records inputs relative to the MACHINE's work_root, where the machine
+    also keeps `mm_settings` (Machine.cs:71), and datarepo reads databases (ProteinDb.SearchedDatabases), upstream records
+    and `<work_root>/mm_settings/<release>` against the manifest's. On the seam rig, against the fixture's own records:
+    `dataset_databases` 2 -> 0, unresolved modification kinds 3 -> 8 (Carbamidomethyl on C on 25 PSMs),
+    `provenance_records` 3 -> 1, `ptm_sites` 36 -> 26, `ptm_stoichiometry` 4 -> 0; the ingest exits 0. aging's hand-written
+    manifest (work_root F:/aging_data = the machine's) is unaffected; the first-run tutorial and the trial (`../runs`) are.
+    Hand-editing the manifest to `work_root: ..` and `run: runs/<acc>` restores every table exactly (verified). The fix is
+    PXReprise's (their test `ANewQuestionGetsAManifestWhoseRunsAreRelativeToItsOwnWorkRoot` pins today's choice): told
+    them 2026-11-22 by message, asked whose PR carries it and which engine-written manifests need a hand edit. Ours: a
+    searched database or a settings folder that is not on disk should be a finding of its own (today only the tail of
+    `unplaced_ptm_sites` says it), in 1.0.0's ingest path.
   - >-
     G151 NEW 2026-11-22: the q-value-and-notch clause (up to 1.1.14) may be wrong in the same way as G148's. PXReprise's
     review of #42 found the old clause (every notch-ambiguous target row left out) short on 4 of 4 sampled 1.1.13/1.1.14
