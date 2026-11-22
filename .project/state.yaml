@@ -830,7 +830,12 @@ decisions:
       target set, kegg owes PXR-K4, and the user said no to #31 (PXReprise D84). Not a MADR record (D76's reason).
 gaps:
   - >-
-    G148 NEW 2026-11-21: smith #38's datarepo side miscounts under MetaMorpheus 1.1.15 (our 145, PXR-R76), measured on
+    G148 UPDATED 2026-11-21: OPENED as smith-chem-wisc/PXReprise#42 (`08e53ec`, branch `datarepo/pep-filter-per-search`,
+    board #16 In review). With it the trial's 1.1.15 arms f1-f4 reproduce results.txt exactly, PSMs and peptides.
+    It passes Data.Tests 962/962 offline, PXReprise.Tests 636, and IngestParityTests 6/6. With #38's rule restored, four
+    tests fail. The clause is measured right on 1.1.11/1.1.12 (8 of 8 served searches exact); f0 (master before #2982)
+    already counts ambiguous matches, and 1.1.13/1.1.14 are unmeasured. Next: when PXReprise's PXR-R80 adds
+    `identification_filter.pep_trained`, read it first. G148 NEW 2026-11-21: smith #38's datarepo side miscounts under MetaMorpheus 1.1.15 (our 145, PXR-R76), measured on
     PXD058082's filter trial. Our follow-up PR `datarepo/pep-filter-per-search` must land before PXReprise's pin swap (no pin
     runs 1.1.15 yet, so nothing is stored). (1) `Identifications.cs:807` decides PEP "trained" per row (pq in [0,1]), while
     MetaMorpheus decides per search and digestion agent. The f2 peptides come to 6,773 against results.txt's 6,772: a
