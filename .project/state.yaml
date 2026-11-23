@@ -830,6 +830,8 @@ decisions:
       target set, kegg owes PXR-K4, and the user said no to #31 (PXReprise D84). Not a MADR record (D76's reason).
 gaps:
   - >-
+    G148 CLOSED 2026-11-23: smith #42 merged 2026-11-22 (e8ae331), board #16 Shipped, PXReprise told in our 149. It
+    ships in 1.0.0; its findings change without an ingest-path bump is G153.
     G148 UPDATED 2026-11-22: PXReprise reviewed #42 (comment 7074411441): one Medium finding, fixed in `efff783`. Under
     1.1.15's notch judgment (the notch filter, and PEP where not trained) a match whose candidates sat at different notches
     with different full sequences when FDR ran keeps notch q 2 and fails (`FdrAnalysisEngine.cs:433-458`, `FdrInfo.cs:32`,
@@ -858,6 +860,13 @@ gaps:
     "q-value means pooled" on results.txt's FDR-engine line wording, not `Version.TryParse`. Add a count check with a PEP-2
     row and a notch-ambiguous row. Engine side (`SearchSummary.cs:33`) is PXReprise's (PXR-R80). Scratch evidence:
     r76_check.py in the 2026-11-21 session scratchpad; redo it from `F:/aging_data/incoming/status/pilots/mm-next-trial/filter`.
+  - >-
+    G153 NEW 2026-11-23: the ingest path is still `cs-1.3.0` (BundleWriter.IngesterVersion, set at 1.5.0, 4c6304f) and
+    the schema still 0.0.17, yet #38 and #42 (ours) changed which `count_mismatch` findings a MetaMorpheus 1.1.15 search
+    gets. So 1.5.0 and 1.0.0 give one bundle id with different findings rows for such a search, against the CLAUDE.md
+    rule (bump with any transform change). No 1.1.15 bundle is in any store, so nothing served is wrong. Default: bump
+    the ingest path once before 1.0.0, in the same PR as PXR-R81 (which moves the 1% rule's rows anyway). Say so in
+    the R81 cost note.
   - >-
     G152 UPDATED 2026-11-22: PXReprise took the fix as theirs, smith #46 (b581d86): `EnsureExists` takes the machine's
     work_root, written relative to the manifest where one holds the other, else absolute; their old pinning test is
@@ -1001,6 +1010,17 @@ gaps:
     latest.json, the site's generator, the MCP's built_by, doctor; `datarepo run` refusing a -dev build and the tests assuming
     one; DocsTests' tutorial version), not from this list.
   - >-
+    G139 UPDATED 2026-11-23: #42, #43, #45, #46 merged 2026-11-22. (a) is smith #47 (board In review): upstream/master
+    merged into `datarepo/seam-test` (one conflict, FakeMetaMorpheus's header beside #45's FAKE_MM_RESULTS), then the
+    enabled test and the docs commit; 4 of 4 with the expected file unchanged. PXReprise reviewed it (correct, no
+    behaviour change). Its nit is taken in c061741: IngestCommand is internal, InternalsVisibleTo PXReprise.Seam.Tests.
+    They take the dev-pair observation (a separate engine PR: TakesIngestJson to accept a SameRelease datarepo).
+    (b) is a DRAFT on the fork, trishorts/PXReprise-dev#2 (board In progress), branch `datarepo/tutorial-one-release`
+    (86e0b11). It merges WITH 1.0.0, never before, because its links name the v1.0.0 tag. The page clones PXReprise
+    as PXReprise-src, downloads pxreprise-1.0.0-<rid>, and copies tests/datarepo-instance. Rerun with a 1.0.0-stamped
+    datarepo: only the version and the catalog id (6e69863e2448c775) move; the bundle stays 4ccf36a955a1e57d.
+    DocsTests checks the repository, the archive name and the instance folder. At the release, run DocsTests built
+    `-p:Version=<version>` on the release commit.
     G139 UPDATED 2026-11-22: (a) BUILT, waiting for smith #46 to merge. `tests/PXReprise.Seam.Tests`:
     - the engine's SearchStage runs on the fixture's real 1.1.11 search (FakeMetaMorpheus `FAKE_MM_REPLAY`);
     - `ManifestEntry.EnsureExists`/`Append` write the manifest;
