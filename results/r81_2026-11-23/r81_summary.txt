@@ -1,0 +1,23 @@
+bundles 215
+tier: {'pep_q_value': 214, 'q_value_notch': 1}
+by release and tier: [(('1.1.11', 'pep_q_value'), 4), (('1.1.11', 'q_value_notch'), 1), (('1.1.12', 'pep_q_value'), 112), (('1.1.13', 'pep_q_value'), 38), (('1.1.14', 'pep_q_value'), 60)]
+target PSMs passing: today's tier (<) 129,273,657; the search's filter (<=) 105,349,544 (0.815 of today's); both 102,889,542
+  only today's tier 26,384,115; only the filter 2,460,002; filter with the notch-ambiguity clause 104,894,278
+per bundle, filter / tier: median 0.826, min 0.384, max 1.626
+  bundles where the filter passes fewer: 209, more: 6, equal: 0
+  pep_q_value: 214 bundles, median 0.826, range 0.384 to 1.626
+  q_value_notch: 1 bundles, median 0.971, range 0.971 to 0.971
+largest gains under the filter (today's tier passes fewest relative to it):
+  PXD049967 1.1.14 pep_q_value: tier 12,991 -> filter 21,123
+  PXD057502 1.1.12 pep_q_value: tier 74,331 -> filter 82,424
+  PXD005184 1.1.14 pep_q_value: tier 380,245 -> filter 419,433
+  PXD027971 1.1.12 pep_q_value: tier 233,752 -> filter 257,081
+  PXD027490 1.1.14 pep_q_value: tier 181,260 -> filter 191,888
+  PXD053611 1.1.14 pep_q_value: tier 114,563 -> filter 119,180
+largest losses:
+  PXD043964 1.1.12 pep_q_value: tier 84,509 -> filter 32,484
+  PXD058253 1.1.12 pep_q_value: tier 32,081 -> filter 12,841
+  PXD031223 1.1.13 pep_q_value: tier 297,021 -> filter 125,044
+  PXD041660 1.1.12 pep_q_value: tier 270,134 -> filter 122,351
+  PXD052189 1.1.13 pep_q_value: tier 29,976 -> filter 14,467
+  PXD047288 1.1.12 pep_q_value: tier 17,205 -> filter 8,410

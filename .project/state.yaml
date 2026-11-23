@@ -828,6 +828,19 @@ decisions:
       pass; a per-file-inheritance mutation fails seven of 11. The definition's words are go's: GO-D6 still says the combined
       target-set sha256, and that is go's to change (PXR-G15). Pathways are NOT decided by this: kegg's definition also keys by
       target set, kegg owes PXR-K4, and the user said no to #31 (PXReprise D84). Not a MADR record (D76's reason).
+  - id: D78
+    date: 2026-11-23
+    text: >-
+      A bundle's 1% rule is the identification filter its search names, not mzLib's `ChooseTier` (reverses D55). The user
+      ruled it in PXReprise's session on 2026-11-22 (their D87, relayed in their 148 as PXR-R81): "maybe we should just use
+      1% notch everywhere. it seems like the pep filter isnt' ready for primetime"; "i don't want to have a bunch of internal
+      (dataRepo) filters unless absolutely necessary ... just setting the one notch filter in the search should accomplish
+      everything ideally." The rule is read by `Identifications.FilterOf`, cut at or below 0.01. Up to 1.1.14 it is a new
+      `confidence_rule` value, `q_value_and_notch`, which is exactly 1.4.5's `peptidoforms_1pct`. `confidence_rule_fallback`
+      and `confidence_rule_fewer_peptides` go. ptmQtl's S7 moves the same way (their D82), on one shared predicate in
+      `Identifications`, written by ptmQtl on `ptmqtl/s7-search-filter`. Measured on all 215 served bundles
+      (results/r81_2026-11-23): S7's target PSMs go from 129.3 M to 105.3 M (0.815); served 1% peptidoforms do not move.
+      Versions: schema 0.0.18, ingest path cs-1.4.0 (closing G153), catalog format 18, all before 1.0.0. Our 150.
 gaps:
   - >-
     G148 CLOSED 2026-11-23: smith #42 merged 2026-11-22 (e8ae331), board #16 Shipped, PXReprise told in our 149. It
