@@ -1041,7 +1041,9 @@ gaps:
     one; DocsTests' tutorial version), not from this list.
   - >-
     G139 UPDATED 2026-11-23 (later): (a) DONE, smith #47 merged (6938cce), board Shipped, PXReprise told in our 151;
-    the seam test runs in CI on every PR. (b) stays the draft on the fork, merging with 1.0.0.
+    the seam test runs in CI on every PR. (b) stays the draft on the fork, merging with 1.0.0. Our dev-pair observation
+    (149) is PXReprise's G126, smith #49 merged (162c0ec): a batch takes --json from a datarepo of its own release,
+    0.0.0-dev included; they also updated IngestCommand's comment.
     G139 UPDATED 2026-11-23: #42, #43, #45, #46 merged 2026-11-22. (a) is smith #47 (board In review): upstream/master
     merged into `datarepo/seam-test` (one conflict, FakeMetaMorpheus's header beside #45's FAKE_MM_RESULTS), then the
     enabled test and the docs commit; 4 of 4 with the expected file unchanged. PXReprise reviewed it (correct, no
