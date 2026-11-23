@@ -846,6 +846,15 @@ decisions:
       with a confidence_rule_partly_trained finding). Our 150.
 gaps:
   - >-
+    G155 NEW 2026-11-23 (PXReprise's; notice in our 155): `datarepo-binaries` has failed on every master push since #43's
+    merge (d4f8b3c, 2026-11-22 15:00 UTC; last green e8ae331). Job "both programs, osx-arm64": the engine's
+    src/PXReprise/PXReprise.csproj references Microsoft.ML 3.0.1, which supports only x64 and x86. #43 made binaries.yml
+    publish the engine too, for all four rids, and release.yml calls the same binaries.yml, so a 1.0.0 release stops at
+    osx-arm64 as it stands. Nothing of ours to change; re-check with `gh run list --repo smith-chem-wisc/PXReprise
+    --workflow datarepo-binaries.yml --limit 3`. Close when it is green or PXReprise answers.
+  - >-
+    G154 CLOSED 2026-11-23: smith #54 merged 20:43 UTC (head 76f3f2e), board #16 Shipped, PXReprise told in our 155. ptmQtl's
+    #55 landed after it (21:20 UTC) and resolved the CHANGELOG; master 0cbd6c1 CI green.
     G154 UPDATED 2026-11-23 (later): #50 merged; R81 is smith #54 (board In review; fork draft #3 closed and off the
     board). Master (with #44, #50, #51) merged in: offline Data.Tests 982 passed / 4 skipped, seam 6/6, SchemaGen up to
     date. When #54 merges: board Shipped, tell PXReprise (ingest path cs-1.5.0; served 1% peptidoforms unchanged).
@@ -996,6 +1005,11 @@ gaps:
     G111 UPDATED 2026-11-21: checked equivalent to GoGroupAnnotator in our 145 (D77). UPDATED 2026-11-20: built by PXReprise as smith #27 (merged `4fb0c4c`, datarepo 1.5.0 content, which ships in
     PXReprise 1.0.0), keyed per database file rather than per target set. Our check of that is PXR-R73 (G146 (a)).
   - >-
+    G145 UPDATED 2026-11-23 (ptmQtl 074): answered in our 072; ptmQtl did the move themselves. Master's type A is
+    DEF-PTM-PAIR v3 (#55: bounds, partial given run depth, D78's depth_like). Still to come, on a later `ptmqtl/`
+    branch: the site-trait fit's v2 (log2 odds, bounds); it is DEF-SITE-TRAIT v1 today. PtmQtlBundle.Read takes schema
+    0.0.17 bundles only, so nothing runs on the served store before 1.0.0's re-ingest (G144's timings need 0.0.17
+    scratch bundles). Open on their side: S7 reading datasets.confidence_rule where a bundle has it.
     G145 NEW 2026-11-19: owed to ptmQtl, DATAREPO-P39 (their 068): can our ptmQtl engines move to v5, ptmQtl's reported method
     (their D80), before they store any row, and when? Their D79: results are stored beside the repo, each with its record;
     store no row from the 1.4.0 engines, which compute the October method (`PtmPairEngine.CoVarying(..., excludeCeiling:
@@ -1007,6 +1021,8 @@ gaps:
     never come from `HashCode.Combine`, output checksum and counts by status). Our public position (#25, 131): the `ptmqtl`
     layer is added after 1.0.0, when the engine computes ptmQtl's current method.
   - >-
+    G144 UPDATED 2026-11-23 (close): ptmQtl's #50 and #55 (`ptmqtl/run-depth`, DEF-PTM-PAIR v3) are both merged, so the v3
+    timing below is unblocked.
     G144 UPDATED 2026-11-23: answered in part in our aging 142 (the availability table) and 143 (a correction: ptmQtl's 069
     timed site-trait, 0.1/0.4 s without bounds, 185/5,591 s with, over 6 h for one trait over the corpus; 142 had said
     untimed). The #25 comment is PXR-R82, corrected in our PXReprise 153 (152's section 3 held, not posted). STILL OWED:
@@ -1065,6 +1081,10 @@ gaps:
     latest.json, the site's generator, the MCP's built_by, doctor; `datarepo run` refusing a -dev build and the tests assuming
     one; DocsTests' tutorial version), not from this list.
   - >-
+    G139 UPDATED 2026-11-23 (close): (a) and (b) are both merged. #53 merged 20:42 UTC (head 42bded4), board #16 Shipped,
+    PXReprise told in our 155. LEFT, at the release commit: remove the "Before PXReprise 1.0.0 is released" note, rerun
+    the tutorial and update its two ids, set the ingest path to cs-1.5.0 (DocsTests fails a stamped build until then).
+    We send these as a PR on PXReprise's release branch when they say it exists (their G127 holds the step).
     G139 UPDATED 2026-11-23 (latest): (b) is smith #53 (board In review; fork draft #2 closed), at the user's "fix the
     tutorial problem": master's page pointed at a datarepo v1.5.0 that was never released. The 1.0.0 page now carries a
     "Before PXReprise 1.0.0 is released" note (clone master, `dotnet publish PXReprise-src/src/PXReprise.DataCli -c
@@ -1724,6 +1744,10 @@ gaps:
     site_traits artefact's site_trait_fits.tsv. Add them as columns at the next schema version that is needed
     anyway. If ptmQtl needs the fit status queryable sooner, find a way without a re-ingest.
   - >-
+    G88 CLOSED 2026-11-23: the engines shipped in 1.4.0 (feat/ptmqtl-engine at ec584c7 is contained in origin/master). The
+    feed E:\x\feed and the worktree E:\x\pr1430 were deleted 2026-11-23 by PXReprise's E:\x cleanup, on the user's OK
+    (file lists in PXReprise's results/cleanup_2026-11-23-e-drive/x/). code/_wt_ptmqtl is clean and merged, and removable
+    on the user's word; its dotnet/nuget.config names the deleted feed. Was:
     G88 NEW 2026-10-06. The ptmQtl engines are BUILT on branch feat/ptmqtl-engine (a7b9c20, cac982d, b0e5622,
     ec584c7; worktree code/_wt_ptmqtl), NOT merged. They reproduce ptmQtl's reference case exactly and ran on
     PXD035107 and PXD017944 (scratch). The branch builds against mzLib packed from #1430 (1.0.595-pr1430.b2d218d,

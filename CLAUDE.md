@@ -67,7 +67,8 @@ This folder is a `/project`-managed research project. **You are de facto working
   refuses to build). If the fact is already inside the bundle (a verbatim SDRF cell, a provenance
   copy), derive it at BUILD instead (D32). A schema bump for two link columns was written and
   reverted on 2026-09-26 for exactly this reason. And a schema version that has been PUSHED is
-  frozen: a column added after that is the next version (0.0.12 -> 0.0.13 the same afternoon).
+  frozen: a column added after that is the next version (0.0.12 -> 0.0.13 the same afternoon). That was this repository's
+  rule. In PXReprise an unreleased working version takes additions until its release (see "Pushed is not released").
 - **An unexpected number from `threads.py new` means the peer posted since you last looked**
   (sdrf 021 came back when 019 was expected; 019/020 had already built what we were about to ask
   for). Read the new messages before writing. Never hand-edit a template's `reply_to_digest`.
@@ -581,9 +582,20 @@ This folder is a `/project`-managed research project. **You are de facto working
 - **On smith-chem-wisc/PXReprise, green CI is not a release check.** The required check builds everything and runs both test
   projects (all but `Category=ExternalService`). But the 18 `RealData` tests skip themselves on GitHub, a release tag runs no test
   suite (one end-to-end run per platform), and `datarepo-binaries.yml` runs on no pull request. Run the RealData tests on this
-  machine before a release.
+  machine before a release. Since #43, that workflow and `release.yml` share `binaries.yml`, which publishes the engine too,
+  and its osx-arm64 job had failed on every master push for a day before anyone looked (G155). Read its runs after a merge.
 - **A recursive `grep` over `E:\GitClones\PXReprise-dataRepo\tests` in Bash ran past two minutes** (build output under `bin/` and
   `obj/`). Use the Grep tool with `glob: *.cs`.
+- **Pushed is not released.** datarepo 1.5.0 was built, pushed and announced, and never released (v1.4.5 is the latest
+  release). Our 150 said D55 "shipped in 1.5.0", said cs-1.3.0 "was released", and asked for schema 0.0.18, though 0.0.17
+  and catalog format 17 are unreleased working versions that take additions until their release
+  (`schemas/datarepo/releases/README.md`). Read `gh release list --repo smith-chem-wisc/PXReprise` and that README before
+  saying a version shipped or needs a bump.
+- **Clone PXReprise with `git clone -c core.longpaths=true` on Windows.** A test fixture's path is about 140 characters, so
+  a clone into a deep folder fails with "Filename too long".
+- **`E:\x` is shared scratch, and other sessions clear it on the user's word.** Our feed and mzLib worktree vanished
+  mid-listing on 2026-11-23: PXReprise's session was deleting them. Before calling something there lost, read PXReprise's
+  `results/cleanup_*` lists.
 
 **Sibling project: `E:\CodeReview\aging`** (the NCEMS pipeline). aging *produces* results under
 `F:\aging_data\<run>\<PXD>\` with `provenance.json` (schema `aging-provenance/2`). dataRepo *ingests and serves*
