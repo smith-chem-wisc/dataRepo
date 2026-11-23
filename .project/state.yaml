@@ -846,6 +846,9 @@ decisions:
       with a confidence_rule_partly_trained finding). Our 150.
 gaps:
   - >-
+    G154 UPDATED 2026-11-23 (later): #50 merged; R81 is smith #54 (board In review; fork draft #3 closed and off the
+    board). Master (with #44, #50, #51) merged in: offline Data.Tests 982 passed / 4 skipped, seam 6/6, SchemaGen up to
+    date. When #54 merges: board Shipped, tell PXReprise (ingest path cs-1.5.0; served 1% peptidoforms unchanged).
     G154 NEW 2026-11-23: R81 (D78) is BUILT as draft trishorts/PXReprise-dev#3 (branch `datarepo/r81-search-filter`,
     one commit of 26 files on top of 2fb0f22), stacked on ptmQtl's smith #50 (`ptmqtl/s7-search-filter`; board In
     progress). Their `PsmPassesSql` keeps its signature and now wraps our `PassesRuleSql`; their tests pass
@@ -1062,6 +1065,13 @@ gaps:
     latest.json, the site's generator, the MCP's built_by, doctor; `datarepo run` refusing a -dev build and the tests assuming
     one; DocsTests' tutorial version), not from this list.
   - >-
+    G139 UPDATED 2026-11-23 (latest): (b) is smith #53 (board In review; fork draft #2 closed), at the user's "fix the
+    tutorial problem": master's page pointed at a datarepo v1.5.0 that was never released. The 1.0.0 page now carries a
+    "Before PXReprise 1.0.0 is released" note (clone master, `dotnet publish PXReprise-src/src/PXReprise.DataCli -c
+    Release -o datarepo`), checked from a fresh public clone: same lines but version and catalog id. DocsTests fails a
+    stamped build while the note remains. Both clones take `-c core.longpaths=true`: a deep Windows folder failed the
+    checkout ("Filename too long"). Rerun on master cs-1.4.0: bundle f93cde2fc6835dcd, catalog e76ae034659645af (1.0.0).
+    At the release: rerun, remove the note, update ids and ingest path (#54 makes it cs-1.5.0).
     G139 UPDATED 2026-11-23 (later): (a) DONE, smith #47 merged (6938cce), board Shipped, PXReprise told in our 151;
     the seam test runs in CI on every PR. (b) stays the draft on the fork, merging with 1.0.0. Our dev-pair observation
     (149) is PXReprise's G126, smith #49 merged (162c0ec): a batch takes --json from a datarepo of its own release,
