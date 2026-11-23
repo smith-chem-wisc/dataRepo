@@ -1004,6 +1004,11 @@ gaps:
     never come from `HashCode.Combine`, output checksum and counts by status). Our public position (#25, 131): the `ptmqtl`
     layer is added after 1.0.0, when the engine computes ptmQtl's current method.
   - >-
+    G144 UPDATED 2026-11-23: answered in part in our aging 142 (the availability table) and 143 (a correction: ptmQtl's 069
+    timed site-trait, 0.1/0.4 s without bounds, 185/5,591 s with, over 6 h for one trait over the corpus; 142 had said
+    untimed). The #25 comment is PXR-R82, corrected in our PXReprise 153 (152's section 3 held, not posted). STILL OWED:
+    time ptmQtl's v3 engines when #50 and `ptmqtl/run-depth` land (largest deposit by MS2 count, the pooled scope, then
+    site_traits at v2), and send the table again.
     G144 NEW 2026-11-19: owed to aging, DATAREPO-91 (their 141), and promised publicly on smith-chem-wisc/PXReprise#25 (our
     comment 7001405174): one table, a row per ptmQtl calculation in ptmQtl's DEFINITIONS (site-trait, pair types P, C, A and
     B, pooling, the MS/MS-only refit behind `mbr_dependent`, q-value families), saying whether a released engine computes it
@@ -1099,6 +1104,13 @@ gaps:
     workflow builds both programs on four platforms on every PR; a release tag runs no test suite, only one end-to-end run per
     platform; the 18 `RealData` tests skip on GitHub and must be run on this machine before a release.
   - >-
+    G138 UPDATED 2026-11-23: ANSWERED. Our dia 008 (Q2-Q5) and QuantProject 111 (D16): a DIA mode on
+    `AllDiaPrecursors.tsv` per decision 0072, no DIA `AllPSMs.psmtsv`, the precursor table's columns PROPOSED (not in the
+    schema), a DIA confidence_rule value of its own, FeatureType `precursor`, all built only after a MetaMorpheus release
+    carries the DIA task. dia 004's folder (`E:\x\mmcmd2_hfx\Task1DiaLibrarySearchTask`) read: 56,444 rows, all T at 1%
+    (no decoys or high-q rows written; asked to write all), a `# contaminants: not assessed` line above the header, no MS1
+    or Quantity State column yet, one run. Asked dia for a multi-run folder from the current branch, and whether an
+    apex-scan USI is right (we propose none). Script: scratch `dia_read.py`.
     G138 NEW 2026-11-17: DIA, one answer owed to three asks. QuantProject DATAREPO-D16 (their 101): a DIA mode chosen by
     `AllDiaPrecursors.tsv` the way isobaric is chosen by its files (`Isobaric.Wrote`), reading `AllDiaPrecursors.tsv`,
     `AllDiaPeptides.tsv` and `AllDiaProteinGroups.tsv` under `DEF-DIA-*` (their 105, DATA-DEFINITIONS v3.29; `quant_style`
