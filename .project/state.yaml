@@ -886,8 +886,13 @@ gaps:
   - >-
     G152 CLOSED 2026-11-23: smith #48 merged (7a7ee92), board Shipped; PXReprise told in our 151. Measured on the 215
     served bundles: no database missing (744 on disk), mm_settings 1.1.11-1.1.14 present, so no served deposit raises
-    either finding at the 1.0.0 re-ingest. But F:/aging_data/mm_settings/1.1.15 does not exist, so the first 1.1.15
-    delivery would raise search_settings_missing; that is PXReprise's to set up (151 section 3).
+    either finding at the 1.0.0 re-ingest. F:/aging_data/mm_settings/1.1.15 does not exist yet, and 151 section 3 said
+    the first 1.1.15 delivery would raise search_settings_missing. WRONG (PXReprise, 2026-11-23, checked):
+    - the engine passes `--mmsettings <root>/<release>` and never pre-creates it (SearchStage.cs:432);
+    - MetaMorpheus seeds it from the install at its first run (1.1.14's folder is dated 11-07, that release's first
+      search);
+    - ingest runs after the search, so it fires only if the folder is deleted after the search. Say so in our next
+      message to PXReprise.
     G152 UPDATED 2026-11-23: #46 merged. Our half is smith #48 (board In review), branch `datarepo/missing-search-inputs` (fbbc679):
     - `search_database_missing` (each path and the recorded sha256) and `search_settings_missing`, current rules only;
     - IngesterVersion cs-1.4.0, which also closes G153;
