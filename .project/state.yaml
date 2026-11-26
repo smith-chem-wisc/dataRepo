@@ -846,6 +846,20 @@ decisions:
       with a confidence_rule_partly_trained finding). Our 150.
 gaps:
   - >-
+    G157 NEW 2026-11-26: the isobaric form of G107 is smith #72 (datarepo/g107-isobaric, 7ba40a5 on ba48561; board #16 In
+    review). 1.0.0 checked an operator SDRF only against ExperimentalDesign.tsv, so all ten of aging's isobaric entries
+    that name one were refused (CheckOperatorSdrf has done so since 762cd6d, 2026-10-19, released in 1.4.0). The rule,
+    which aging and PXReprise agreed: every non-empty TmtDesign (run, channel) is named by exactly one SDRF row. All ten
+    ingest on the branch (scratch store, dev build). No ingest-path bump. For the swap the ten went in without
+    operator_sdrf. PXReprise merges #72 on green; a release is the user's call, then PXReprise re-ingests the ten. Close
+    when #72 merges (move board #16 to Shipped).
+  - >-
+    G156 NEW 2026-11-26: the finding `isobaric_channels_not_in_sdrf` counts channels the design marks `empty`, and says
+    they "sit on the design's own sample", which they do not: they have no sample (PXD077152: all 240 of the 432 flagged
+    are empty). Correcting the text changes the finding rows of every isobaric bundle with an empty channel, so it rides
+    the next ingest-path change, never alone. Also owed at our first schema-changing PR: freeze 0.0.17 from its v1.0.0
+    text (schemas/datarepo/releases/README.md; FrozenSchemaTests).
+  - >-
     G155 NEW 2026-11-23 (PXReprise's; notice in our 155): `datarepo-binaries` has failed on every master push since #43's
     merge (d4f8b3c, 2026-11-22 15:00 UTC; last green e8ae331). Job "both programs, osx-arm64": the engine's
     src/PXReprise/PXReprise.csproj references Microsoft.ML 3.0.1, which supports only x64 and x86. #43 made binaries.yml
