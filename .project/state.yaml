@@ -846,8 +846,9 @@ decisions:
       with a confidence_rule_partly_trained finding). Our 150.
 gaps:
   - >-
-    G157 NEW 2026-11-26: the isobaric form of G107 is smith #72 (datarepo/g107-isobaric, 7ba40a5 on ba48561; board #16 In
-    review). 1.0.0 checked an operator SDRF only against ExperimentalDesign.tsv, so all ten of aging's isobaric entries
+    G157 CLOSED 2026-11-26: smith #72 merged (9827a5f; board #16 Shipped). Release PR smith #73 (1.0.1) is open, and the
+    tag is the user's. PXReprise was told #73 leaves getting-started.md at 1.0.0. The isobaric form of G107 is smith #72
+    (datarepo/g107-isobaric, 7ba40a5 on ba48561). 1.0.0 checked an operator SDRF only against ExperimentalDesign.tsv, so all ten of aging's isobaric entries
     that name one were refused (CheckOperatorSdrf has done so since 762cd6d, 2026-10-19, released in 1.4.0). The rule,
     which aging and PXReprise agreed: every non-empty TmtDesign (run, channel) is named by exactly one SDRF row. All ten
     ingest on the branch (scratch store, dev build). No ingest-path bump. For the swap the ten went in without
