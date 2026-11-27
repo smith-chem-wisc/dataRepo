@@ -975,7 +975,13 @@ gaps:
     a string; answer per version and sort numerically; (2) the catalog adds `definition_version` to `metrics`, derived at
     build from the same bundle's `definitions` row (D32); (3) `datasets.identification_filter`, nullable, in schema 1.0.0's
     PR D, filled from `Identifications.FilterOf`. The ingest writes v2 text into 1.1.15 PEP bundles in PR D's path
-    `cs-2.0.0`, copying the owners' v2 texts on release day only.
+    `cs-2.0.0`, copying the owners' v2 texts on release day only. CHANGED 2026-11-26 (our 167, PXR-R84): the ingest does
+    NOT file v2 (D84 leaves them out, so cs-1.5.0 bundles of 1.1.16 searches have no 1% count or ID rate). The BUILD files
+    the dataset-scope psms_1pct/peptides/protein_groups from the bundle's stored sources/results.txt, and id_rate from
+    sources/provenance_04_search.json id_rate.rate_filter, for every bundle whose results.txt names a non-v1 filter (the
+    ingest's own test, Ingester.cs:699-701). They cite v2 in the bundle's namespace, with `source` naming the file and field.
+    No re-ingest. Texts at aging ae5348d830 and smith a9e7c9c (#77); re-read both owners first. Item (3) may be covered by
+    `datasets.confidence_rule` (0.0.17), but that maps an untrained `pep q-value` search to q_value_notch, so key on results.txt.
   - >-
     G150 NEW 2026-11-21: differential abundance as its own layer beside the bundle (our 145, PXR-R78). There are five
     proposed tables: `differential_analyses`, `_results`, `_decisions`, `_exclusions`, `_files`. An analysis binds to a
