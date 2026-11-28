@@ -983,6 +983,15 @@ gaps:
     No re-ingest. Texts at aging ae5348d830 and smith a9e7c9c (#77); re-read both owners first. Item (3) may be covered by
     `datasets.confidence_rule` (0.0.17), but that maps an untrained `pep q-value` search to q_value_notch, so key on results.txt.
   - >-
+    G150 IN REVIEW 2026-11-28: built as smith #83 (`datarepo/differential-layer`, head 2fb2e27, board #16 In review,
+    required check and the 90% patch-coverage rule passing; the user merges). All 138 real stages on F: then: 129 register,
+    none refused, 9 have no bundle; 97 in included deposits give 998,904 results rows, all joining protein_groups. Built at
+    PXReprise's PXR-R85 (their 169, our 170). `datarepo run differential.register <PXD> --input stage=<run>/<PXD>/06_differential`
+    and seven `differential_*` tables (catalog format 17 -> 18; `differential_stages` and `differential_findings` added for
+    a stage that analysed nothing). Option A: `observation_table` recorded, not bound. Binding also accepts a file the
+    bundle's search-record copy lists by sha256 (PXD042301's written SDRF). Nine real stages registered on a scratch store,
+    three isobaric; all 653,515 results rows join protein_groups. Registering on aging's store needs a release carrying #83.
+    Left out: the DEF-DIFF text (copy on release day), a role for IsobaricPsms.tsv, an MCP tool for StatisticalReport.md. Was:
     G150 NEW 2026-11-21: differential abundance as its own layer beside the bundle (our 145, PXR-R78). There are five
     proposed tables: `differential_analyses`, `_results`, `_decisions`, `_exclusions`, `_files`. An analysis binds to a
     bundle only when every input sha256 in `DifferentialResults.metadata.json` equals the bundle's recorded source sha256.
